@@ -3,9 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [AuthModule,MongooseModule.forRoot("mongodb+srv://dragssine:O2eIhQcWxYNp7QeT@cluster0.dou2yft.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")],
+  imports: [ConfigModule.forRoot({
+    envFilePath: '.env',
+    isGlobal: true,
+  }),AuthModule,MongooseModule.forRoot(process.env.MONGO_URI), DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })

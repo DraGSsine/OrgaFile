@@ -1,5 +1,5 @@
-import Discover from '@/components/signup/discover'
-import SignupPage from '@/components/signup/signupPage'
+import Discover from '@/components/signUp/discover'
+import SignupPage from '@/components/signUp/signupPage'
 import React from 'react'
 
 const page = () => {

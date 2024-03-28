@@ -6,13 +6,15 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { Button } from "@nextui-org/react";
 import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
-import { login } from "@/redux/slices/loginSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSigninMutation } from "@/redux/slices/userApiSlice";
+import { setCredentials } from "@/redux/slices/authSlice";
 
-export const LoginForm = () => {
+export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const response = useSelector((state: RootState) => state.login);
+  const response = useSelector((state: RootState) => state.auth.userInfo);
+  const [signin, { isLoading }] = useSigninMutation();
   const router = useRouter()
   const [userInfo, setUserInfo] = useState<userInfoType>({
     email: null,
@@ -31,14 +33,14 @@ export const LoginForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      await dispatch(login(userInfo));
-      if (response.response?.statusCode === 401) {
-        toast.error(response.response.message);
-      } else if (response.response) {
-        toast.success(response.response.message || "Success");
-        router.push('/dashboard')
-      }
-    }
+      try {
+        const res = await signin({ ...userInfo }).unwrap();
+        dispatch(setCredentials(res));
+        toast.success("Welcome back");
+        router.push("/dashboard");
+      } catch (error: any) {
+        toast.error(error?.data?.message || "An error occured");
+    }}
   };
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
@@ -56,7 +58,7 @@ export const LoginForm = () => {
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={response.loading ? true : false}
+        isLoading={isLoading ? true : false}
       >
         Create Account
       </Button>

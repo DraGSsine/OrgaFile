@@ -8,7 +8,7 @@ const SignupPage = () => {
       <div className="w-[80%] py-20">
         <div>
           <h1 className=" font-semibold text-3xl pb-3">Sign up</h1>
-          <p className=" pb-7">Have an account <Link href='/auth/login' className=" font-semibold text-primary-color">login</Link> </p>
+          <p className=" pb-7">Have an account <Link href='/auth/signin' className=" font-semibold text-primary-color">sign in</Link> </p>
         </div>
         <SignupPageForm />
       </div>

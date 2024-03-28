@@ -9,16 +9,17 @@ import { Button, RadioGroup } from "@nextui-org/react";
 import { CustomRadio } from "../RadiosGroup";
 import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
-import { signUp } from "@/redux/slices/loginSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSignupMutation } from "@/redux/slices/userApiSlice";
 
 const SignupPageForm = () => {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const response = useSelector((state: RootState) => state.login);
-  const router = useRouter()
+  const [signup, {isLoading, data }] = useSignupMutation();
+  const userData = useSelector((state: RootState) => state.auth.userInfo);
   const [userInfo, setUserInfo] = useState<userInfoType>({
-    loginFor: "Projects",
+    signInFor: "Projects",
     email: null,
     password: null,
     confirmPassword: null,
@@ -27,7 +28,7 @@ const SignupPageForm = () => {
   const [errorState, setErrorState] = useState<ZodIssue | null>(null);
   const User = z
     .object({
-      loginFor: z.string(),
+      signInFor: z.string(),
       email: z.string().email(),
       password: z.string().min(6).max(30),
       confirmPassword: z.string().min(6).max(30),
@@ -45,27 +46,28 @@ const SignupPageForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      await dispatch(signUp(userInfo));
-      if (response.response?.statusCode === 401) {
-        toast.error(response.response.message);
-      } else if (response.response) {
-        toast.success(response.response.message || "Success");
-        router.push("/auth/login")
+      try {
+        const res = await signup({...userInfo}).unwrap();
+        router.push("/auth/signin");
+      } catch (error: any) {
+        toast.error( error?.data?.message || "An error occured");
       }
     }
   };
-  // useEffect(() => {
 
-  // }, [response]);
-
+    useEffect(() => {
+        if(userData){
+            router.push("/");
+        }
+    },[userData])
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <div className="pt-5">
-        <p className=" font-medium text-gray-500 pb-2">Login for ?</p>
+        <p className=" font-medium text-gray-500 pb-2">sign in for ?</p>
         <RadioGroup
           defaultValue="Projects"
           onValueChange={(e) =>
-            setUserInfo({ ...userInfo, loginFor: e as "Projects" | "Designs" })
+            setUserInfo({ ...userInfo, signInFor: e as "Projects" | "Designs" })
           }
         >
           <div className=" flex flex-col gap-8 md:flex-row">
@@ -102,7 +104,7 @@ const SignupPageForm = () => {
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={response.loading ? true : false}
+        isLoading={isLoading ? true : false}
       >
         Create Account
       </Button>
