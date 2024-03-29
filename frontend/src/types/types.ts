@@ -18,7 +18,7 @@ export type userInfoType = {
 
 export type initialStateType = 
 {
-  userInfo:userInfoType | null;
+  userInfo:string | null;
   isAuthenticated:boolean;
   loading:boolean;
 }

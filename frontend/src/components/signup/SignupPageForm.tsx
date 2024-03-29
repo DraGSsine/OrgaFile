@@ -57,7 +57,7 @@ const SignupPageForm = () => {
 
     useEffect(() => {
         if(userData){
-            router.push("/");
+            router.push("/auth/signin");
         }
     },[userData])
   return (

@@ -5,7 +5,7 @@ import { userDocument } from 'src/schemas/auth.schema';
 import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import {JwtService} from "@nestjs/jwt"
-@Injectable()
+@Injectable() 
 export class AuthService {
     constructor(private jwtService:JwtService , @InjectModel("user") private readonly userModel:Model<userDocument>){};
     async signIn(signInDto:signInDto){
@@ -36,5 +36,17 @@ export class AuthService {
             password:encryptedPassword
         });
         
+    }
+    async refresh(user:any){
+        const token = await this.jwtService.signAsync({email:user.email}, {expiresIn:"1h",secret:process.env.jwtSecretKey});
+        const refreshToken = await this.jwtService.signAsync({email:user.email}, {expiresIn:"7d",secret:process.env.refreshToken});
+        return {token,refreshToken};
+    }
+    async verify(user:any){
+        console.log(user);
+        // const {token} = user.Authorization;
+        // console.log(token);
+        // const decoded = this.jwtService.verify(token, {secret:process.env.jwtSecretKey});
+        // console.log(decoded);
     }
 }
