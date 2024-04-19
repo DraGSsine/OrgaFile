@@ -10,7 +10,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
   imports: [ConfigModule.forRoot({
     envFilePath: '.env',
     isGlobal: true,
-  }),AuthModule,MongooseModule.forRoot(process.env.MONGO_URI), DashboardModule],
+  }),AuthModule,MongooseModule.forRoot("mongodb+srv://dragssine:kefm4SaVfSxJ3a64@cluster0.dou2yft.mongodb.net/"), DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -18,8 +18,8 @@ export class AuthService {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch)
             throw new UnprocessableEntityException("Email or password is incorrect");
-        const token = await this.jwtService.signAsync({email}, {expiresIn:"1h",secret:process.env.jwtSecretKey});
-        const refreshToken = await this.jwtService.signAsync({email:email}, {expiresIn:"7d",secret:process.env.refreshToken});
+        const token = await this.jwtService.signAsync({email}, {expiresIn:"1h",secret:process.env.JWT_SECRET_KEY});
+        const refreshToken = await this.jwtService.signAsync({email:email}, {expiresIn:"7d",secret:process.env.REFRESH_TOKEN});
         return {token,refreshToken};
     }
     async signUp(signUpDto:signUpDto){
@@ -38,8 +38,8 @@ export class AuthService {
         
     }
     async refresh(user:any){
-        const token = await this.jwtService.signAsync({email:user.email}, {expiresIn:"1h",secret:process.env.jwtSecretKey});
-        const refreshToken = await this.jwtService.signAsync({email:user.email}, {expiresIn:"7d",secret:process.env.refreshToken});
+        const token = await this.jwtService.signAsync({email:user.email}, {expiresIn:"1h",secret:process.env.JWT_SECRET_KEY});
+        const refreshToken = await this.jwtService.signAsync({email:user.email}, {expiresIn:"7d",secret:process.env.REFRESH_TOKEN});
         return {token,refreshToken};
     }
     async verify(user:any){

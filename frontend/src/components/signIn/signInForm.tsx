@@ -60,7 +60,7 @@ export const SignInForm = () => {
         className="w-full h-[60px] text-lg"
         isLoading={isLoading ? true : false}
       >
-        Create Account
+        Sign in
       </Button>
     </form>
   );

@@ -17,7 +17,7 @@ import {
       }
       try {
         const payload = this.jwtService.verify(token, {
-          secret: process.env.refreshToken,
+          secret: process.env.REFRESH_TOKEN,
         });
         request.user = payload;
       } catch (error) {

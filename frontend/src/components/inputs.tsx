@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "../../public/icons";
+import { EyeFilledIcon, EyeSlashFilledIcon, SearchIcon } from "../../public/icons";
 import { Input } from "@nextui-org/react";
 import { ZodIssue } from "zod";
 
@@ -68,6 +68,25 @@ export const EmailInput = ({errorState,onChange} : {errorState:ZodIssue | null,o
       variant="bordered"
       description="We'll never share your email with anyone else."
       className="max-w-full flex"
+    />
+  );
+};
+
+
+export const SearchInput = () => {
+
+  return (
+    <Input
+      style={{ width: 350 , height:55}}
+      placeholder="Type To Search"
+      variant="bordered"
+      radius="sm"
+      className="max-w-full flex"
+      startContent={
+        <button>
+          <SearchIcon/>
+        </button>
+      }
     />
   );
 };

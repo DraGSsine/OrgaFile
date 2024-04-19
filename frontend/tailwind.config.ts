@@ -18,6 +18,7 @@ const config: Config = {
       },
       colors:
       {
+        "primary-text-color":"var(--primary-text-color)",
         "primary-color":"var(--primary-color)",
         "dark-primary-color":"var(--dark-primary-color)",
 
