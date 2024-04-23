@@ -27,8 +27,13 @@ export class UploadService {
     });
   }
 
-  findAll() {
-    return `This action returns all upload`;
+  async LoadFiles() {
+    return cloudinary.api.resources({type: 'upload'}, (error, result) => {
+      if (error) {
+        throw new UnsupportedMediaTypeException();
+      }
+      return result;
+    });
   }
 
   findOne(id: number) {

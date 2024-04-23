@@ -1,6 +1,7 @@
 import { Button } from "@nextui-org/button";
 import { FilterSearchIcon, PlusIcon, UploadDocumentIcon } from "../../../public/icons";
 import { SearchInput } from "../inputs";
+import UploadButton from "./UploadButton";
 
 
 export default function NavBar() {
@@ -21,14 +22,12 @@ export default function NavBar() {
             <span className=" font-semibold text-base ">Create</span>
 
           </Button>
-          <Button
-            radius="sm"
-            variant="flat"
-            className="text-default-500 flex items-center justify-between min-w-[130px] min-h-[55px] bg-black"
-          >
-            <UploadDocumentIcon width={70} height={70} className="flex-shrink-0" stroke={"#ffffff"} />
-            <span className=" font-semibold text-base text-white">Upload</span>
-          </Button>
+          <UploadButton
+          radius="sm"
+          variant="flat"
+          className="text-default-500 flex items-center justify-between min-w-[130px] min-h-[55px] bg-black"
+
+          />
         </div>
       </div>
     </nav>

@@ -1,8 +1,11 @@
+import File from '@/components/dashboard/files/File'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <File/>
+    </div>
   )
 }
 

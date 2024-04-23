@@ -14,9 +14,9 @@ export class UploadController {
     return this.uploadService.UploadFiles(file);
   }
 
-  @Get()
+  @Get('load')
   findAll() {
-    return this.uploadService.findAll();
+    return this.uploadService.LoadFiles();
   }
 
   @Get(':id')

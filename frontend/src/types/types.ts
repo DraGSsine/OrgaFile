@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export type colorType =
   | "default"
   | "primary"
@@ -15,7 +17,8 @@ export type userInfoType = {
   field?:string | null;
 };
 
-
+export type variantType = "bordered" | "solid" | "faded" | "shadow" | "ghost" | "flat" | undefined;
+export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
 export type initialStateType = 
 {
   userInfo:string | null;
