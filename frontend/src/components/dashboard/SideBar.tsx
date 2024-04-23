@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { DashboardIcon, DeleteIcon, DocTifyLogo, FolderIcon, LogOut, SettingsIcon, StarIcon } from '../../../public/icons';
 import { Button } from '@nextui-org/button';
+import Link from 'next/link';
 
 const SideBar = () => {
    const [activeItem, setActiveItem] = useState<string>('dashboard');
@@ -18,7 +19,7 @@ const SideBar = () => {
 
    const Components = [
       { name: "dashboard", component: <DashboardIcon width={35} height={35} outline={activeItem === "dashboard" ? false : true} className={"transition-colors duration-300"} /> },
-      { name: "privateFiles", component: <FolderIcon width={35} height={35} outline={activeItem === "privateFiles" ? false : true} className={"transition-colors duration-300"} /> },
+      { name: "Files", component: <FolderIcon width={35} height={35} outline={activeItem === "privateFiles" ? false : true} className={"transition-colors duration-300"} /> },
       { name: "favorite", component: <StarIcon width={35} height={35} outline={activeItem === "favorite" ? false : true} className={"transition-colors duration-300"} /> },
       { name: "trash", component: <DeleteIcon width={35} height={35} outline={activeItem === "trash" ? false : true} className={"transition-colors duration-300"} /> },
       { name: "settings", component: <SettingsIcon width={35} height={35} outline={activeItem === "settings" ? false : true} className={"transition-colors duration-300"} /> }
@@ -32,7 +33,7 @@ const SideBar = () => {
          <div className='w-[12vw] py-8 flex flex-col h-auto justify-between flex-grow'>
             <div className='gap-10 flex flex-col relative'>
                {Components.map((Component, index) => (
-                  <div
+                  <Link href={ Component.name == 'dashboard' ? "/dashboard" : `/dashboard/${Component.name.toLowerCase()}`}
                      key={index}
                      className={`flex gap-4 items-center cursor-pointer`}
                      onClick={() => handleItemClick(Component.name)}
@@ -41,7 +42,7 @@ const SideBar = () => {
                      <span className={`font-semibold text-[1.1rem] ${activeItem === Component.name ? 'text-black transition-all duration-1000 ' : 'text-primary-text-color'}`}>
                         {Component.name}
                      </span>
-                  </div>
+                  </Link>
                ))}
                <div
                   className={`${animation} transition-all ease-in-out -right-5 absolute h-[60px] w-[6px] rounded-l-full bg-black`}

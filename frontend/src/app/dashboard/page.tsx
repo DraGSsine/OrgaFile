@@ -1,9 +1,10 @@
+import  UploadButton  from '@/components/dashboard/UploadButton'
 import React from 'react'
 
 const Dashboard = () => {
   return (
     <div className=''>
-        f
+        <UploadButton/>
     </div>
   )
 }
