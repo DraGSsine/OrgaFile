@@ -6,9 +6,11 @@ import * as AWS from 'aws-sdk';
 @Injectable()
 export class UploadService {
   private readonly s3Client = new AWS.S3({
+    credentials: {
+      accessKeyId: this.configService.get('S3_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY'),
+    },
     region: this.configService.get('S3_REGION'),
-    accessKeyId: this.configService.get('S3_ACCESS_KEY_ID'),
-    secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY'),
   });
   constructor(private readonly configService: ConfigService) {}
   async UploadFiles(file: any) {
@@ -28,23 +30,22 @@ export class UploadService {
 
   async LoadFiles() {
     try {
-      const data = await this.s3Client
-        .listObjectsV2({
-          Bucket: this.configService.get('S3_BUCKET_NAME'),
-          MaxKeys: 1000,
-        })
+      let files = await this.s3Client
+        .listObjectsV2({ Bucket: this.configService.get('S3_BUCKET_NAME') })
         .promise();
+      const data = files.Contents.map((file) => {
+        return {
+          url: `${this.configService.get('S3_BUCKET_URL')}${file.Key}`,
+          name: file.Key,
+          size: file.Size,
+          lastModified: file.LastModified,
+          format: file.Key.split('.').pop(),
 
-      // const detailedFiles = data.Contents.map((file) => ({
-      //   key: file.Key,
-      //   size: file.Size,
-      //   lastModified: file.LastModified,
-      //   format: file.Key.split('.').pop(),
-      // }));
-
+        };
+      })
       return data;
     } catch (error) {
-      console.error('Error fetching files:', error);
+      throw new UnsupportedMediaTypeException();
     }
   }
 

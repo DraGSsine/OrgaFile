@@ -33,8 +33,9 @@ export type initialStateType = {
 };
 
 export type filesType = {
-  key: string;
+  name: string;
   lastModified: string;
   size: number;
   format: string;
+  url: string;
 };

@@ -2,12 +2,16 @@ import React from "react";
 import Image from "next/image";
 import { filesType } from "@/types/types";
 import { DateToDays, bytesToMegaBytes } from "@/helpers/helpers";
-const File = ({ public_id, bytes, created_at, url, format }: filesType) => {
+const File = ({ name, size, lastModified , url, format }: filesType) => {
   const formatNmae = format.toLowerCase();
   const getIconName = (formatNmae: string) => {
     if (formatNmae === "jpg" || formatNmae === "jpeg" || formatNmae === "png") {
       return "image";
-    } else {
+    }
+    else if (formatNmae === "md" || formatNmae === "txt") {
+      return "txt";
+    }
+    else {
       return formatNmae;
     }
   };
@@ -23,11 +27,11 @@ const File = ({ public_id, bytes, created_at, url, format }: filesType) => {
             height={40}
           />
           <p className="text-sm text-center capitalize font-medium ">
-            {public_id}
+            {name}
           </p>
         </div>
-        <span className=" block w-[21%]">{bytesToMegaBytes(bytes)} Mb</span>
-        <span>{DateToDays(created_at)} Day ago </span>
+        <span className=" block w-[21%]">{bytesToMegaBytes(size)} Mb</span>
+        <span>{DateToDays(lastModified)} Day ago </span>
         <span
           className={`rounded-lg px-2 py-1 text-xs ml-auto mr-5 ${color}`}
         >

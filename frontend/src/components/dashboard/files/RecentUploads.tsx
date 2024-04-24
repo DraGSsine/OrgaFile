@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import File from "./File";
 import { ArrowUp } from "../../../../public/icons";
 import { filesType } from "@/types/types";
-import { map } from "zod";
 const RecentUploads = () => {
   const [fileContent, setFilesContent] = useState({name: "name",className:"transform rotate-180 transition-transform duration-300 ease-in-out",rotation: "up",});
   const [files, setFiles] = useState<filesType[]>([]);
@@ -25,12 +24,11 @@ const RecentUploads = () => {
     });
     res.then((response) => {
       response.json().then((data) => {
-        setFiles(data.Contents);
+        setFiles(data);
       });
     });
   }, [])
-  
-  console.log(files[0]);
+  console.log(files)  
   return (
     <div className=" space-y-6">
       <div>
@@ -45,7 +43,7 @@ const RecentUploads = () => {
         </span>
         <span
           onClick={() => filterFiles("size")}
-          className=" cursor-pointer flex font-semibold text-zinc-600  w-[21%] "
+          className=" cursor-pointer flex font-semibold text-zinc-600  w-[20%] "
         >
           Size{" "}
           <ArrowUp
@@ -83,7 +81,7 @@ const RecentUploads = () => {
                   <File
                   
                     format={file.format}
-                    key={file.key}
+                    name={file.name}
                     size={file.size}
                     lastModified={file.lastModified}
                     url={file.url}

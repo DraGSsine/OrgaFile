@@ -24,7 +24,7 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('files'))
   UploadFiles(
     @UploadedFile(
-      new ParseFilePipe({ validators: [new MaxFileSizeValidator({maxSize:10000})] }),
+      new ParseFilePipe({ validators: [new MaxFileSizeValidator({maxSize:100000000})] }),
     )
     file: Express.Multer.File,
   ) {
