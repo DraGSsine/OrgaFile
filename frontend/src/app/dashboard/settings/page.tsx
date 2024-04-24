@@ -1,8 +1,11 @@
 import React from 'react'
+import EditProfile from '@/components/dashboard/settings/EditProfile'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <EditProfile />
+    </div>
   )
 }
 
