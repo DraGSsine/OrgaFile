@@ -68,7 +68,7 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
       {({ getRootProps, getInputProps, acceptedFiles }) => (
          <div
          {...getRootProps()}
-         className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'>
+         className='border h-96 w-[500px] m-4 border-dashed border-gray-300 rounded-lg'>
          <div className='flex items-center justify-center h-full w-full'>
            <label
              htmlFor='dropzone-file'

@@ -3,7 +3,29 @@
 @tailwind utilities;
 
 :root {
+    /* "image-color":"var(--image-color)",
+    "video-color":"var(--video-color)",
+    "audio-color":"var(--audio-color)",
+    "document-color":"var(--document-color)",
+    "pdf-color":"var(--pdf-color)",
+    "xls-color":"var(--xls-color)",
+    "ppt-color":"var(--ppt-color)",
+    "txt-color":"var(--txt-color)",
+    "zip-color":"var(--zip-color)",
+    "doc-color":"var(--doc-color)", */
     --primary-color :#3b37ff;
     --dark-primary-color:#2420E2;
-    --primary-text-color:#8a8a8a;;
+    --primary-text-color:#8a8a8a;
+    --image-color:#6dff5a7e;
+    --video-color:#802cff7e;
+    --audio-color:#fda1447e;
+    --document-color:#d44f037e;
+    --pdf-color:#ff76767e;
+    --xls-color:#13c2007e;
+    --ppt-color:#fba3267e;
+    --txt-color:#123fbd7e;
+    --zip-color:#1600707e;
+    --doc-color:#f5f5f57e;
+    
+
 }

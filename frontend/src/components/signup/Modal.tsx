@@ -10,10 +10,11 @@ export default function ModalComponent({isOpen, onOpenChange}:any) {
         backdrop="opaque" 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
+        size="xl"
         radius="lg"
         classNames={{
           body: "py-6",
-          backdrop: "bg-[#fff]/60 backdrop-opacity-40",
+          backdrop: "bg-[#fff]/40 backdrop-opacity-40 blur-sm",
           base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
           header: "border-b-[1px] border-[#292f46]",
           footer: "border-t-[1px] border-[#292f46]",
