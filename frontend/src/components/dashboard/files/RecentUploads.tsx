@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import File from "./File";
 import { ArrowUp } from "../../../../public/icons";
+import { filesType } from "@/types/types";
+import { map } from "zod";
 const RecentUploads = () => {
   const [fileContent, setFilesContent] = useState({name: "name",className:"transform rotate-180 transition-transform duration-300 ease-in-out",rotation: "up",});
-
+  const [files, setFiles] = useState<filesType[]>([]);
   const filterFiles = (name: string) => {
     console.log(fileContent.rotation);
     if (fileContent.rotation == "up") {
@@ -13,6 +15,22 @@ const RecentUploads = () => {
       setFilesContent({name: name, className: "transform transition-transform duration-300 ease-in-out", rotation: "up",});
     }
   };
+
+  useEffect(() => {
+    const res = fetch("http://127.0.0.1:9010/api/files/load", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    res.then((response) => {
+      response.json().then((data) => {
+        setFiles(data.Contents);
+      });
+    });
+  }, [])
+  
+  console.log(files[0]);
   return (
     <div className=" space-y-6">
       <div>
@@ -59,11 +77,20 @@ const RecentUploads = () => {
       </div>
 
       <div className=" space-y-5 ">
-        <File />
-        <File />
-        <File />
-        <File />
-        <File />
+            {
+              files.map((file) => {
+                return (
+                  <File
+                  
+                    format={file.format}
+                    key={file.key}
+                    size={file.size}
+                    lastModified={file.lastModified}
+                    url={file.url}
+                  />
+                );
+              })
+            }
       </div>
     </div>
   );

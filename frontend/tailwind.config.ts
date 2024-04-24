@@ -18,12 +18,20 @@ const config: Config = {
       },
       colors:
       {
-        "primary-text-color":"var(--primary-text-color)",
         "primary-color":"var(--primary-color)",
         "dark-primary-color":"var(--dark-primary-color)",
-
       },
       backgroundColor:{
+        "image-color":"var(--image-color)",
+        "video-color":"var(--video-color)",
+        "audio-color":"var(--audio-color)",
+        "document-color":"var(--document-color)",
+        "pdf-color":"var(--pdf-color)",
+        "xls-color":"var(--xls-color)",
+        "ppt-color":"var(--ppt-color)",
+        "txt-color":"var(--txt-color)",
+        "zip-color":"var(--zip-color)",
+        "doc-color":"var(--doc-color)",
         "primary-color":"var(--primary-color)",
         "dark-primary-color":"var(--dark-primary-color)",
       },

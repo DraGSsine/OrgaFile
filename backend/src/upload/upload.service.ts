@@ -1,39 +1,51 @@
 import { Injectable, UnsupportedMediaTypeException } from '@nestjs/common';
-import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
-import { v2 as cloudinary, v2 } from 'cloudinary';
-const streamifier = require('streamifier');
+import { ConfigService } from '@nestjs/config';
+import * as AWS from 'aws-sdk';
+
 @Injectable()
 export class UploadService {
-  constructor() {
-    cloudinary.config({
-      cloud_name: 'decb9vsza',
-      api_key: '618554148233887',
-      api_secret: 'WLlUD0LH606jbzprAFreICQW06k',
-    });
-  }
+  private readonly s3Client = new AWS.S3({
+    region: this.configService.get('S3_REGION'),
+    accessKeyId: this.configService.get('S3_ACCESS_KEY_ID'),
+    secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY'),
+  });
+  constructor(private readonly configService: ConfigService) {}
   async UploadFiles(file: any) {
-    return new Promise((resolve, reject) => {
-      console.log(file);
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {resource_type: 'auto' , public_id:file.originalname},
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        },
-      );
-
-      streamifier.createReadStream(file.buffer).pipe(uploadStream);
-    });
+    const { originalname, buffer } = file;
+    try {
+      return await this.s3Client
+        .upload({
+          Bucket: this.configService.get('S3_BUCKET_NAME'),
+          Key: originalname,
+          Body: buffer,
+        })
+        .promise();
+    } catch (error) {
+      throw new UnsupportedMediaTypeException();
+    }
   }
 
   async LoadFiles() {
-    return cloudinary.api.resources({type: 'upload'}, (error, result) => {
-      if (error) {
-        throw new UnsupportedMediaTypeException();
-      }
-      return result;
-    });
+    try {
+      const data = await this.s3Client
+        .listObjectsV2({
+          Bucket: this.configService.get('S3_BUCKET_NAME'),
+          MaxKeys: 1000,
+        })
+        .promise();
+
+      // const detailedFiles = data.Contents.map((file) => ({
+      //   key: file.Key,
+      //   size: file.Size,
+      //   lastModified: file.LastModified,
+      //   format: file.Key.split('.').pop(),
+      // }));
+
+      return data;
+    } catch (error) {
+      console.error('Error fetching files:', error);
+    }
   }
 
   findOne(id: number) {
