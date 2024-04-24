@@ -1,10 +1,21 @@
-import { Injectable, UnsupportedMediaTypeException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnsupportedMediaTypeException,
+} from '@nestjs/common';
 import { UpdateUploadDto } from './dto/update-upload.dto';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, ObjectId } from 'mongoose';
+import { fileType, userDocument } from 'src/schemas/auth.schema';
 
 @Injectable()
 export class UploadService {
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectModel('user') private readonly userModel: Model<userDocument>,
+  ) {}
   private readonly s3Client = new AWS.S3({
     credentials: {
       accessKeyId: this.configService.get('S3_ACCESS_KEY_ID'),
@@ -12,38 +23,50 @@ export class UploadService {
     },
     region: this.configService.get('S3_REGION'),
   });
-  constructor(private readonly configService: ConfigService) {}
-  async UploadFiles(file: any) {
-    const { originalname, buffer } = file;
+  async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
+    const user = await this.userModel.findById(userId);
+    console.log(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     try {
-      return await this.s3Client
-        .upload({
-          Bucket: this.configService.get('S3_BUCKET_NAME'),
-          Key: originalname,
-          Body: buffer,
-        })
-        .promise();
+      const params = {
+        Bucket: this.configService.get('S3_BUCKET_NAME'),
+        Key: file.originalname,
+        Body: file.buffer,
+      };
+
+      await this.s3Client.upload(params).promise();
+
+      const data:fileType = {
+        url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
+        format: file.originalname.split('.').pop(),
+        name: file.originalname,
+        size: file.size,
+        createdAt: new Date(),
+  
+      };
+      user.files.push(data);
+      await user.save();
+
+      return user;
     } catch (error) {
-      throw new UnsupportedMediaTypeException();
+      if (error.code === 'UnsupportedMediaType') {
+        throw new UnsupportedMediaTypeException();
+      } else {
+        throw error;
+      }
     }
   }
 
-  async LoadFiles() {
+  async LoadFiles(userId: ObjectId) {
     try {
-      let files = await this.s3Client
-        .listObjectsV2({ Bucket: this.configService.get('S3_BUCKET_NAME') })
-        .promise();
-      const data = files.Contents.map((file) => {
-        return {
-          url: `${this.configService.get('S3_BUCKET_URL')}${file.Key}`,
-          name: file.Key,
-          size: file.Size,
-          lastModified: file.LastModified,
-          format: file.Key.split('.').pop(),
-
-        };
-      })
-      return data;
+      const files = await this.userModel.findById(userId);
+      if (!files) {
+        throw new NotFoundException('User not found');
+      }
+      return files.files;
     } catch (error) {
       throw new UnsupportedMediaTypeException();
     }

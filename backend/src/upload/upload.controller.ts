@@ -15,6 +15,7 @@ import { UploadService } from './upload.service';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ObjectId } from 'mongoose';
 
 @Controller('api/files')
 export class UploadController {
@@ -24,16 +25,19 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('files'))
   UploadFiles(
     @UploadedFile(
-      new ParseFilePipe({ validators: [new MaxFileSizeValidator({maxSize:100000000})] }),
+      new ParseFilePipe({
+        validators: [new MaxFileSizeValidator({ maxSize: 100000000 })],
+      }),
     )
     file: Express.Multer.File,
+    @Body('userId') userId: ObjectId,
   ) {
-    return this.uploadService.UploadFiles(file);
+    return this.uploadService.UploadFiles(file, userId);
   }
 
   @Get('load')
-  findAll() {
-    return this.uploadService.LoadFiles();
+  findAll(@Body('userId') userId: ObjectId){
+    return this.uploadService.LoadFiles(userId);
   }
 
   @Get(':id')

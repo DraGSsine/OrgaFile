@@ -4,14 +4,28 @@ import File from "./File";
 import { ArrowUp } from "../../../../public/icons";
 import { filesType } from "@/types/types";
 const RecentUploads = () => {
-  const [fileContent, setFilesContent] = useState({name: "name",className:"transform rotate-180 transition-transform duration-300 ease-in-out",rotation: "up",});
+  const [fileContent, setFilesContent] = useState({
+    name: "name",
+    className:
+      "transform rotate-180 transition-transform duration-300 ease-in-out",
+    rotation: "up",
+  });
   const [files, setFiles] = useState<filesType[]>([]);
   const filterFiles = (name: string) => {
     console.log(fileContent.rotation);
     if (fileContent.rotation == "up") {
-      setFilesContent({name: name, className: "transform rotate-180 transition-transform duration-300 ease-in-out", rotation: "down",});
+      setFilesContent({
+        name: name,
+        className:
+          "transform rotate-180 transition-transform duration-300 ease-in-out",
+        rotation: "down",
+      });
     } else {
-      setFilesContent({name: name, className: "transform transition-transform duration-300 ease-in-out", rotation: "up",});
+      setFilesContent({
+        name: name,
+        className: "transform transition-transform duration-300 ease-in-out",
+        rotation: "up",
+      });
     }
   };
 
@@ -27,8 +41,8 @@ const RecentUploads = () => {
         setFiles(data);
       });
     });
-  }, [])
-  console.log(files)  
+  }, []);
+  console.log(files);
   return (
     <div className=" space-y-6">
       <div>
@@ -75,20 +89,17 @@ const RecentUploads = () => {
       </div>
 
       <div className=" space-y-5 ">
-            {
-              files.map((file) => {
-                return (
-                  <File
-                  
-                    format={file.format}
-                    name={file.name}
-                    size={file.size}
-                    lastModified={file.lastModified}
-                    url={file.url}
-                  />
-                );
-              })
-            }
+        {files?.map((file) => {
+          return (
+            <File
+              format={file.format}
+              name={file.name}
+              size={file.size}
+              lastModified={file.lastModified}
+              url={file.url}
+            />
+          );
+        })}
       </div>
     </div>
   );
