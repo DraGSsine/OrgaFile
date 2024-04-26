@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { filesType } from "@/types/types";
-import { DateToDays, bytesToMegaBytes } from "@/helpers/helpers";
+import { FormatTheDate, bytesToMegaBytes } from "@/helpers/helpers";
 import FilesSettings from "./FilesSettings";
 const File = ({ name, size, createdAt , url, format , _id }: filesType) => {
   const formatNmae = format.toLowerCase();
@@ -35,7 +35,7 @@ const File = ({ name, size, createdAt , url, format , _id }: filesType) => {
           </p>
         </div>
         <span className=" block w-[21%]">{bytesToMegaBytes(size)} Mb</span>
-        <span>{DateToDays(createdAt)} Day ago </span>
+        <span>{FormatTheDate(createdAt)} Day ago </span>
         <span
           className={`rounded-lg px-2 py-1 text-xs ml-auto mr-5 ${color}`}
         >

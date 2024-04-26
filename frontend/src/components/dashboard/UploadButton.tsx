@@ -3,7 +3,7 @@ import React from "react";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { raduisType, variantType } from "@/types/types";
 import { UploadDocumentIcon } from "../../../public/icons";
-import ModalComponent from "../signUp/Modal";
+import ModalComponent from "../signup/Modal";
 
 const UploadButton = ({
   radius,
@@ -23,7 +23,7 @@ const UploadButton = ({
         className={className}
         radius={radius}
       >
-        <span className=" font-semibold text-base text-white">Upload</span>
+        <span className=" font-medium text-white text-base ">Upload</span>
         <UploadDocumentIcon
           width={70}
           height={70}

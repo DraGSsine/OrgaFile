@@ -73,20 +73,22 @@ export const EmailInput = ({errorState,onChange} : {errorState:ZodIssue | null,o
 };
 
 
-export const SearchInput = () => {
 
+export const SearchInput = () => {
   return (
     <Input
-      style={{ width: 350 , height:55}}
       placeholder="Type To Search"
       variant="bordered"
       radius="sm"
-      className="max-w-full flex"
+      className="custom-input"
+      style={{ width: '450px', height: '40px'}}
       startContent={
         <button>
-          <SearchIcon/>
+          <SearchIcon className="h-6 w-6 stroke-zinc-400" />
         </button>
       }
     />
   );
 };
+
+

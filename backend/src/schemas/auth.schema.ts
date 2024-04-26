@@ -18,6 +18,9 @@ export class Files {
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop()
+  topic: string;
 }
 
 @Schema()

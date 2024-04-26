@@ -7,7 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
-import { Ellipsis } from "../../public/icons";
+import { CopyIcon, DeleteIcon, DownloadIcon, Ellipsis } from "../../public/icons";
 
 function handleAction({ key, fileId }: { key: string | number; fileId: string }) {
   const {token} = JSON.parse(Cookies?.get("userInfo") as string);
@@ -40,10 +40,9 @@ export const DropDown = ({fileId}:{fileId:string}) => {
         aria-label="Action event example"
         onAction={(key) => handleAction({key,fileId})}
       >
-        <DropdownItem key="new">New file</DropdownItem>
-        <DropdownItem key="copy">Copy link</DropdownItem>
-        <DropdownItem key="edit">Edit file</DropdownItem>
-        <DropdownItem key="delete" className="text-danger" color="danger">
+        <DropdownItem startContent={<DownloadIcon/>} key="new">Download file</DropdownItem>
+        <DropdownItem startContent={<CopyIcon/>} key="copy">Copy link</DropdownItem>
+        <DropdownItem startContent={<DeleteIcon width={25} height={25} />} key="delete" className="text-danger" color="danger">
           Delete file
         </DropdownItem>
       </DropdownMenu>

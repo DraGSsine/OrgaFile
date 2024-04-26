@@ -40,6 +40,7 @@ export class UploadService {
       await this.s3Client.upload(params).promise();
 
       const data: Files = {
+        topic: 'General',
         url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
         format: file.originalname.split('.').pop(),
         name: file.originalname,

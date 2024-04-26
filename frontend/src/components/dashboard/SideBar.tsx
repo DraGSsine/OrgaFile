@@ -17,22 +17,22 @@ const SideBar = () => {
   const pathname = usePathname();
   const routeName = pathname.split("/")[pathname.split("/").length - 1].charAt(0).toUpperCase() + pathname.split("/")[pathname.split("/").length - 1].slice(1);
   const [activeItem, setActiveItem] = useState<string>(routeName);
-  const [animation, setAnimation] = useState<string>("-top-[11px]");
+  const [animation, setAnimation] = useState<string>("-top-[10px]");
   const handleItemClick = (item: string) => {
     setActiveItem(item);
-    if (item === "Dashboard") setAnimation("-top-[11px]");
-    else if (item === "Files") setAnimation("top-[67px]");
+    if (item === "Dashboard") setAnimation("-top-[10px]");
+    else if (item === "Files") setAnimation("top-[58px]");
     else if (item === "Favorite") setAnimation("top-[140px]");
-    else if (item === "Trash") setAnimation("top-[214px]");
-    else if (item === "Settings") setAnimation("top-[288px]");
+    else if (item === "Trash") setAnimation("top-[195px]");
+    else if (item === "Settings") setAnimation("top-[265px]");
   };
   const Components = [
     {
       name: "Dashboard",
       component: (
         <DashboardIcon
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           outline={activeItem === "Dashboard" ? false : true}
           className={"transition-colors duration-300"}
         />
@@ -42,8 +42,8 @@ const SideBar = () => {
       name: "Files",
       component: (
         <FolderIcon
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           outline={activeItem === "Files" ? false : true}
           className={"transition-colors duration-300"}
         />
@@ -53,8 +53,8 @@ const SideBar = () => {
       name: "Favorite",
       component: (
         <StarIcon
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           outline={activeItem === "Favorite" ? false : true}
           className={"transition-colors duration-300"}
         />
@@ -64,8 +64,8 @@ const SideBar = () => {
       name: "Trash",
       component: (
         <DeleteIcon
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           outline={activeItem === "Trash" ? false : true}
           className={"transition-colors duration-300"}
         />
@@ -75,8 +75,8 @@ const SideBar = () => {
       name: "Settings",
       component: (
         <SettingsIcon
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           outline={activeItem === "Settings" ? false : true}
           className={"transition-colors duration-300"}
         />
@@ -139,9 +139,9 @@ const SideBar = () => {
           <Button
             radius="sm"
             variant="light"
-            className="text-black text-lg font-semibold flex justify-between"
+            className="text-black text-md font-semibold flex justify-between"
           >
-            <LogOut width={30} height={30} />
+            <LogOut width={5} height={5} />
             Log Out
           </Button>
         </div>
