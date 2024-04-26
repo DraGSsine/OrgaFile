@@ -10,14 +10,19 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
+  Req,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('api/files')
+@UseGuards(AuthGuard)
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
@@ -30,14 +35,14 @@ export class UploadController {
       }),
     )
     file: Express.Multer.File,
-    @Body('userId') userId: ObjectId,
+    @Req() req: any,
   ) {
-    return this.uploadService.UploadFiles(file, userId);
+    return this.uploadService.UploadFiles(file, req.user.userId);
   }
 
   @Get('load')
-  findAll(@Body('userId') userId: ObjectId){
-    return this.uploadService.LoadFiles(userId);
+  findAll(@Req() req: any){
+    return this.uploadService.LoadFiles(req.user.userId);
   }
 
   @Get(':id')
@@ -50,8 +55,8 @@ export class UploadController {
     return this.uploadService.update(+id, updateUploadDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.uploadService.remove(+id);
+  @Delete('remove')
+  remove(@Req() req:any, @Query('fileid') fileId: ObjectId) {
+    return this.uploadService.remove(req, fileId);
   }
 }

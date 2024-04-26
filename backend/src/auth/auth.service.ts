@@ -18,8 +18,8 @@ export class AuthService {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch)
             throw new UnprocessableEntityException("Email or password is incorrect");
-        const token = await this.jwtService.signAsync({email}, {expiresIn:"1h",secret:process.env.JWT_SECRET_KEY});
-        const refreshToken = await this.jwtService.signAsync({email:email}, {expiresIn:"7d",secret:process.env.REFRESH_TOKEN});
+        const token = await this.jwtService.signAsync({userId:user._id}, {expiresIn:"7d",secret:process.env.JWT_SECRET_KEY});
+        const refreshToken = await this.jwtService.signAsync({userId:user._id}, {expiresIn:"7d",secret:process.env.REFRESH_TOKEN});
         return {token,refreshToken};
     }
     async signUp(signUpDto:signUpDto){
@@ -43,7 +43,6 @@ export class AuthService {
         return {token,refreshToken};
     }
     async verify(user:any){
-        console.log(user);
         // const {token} = user.Authorization;
         // console.log(token);
         // const decoded = this.jwtService.verify(token, {secret:process.env.jwtSecretKey});

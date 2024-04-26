@@ -5,7 +5,7 @@ import Dropzone from "react-dropzone";
 import { Cloud, File, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "./Progress";
-
+import Cookies from "js-cookie";
 export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
 
@@ -44,9 +44,13 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         });
 
         try {
+          const token = JSON.parse(Cookies.get("userInfo") as string).token;
           const res = await fetch("http://127.0.0.1:9010/api/files/upload", {
             method: "POST",
             body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
           if (res.ok) {

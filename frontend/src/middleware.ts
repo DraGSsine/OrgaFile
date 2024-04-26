@@ -16,7 +16,6 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Error verifying access token:", error);
     return NextResponse.redirect(new URL("/", request.nextUrl.origin).href);
   }
 

@@ -34,8 +34,9 @@ export type initialStateType = {
 
 export type filesType = {
   name: string;
-  lastModified: string;
+  createdAt: string;
   size: number;
   format: string;
   url: string;
+  _id: string;
 };

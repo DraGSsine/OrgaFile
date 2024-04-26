@@ -7,7 +7,7 @@ import { RefreshJwtGuard } from "src/guards/refresh.guard";
 export class AuthController {
     constructor(private authService:AuthService){};
 
-    @Post("signIn")
+    @Post("signin")
     signIn(@Body() signInDto:signInDto){
         return this.authService.signIn(signInDto);
     }

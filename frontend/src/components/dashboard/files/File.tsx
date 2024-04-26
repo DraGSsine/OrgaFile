@@ -2,8 +2,10 @@ import React from "react";
 import Image from "next/image";
 import { filesType } from "@/types/types";
 import { DateToDays, bytesToMegaBytes } from "@/helpers/helpers";
-const File = ({ name, size, lastModified , url, format }: filesType) => {
+import FilesSettings from "./FilesSettings";
+const File = ({ name, size, createdAt , url, format , _id }: filesType) => {
   const formatNmae = format.toLowerCase();
+  const allowedFormats = ["jpg", "jpeg", "png", "md", "txt", "pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"];
   const getIconName = (formatNmae: string) => {
     if (formatNmae === "jpg" || formatNmae === "jpeg" || formatNmae === "png") {
       return "image";
@@ -11,9 +13,11 @@ const File = ({ name, size, lastModified , url, format }: filesType) => {
     else if (formatNmae === "md" || formatNmae === "txt") {
       return "txt";
     }
-    else {
+    else if (allowedFormats.includes(formatNmae)) {
       return formatNmae;
     }
+    else
+      return "file";
   };
   const color = `bg-${getIconName(formatNmae)}-color`;
 
@@ -31,12 +35,13 @@ const File = ({ name, size, lastModified , url, format }: filesType) => {
           </p>
         </div>
         <span className=" block w-[21%]">{bytesToMegaBytes(size)} Mb</span>
-        <span>{DateToDays(lastModified)} Day ago </span>
+        <span>{DateToDays(createdAt)} Day ago </span>
         <span
           className={`rounded-lg px-2 py-1 text-xs ml-auto mr-5 ${color}`}
         >
           New
         </span>
+        <FilesSettings fileId={_id}/>
     </div>
   );
 };

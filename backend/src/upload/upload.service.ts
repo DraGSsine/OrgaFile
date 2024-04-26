@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
@@ -8,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { fileType, userDocument } from 'src/schemas/auth.schema';
+import { Files, userDocument } from 'src/schemas/auth.schema';
 
 @Injectable()
 export class UploadService {
@@ -25,7 +26,6 @@ export class UploadService {
   });
   async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
     const user = await this.userModel.findById(userId);
-    console.log(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -39,18 +39,17 @@ export class UploadService {
 
       await this.s3Client.upload(params).promise();
 
-      const data:fileType = {
+      const data: Files = {
         url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
         format: file.originalname.split('.').pop(),
         name: file.originalname,
         size: file.size,
         createdAt: new Date(),
-  
       };
       user.files.push(data);
       await user.save();
 
-      return user;
+      return data;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {
         throw new UnsupportedMediaTypeException();
@@ -68,7 +67,7 @@ export class UploadService {
       }
       return files.files;
     } catch (error) {
-      throw new UnsupportedMediaTypeException();
+      throw new InternalServerErrorException('Failed to load files');
     }
   }
 
@@ -80,7 +79,32 @@ export class UploadService {
     return `This action updates a #${id} upload`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} upload`;
+  async remove(req: any, fileId: ObjectId) {
+    try {
+      const id = req.user.userId;
+      const user = await this.userModel.findById(id);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const fileIndex = user.files.findIndex(
+        (file: any) => file._id.toString() === fileId.toString(),
+      );
+      if (fileIndex === -1) {
+        throw new NotFoundException('File does not exist');
+      }
+      const DeleteFile = user.files[fileIndex];
+      user.deletedFiles.push(DeleteFile);
+      user.files.splice(fileIndex, 1);
+      await user.save();
+      return DeleteFile;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      } else {
+        console.error('Failed to remove file:', error);
+        throw new InternalServerErrorException('Failed to remove file');
+      }
+    }
   }
 }

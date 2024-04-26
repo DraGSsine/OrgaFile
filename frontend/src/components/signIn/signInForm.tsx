@@ -13,7 +13,6 @@ import { setCredentials } from "@/redux/slices/authSlice";
 
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const response = useSelector((state: RootState) => state.auth.userInfo);
   const [signin, { isLoading }] = useSigninMutation();
   const router = useRouter()
   const [userInfo, setUserInfo] = useState<userInfoType>({

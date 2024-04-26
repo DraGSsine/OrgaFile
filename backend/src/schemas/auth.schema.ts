@@ -1,26 +1,44 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 
-export type fileType = {
-  url: string;
-  name: string;
-  size: number;
-  format: string;
-  createdAt: Date;
-};
-export type userDocument = user & Document;
-
+export type userDocument = User & Document;
 @Schema()
-export class user {
+export class Files {
   @Prop({ required: true })
-  signInFor: 'Projects' | 'Designs';
+  url: string;
+
   @Prop({ required: true })
-  email: string;
+  name: string;
+
   @Prop({ required: true })
-  password: string;
-  @Prop({ required: false })
-  field: string;
-  @Prop({ required: false })
-  files: fileType[];
+  size: number;
+
+  @Prop({ required: true })
+  format: string;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
-export const userSchema = SchemaFactory.createForClass(user);
+@Schema()
+export class User {
+  @Prop({ required: true })
+  signInFor: 'Projects' | 'Designs';
+
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
+
+  @Prop()
+  field: string;
+
+  @Prop({ type: [Files], default: [] })
+  files: Files[];
+  
+  @Prop({ type:[Files],default:[]})
+  deletedFiles:Files[];
+}
+
+export const userSchema = SchemaFactory.createForClass(User);

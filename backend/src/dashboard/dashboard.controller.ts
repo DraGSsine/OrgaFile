@@ -3,6 +3,7 @@ import { DashboardService } from './dashboard.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('api/dashboard')
+@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
   
@@ -16,7 +17,6 @@ export class DashboardController {
     return this.dashboardService.findAll();
   }
   
-  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dashboardService.findOne(+id);
