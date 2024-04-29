@@ -34,8 +34,8 @@ export async function AnalyzeFile(url: string) {
     const output = await splitter.createDocuments([fileContents]);
 
     const supabaseClient = createClient(
-      'https://erskyucagtvdpcncjkqk.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyc2t5dWNhZ3R2ZHBjbmNqa3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQzODYwNzUsImV4cCI6MjAyOTk2MjA3NX0.rsc5K1biU4H4biMT0Ctb2GoPOJZgpX0VP8n3Far0-sc',
+      process.env.SUPABASE_URL || '',
+      process.env.SUPABASE_KEY
     );
 
     const vectorStore = await SupabaseVectorStore.fromDocuments(
