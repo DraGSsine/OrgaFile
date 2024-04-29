@@ -14,17 +14,21 @@ import {
 import { useAsyncList } from "@react-stately/data";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import { FormatTheDate, bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
+import {
+  FormatTheDate,
+  bytesToMegaBytes,
+  getFileImage,
+} from "@/helpers/helpers";
 import FilesSettings from "./FilesSettings";
+import RowLoading from "@/components/RowLoading";
 
 const AllUserFiles = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const { token } = JSON.parse(Cookies.get("userInfo") as string);
+  const { token } = JSON.parse(Cookies.get("userInfo") || "{}");
 
   const HandleFileRedirection = (url: any) => {
     window.open(url, "_blank");
   };
-
   let list = useAsyncList({
     async load({ signal }): Promise<any> {
       try {
@@ -68,12 +72,16 @@ const AllUserFiles = () => {
   });
   return (
     <Table
-      style={{borderSpacing:"0px 10px", borderCollapse: "separate" ,}}
+      isHeaderSticky
+      style={{
+        borderSpacing: "0px 10px",
+        borderCollapse: "separate",
+      }}
       aria-label="Recent Uploads"
       sortDescriptor={list.sortDescriptor}
       onSortChange={list.sort}
     >
-      <TableHeader className=" text-xl">
+      <TableHeader >
         <TableColumn key="name" allowsSorting>
           Name
         </TableColumn>
@@ -86,16 +94,26 @@ const AllUserFiles = () => {
         <TableColumn key="topic" allowsSorting>
           Topic
         </TableColumn>
-        <TableColumn className=" flex justify-center items-center " key="settings">Settings</TableColumn>
+        <TableColumn
+          className=" flex justify-center items-center "
+          key="settings"
+        >
+          Settings
+        </TableColumn>
       </TableHeader>
+
       <TableBody
-        emptyContent="No files found"
+        emptyContent={isLoading ? "" : "No files found"}
         items={list.items}
         isLoading={isLoading}
-        loadingContent={<Spinner label="Loading..." />}
+        loadingContent={<Spinner />}
       >
         {(item: any) => (
-          <TableRow onDoubleClick={()=>HandleFileRedirection(item.url)}  key={item._id} className=" cursor-pointer hover:bg-zinc-50 text-xl">
+          <TableRow
+            onDoubleClick={() => HandleFileRedirection(item.url)}
+            key={item._id}
+            className=" cursor-pointer hover:bg-zinc-50 text-xl"
+          >
             <TableCell>
               <div className="flex items-center space-x-8">
                 <Image
@@ -111,13 +129,21 @@ const AllUserFiles = () => {
             <TableCell>{bytesToMegaBytes(item.size)}</TableCell>
             <TableCell>{FormatTheDate(item.createdAt)}</TableCell>
             <TableCell>
-              <Chip style={{border:"1px yellow"}} size="sm" color="warning" variant="dot">{item.topic || 'Unknow'}</Chip>
+              <Chip
+                style={{ border: "1px yellow" }}
+                size="sm"
+                color="warning"
+                variant="dot"
+              >
+                {item.topic || "Unknow"}
+              </Chip>
             </TableCell>
-            <TableCell  className=" rounded-xl text-center">
-                <FilesSettings fileId={item._id} />
+            <TableCell className=" rounded-xl text-center">
+              <FilesSettings fileId={item._id} />
             </TableCell>
           </TableRow>
         )}
+        
       </TableBody>
     </Table>
   );

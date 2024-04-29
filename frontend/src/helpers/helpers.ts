@@ -60,7 +60,7 @@ export function getFileImage(format: string) : string
 
   switch (true) {
     case textFormats.includes(format):
-      return "/formatImages/text.png";
+      return "/formatImages/txt.png";
     case audioFormats.includes(format):
       return "/formatImages/audio.png";
     case videoFormats.includes(format):

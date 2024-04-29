@@ -10,6 +10,7 @@ import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Files, userDocument } from 'src/schemas/auth.schema';
+import { AnalyzeFile } from 'src/ai/openai-setup';
 
 @Injectable()
 export class UploadService {
@@ -25,11 +26,11 @@ export class UploadService {
     region: this.configService.get('S3_REGION'),
   });
   async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
+
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
     try {
       const params = {
         Bucket: this.configService.get('S3_BUCKET_NAME'),
@@ -49,7 +50,8 @@ export class UploadService {
       };
       user.files.push(data);
       await user.save();
-
+      const res = await AnalyzeFile(data.url);
+      data.topic = res;
       return data;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {

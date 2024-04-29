@@ -28,7 +28,7 @@ export class UploadController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('files'))
-  UploadFiles(
+  async UploadFiles(
     @UploadedFile(
       new ParseFilePipe({
         validators: [new MaxFileSizeValidator({ maxSize: 100000000 })],
@@ -37,11 +37,11 @@ export class UploadController {
     file: Express.Multer.File,
     @Req() req: any,
   ) {
-    return this.uploadService.UploadFiles(file, req.user.userId);
+      return this.uploadService.UploadFiles(file, req.user.userId);
   }
 
   @Get('load')
-  findAll(@Req() req: any){
+  async findAll(@Req() req: any){
     return this.uploadService.LoadFiles(req.user.userId);
   }
 
