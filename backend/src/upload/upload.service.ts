@@ -48,10 +48,10 @@ export class UploadService {
         size: file.size,
         createdAt: new Date(),
       };
-      user.files.push(data);
-      await user.save();
       const res = await AnalyzeFile(data.url);
       data.topic = res;
+      user.files.push(data);
+      await user.save();
       return data;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {

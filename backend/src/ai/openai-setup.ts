@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { createClient } from '@supabase/supabase-js';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
@@ -10,6 +10,7 @@ import {
   RunnablePassthrough,
   RunnableSequence,
 } from 'langchain/schema/runnable';
+import { parseFile } from './prase-files';
 
 function combineDocuments(documents: any): string {
   return documents.map((doc: any) => doc.pageContent).join('\n\n');
@@ -21,9 +22,8 @@ question: {question}
 answer: 
 `;
 export async function AnalyzeFile(url: string) {
-  const question = 'What is the main topic of this document?';
   try {
-    const fileContents = await axios.get(url);
+    const fileContents:string = await parseFile(url);
 
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
@@ -31,7 +31,7 @@ export async function AnalyzeFile(url: string) {
       chunkOverlap: 50,
     });
 
-    const output = await splitter.createDocuments([fileContents.data]);
+    const output = await splitter.createDocuments([fileContents]);
 
     const supabaseClient = createClient(
       'https://erskyucagtvdpcncjkqk.supabase.co',
