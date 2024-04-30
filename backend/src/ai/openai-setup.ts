@@ -21,10 +21,10 @@ context: {context}
 question: {question}
 answer: 
 `;
-export async function AnalyzeFile(url: string) {
+export async function AnalyzeFile(url: string, type: string) {
   try {
-    const fileContents:string = await parseFile(url);
-
+    const fileContents:string = await parseFile(url, type);
+    
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
       separators: ['\n\n', '.', '', ' '],
@@ -98,10 +98,11 @@ export async function AnalyzeFile(url: string) {
     ]);
 
     const response = await chain.invoke({
-      question: 'What is the main topic of this document?',
+      question: 'What does this file discuss or cover?',
     });
 
     return response;
+  
   } catch (error) {
     console.error('Error analyzing file:', error);
   }

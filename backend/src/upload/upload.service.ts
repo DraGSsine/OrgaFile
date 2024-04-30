@@ -32,6 +32,7 @@ export class UploadService {
       throw new NotFoundException('User not found');
     }
     try {
+      const fileType = file.mimetype;
       const params = {
         Bucket: this.configService.get('S3_BUCKET_NAME'),
         Key: file.originalname,
@@ -48,7 +49,7 @@ export class UploadService {
         size: file.size,
         createdAt: new Date(),
       };
-      const res = await AnalyzeFile(data.url);
+      const res = await AnalyzeFile(data.url,fileType);
       data.topic = res;
       user.files.push(data);
       await user.save();
