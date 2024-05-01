@@ -21,7 +21,6 @@ const parsePdfFile = async (url) => {
 
     await fs.writeFile('cleaned_text.txt', cleanedText);
 
-    console.log(cleanedText);
     return cleanedText;
   } catch (error) {
     console.error("Error parsing file:", error);
@@ -46,7 +45,6 @@ const parseTxtFile = async (url: string) => {
 
 export async function parseFile(url:string, type:string) {
   const format = type.split('/').pop().toLowerCase();
-  console.log(format)
   switch (format) {
     case "pdf":
       return await parsePdfFile(url);

@@ -1,0 +1,44 @@
+5
+What is data science?
+1.1What is data science?
+Data science is the practice of using data to try to understand and solve real-world prob-
+lems.  This  concept  isnt  exactly  new;  people  have  been analyzing  sales  figures  and
+trends since  the  invention  of  the  zero. In the  past  decade,  however,  we  have  gained
+access to exponentially more data than existed before. The advent of computers has
+assisted in the generation of all that data, but computing is also our only way to pro-
+cess the mounds of information. With computer code, a data scientist can transform
+or aggregate data, run statistical analyses, or train machine learning models. The out-
+put of this code may be a report or dashboard for human consumption, or it could be
+a machine learning model that will be deployed to run continuously.
+ If a retail company is having trouble deciding where to put a new store, for exam-
+ple, it may call in a data scientist to do an analysis. The data scientist could look at the
+historical data of locations where online orders are shipped to understand where cus-
+tomer  demand  is.  They  may  also  combine  that  customer  location  data  with  demo-
+graphic and income information for those localities from census records. With these
+datasets,  they  could  find  the  optimal  place  for  the  new  store  and  create  a  Microsoft
+PowerPoint  presentation  to present their recommendation to the companys vice
+president of retail operations.
+ In another situation, that same retail company may want to increase online order
+sizes by recommending items to customers while they shop. A data scientist could load
+the historical web order data and create a machine learning model that, given a set of
+items currently in the cart, predicts the best item to recommend to the shopper. After
+creating  that  model,  the  data  scientist would  work  with  the companys  engineering
+team  so  that  every  time  a  customer  is shopping,  the  new  machine  learning  model
+serves up the recommended items.
+  When  many  people  start  looking  into  data  science,  one  challenge  they  face  is
+being overwhelmed by the amount of things they need to learn, such as coding (but
+which language?), statistics (but which methods are most important in practice, and
+which are largely academic?), machine learning (but how is machine learning differ-
+ent from statistics or AI?), and the domain knowledge of whatever industry they want
+to  work  in  (but  what  if  you  don't  know  where  you  want  to  work?).  In  addition,  they
+need  to  learn  business  skills such as effectively communicating  results  to  audiences
+ranging from other data scientists to the CEO. This anxiety can be exacerbated by job
+postings that ask for a PhD, multiple years of data science experience, and expertise in
+a laundry list of statistical and programming methods. How can you possibly learn all
+these skills? Which ones should you start with? What are the basics?
+ If youve looked into the different areas of data science, you may be familiar with
+Drew Conways popular data science Venn diagram. In Conways opinion (at the time of
+the  diagrams  creation),  data  science  fell  into the intersection of math and statistical
+Licensed to Adriana Picoral <adrianaps@email.arizona.edu>
+E
+xcerpt from "Build a Career in Data Science" by Emily Robinson and Jacqueline Nolis (2020) ISBN: 9781617296246

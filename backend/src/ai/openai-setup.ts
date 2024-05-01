@@ -6,25 +6,35 @@ import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { SupabaseVectorStore } from 'langchain/vectorstores/supabase';
 import { PromptTemplate } from 'langchain/prompts';
 import { StringOutputParser } from 'langchain/schema/output_parser';
-import {
-  RunnablePassthrough,
-  RunnableSequence,
-} from 'langchain/schema/runnable';
+import { oneLine, stripIndent } from 'common-tags';
 import { parseFile } from './prase-files';
+import OpenAI from 'openai';
 
-function combineDocuments(documents: any): string {
-  return documents.map((doc: any) => doc.pageContent).join('\n\n');
+function storeData(output: any, supabaseClient: any, url: string, openai: any) {
+  output.forEach(async (doc: any) => {
+    const { pageContent, metadata } = doc;
+    const embedding = await openai.embeddings.create({
+      model: 'text-embedding-ada-002',
+      input: pageContent,
+    });
+    const vectors = embedding.data[0].embedding;
+    const { error } = await supabaseClient.from('documents').insert({
+      fileid: url,
+      content: pageContent,
+      metadata: metadata,
+      embedding: vectors,
+    });
+
+    if (error) {
+      console.error('Error storing data:', error);
+    }
+  });
 }
-
-const answerTemplate = `You are a helpful and enthusiastic support bot who can detect the main topic of a document and you only return max of tow words.
-context: {context}
-question: {question}
-answer: 
-`;
 export async function AnalyzeFile(url: string, type: string) {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   try {
-    const fileContents:string = await parseFile(url, type);
-    
+    const fileContents: string = await parseFile(url, type);
+
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
       separators: ['\n\n', '.', '', ' '],
@@ -35,74 +45,76 @@ export async function AnalyzeFile(url: string, type: string) {
 
     const supabaseClient = createClient(
       process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_KEY
+      process.env.SUPABASE_KEY,
     );
 
-    const vectorStore = await SupabaseVectorStore.fromDocuments(
-      output,
-      new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY }),
+    storeData(output, supabaseClient, url, openai);
+
+    const embeddingResponse = await openai.embeddings.create({
+      model: 'text-embedding-ada-002',
+      input: 'what is data science?',
+    });
+
+    const [{ embedding }] = embeddingResponse.data;
+
+    // In production we should handle possible errors
+    const { data: documents, error: matchError } = await supabaseClient.rpc(
+      'match_documents',
       {
-        client: supabaseClient,
-        tableName: 'documents',
+        query_embedding: embedding,
+        match_threshold: 0.7,
+        file_match_id: url,
+        match_count: 1,
       },
     );
 
-    //////////////////////////////////////
+    if (matchError) {
+      throw new Error('Error matching documents');
+    }
 
-    const embeddings = new OpenAIEmbeddings({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-    const store = new SupabaseVectorStore(embeddings, {
-      client: supabaseClient,
-      tableName: 'documents',
-      queryName: 'match_documents',
-    });
+    let contextText = '';
 
-    const retriever = store.asRetriever();
+    // Concat matched documents
+    for (let i = 0; i < documents.length; i++) {
+      const document = documents[i];
+      const content = document.content;
 
-    ///////////////////////////////////////
+      contextText += `${content.trim()}\n---\n`;
+    }
 
-    const openAIApikey = process.env.OPENAI_API_KEY;
-    const llm = new ChatOpenAI({
-      apiKey: openAIApikey,
-    });
-    const answerPrompt = PromptTemplate.fromTemplate(answerTemplate);
-    const standaloneQuestionTemplate =
-      'Given a question, convert it to a standalone question. question: {question} standalone question:';
+    const prompt = stripIndent`${oneLine`
+    You are an AI-powered document analyzer tasked with summarizing the content of various documents.
+    Your goal is to provide a concise summary of the document in one sentence.
+  `}
 
-    const standaloneQuestionPrompt = PromptTemplate.fromTemplate(
-      standaloneQuestionTemplate,
-    );
+  Context sections:
+  ${contextText}
 
-    const standaloneQuestionChain = standaloneQuestionPrompt
-      .pipe(llm)
-      .pipe(new StringOutputParser());
+  Question: """
+  ${question}
+  """
 
-    const retrieverChain = RunnableSequence.from([
-      (prevResult) => prevResult.standalone_question,
-      retriever,
-      combineDocuments,
-    ]);
-    const answerChain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+  Answer as markdown (including related code snippets if available):
+"`;
 
-    const chain = RunnableSequence.from([
-      {
-        standalone_question: standaloneQuestionChain,
-        original_input: new RunnablePassthrough(),
-      },
-      {
-        context: retrieverChain,
-        question: ({ original_input }) => original_input.question,
-      },
-      answerChain,
-    ]);
-
-    const response = await chain.invoke({
-      question: 'What does this file discuss or cover?',
+    // In production we should handle possible errors
+    const completionResponse = await openai.chat.completions({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful Supabase representative.',
+        },
+        { role: 'user', content: prompt },
+      ],
     });
 
-    return response;
-  
+    const {
+      id,
+      choices: [{ text }],
+    } = completionResponse.data;
+
+    return 'response';
   } catch (error) {
     console.error('Error analyzing file:', error);
   }
