@@ -2,8 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, ObjectId } from 'mongoose';
 
 export type userDocument = User & Document;
-@Schema()
+
 export class Files {
+  @Prop({ required: true })
+  id: mongoose.Types.ObjectId;
+  
   @Prop({ required: true })
   url: string;
 
@@ -39,9 +42,9 @@ export class User {
 
   @Prop({ type: [Files], default: [] })
   files: Files[];
-  
-  @Prop({ type:[Files],default:[]})
-  deletedFiles:Files[];
+
+  @Prop({ type: [Files], default: [] })
+  deletedFiles: Files[];
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

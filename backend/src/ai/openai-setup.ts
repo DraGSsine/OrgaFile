@@ -9,8 +9,16 @@ import { StringOutputParser } from 'langchain/schema/output_parser';
 import { oneLine, stripIndent } from 'common-tags';
 import { parseFile } from './prase-files';
 import OpenAI from 'openai';
+import mongoose from 'mongoose';
+import { Files } from 'src/schemas/auth.schema';
+import { promptContent, systemContent } from './ai-const';
 
-function storeData(output: any, supabaseClient: any, url: string, openai: any) {
+function storeData(
+  output: any,
+  supabaseClient: any,
+  id: mongoose.Types.ObjectId,
+  openai: any,
+) {
   output.forEach(async (doc: any) => {
     const { pageContent, metadata } = doc;
     const embedding = await openai.embeddings.create({
@@ -19,7 +27,7 @@ function storeData(output: any, supabaseClient: any, url: string, openai: any) {
     });
     const vectors = embedding.data[0].embedding;
     const { error } = await supabaseClient.from('documents').insert({
-      fileid: url,
+      fileid: id,
       content: pageContent,
       metadata: metadata,
       embedding: vectors,
@@ -30,92 +38,89 @@ function storeData(output: any, supabaseClient: any, url: string, openai: any) {
     }
   });
 }
-export async function AnalyzeFile(url: string, type: string) {
+
+export async function AnalyzeFile(data: Files, type: string) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   try {
-    const fileContents: string = await parseFile(url, type);
+    const fileContents: string = await parseFile(data.url, type);
 
+    // Split document into relevant chunks for context
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
       separators: ['\n\n', '.', '', ' '],
       chunkOverlap: 50,
     });
-
     const output = await splitter.createDocuments([fileContents]);
 
+    // Store document data
     const supabaseClient = createClient(
       process.env.SUPABASE_URL || '',
       process.env.SUPABASE_KEY,
     );
+    storeData(output, supabaseClient, data.id, openai);
 
-    storeData(output, supabaseClient, url, openai);
-
+    // Create embedding for question
+    const question = 'What is the main topic of this document?';
     const embeddingResponse = await openai.embeddings.create({
       model: 'text-embedding-ada-002',
-      input: 'what is data science?',
+      input: question,
     });
-
     const [{ embedding }] = embeddingResponse.data;
 
-    // In production we should handle possible errors
+    // Match documents based on embeddings
     const { data: documents, error: matchError } = await supabaseClient.rpc(
       'match_documents',
       {
         query_embedding: embedding,
-        match_threshold: 0.7,
-        file_match_id: url,
-        match_count: 1,
+        match_threshold: 0.7, // Adjust threshold as needed
+        file_match_id: data.id,
+        match_count: 3,
       },
     );
 
+    // Handle matching error
     if (matchError) {
       throw new Error('Error matching documents');
     }
 
+    // Construct context sections for prompt
     let contextText = '';
-
-    // Concat matched documents
     for (let i = 0; i < documents.length; i++) {
       const document = documents[i];
       const content = document.content;
 
+      // Limit context to relevant sections
+      // Adjust this based on document type and content
       contextText += `${content.trim()}\n---\n`;
     }
 
-    const prompt = stripIndent`${oneLine`
-    You are an AI-powered document analyzer tasked with summarizing the content of various documents.
-    Your goal is to provide a concise summary of the document in one sentence.
-  `}
+    // Generate prompt
+    const prompt = stripIndent`
+    ${promptContent}
+    Context sections:
+    ${contextText}
+    
+    Question: ${question}
+    `;
 
-  Context sections:
-  ${contextText}
-
-  Question: """
-  ${question}
-  """
-
-  Answer as markdown (including related code snippets if available):
-"`;
-
-    // In production we should handle possible errors
-    const completionResponse = await openai.chat.completions({
+    // Request completion from OpenAI
+    const completionResponse = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
-          role: 'system',
-          content: 'You are a helpful Supabase representative.',
+          role: "assistant",
+          content: `${systemContent}`,
         },
         { role: 'user', content: prompt },
       ],
     });
 
-    const {
-      id,
-      choices: [{ text }],
-    } = completionResponse.data;
-
-    return 'response';
+    // Extract and return the generated message content
+    const { message } = completionResponse.choices[0];
+    return message.content;
   } catch (error) {
+    // Handle any errors gracefully
     console.error('Error analyzing file:', error);
+    return null;
   }
 }

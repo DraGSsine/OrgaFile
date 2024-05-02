@@ -111,7 +111,7 @@ const AllUserFiles = () => {
         {(item: any) => (
           <TableRow
             onDoubleClick={() => HandleFileRedirection(item.url)}
-            key={item._id}
+            key={item.id}
             className=" cursor-pointer hover:bg-zinc-50 text-xl"
           >
             <TableCell>
@@ -139,7 +139,7 @@ const AllUserFiles = () => {
               </Chip>
             </TableCell>
             <TableCell className=" rounded-xl text-center">
-              <FilesSettings fileId={item._id} />
+              <FilesSettings fileId={item.id} />
             </TableCell>
           </TableRow>
         )}

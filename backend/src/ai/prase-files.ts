@@ -19,8 +19,6 @@ const parsePdfFile = async (url) => {
     const pageLevelDocs = await loader.load()
     const cleanedText = unicodeRemover(pageLevelDocs[0].pageContent);
 
-    await fs.writeFile('cleaned_text.txt', cleanedText);
-
     return cleanedText;
   } catch (error) {
     console.error("Error parsing file:", error);

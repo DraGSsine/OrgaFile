@@ -8,7 +8,7 @@ import { UpdateUploadDto } from './dto/update-upload.dto';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import mongoose, { Model, ObjectId } from 'mongoose';
 import { Files, userDocument } from 'src/schemas/auth.schema';
 import { AnalyzeFile } from 'src/ai/openai-setup';
 
@@ -26,7 +26,6 @@ export class UploadService {
     region: this.configService.get('S3_REGION'),
   });
   async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
-
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -42,6 +41,7 @@ export class UploadService {
       await this.s3Client.upload(params).promise();
 
       const data: Files = {
+        id: new mongoose.Types.ObjectId(),
         topic: 'General',
         url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
         format: file.originalname.split('.').pop(),
@@ -49,7 +49,7 @@ export class UploadService {
         size: file.size,
         createdAt: new Date(),
       };
-      const res = await AnalyzeFile(data.url,fileType);
+      const res = await AnalyzeFile(data, fileType);
       data.topic = res;
       user.files.push(data);
       await user.save();
@@ -92,7 +92,7 @@ export class UploadService {
         throw new NotFoundException('User not found');
       }
       const fileIndex = user.files.findIndex(
-        (file: any) => file._id.toString() === fileId.toString(),
+        (file: any) => file.id.toString() === fileId.toString(),
       );
       if (fileIndex === -1) {
         throw new NotFoundException('File does not exist');
@@ -103,12 +103,7 @@ export class UploadService {
       await user.save();
       return DeleteFile;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      } else {
-        console.error('Failed to remove file:', error);
-        throw new InternalServerErrorException('Failed to remove file');
-      }
+      throw new InternalServerErrorException('Failed to remove file');
     }
   }
 }

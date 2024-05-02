@@ -3,7 +3,7 @@ import Image from "next/image";
 import { filesType } from "@/types/types";
 import { FormatTheDate, bytesToMegaBytes } from "@/helpers/helpers";
 import FilesSettings from "./FilesSettings";
-const File = ({ name, size, createdAt , url, format , _id }: filesType) => {
+const File = ({ name, size, createdAt , url, format , id }: filesType) => {
   const formatNmae = format.toLowerCase();
   const allowedFormats = ["jpg", "jpeg", "png", "md", "txt", "pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"];
   const getIconName = (formatNmae: string) => {
@@ -41,7 +41,7 @@ const File = ({ name, size, createdAt , url, format , _id }: filesType) => {
         >
           New
         </span>
-        <FilesSettings fileId={_id}/>
+        <FilesSettings fileId={id}/>
     </div>
   );
 };

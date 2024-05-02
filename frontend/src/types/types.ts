@@ -38,5 +38,5 @@ export type filesType = {
   size: number;
   format: string;
   url: string;
-  _id: string;
+  id: string;
 };
