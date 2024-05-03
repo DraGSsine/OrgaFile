@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("userInfo")?.value;
+  const accessToken = request.cookies.get("token")?.value;
 
   try {
     if (request.nextUrl.pathname.startsWith("/dashboard")) {
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
       }
     } else if (request.nextUrl.pathname.startsWith("/auth")) {
       if (accessToken) {
-        return NextResponse.redirect(new URL("/", request.nextUrl.origin).href);
+        return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin).href);
       }
     }
   } catch (error) {

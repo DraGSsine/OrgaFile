@@ -27,7 +27,8 @@ export type variantType =
   | undefined;
 export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
 export type initialStateType = {
-  userInfo: string | null;
+  userCreated: {message:string} | null;
+  error: {message:string , error:string, statusCode:number} | null;
   isAuthenticated: boolean;
   loading: boolean;
 };

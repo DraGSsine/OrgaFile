@@ -35,7 +35,7 @@ export class AuthService {
             ...signUpDto,
             password:encryptedPassword
         });
-        
+        return {message:"User created successfully"};
     }
     async refresh(user:any){
         const token = await this.jwtService.signAsync({email:user.email}, {expiresIn:"1h",secret:process.env.JWT_SECRET_KEY});

@@ -7,7 +7,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
   Spinner,
   Chip,
 } from "@nextui-org/react";
@@ -20,7 +19,6 @@ import {
   getFileImage,
 } from "@/helpers/helpers";
 import FilesSettings from "./FilesSettings";
-import RowLoading from "@/components/RowLoading";
 
 const AllUserFiles = () => {
   const [isLoading, setIsLoading] = useState(true);

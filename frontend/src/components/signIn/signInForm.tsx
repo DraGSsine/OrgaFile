@@ -8,12 +8,11 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useSigninMutation } from "@/redux/slices/userApiSlice";
-import { setCredentials } from "@/redux/slices/authSlice";
+import { SignInAction } from "@/redux/slices/AuthSlice";
 
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [signin, { isLoading }] = useSigninMutation();
+  const { isLoading, error,token } = useSelector((state: RootState) => state.auth);
   const router = useRouter()
   const [userInfo, setUserInfo] = useState<userInfoType>({
     email: null,
@@ -32,14 +31,8 @@ export const SignInForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      try {
-        const res = await signin({ ...userInfo }).unwrap();
-        dispatch(setCredentials(res));
-        toast.success("Welcome back");
-        router.push("/dashboard");
-      } catch (error: any) {
-        toast.error(error?.data?.message || "An error occured");
-    }}
+      dispatch(SignInAction(userInfo));
+    }
   };
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">

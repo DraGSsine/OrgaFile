@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, use, useEffect, useState } from "react";
 import { EmailInput, PasswordInput } from "../inputs";
 import SelectSkill from "../SelectSkill";
 import CheckBox from "../CheckBox";
@@ -11,14 +11,15 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useSignupMutation } from "@/redux/slices/userApiSlice";
-
+import { SignUpAction } from "@/redux/slices/AuthSlice";
 const SignupPageForm = () => {
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
-  const [signup, {isLoading, data }] = useSignupMutation();
-  const userData = useSelector((state: RootState) => state.auth.userInfo);
-  const [userInfo, setUserInfo] = useState<userInfoType>({
+  const dispatch = useDispatch<any>();
+  const { loading, userCreated, error } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const [userCredential, setUserInfo] = useState<userInfoType>({
     signInFor: "Projects",
     email: null,
     password: null,
@@ -41,25 +42,25 @@ const SignupPageForm = () => {
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const parsedUser = User.safeParse(userInfo);
+    const parsedUser = User.safeParse(userCredential);
     if (!parsedUser.success) {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      try {
-        const res = await signup({...userInfo}).unwrap();
-        router.push("/auth/signin");
-      } catch (error: any) {
-        toast.error( error?.data?.message || "An error occured");
-      }
+      dispatch(SignUpAction(userCredential));
     }
   };
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+      console.log(error)
+    }
+    if (userCreated) {
+      toast.success(userCreated.message);
+      router.push("/auth/signin");
+    }
+  }, [error, userCreated]);
 
-    useEffect(() => {
-        if(userData){
-            router.push("/auth/signin");
-        }
-    },[userData])
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <div className="pt-5">
@@ -67,7 +68,10 @@ const SignupPageForm = () => {
         <RadioGroup
           defaultValue="Projects"
           onValueChange={(e) =>
-            setUserInfo({ ...userInfo, signInFor: e as "Projects" | "Designs" })
+            setUserInfo({
+              ...userCredential,
+              signInFor: e as "Projects" | "Designs",
+            })
           }
         >
           <div className=" flex flex-col gap-8 md:flex-row">
@@ -78,22 +82,24 @@ const SignupPageForm = () => {
       </div>
       <EmailInput
         errorState={errorState}
-        onChange={(e) => setUserInfo({ ...userInfo, email: e })}
+        onChange={(e) => setUserInfo({ ...userCredential, email: e })}
       />
       <PasswordInput
         errorState={errorState}
         label="Password"
         name="password"
-        onChange={(e) => setUserInfo({ ...userInfo, password: e })}
+        onChange={(e) => setUserInfo({ ...userCredential, password: e })}
       />
       <PasswordInput
         errorState={errorState}
         label="confirme Password"
         name="confirmPassword"
-        onChange={(e) => setUserInfo({ ...userInfo, confirmPassword: e })}
+        onChange={(e) => setUserInfo({ ...userCredential, confirmPassword: e })}
       />
       <SelectSkill
-        handleSelectionChange={(e) => setUserInfo({ ...userInfo, field: e })}
+        handleSelectionChange={(e) =>
+          setUserInfo({ ...userCredential, field: e })
+        }
       />
       <CheckBox
         color="primary"
@@ -104,7 +110,7 @@ const SignupPageForm = () => {
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={isLoading ? true : false}
+        isLoading={loading ? true : false}
       >
         Create Account
       </Button>
