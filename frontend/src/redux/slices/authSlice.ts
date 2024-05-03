@@ -5,7 +5,7 @@ import cookie from "js-cookie";
 const initialState: initialStateType = {
   isAuthenticated: false,
   error: null,
-  loading: false,
+  isLoading: false,
   userCreated: null,
 };
 
@@ -38,18 +38,16 @@ export const SignInAction = createAsyncThunk(
     try {
       const response = await fetch(`http://localhost:9010/api/auth/signin`, {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
+      })
+        .then((res) => res.json())
+        .catch((err) => rejectWithValue(err));
 
-      if (!response.ok) {
-        return rejectWithValue(await response.json());
-      }
-      const responseData = await response.json();
-      return responseData;
+      console.log(response);
+      return response;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -61,28 +59,32 @@ export const AuthSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(SignUpAction.pending, (state) => {
-      state.loading = true;
+      state.isLoading = true;
     });
     builder.addCase(SignUpAction.fulfilled, (state, action: any) => {
-      state.loading = false;
+      state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
     });
     builder.addCase(SignUpAction.rejected, (state, action: any) => {
-      state.loading = false;
+      state.isLoading = false;
       state.error = action.payload || null;
       state.userCreated = null;
     });
     builder.addCase(SignInAction.pending, (state) => {
-      state.loading = true;
+      state.isLoading = true;
     });
     builder.addCase(SignInAction.fulfilled, (state, action: any) => {
-      state.loading = false;
+      state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
+      cookie.set("token", action.payload.token, {
+        expires: 7 * 24 * 60 * 60 * 1000,
+      });
+      console.log(action.payload);
     });
     builder.addCase(SignInAction.rejected, (state, action: any) => {
-      state.loading = false;
+      state.isLoading = false;
       state.error = action.payload || null;
       state.userCreated = null;
     });

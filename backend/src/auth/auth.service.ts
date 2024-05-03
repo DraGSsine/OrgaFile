@@ -20,7 +20,7 @@ export class AuthService {
             throw new UnprocessableEntityException("Email or password is incorrect");
         const token = await this.jwtService.signAsync({userId:user._id}, {expiresIn:"7d",secret:process.env.JWT_SECRET_KEY});
         const refreshToken = await this.jwtService.signAsync({userId:user._id}, {expiresIn:"7d",secret:process.env.REFRESH_TOKEN});
-        return {token,refreshToken};
+        return {token};
     }
     async signUp(signUpDto:signUpDto){
         const {email, password} = signUpDto;

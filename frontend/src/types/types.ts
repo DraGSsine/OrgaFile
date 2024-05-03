@@ -30,7 +30,7 @@ export type initialStateType = {
   userCreated: {message:string} | null;
   error: {message:string , error:string, statusCode:number} | null;
   isAuthenticated: boolean;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 export type filesType = {
