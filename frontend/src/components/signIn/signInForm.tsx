@@ -8,11 +8,11 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignInAction } from "@/redux/slices/AuthSlice";
+import { SignInAction } from "@/redux/slices/authSlice";
 
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading, error,token } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const router = useRouter()
   const [userInfo, setUserInfo] = useState<userInfoType>({
     email: null,
@@ -34,6 +34,15 @@ export const SignInForm = () => {
       dispatch(SignInAction(userInfo));
     }
   };
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }else{
+      toast.success('Sign in successful')
+      router.push('/')
+    }
+
+  });
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <EmailInput

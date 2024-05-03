@@ -1,8 +1,5 @@
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
-import axios, { AxiosResponse }  from "axios";
-import utf8 from 'utf8';
 
-import { promises as fs } from 'fs';
 
 const unicodeRemover = (text) => {
   return text.replace(/[^\x00-\x7F]|\0/g, "");
@@ -29,12 +26,12 @@ const parsePdfFile = async (url) => {
 
 const parseTxtFile = async (url: string) => {
   try {
-    const response: AxiosResponse = await axios.get(url);
+    const response = await fetch(url);
     if (response.status !== 200) {
       console.error("Error Fetching the:", response.statusText);
       return null;
     }
-    return response.data;
+    return response.text();
   } catch (error) {
     console.error("Error parsing file:", error);
     return null;

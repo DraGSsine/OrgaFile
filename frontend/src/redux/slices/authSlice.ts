@@ -43,11 +43,13 @@ export const SignInAction = createAsyncThunk(
         },
         body: JSON.stringify(data),
       })
-        .then((res) => res.json())
-        .catch((err) => rejectWithValue(err));
 
-      console.log(response);
-      return response;
+      if (!response.ok) {
+        return rejectWithValue(await response.json());
+      }
+      console.log(response)
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -78,14 +80,14 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
-      cookie.set("token", action.payload.token, {
+      cookie.set("token", action.payload, {
         expires: 7 * 24 * 60 * 60 * 1000,
       });
       console.log(action.payload);
     });
     builder.addCase(SignInAction.rejected, (state, action: any) => {
       state.isLoading = false;
-      state.error = action.payload || null;
+      state.error = action.payload.message || null;
       state.userCreated = null;
     });
   },

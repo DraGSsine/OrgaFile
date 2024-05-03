@@ -11,11 +11,11 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignUpAction } from "@/redux/slices/AuthSlice";
+import { SignUpAction } from "@/redux/slices/authSlice";
 const SignupPageForm = () => {
   const router = useRouter();
   const dispatch = useDispatch<any>();
-  const { loading, userCreated, error } = useSelector(
+  const { isLoading, userCreated, error } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -110,7 +110,7 @@ const SignupPageForm = () => {
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={loading ? true : false}
+        isLoading={isLoading ? true : false}
       >
         Create Account
       </Button>

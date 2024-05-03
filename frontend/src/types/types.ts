@@ -41,3 +41,9 @@ export type filesType = {
   url: string;
   id: string;
 };
+
+export type loadState = {
+  files: filesType[];
+  isLoading: boolean;
+  error: {message:string , error:string, statusCode:number} | null;
+};

@@ -11,7 +11,6 @@ import { CopyIcon, DeleteIcon, DownloadIcon, Ellipsis } from "../../public/icons
 
 function handleAction({ key, fileId }: { key: string | number; fileId: string }) {
   const {token} = JSON.parse(Cookies?.get("userInfo") as string);
-  console.log(token);
   if (key === "delete")
   {
     fetch(`http://127.0.0.1:9010/api/files/remove?fileid=${fileId}`, {

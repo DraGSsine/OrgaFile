@@ -1,5 +1,4 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import axios, { AxiosResponse } from 'axios';
 import { createClient } from '@supabase/supabase-js';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
