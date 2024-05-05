@@ -44,7 +44,7 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         });
 
         try {
-          const token = JSON.parse(Cookies.get("userInfo") as string).token;
+          const token = JSON.parse(Cookies.get("token") as string).token;
           const res = await fetch("http://127.0.0.1:9010/api/files/upload", {
             method: "POST",
             body: formData,

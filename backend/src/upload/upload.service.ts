@@ -69,6 +69,7 @@ export class UploadService {
       if (!files) {
         throw new NotFoundException('User not found');
       }
+      console.log(files);
       return files.files;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');

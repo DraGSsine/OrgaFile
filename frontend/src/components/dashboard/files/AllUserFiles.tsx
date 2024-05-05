@@ -67,7 +67,6 @@ const AllUserFiles = () => {
       <button onClick={() => dispatch(loadFiles())}>fetch data</button>
 
       <Table
-        isHeaderSticky
         style={{
           borderSpacing: "0px 10px",
           borderCollapse: "separate",
