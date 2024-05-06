@@ -1,14 +1,16 @@
 import React from "react";
-import {Modal, ModalContent, ModalBody} from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody } from "@nextui-org/react";
 import { UploadDropzone } from "../dashboard/DropZone";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
-export default function ModalComponent({isOpen, onOpenChange}:any) {
+export default function ModalComponent({ isOpen,onOpen, onOpenChange }: any) {
 
   return (
     <>
-      <Modal 
-        backdrop="opaque" 
-        isOpen={isOpen} 
+      <Modal
+        backdrop="opaque"
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         size="xl"
         radius="lg"
@@ -22,11 +24,11 @@ export default function ModalComponent({isOpen, onOpenChange}:any) {
         }}
       >
         <ModalContent>
-            <>
-              <ModalBody className="bg-zinc-100">
-                <UploadDropzone isSubscribed={false} />
-              </ModalBody>
-            </>
+          <>
+            <ModalBody className="bg-zinc-100">
+              <UploadDropzone isSubscribed={false} onOpen={onOpen} />
+            </ModalBody>
+          </>
         </ModalContent>
       </Modal>
     </>

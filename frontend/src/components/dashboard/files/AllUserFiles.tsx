@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -9,7 +9,6 @@ import {
   TableCell,
   Spinner,
   Chip,
-  useSelect,
 } from "@nextui-org/react";
 import { useAsyncList } from "@react-stately/data";
 import Image from "next/image";
@@ -21,11 +20,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import FilesSettings from "./FilesSettings";
 import { AppDispatch, RootState } from "@/redux/store";
-import { loadFiles } from "@/redux/slices/fileSlices";
+import { loadFiles } from "@/redux/slices/filesSlices";
 
 const AllUserFiles = () => {
-  const { isLoading, error, files } = useSelector(
-    (state: RootState) => state.file
+  const { isLoading, isFilesLoaded ,error, files } = useSelector(
+    (state: RootState) => state.files
   );
   const dispatch = useDispatch<AppDispatch>();
   const HandleFileRedirection = (url: any) => {
@@ -34,7 +33,7 @@ const AllUserFiles = () => {
   let list = useAsyncList({
     async load({ signal }): Promise<any> {
       try {
-        dispatch(loadFiles());
+        dispatch(loadFiles(signal));
         return {
           items: files,
         };
@@ -62,10 +61,13 @@ const AllUserFiles = () => {
       };
     },
   });
+
+  useEffect(() => {
+    list.reload();
+  }, [isFilesLoaded]);
+
   return (
     <div>
-      <button onClick={() => dispatch(loadFiles())}>fetch data</button>
-
       <Table
         isHeaderSticky
         style={{

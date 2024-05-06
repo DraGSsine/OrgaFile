@@ -43,6 +43,10 @@ export type filesType = {
 };
 
 export type loadState = {
+  deleteFileId: string,
+  isFileDeleted: boolean,
+  isFilesUploaded: boolean,
+  isFilesLoaded: boolean,
   files: filesType[];
   isLoading: boolean;
   error: {message:string , error:string, statusCode:number} | null;

@@ -80,7 +80,7 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
-      cookie.set("token", action.payload, {
+      cookie.set("token", action.payload.token, {
         expires: 7 * 24 * 60 * 60 * 1000,
       });
       console.log(action.payload);

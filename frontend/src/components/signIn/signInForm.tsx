@@ -12,7 +12,7 @@ import { SignInAction } from "@/redux/slices/authSlice";
 
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading, error } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error , isAuthenticated} = useSelector((state: RootState) => state.auth);
   const router = useRouter()
   const [userInfo, setUserInfo] = useState<userInfoType>({
     email: null,
@@ -37,9 +37,10 @@ export const SignInForm = () => {
   useEffect(() => {
     if (error) {
       toast.error(error.message);
-    }else{
+    }
+    if (isAuthenticated){
       toast.success('Sign in successful')
-      router.push('/')
+      router.push('/dashboard')
     }
 
   });
