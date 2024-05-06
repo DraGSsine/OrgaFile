@@ -12,7 +12,7 @@ const FeatureCard = ({
 }) => {
   return (
     <div className="  w-[300px] flex items-center flex-col ">
-      <div className="flex items-center justify-center w-16 h-16 bg-primary-color rounded-lg">
+      <div className=" before:abs before:w-[65px] before:bg-primary-200 before:h-[65px] flex items-center justify-center w-16 h-16 bg-primary-color rounded-lg">
         {icon}
       </div>
       <div className=" flex flex-col items-center">
@@ -21,7 +21,6 @@ const FeatureCard = ({
           {description}
         </p>
       </div>
-      <div className=" w-[65px] bg-primary-200 h-[65px] " ></div>
     </div>
   );
 };

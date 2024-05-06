@@ -31,7 +31,7 @@ const Features = () => {
   ];
   return (
     <MaxWidthWrapper>
-      <div className="py-20 lg:max-w-[42%]">
+      <div className="py-20">
         <div className="flex flex-col space-y-4">
           <span className=" text-3xl font-semibold text-primary-color ">
             Features
@@ -42,7 +42,7 @@ const Features = () => {
             organization. Here are some of its standout capabilities
           </p>
         </div>
-        <div>
+        <div className=" flex justify-between">
           {features.map((feature, index) => (
             <FeatureCard
               key={index}
