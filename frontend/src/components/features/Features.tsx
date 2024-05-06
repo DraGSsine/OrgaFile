@@ -31,8 +31,8 @@ const Features = () => {
   ];
   return (
     <MaxWidthWrapper>
-      <div className="py-20">
-        <div className="flex flex-col space-y-4">
+      <div className=" pt-32 space-y-20 ">
+        <div className="flex w-[43%] flex-col space-y-4">
           <span className=" text-3xl font-semibold text-primary-color ">
             Features
           </span>
