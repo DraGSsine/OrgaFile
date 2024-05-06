@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-    /* "image-color":"var(--image-color)",
+  /* "image-color":"var(--image-color)",
     "video-color":"var(--video-color)",
     "audio-color":"var(--audio-color)",
     "document-color":"var(--document-color)",
@@ -13,17 +13,44 @@
     "txt-color":"var(--txt-color)",
     "zip-color":"var(--zip-color)",
     "doc-color":"var(--doc-color)", */
-    --primary-color :#3b37ff;
-    --dark-primary-color:#2420E2;
-    --primary-text-color:#8a8a8a;
-    --image-color:#6dff5a7e;
-    --video-color:#802cff7e;
-    --audio-color:#fda1447e;
-    --document-color:#d44f037e;
-    --pdf-color:#ff76767e;
-    --xls-color:#13c2007e;
-    --ppt-color:#fba3267e;
-    --txt-color:#123fbd7e;
-    --zip-color:#1600707e;
-    --doc-color:#f5f5f57e;
+  --primary-color: #4b81f7;
+  --dark-primary-color: #2420e2;
+  --primary-text-color: #8a8a8a;
+  --image-color: #6dff5a7e;
+  --video-color: #802cff7e;
+  --audio-color: #fda1447e;
+  --document-color: #d44f037e;
+  --pdf-color: #ff76767e;
+  --xls-color: #13c2007e;
+  --ppt-color: #fba3267e;
+  --txt-color: #123fbd7e;
+  --zip-color: #1600707e;
+  --doc-color: #f5f5f57e;
 }
+
+.boujee-text {
+    --bg-size: 400%;
+    --color-one: #4b81f7;
+    --color-two: #4bf76e;
+    background: linear-gradient(
+        90deg,
+        var(--color-one),
+        var(--color-two),
+        var(--color-one)
+      )
+      0 0 / var(--bg-size) 100%;
+    color: transparent;
+    background-clip: text;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .boujee-text {
+      animation: move-bg 8s linear infinite;
+    }
+    @keyframes move-bg {
+      to {
+        background-position: var(--bg-size) 0;
+      }
+    }
+  }
+  

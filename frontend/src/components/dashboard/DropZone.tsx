@@ -60,11 +60,31 @@ export const UploadDropzone = ({
         acceptedFiles.forEach((file) => {
           formData.append("files", file);
         });
-        dispatch(uploadFiles(formData));
-        if (!isLoading) {
-          clearInterval(progressInterval);
-          setUploadProgress(100);
+
+        try {
+          const token = JSON.parse(Cookies.get("userInfo") as string).token;
+          const res = await fetch("http://127.0.0.1:9010/api/files/upload", {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (res.ok) {
+            toast.success("Files uploaded successfully");
+            router.push("/dashboard/files");
+          } else {
+            toast.error("Failed to upload files");
+            setIsUploading(false);
+          }
+        } catch (error) {
+          toast.error("Error uploading files");
+          setIsUploading(false);
         }
+
+        clearInterval(progressInterval);
+        setUploadProgress(100);
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (

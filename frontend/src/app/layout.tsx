@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "fleeso a way to Generate things",
 };
 
+const showNavBar = ["home","pricing"];
+
 export default function RootLayout({
   children,
 }: Readonly<{

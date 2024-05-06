@@ -69,7 +69,6 @@ const AllUserFiles = () => {
   return (
     <div>
       <Table
-        isHeaderSticky
         style={{
           borderSpacing: "0px 10px",
           borderCollapse: "separate",
