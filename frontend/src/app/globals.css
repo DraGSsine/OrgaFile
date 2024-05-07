@@ -14,7 +14,9 @@
     "zip-color":"var(--zip-color)",
     "doc-color":"var(--doc-color)", */
   --primary-color: #4b81f7;
-  --dark-primary-color: #2420e2;
+  --secondary-color: #4bf76e;
+  --third-color: #332F89;
+  --dark-primary-color: #514bf7;
   --primary-text-color: #8a8a8a;
   --image-color: #6dff5a7e;
   --video-color: #802cff7e;
@@ -27,10 +29,15 @@
   --zip-color: #1600707e;
   --doc-color: #f5f5f57e;
 }
+@layer components {
+  .pretty-text-small{
+    @apply text-lg mt-4 text-slate-600;
+  }
+}
 
 .boujee-text {
     --bg-size: 400%;
-    --color-one: #4b81f7;
+    --color-one: #4F46E5;
     --color-two: #4bf76e;
     background: linear-gradient(
         90deg,

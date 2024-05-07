@@ -19,6 +19,8 @@ const config: Config = {
       colors:
       {
         "primary-color":"var(--primary-color)",
+        "secondary-color":"var(--secondary-color)",
+        "third-color":"var(--third-color)",
         "dark-primary-color":"var(--dark-primary-color)",
       },
       backgroundColor:{

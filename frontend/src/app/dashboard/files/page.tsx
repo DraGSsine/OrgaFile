@@ -1,14 +1,10 @@
 "use client";
-import AllUserFiles from '@/components/dashboard/files/AllUserFiles'
-import { Server } from 'lucide-react';
-import React from 'react'
+import AllUserFiles from "@/components/dashboard/files/AllUserFiles";
+import { Server } from "lucide-react";
+import React from "react";
 
 const page = () => {
-  return (
-    <div>
-      <AllUserFiles />
-    </div>
-  )
-}
+  return <AllUserFiles />;
+};
 
-export default page
+export default page;

@@ -40,6 +40,7 @@ export type filesType = {
   format: string;
   url: string;
   id: string;
+  topic: string;
 };
 
 export type loadState = {

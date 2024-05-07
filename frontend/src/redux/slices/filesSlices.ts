@@ -8,7 +8,7 @@ const initialState: loadState = {
   isFilesUploaded: false,
   isFilesLoaded: false,
   isFileDeleted: false,
-  isLoading: false,
+  isLoading: true,
   error: null,
 };
 
