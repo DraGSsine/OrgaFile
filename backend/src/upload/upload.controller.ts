@@ -45,18 +45,18 @@ export class UploadController {
     return this.uploadService.LoadFiles(req.user.userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.uploadService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUploadDto: UpdateUploadDto) {
-    return this.uploadService.update(+id, updateUploadDto);
+  @Get("removed-files")
+  async findRemovedFiles(@Req() req: any){
+    return this.uploadService.LoadRemovedFiles(req.user.userId);
   }
 
   @Delete('remove')
-  remove(@Req() req:any, @Query('fileid') fileId: ObjectId) {
+  remove(@Req() req:any, @Body('fileid') fileId: ObjectId) {
     return this.uploadService.remove(req, fileId);
+  }
+
+  @Delete('removemany')
+  removeMany(@Req() req:any, @Body('files') files: ObjectId[]) {
+    return this.uploadService.removeMany(req, files);
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal, ModalContent, ModalBody} from "@nextui-org/react";
-import { UploadDropzone } from "../dashboard/DropZone";
+import { UploadDropzone } from "../DropZone";
 
 export default function ModalComponent({isOpen, onOpenChange}:any) {
 

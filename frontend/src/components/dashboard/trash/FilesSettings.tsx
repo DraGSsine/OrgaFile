@@ -10,25 +10,33 @@ import {
 import ConfirmeDelete from "@/components/dashboard/files/ConfirmeDelete";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
+import { setConfirmFileDelete } from "@/redux/slices/filesSlices";
 import {
   ArrowDownToLineIcon,
   Clipboard,
   EllipsisVertical,
   Trash2,
 } from "lucide-react";
-import { setConfirmFileRemove } from "@/redux/slices/filesSlices";
 
 const FilesSettings = ({ fileId }: { fileId: string }) => {
-  const { removeFile } = useSelector((state: RootState) => state.files);
+  const { confirmFileDelete } = useSelector((state: RootState) => state.files);
   const dispatch = useDispatch<AppDispatch>();
 
   function handleAction({ key }: { key: string | number }) {
     if (key === "delete") {
-      dispatch(setConfirmFileRemove({ active: true, fileId }));
+      dispatch(setConfirmFileDelete(true));
     }
   }
+
+
+
   return (
     <>
+      <ConfirmeDelete
+        isConfirmeDeleteOpen={confirmFileDelete}
+        fileId={fileId}
+      />
+
       <Dropdown size="sm">
         <DropdownTrigger>
           <Button

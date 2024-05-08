@@ -8,12 +8,10 @@ import ProgressBar from "./Progress";
 import Cookies from "js-cookie";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { uploadFiles } from "@/redux/slices/filesSlices";
+import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
 export const UploadDropzone = ({
-  onOpen,
   isSubscribed,
 }: {
-  onOpen: any;
   isSubscribed: boolean;
 }) => {
   const router = useRouter();
@@ -21,7 +19,7 @@ export const UploadDropzone = ({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isFilesUploaded, isLoading, error } = useSelector(
+  const { uploadFile } = useSelector(
     (state: RootState) => state.files
   );
 
@@ -42,14 +40,15 @@ export const UploadDropzone = ({
   };
 
   useEffect(() => {
-    if (isFilesUploaded) {
+    if (uploadFile.isFileUploaded) {
       router.push("/dashboard/files");
       toast.success("Files uploaded successfully");
+      dispatch(setUploadModal(false));
     }
-    if (error) {
-      toast.error(error.message);
+    if (uploadFile.error) {
+      toast.error(uploadFile.error.message);
     }
-  }, [isFilesUploaded, error]);
+  }, [uploadFile.isFileUploaded, uploadFile.error]);
   return (
     <Dropzone
       multiple
@@ -61,7 +60,6 @@ export const UploadDropzone = ({
           formData.append("files", file);
         });
         dispatch(uploadFiles(formData));
-        
         clearInterval(progressInterval);
         setUploadProgress(100);
       }}
@@ -98,7 +96,7 @@ export const UploadDropzone = ({
                 </div>
               ) : null}
 
-              {isLoading ? (
+              {uploadFile.isLoading ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <ProgressBar
                     indicatorColor={

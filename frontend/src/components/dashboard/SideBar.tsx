@@ -2,146 +2,111 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
-  DashboardIcon,
-  DeleteIcon,
   DocTifyLogo,
-  FolderIcon,
-  LogOut,
-  SettingsIcon,
-  StarIcon,
 } from "../../../public/icons";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+import Cookie from "js-cookie";
+import {
+  Files,
+  FolderMinus,
+  LayoutDashboard,
+  LucideLogOut,
+  Settings,
+  Trash2,
+} from "lucide-react";
 
 const SideBar = () => {
   const pathname = usePathname();
-  const routeName = pathname.split("/")[pathname.split("/").length - 1].charAt(0).toUpperCase() + pathname.split("/")[pathname.split("/").length - 1].slice(1);
+  const routeName =
+    pathname
+      .split("/")
+      [pathname.split("/").length - 1].charAt(0)
+      .toUpperCase() +
+    pathname.split("/")[pathname.split("/").length - 1].slice(1);
   const [activeItem, setActiveItem] = useState<string>(routeName);
-  const [animation, setAnimation] = useState<string>("-top-[10px]");
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
-    if (item === "Dashboard") setAnimation("-top-[10px]");
-    else if (item === "Files") setAnimation("top-[58px]");
-    else if (item === "Favorite") setAnimation("top-[140px]");
-    else if (item === "Trash") setAnimation("top-[195px]");
-    else if (item === "Settings") setAnimation("top-[265px]");
-  };
+
   const Components = [
     {
       name: "Dashboard",
-      component: (
-        <DashboardIcon
-          width={30}
-          height={30}
-          outline={activeItem === "Dashboard" ? false : true}
-          className={"transition-colors duration-300"}
-        />
-      ),
+      icon: <LayoutDashboard size={25} />,
     },
     {
       name: "Files",
-      component: (
-        <FolderIcon
-          width={30}
-          height={30}
-          outline={activeItem === "Files" ? false : true}
-          className={"transition-colors duration-300"}
-        />
-      ),
+      icon: <Files size={25} />,
     },
     {
-      name: "Favorite",
-      component: (
-        <StarIcon
-          width={30}
-          height={30}
-          outline={activeItem === "Favorite" ? false : true}
-          className={"transition-colors duration-300"}
-        />
-      ),
+      name: "Repository",
+      icon: <FolderMinus size={25} />,
     },
     {
       name: "Trash",
-      component: (
-        <DeleteIcon
-          width={30}
-          height={30}
-          outline={activeItem === "Trash" ? false : true}
-          className={"transition-colors duration-300"}
-        />
-      ),
+      icon: <Trash2 size={25} />,
     },
     {
       name: "Settings",
-      component: (
-        <SettingsIcon
-          width={30}
-          height={30}
-          outline={activeItem === "Settings" ? false : true}
-          className={"transition-colors duration-300"}
-        />
-      ),
+      icon: <Settings size={25} />,
     },
   ];
 
   useEffect(() => {
-      handleItemClick(routeName);
+    setActiveItem(routeName);
   }, [routeName]);
 
   return (
-    <div className="border-r pr-5 h-screen flex flex-col">
+    <div className=" w-64 bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
       <div>
-        <DocTifyLogo />
-      </div>
-      <div className="w-[12vw] py-8 flex flex-col h-auto justify-between flex-grow">
-        <div className="gap-10 flex flex-col relative">
-          {Components.map((Component, index) => (
-            <Link
-              href={
-                Component.name.toLocaleLowerCase() == "dashboard"
-                  ? "/dashboard"
-                  : `/dashboard/${Component.name.toLowerCase()}`
-              }
-              key={index}
-              className={`flex gap-4 items-center cursor-pointer`}
-            >
-              {Component.component}
-              <span
-                className={`font-semibold text-[1.1rem] ${
-                  activeItem === Component.name
-                    ? "text-black transition-all duration-1000 "
-                    : "text-primary-text-color"
-                }`}
-              >
-                {Component.name}
-              </span>
-            </Link>
-          ))}
-          <div
-            className={`${animation} transition-all ease-in-out -right-5 absolute h-[60px] w-[6px] rounded-l-full bg-black`}
-          ></div>
+        <div className="px-8">
+          <DocTifyLogo />
         </div>
-        <div className="space-y-10">
-          <div className="bg-primary flex flex-col justify-between p-4 rounded-lg gap-2">
-            <h1 className="text-lg text-white font-semibold">Go To Premium</h1>
-            <p className="text-sm text-white">
-              Get full speed and additional storage, as well as various
-              exclusive features
-            </p>
-            <Button
-              radius="sm"
-              variant="flat"
-              className="text-lg font-semibold p-6 bg-black text-white"
-            >
-              Upgrade
-            </Button>
-          </div>
+        <nav
+          className="py-6 w-full flex flex-col flex-wrap"
+          data-hs-accordion-always-open=""
+        >
+          <ul className="space-y-3">
+            {Components.map((Component, index) => (
+              <li onClick={() => setActiveItem(Component.name)}>
+                <Link
+                  className={` flex items-center gap-x-3.5 py-2 pl-3 text-[1.1rem] ${
+                    activeItem == Component.name ? "bg-primary-100/70 text-primary-500 " : "text-zinc-500 "
+                  } rounded-lg hover:bg-primary-50/50`}
+                  href={`/dashboard/${
+                    Component.name.toLowerCase() == "dashboard"
+                      ? ""
+                      : Component.name.toLowerCase()
+                  }`}
+                >
+                  {Component.icon}
+                  {Component.name }
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+      <div className=" flex flex-col items-center gap-16 ">
+        <div className="bg-primary flex flex-col justify-between p-4 rounded-lg gap-2">
+          <h1 className="text-lg text-white font-semibold">Go To Premium</h1>
+          <p className="text-[1.1rem] text-white">
+            Get full speed and additional storage, as well as various exclusive
+            features
+          </p>
           <Button
             radius="sm"
-            variant="light"
-            className="text-black text-md font-semibold flex justify-between"
+            variant="flat"
+            className="text-lg font-semibold p-6 bg-black text-white"
           >
-            <LogOut width={5} height={5} />
+            Upgrade
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={() => Cookie.remove("token")}
+            radius="sm"
+            variant="light"
+            className="text-black text-[1.1rem] font-medium flex justify-between"
+          >
+            <LucideLogOut size={25} />
             Log Out
           </Button>
         </div>

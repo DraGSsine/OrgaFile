@@ -1,4 +1,5 @@
 import { Mail, MailIcon } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 const NewsLetter = () => {
@@ -45,8 +46,8 @@ const NewsLetter = () => {
               </div>
             </div>
             <div className="md:w-[42%] lg:w-1/2">
-              <img
-                src="./../images/cta-cards.webp"
+              <Image
+                src="/images/cta-cards.webp"
                 alt="DocTify stat cards components"
                 loading="lazy"
                 width={1299}

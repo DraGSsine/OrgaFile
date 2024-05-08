@@ -25,6 +25,7 @@ export class UploadService {
     },
     region: this.configService.get('S3_REGION'),
   });
+
   async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
     const user = await this.userModel.findById(userId);
     if (!user) {
@@ -49,7 +50,8 @@ export class UploadService {
         size: file.size,
         createdAt: new Date(),
       };
-      const res = await AnalyzeFile(data, fileType);
+      // const res = await AnalyzeFile(data, fileType);
+      const res = "General"
       data.topic = res;
       user.files.push(data);
       await user.save();
@@ -76,12 +78,16 @@ export class UploadService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} upload`;
-  }
-
-  update(id: number, updateUploadDto: UpdateUploadDto) {
-    return `This action updates a #${id} upload`;
+  async LoadRemovedFiles(userId: ObjectId) {
+    try {
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user.deletedFiles;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to load files');
+    }
   }
 
   async remove(req: any, fileId: ObjectId) {
@@ -105,6 +111,34 @@ export class UploadService {
       return DeleteFile;
     } catch (error) {
       throw new InternalServerErrorException('Failed to remove file');
+    }
+  }
+
+  async removeMany(req: any, fileIds: ObjectId[]) {
+    console.log(fileIds);
+    try {
+      const id = req.user.userId;
+      const user = await this.userModel.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const deletedFiles = [];
+      for (const fileId of fileIds) {
+        const fileIndex = user.files.findIndex(
+          (file: any) => file.id.toString() === fileId.toString(),
+        );
+        if (fileIndex === -1) {
+          throw new NotFoundException('File does not exist');
+        }
+        const DeleteFile = user.files[fileIndex];
+        user.deletedFiles.push(DeleteFile);
+        deletedFiles.push(DeleteFile);
+        user.files.splice(fileIndex, 1);
+      }
+      await user.save();
+      return deletedFiles;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to remove files');
     }
   }
 }

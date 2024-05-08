@@ -4,7 +4,7 @@ import SideBar from "@/components/dashboard/SideBar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <div className=" mx-auto pl-5 flex">
+        <div className=" mx-auto flex">
             <SideBar/>
             <div className="flex flex-grow h-screen flex-col">
                 <NavBar/>

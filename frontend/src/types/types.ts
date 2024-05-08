@@ -43,12 +43,16 @@ export type filesType = {
   topic: string;
 };
 
-export type loadState = {
+export type FilesState = {
+  isFilesUploaded: boolean,
+  confirmFileDelete: boolean,
+  isManyFileDeleted: boolean,
   deleteFileId: string,
   isFileDeleted: boolean,
-  isFilesUploaded: boolean,
+  uploadFilesStatus: boolean,
   isFilesLoaded: boolean,
   files: filesType[];
   isLoading: boolean;
+  fileDeletLoading: boolean;
   error: {message:string , error:string, statusCode:number} | null;
 };

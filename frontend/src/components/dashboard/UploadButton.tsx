@@ -4,33 +4,23 @@ import { Button, useDisclosure } from "@nextui-org/react";
 import { raduisType, variantType } from "@/types/types";
 import { UploadDocumentIcon } from "../../../public/icons";
 import ModalComponent from "../signup/Modal";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setUploadModal } from "@/redux/slices/filesSlices";
 
 const UploadButton = ({
   radius,
   className,
-  variant,
 }: {
   radius: raduisType;
   className: string;
-  variant: variantType;
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isFilesLoaded } = useSelector((state: RootState) => state.files);
-  
-  useEffect(() => {
-    if (isFilesLoaded) {
-      onClose();
-      console.log(isFilesLoaded)
-      console.log(isOpen)
-    }
-  }, [isFilesLoaded, onClose]);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <>
       <Button
-        onPress={onOpen}
+        onPress={() => dispatch(setUploadModal(true))}
         className={className}
         radius={radius}
       >
@@ -42,11 +32,7 @@ const UploadButton = ({
           stroke={"#ffffff"}
         />
       </Button>
-      <ModalComponent
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-      />
+      <ModalComponent/>
     </>
   );
 };

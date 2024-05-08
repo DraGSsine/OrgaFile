@@ -4,7 +4,7 @@ import UserProfile from "../User"
 
 export const RightSideBar = () => {
     return (
-        <div className="w-[25vw] border-l">
+        <div className="min-w-[25vw] border-l">
             <div className=" pl-5 items-center flex h-[10vh] border-b justify-between ">
                 <div className=" flex flex-col">
                     <span className=" font-semibold">Yassine ouchen</span>

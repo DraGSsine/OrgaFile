@@ -5,7 +5,7 @@ import UploadButton from "./UploadButton";
 
 export default function NavBar() {
   return (
-    <nav className="flex items-center justify-around h-[10vh]  border-b">
+    <nav className="flex items-center justify-around min-h-[10vh]  border-b">
       <div>
         <SearchInput />
       </div>
@@ -24,7 +24,6 @@ export default function NavBar() {
         </Button>
         <UploadButton
           radius="sm"
-          variant="flat"
           className="text-default-500 flex items-center justify-between min-w-[130px] min-h-[55px] bg-black"
         />
       </div>

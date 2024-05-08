@@ -11,7 +11,6 @@ import {
   Spinner,
   Tooltip,
 } from "@nextui-org/react";
-import FilesSettings from "./FilesSettings";
 import Image from "next/image";
 import {
   FormatTheDate,
@@ -20,67 +19,58 @@ import {
 } from "@/helpers/helpers";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteManyFiles,
-  loaAlldFiles,
-  resetFiles,
-  setConfirmFileRemove,
-  setConfirmManyFileRemove,
-} from "@/redux/slices/filesSlices";
+import { deleteManyFiles, loadFiles, resetFiles, setConfirmFileDelete } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
+import FilesSettings from "./FilesSettings";
 
-export default function AllUsersFiles() {
+export default function AllUserDeletedFiles() {
   const dispatch = useDispatch<AppDispatch>();
-  const { loadFiles, removeFile, removeManyFiles, uploadFile } = useSelector(
-    (state: RootState) => state.files
-  );
+  const {
+    files,
+    isLoading,
+    error,
+    isFileDeleted,
+    isManyFileDeleted,
+    isFilesUploaded,
+  } = useSelector((state: RootState) => state.files);
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 20;
 
-  const pages = Math.ceil(loadFiles.files.length / rowsPerPage);
+  const pages = Math.ceil(files.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return loadFiles.files.slice(start, end);
-  }, [page, loadFiles.files]);
+    return files.slice(start, end);
+  }, [page, files]);
 
   const removeSelectedKeys = () => {
-    dispatch(
-      setConfirmManyFileRemove({
-        active: true,
-        files: Array.from(selectedKeys),
-      })
-    );
+    dispatch(deleteManyFiles(selectedKeys));
     setSelectedKeys(new Set([]));
   };
 
   useEffect(() => {
-    dispatch(loaAlldFiles(null));
-    if (loadFiles.error) {
+    dispatch(loadFiles(null));
+    if (error) {
       toast.error("Failed to load files");
     }
     switch (true) {
-      case removeFile.isFileDeleted:
+      case isFileDeleted:
         toast.success("File deleted successfully");
-        dispatch(setConfirmFileRemove({ active: false, fileId: "" }));
+        dispatch(setConfirmFileDelete(false))
         break;
-      case removeManyFiles.isManyFileDeleted:
+      case isManyFileDeleted:
         toast.success("Files deleted successfully");
         break;
-      case uploadFile.isFileUploaded:
+      case isFilesUploaded:
         toast.success("Files uploaded successfully");
         break;
     }
-    dispatch(resetFiles());
-  }, [
-    removeFile.isFileDeleted,
-    removeManyFiles.isManyFileDeleted,
-    uploadFile.isFileUploaded,
-  ]);
+    dispatch(resetFiles())
+  }, [isFileDeleted, isManyFileDeleted, isFilesUploaded]);
   return (
     <Table
       BaseComponent={TableWraper}
@@ -90,7 +80,7 @@ export default function AllUsersFiles() {
       onSelectionChange={(keys) => {
         let allKeys = new Set<string>([]);
         if (keys == "all") {
-          loadFiles.files.map((file) => {
+          files.map((file) => {
             allKeys.add(file.id);
             setSelectedKeys(allKeys);
           });
@@ -128,25 +118,23 @@ export default function AllUsersFiles() {
       }
     >
       <TableHeader>
-        <TableColumn className=" w-[40%] " key="name">
-          FILE
-        </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="size">
+        <TableColumn key="name">FILE</TableColumn>
+        <TableColumn className=" w-[160px]" key="size">
           SIZE
         </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="createdAt">
+        <TableColumn className=" w-[160px]" key="createdAt">
           CREATED AT
         </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="status">
+        <TableColumn className=" w-[160px]" key="status">
           STATUS
         </TableColumn>
-        <TableColumn className=" w-[15%] text-center" key="settings">
+        <TableColumn className="text-center" key="settings">
           SETTINGS
         </TableColumn>
       </TableHeader>
       <TableBody
         emptyContent="No files to load"
-        isLoading={loadFiles.isLoading}
+        isLoading={isLoading}
         loadingContent={<Spinner />}
         items={items}
       >
@@ -162,14 +150,14 @@ export default function AllUsersFiles() {
                   alt="file"
                   width={40}
                   height={40}
-                  className="rounded-md -ml-2"
+                  className="rounded-md"
                 />
                 <span>{item.name}</span>
               </div>
             </TableCell>
-            <TableCell className="text-center">{bytesToMegaBytes(item.size)}</TableCell>
-            <TableCell className="text-center">{FormatTheDate(item.createdAt)}</TableCell>
-            <TableCell className="text-center">
+            <TableCell>{bytesToMegaBytes(item.size)}</TableCell>
+            <TableCell>{FormatTheDate(item.createdAt)}</TableCell>
+            <TableCell>
               <Chip
                 size="sm"
                 color="warning"
@@ -179,8 +167,8 @@ export default function AllUsersFiles() {
                 {item.topic}
               </Chip>
             </TableCell>
-            <TableCell className="text-center">
-              <FilesSettings  fileId={item.id} />
+            <TableCell className=" rounded-xl text-center">
+              <FilesSettings fileId={item.id} />
             </TableCell>
           </TableRow>
         )}
