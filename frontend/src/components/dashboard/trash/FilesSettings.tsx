@@ -7,7 +7,7 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import ConfirmeDelete from "@/components/dashboard/files/ConfirmeDelete";
+import ConfirmeDelete from "@/components/dashboard/ConfirmeDelete";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setConfirmFileDelete } from "@/redux/slices/filesSlices";

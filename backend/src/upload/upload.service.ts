@@ -51,7 +51,7 @@ export class UploadService {
         createdAt: new Date(),
       };
       // const res = await AnalyzeFile(data, fileType);
-      const res = "General"
+      const res = 'General';
       data.topic = res;
       user.files.push(data);
       await user.save();
@@ -73,6 +73,27 @@ export class UploadService {
       }
       console.log(files);
       return files.files;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to load files');
+    }
+  }
+
+  async LoadRecentFiles(userId: ObjectId) {
+    try {
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      // Filter files that are 7 days old or newer
+      const recentFiles = user.files.filter(
+        (file: any) => new Date(file.createdAt) > oneWeekAgo,
+      );
+
+      return recentFiles;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
     }

@@ -45,6 +45,12 @@ export class UploadController {
     return this.uploadService.LoadFiles(req.user.userId);
   }
 
+  @Get("recent")
+  async findRecentFiles(@Req() req: any){
+    console.log("request reached here")
+    return this.uploadService.LoadRecentFiles(req.user.userId);
+  }
+
   @Get("removed-files")
   async findRemovedFiles(@Req() req: any){
     return this.uploadService.LoadRemovedFiles(req.user.userId);

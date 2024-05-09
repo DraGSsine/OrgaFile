@@ -34,6 +34,9 @@
     @apply text-lg mt-4 text-slate-600;
   }
 }
+tbody tr {
+  height: 70px !important;
+}
 
 .boujee-text {
     --bg-size: 400%;

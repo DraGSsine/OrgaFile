@@ -5,37 +5,30 @@ import Dropzone from "react-dropzone";
 import { Cloud, File, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "./Progress";
-import Cookies from "js-cookie";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
-export const UploadDropzone = ({
-  isSubscribed,
-}: {
-  isSubscribed: boolean;
-}) => {
+import { set } from "zod";
+
+export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
-
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { uploadFile } = useSelector(
-    (state: RootState) => state.files
-  );
+  const { uploadFile } = useSelector((state: RootState) => state.files);
 
   const startSimulatedProgress = () => {
+    setLoading(true);
     setUploadProgress(0);
-
     const interval = setInterval(() => {
       setUploadProgress((prevProgress) => {
-        if (prevProgress >= 95) {
+        if (prevProgress >= 95 || uploadFile.isFileUploaded) {
           clearInterval(interval);
-          return prevProgress;
+          return 100;
         }
         return prevProgress + 5;
       });
     }, 500);
-
     return interval;
   };
 
@@ -44,24 +37,21 @@ export const UploadDropzone = ({
       router.push("/dashboard/files");
       toast.success("Files uploaded successfully");
       dispatch(setUploadModal(false));
-    }
-    if (uploadFile.error) {
+    } else if (uploadFile.error) {
       toast.error(uploadFile.error.message);
     }
   }, [uploadFile.isFileUploaded, uploadFile.error]);
+
   return (
     <Dropzone
       multiple
       onDrop={async (acceptedFiles) => {
-        const progressInterval = startSimulatedProgress();
-
         const formData = new FormData();
+        const interval = startSimulatedProgress();
         acceptedFiles.forEach((file) => {
           formData.append("files", file);
         });
         dispatch(uploadFiles(formData));
-        clearInterval(progressInterval);
-        setUploadProgress(100);
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -96,7 +86,7 @@ export const UploadDropzone = ({
                 </div>
               ) : null}
 
-              {uploadFile.isLoading ? (
+              {loading ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <ProgressBar
                     indicatorColor={
@@ -104,12 +94,12 @@ export const UploadDropzone = ({
                     }
                     value={uploadProgress}
                   />
-                  {uploadProgress === 100 ? (
+                  {uploadProgress === 100 && (
                     <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
                       <Loader2 className="h-3 w-3 animate-spin" />
                       Redirecting...
                     </div>
-                  ) : null}
+                  )}
                 </div>
               ) : null}
 

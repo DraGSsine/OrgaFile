@@ -1,25 +1,24 @@
 "use client";
 import TableFiles from "@/components/dashboard/files/TableFiles";
-import ConfirmDelete from "@/components/dashboard/ConfirmeDelete";
 import { useEffect } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  loadAllFiles,
+  loadRecentFiles,
   resetFiles,
   setConfirmFileRemove,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import React from "react";
 
-const page = () => {
+const RecentFiles = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loadFiles, removeFile, removeManyFiles, uploadFile } = useSelector(
+  const { recentFiles, removeFile, removeManyFiles, uploadFile } = useSelector(
     (state: RootState) => state.files
   );
   useEffect(() => {
-    dispatch(loadAllFiles(null));
-    if (loadFiles.error) {
+    dispatch(loadRecentFiles());
+    if (recentFiles.error) {
       toast.error("Failed to load files");
     }
     switch (true) {
@@ -42,9 +41,10 @@ const page = () => {
   ]);
   return (
     <div>
-      <TableFiles files={loadFiles.files} isLoading={loadFiles.isLoading} />
+      <h1 className=" font-medium text-2xl pb-6 ">Recent Files</h1>
+      <TableFiles files={recentFiles.files} isLoading={recentFiles.isLoading} />
     </div>
   );
 };
 
-export default page;
+export default RecentFiles;

@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { deleteFile } from "@/redux/slices/filesSlices";
-import ConfirmeDelete from "./dashboard/files/ConfirmeDelete";
+import ConfirmeDelete from "./dashboard/ConfirmeDelete";
 
 export const DropDown = ({ fileId }: { fileId: string }) => {
   const { deleteFileId } = useSelector((state: RootState) => state.files);

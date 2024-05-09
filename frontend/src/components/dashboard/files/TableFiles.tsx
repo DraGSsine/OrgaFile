@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, use, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -18,35 +18,34 @@ import {
   bytesToMegaBytes,
   getFileImage,
 } from "@/helpers/helpers";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteManyFiles,
-  loaAlldFiles,
-  resetFiles,
-  setConfirmFileRemove,
-  setConfirmManyFileRemove,
-} from "@/redux/slices/filesSlices";
-import { toast } from "sonner";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { setConfirmManyFileRemove } from "@/redux/slices/filesSlices";
 import { Trash2 } from "lucide-react";
+import { filesType } from "@/types/types";
+import { usePathname } from "next/navigation";
 
-export default function AllUsersFiles() {
+export default function TableFiles({
+  files,
+  isLoading,
+}: {
+  files: filesType[];
+  isLoading: boolean;
+}) {
   const dispatch = useDispatch<AppDispatch>();
-  const { loadFiles, removeFile, removeManyFiles, uploadFile } = useSelector(
-    (state: RootState) => state.files
-  );
+
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 20;
 
-  const pages = Math.ceil(loadFiles.files.length / rowsPerPage);
+  const pages = Math.ceil(files.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return loadFiles.files.slice(start, end);
-  }, [page, loadFiles.files]);
+    return files.slice(start, end);
+  }, [page, files]);
 
   const removeSelectedKeys = () => {
     dispatch(
@@ -58,39 +57,17 @@ export default function AllUsersFiles() {
     setSelectedKeys(new Set([]));
   };
 
-  useEffect(() => {
-    dispatch(loaAlldFiles(null));
-    if (loadFiles.error) {
-      toast.error("Failed to load files");
-    }
-    switch (true) {
-      case removeFile.isFileDeleted:
-        toast.success("File deleted successfully");
-        dispatch(setConfirmFileRemove({ active: false, fileId: "" }));
-        break;
-      case removeManyFiles.isManyFileDeleted:
-        toast.success("Files deleted successfully");
-        break;
-      case uploadFile.isFileUploaded:
-        toast.success("Files uploaded successfully");
-        break;
-    }
-    dispatch(resetFiles());
-  }, [
-    removeFile.isFileDeleted,
-    removeManyFiles.isManyFileDeleted,
-    uploadFile.isFileUploaded,
-  ]);
   return (
     <Table
+      className="border-collapse "
+      aria-label="Example static collection table"
       BaseComponent={TableWraper}
-      aria-label="Controlled table example with dynamic content"
       selectionMode="multiple"
       selectedKeys={selectedKeys}
       onSelectionChange={(keys) => {
         let allKeys = new Set<string>([]);
         if (keys == "all") {
-          loadFiles.files.map((file) => {
+          files.map((file: any) => {
             allKeys.add(file.id);
             setSelectedKeys(allKeys);
           });
@@ -145,15 +122,16 @@ export default function AllUsersFiles() {
         </TableColumn>
       </TableHeader>
       <TableBody
+        className=""
         emptyContent="No files to load"
-        isLoading={loadFiles.isLoading}
+        isLoading={isLoading}
         loadingContent={<Spinner />}
         items={items}
       >
-        {(item) => (
+        {(item: filesType) => (
           <TableRow
             key={item.id}
-            className=" cursor-pointer hover:bg-zinc-50 text-xl"
+            className=" cursor-pointer text-xl bg-transparent "
           >
             <TableCell>
               <div className="flex items-center space-x-4">
@@ -162,13 +140,17 @@ export default function AllUsersFiles() {
                   alt="file"
                   width={40}
                   height={40}
-                  className="rounded-md -ml-2"
+                  className="rounded-md -ml-2 "
                 />
                 <span>{item.name}</span>
               </div>
             </TableCell>
-            <TableCell className="text-center">{bytesToMegaBytes(item.size)}</TableCell>
-            <TableCell className="text-center">{FormatTheDate(item.createdAt)}</TableCell>
+            <TableCell className="text-center">
+              {bytesToMegaBytes(item.size)}
+            </TableCell>
+            <TableCell className="text-center">
+              {FormatTheDate(item.createdAt)}
+            </TableCell>
             <TableCell className="text-center">
               <Chip
                 size="sm"
@@ -180,7 +162,7 @@ export default function AllUsersFiles() {
               </Chip>
             </TableCell>
             <TableCell className="text-center">
-              <FilesSettings  fileId={item.id} />
+              <FilesSettings fileId={item.id} />
             </TableCell>
           </TableRow>
         )}
@@ -190,8 +172,14 @@ export default function AllUsersFiles() {
 }
 
 const TableWraper = ({ children }: { children: ReactNode }) => {
+  const path = usePathname();
+
   return (
-    <div className=" h-[86.8vh] relative bg-white rounded-t-2xl p-10  shadow-small">
+    <div
+      className={` ${
+        path == "/dashboard" ? " h-[61.6vh] " : "h-[86.8vh]"
+      } bg-white relative rounded-t-2xl p-10  shadow-small`}
+    >
       {children}
     </div>
   );

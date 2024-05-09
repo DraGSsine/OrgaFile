@@ -9,6 +9,11 @@ type FilesState = {
     isLoading: boolean;
     error: any;
   };
+  recentFiles: {
+    files: any[];
+    isLoading: boolean;
+    error: any;
+  };
   removeFile: {
     file: string | null;
     isFileDeleted: boolean;
@@ -37,6 +42,11 @@ const initialState: FilesState = {
     isLoading: true,
     error: null,
   },
+  recentFiles: {
+    files: [],
+    isLoading: true,
+    error: null,
+  },
   removeFile: {
     file: null,
     confirmeRemoveModal: false,
@@ -59,8 +69,8 @@ const initialState: FilesState = {
   },
 };
 
-export const loaAlldFiles = createAsyncThunk(
-  "files/loaAlldFiles",
+export const loadAllFiles = createAsyncThunk(
+  "files/loadAllFiles",
   async (signal: any, { rejectWithValue }) => {
     try {
       const response = await fetch("http://localhost:9010/api/files/load", {
@@ -151,6 +161,28 @@ export const deleteManyFiles = createAsyncThunk(
   }
 );
 
+export const loadRecentFiles = createAsyncThunk(
+  "files/loadRecentFiles",
+  async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:9010/api/files/recent", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.get("token")}`,
+        },
+      });
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res);
+      }
+      return res;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+);
+
 export const filesSlice = createSlice({
   name: "files",
   initialState,
@@ -168,7 +200,7 @@ export const filesSlice = createSlice({
       state.removeManyFiles.confirmeRemoveModal = action.payload.active;
     },
     setConfirmFileRemove: (state, action) => {
-      state.removeFile.file= action.payload.fileId;
+      state.removeFile.file = action.payload.fileId;
       state.removeFile.confirmeRemoveModal = action.payload.active;
     },
     setUploadModal: (state, action) => {
@@ -177,20 +209,34 @@ export const filesSlice = createSlice({
   },
   extraReducers(builder) {
     // Load files
-    builder.addCase(loaAlldFiles.pending, (state) => {
+    builder.addCase(loadAllFiles.pending, (state) => {
       state.loadFiles.isLoading = true;
       state.loadFiles.error = null;
     });
-    builder.addCase(loaAlldFiles.fulfilled, (state, action) => {
+    builder.addCase(loadAllFiles.fulfilled, (state, action) => {
       state.loadFiles.files = action.payload;
       state.loadFiles.isLoading = false;
       state.loadFiles.error = null;
     });
-    builder.addCase(loaAlldFiles.rejected, (state, action: any) => {
+    builder.addCase(loadAllFiles.rejected, (state, action: any) => {
       state.loadFiles.isLoading = false;
       state.loadFiles.error = action.payload || null;
     });
 
+    // Load Recent Files
+    builder.addCase(loadRecentFiles.pending, (state) => {
+      state.recentFiles.isLoading = true;
+      state.recentFiles.error = null;
+    });
+    builder.addCase(loadRecentFiles.fulfilled, (state, action) => {
+      state.recentFiles.files = action.payload;
+      state.recentFiles.isLoading = false;
+      state.recentFiles.error = null;
+    });
+    builder.addCase(loadRecentFiles.rejected, (state, action: any) => {
+      state.recentFiles.isLoading = false;
+      state.recentFiles.error = action.payload || null;
+    });
     // Upload files
 
     builder.addCase(uploadFiles.pending, (state) => {
