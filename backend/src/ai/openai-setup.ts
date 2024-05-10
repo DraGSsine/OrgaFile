@@ -15,7 +15,7 @@ import { promptContent, systemContent } from './ai-const';
 function storeData(
   output: any,
   supabaseClient: any,
-  id: mongoose.Types.ObjectId,
+  id: string,
   openai: any,
 ) {
   output.forEach(async (doc: any) => {
@@ -26,7 +26,7 @@ function storeData(
     });
     const vectors = embedding.data[0].embedding;
     const { error } = await supabaseClient.from('documents').insert({
-      fileid: id,
+      fileId: id,
       content: pageContent,
       metadata: metadata,
       embedding: vectors,

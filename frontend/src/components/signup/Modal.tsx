@@ -7,12 +7,12 @@ import { setUploadModal } from "@/redux/slices/filesSlices";
 
 export default function ModalComponent() {
   const dispatch = useDispatch<AppDispatch>();
-  const { uploadFile } = useSelector((state: RootState) => state.files);
+  const { uploadFileState } = useSelector((state: RootState) => state.files);
   return (
     <>
       <Modal
         backdrop="opaque"
-        isOpen={uploadFile.openUploadModal}
+        isOpen={uploadFileState.openUploadModal}
         onClose={() => dispatch(setUploadModal(false))}
         size="xl"
         radius="lg"

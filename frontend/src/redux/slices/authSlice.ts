@@ -42,12 +42,12 @@ export const SignInAction = createAsyncThunk(
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      })
+      });
 
       if (!response.ok) {
         return rejectWithValue(await response.json());
       }
-      console.log(response)
+      console.log(response);
       const responseData = await response.json();
       return responseData;
     } catch (error) {

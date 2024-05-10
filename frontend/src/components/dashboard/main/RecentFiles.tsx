@@ -1,50 +1,56 @@
 "use client";
-import TableFiles from "@/components/dashboard/files/TableFiles";
+import TableFiles from "@/components/dashboard/TableFiles";
 import { useEffect } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loadRecentFiles,
   resetFiles,
-  setConfirmFileRemove,
+  setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import React from "react";
 
-const RecentFiles = () => {
+const recentFilesState = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { recentFiles, removeFile, removeManyFiles, uploadFile } = useSelector(
-    (state: RootState) => state.files
-  );
+  const {
+    recentFilesState,
+    removeFileState,
+    uploadFileState,
+  } = useSelector((state: RootState) => state.files);
   useEffect(() => {
     dispatch(loadRecentFiles());
-    if (recentFiles.error) {
+    if (recentFilesState.error) {
       toast.error("Failed to load files");
     }
     switch (true) {
-      case removeFile.isFileDeleted:
+      case removeFileState.isFileDeleted && !removeFileState.isMany:
         toast.success("File deleted successfully");
-        dispatch(setConfirmFileRemove({ active: false, fileId: "" }));
+        dispatch(setConfirmFileRemoveModal(false));
         break;
-      case removeManyFiles.isManyFileDeleted:
+      case removeFileState.isMany:
         toast.success("Files deleted successfully");
         break;
-      case uploadFile.isFileUploaded:
+      case uploadFileState.isFileUploaded:
         toast.success("Files uploaded successfully");
         break;
     }
     dispatch(resetFiles());
   }, [
-    removeFile.isFileDeleted,
-    removeManyFiles.isManyFileDeleted,
-    uploadFile.isFileUploaded,
+    removeFileState.isFileDeleted,
+    uploadFileState.isFileUploaded,
   ]);
   return (
     <div>
       <h1 className=" font-medium text-2xl pb-6 ">Recent Files</h1>
-      <TableFiles files={recentFiles.files} isLoading={recentFiles.isLoading} />
+      <TableFiles
+        maxRows={9}
+        files={recentFilesState.files}
+        isLoading={recentFilesState.isLoading}
+        routeName="recentFiles"
+      />
     </div>
   );
 };
 
-export default RecentFiles;
+export default recentFilesState;

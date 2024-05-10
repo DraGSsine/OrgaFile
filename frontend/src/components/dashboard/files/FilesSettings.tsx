@@ -7,24 +7,40 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import ConfirmeDelete from "@/components/dashboard/ConfirmeDelete";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
 import {
   ArrowDownToLineIcon,
   Clipboard,
   EllipsisVertical,
   Trash2,
 } from "lucide-react";
-import { setConfirmFileRemove } from "@/redux/slices/filesSlices";
+import { RouteNameType } from "@/types/types";
+import {
+  setConfirmFileRemoveModal,
+  setRemoveFiles,
+} from "@/redux/slices/filesSlices";
+import { array } from "zod";
 
-const FilesSettings = ({ fileId }: { fileId: string }) => {
-  const { removeFile } = useSelector((state: RootState) => state.files);
+const FilesSettings = ({
+  fileId,
+  routeName,
+}: {
+  fileId: string;
+  routeName: RouteNameType;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
 
   function handleAction({ key }: { key: string | number }) {
     if (key === "delete") {
-      dispatch(setConfirmFileRemove({ active: true, fileId }));
+      dispatch(setConfirmFileRemoveModal(true));
+      dispatch(
+        setRemoveFiles({
+          files: [fileId],
+          isPremanently: routeName === "removedFiles",
+          isMany: false,
+        })
+      );
     }
   }
   return (

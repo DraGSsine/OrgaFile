@@ -56,3 +56,5 @@ export type FilesState = {
   fileDeletLoading: boolean;
   error: {message:string , error:string, statusCode:number} | null;
 };
+
+export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles";

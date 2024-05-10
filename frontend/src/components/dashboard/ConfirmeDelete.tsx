@@ -2,7 +2,6 @@ import React from "react";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   Button,
@@ -11,36 +10,45 @@ import {
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deleteFile,
-  deleteManyFiles,
-  setConfirmFileRemove,
-  setConfirmManyFileRemove,
+  removeFile,
+  removeManyFiles,
+  setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { AlertTriangleIcon } from "lucide-react";
 
 export default function ConfirmDelete() {
   const dispatch = useDispatch<AppDispatch>();
-  const { removeFile, removeManyFiles } = useSelector(
-    (state: RootState) => state.files
-  );
-  let removeOneOrManyFiles = removeFile.confirmeRemoveModal ? "one" : "many";
-  const headerMessage = removeOneOrManyFiles === "one" ? "Delete file" : "Delete files";
-  const loading = removeFile.fileDeletLoading || removeManyFiles.isLoading;
-
-  const handleDelete = () => {
-    if (removeOneOrManyFiles === "one") {
-      dispatch(deleteFile(removeFile.file as string));
-      dispatch(setConfirmFileRemove({ active: false, fileId: "" }));
-    } else if (removeOneOrManyFiles === "many") {
-      dispatch(deleteManyFiles(Array.from(removeManyFiles.files)));
-      dispatch(setConfirmManyFileRemove({ active: false, files: [""] }));
-    }
-  };
+  const { removeFileState } = useSelector((state: RootState) => state.files);
+  const Message = removeFileState.isMany
+    ? "delete these files"
+    : "delete this file";
   const closeModal = () => {
-    if (removeOneOrManyFiles === "one") {
-      dispatch(setConfirmFileRemove({ active: false, fileId: "" }));
-    } else if (removeOneOrManyFiles === "many") {
-      dispatch(setConfirmManyFileRemove({ active: false, files: [""] }));
+    dispatch(setConfirmFileRemoveModal(false));
+  };
+  const handleDelete = () => {
+    if (removeFileState.isMany) {
+      if (removeFileState.isPremanently) {
+        dispatch(
+          removeManyFiles({ files: removeFileState.files, isPremanently: true })
+        );
+      } else {
+        dispatch(
+          removeManyFiles({
+            files: removeFileState.files,
+            isPremanently: false,
+          })
+        );
+      }
+    } else {
+      if (removeFileState.isPremanently) {
+        dispatch(
+          removeFile({ fileId: removeFileState.files[0], isPremanently: true })
+        );
+      } else {
+        dispatch(
+          removeFile({ fileId: removeFileState.files[0], isPremanently: false })
+        );
+      }
     }
   };
   return (
@@ -51,9 +59,7 @@ export default function ConfirmDelete() {
           backdrop: "bg-[#fff]/40 backdrop-opacity-40 blur-xs ",
           closeButton: "hover:bg-white/5 active:bg-white/10",
         }}
-        isOpen={
-          removeFile.confirmeRemoveModal || removeManyFiles.confirmeRemoveModal
-        }
+        isOpen={removeFileState.confirmRemoveModal}
         onClose={() => closeModal()}
         isDismissable={true}
         isKeyboardDismissDisabled={true}
@@ -66,7 +72,7 @@ export default function ConfirmDelete() {
               </div>
               <div className=" space-y-3">
                 <p className=" font-semibold">
-                  Are you sure you want to {headerMessage} ?
+                  Are you sure you want to {Message} ?
                 </p>
                 <p className=" text-sm text-zinc-500">
                   This action cannot be undone. All data associated with this
@@ -84,9 +90,9 @@ export default function ConfirmDelete() {
               Cancel
             </Button>
             <Button
-              disabled={loading}
+              disabled={removeFileState.isLoading}
               spinner={<Spinner color="white" size="sm" />}
-              isLoading={loading}
+              isLoading={removeFileState.isLoading}
               color="danger"
               onPress={handleDelete}
             >

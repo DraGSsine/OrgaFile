@@ -5,8 +5,8 @@ export type userDocument = User & Document;
 
 export class Files {
   @Prop({ required: true })
-  id: mongoose.Types.ObjectId;
-  
+  id: string;
+
   @Prop({ required: true })
   url: string;
 

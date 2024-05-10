@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, use, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -11,32 +11,39 @@ import {
   Spinner,
   Tooltip,
 } from "@nextui-org/react";
+import FilesSettings from "./files/FilesSettings";
 import Image from "next/image";
 import {
   FormatTheDate,
   bytesToMegaBytes,
   getFileImage,
 } from "@/helpers/helpers";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteManyFiles, loadFiles, resetFiles, setConfirmFileDelete } from "@/redux/slices/filesSlices";
-import { toast } from "sonner";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
 import { Trash2 } from "lucide-react";
-import FilesSettings from "./FilesSettings";
+import { RouteNameType, filesType } from "@/types/types";
+import { usePathname } from "next/navigation";
+import {
+  setConfirmFileRemoveModal,
+  setRemoveFiles,
+} from "@/redux/slices/filesSlices";
 
-export default function AllUserDeletedFiles() {
+export default function TableFiles({
+  files,
+  isLoading,
+  maxRows,
+  routeName,
+}: {
+  files: filesType[];
+  isLoading: boolean;
+  maxRows: number;
+  routeName: RouteNameType;
+}) {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    files,
-    isLoading,
-    error,
-    isFileDeleted,
-    isManyFileDeleted,
-    isFilesUploaded,
-  } = useSelector((state: RootState) => state.files);
+
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
   const [page, setPage] = React.useState(1);
-  const rowsPerPage = 20;
+  const rowsPerPage = maxRows;
 
   const pages = Math.ceil(files.length / rowsPerPage);
 
@@ -48,39 +55,28 @@ export default function AllUserDeletedFiles() {
   }, [page, files]);
 
   const removeSelectedKeys = () => {
-    dispatch(deleteManyFiles(selectedKeys));
+    dispatch(
+      setRemoveFiles({
+        files: Array.from(selectedKeys),
+        isMany: true,
+        isPremanently: routeName == "removedFiles",
+      })
+    );
+    dispatch(setConfirmFileRemoveModal(true));
     setSelectedKeys(new Set([]));
   };
 
-  useEffect(() => {
-    dispatch(loadFiles(null));
-    if (error) {
-      toast.error("Failed to load files");
-    }
-    switch (true) {
-      case isFileDeleted:
-        toast.success("File deleted successfully");
-        dispatch(setConfirmFileDelete(false))
-        break;
-      case isManyFileDeleted:
-        toast.success("Files deleted successfully");
-        break;
-      case isFilesUploaded:
-        toast.success("Files uploaded successfully");
-        break;
-    }
-    dispatch(resetFiles())
-  }, [isFileDeleted, isManyFileDeleted, isFilesUploaded]);
   return (
     <Table
+      className="border-collapse "
+      aria-label="Example static collection table"
       BaseComponent={TableWraper}
-      aria-label="Controlled table example with dynamic content"
       selectionMode="multiple"
       selectedKeys={selectedKeys}
       onSelectionChange={(keys) => {
         let allKeys = new Set<string>([]);
         if (keys == "all") {
-          files.map((file) => {
+          files.map((file: any) => {
             allKeys.add(file.id);
             setSelectedKeys(allKeys);
           });
@@ -104,7 +100,7 @@ export default function AllUserDeletedFiles() {
         )
       }
       bottomContent={
-        <div className="flex w-full justify-center absolute bottom-10  ">
+        <div className="flex w-full justify-center absolute bottom-5  ">
           <Pagination
             isCompact
             showControls
@@ -118,30 +114,33 @@ export default function AllUserDeletedFiles() {
       }
     >
       <TableHeader>
-        <TableColumn key="name">FILE</TableColumn>
-        <TableColumn className=" w-[160px]" key="size">
+        <TableColumn className=" w-[40%] " key="name">
+          FILE
+        </TableColumn>
+        <TableColumn className=" text-center w-[15%]" key="size">
           SIZE
         </TableColumn>
-        <TableColumn className=" w-[160px]" key="createdAt">
+        <TableColumn className=" text-center w-[15%]" key="createdAt">
           CREATED AT
         </TableColumn>
-        <TableColumn className=" w-[160px]" key="status">
+        <TableColumn className=" text-center w-[15%]" key="status">
           STATUS
         </TableColumn>
-        <TableColumn className="text-center" key="settings">
+        <TableColumn className=" w-[15%] text-center" key="settings">
           SETTINGS
         </TableColumn>
       </TableHeader>
       <TableBody
+        className=""
         emptyContent="No files to load"
         isLoading={isLoading}
         loadingContent={<Spinner />}
         items={items}
       >
-        {(item) => (
+        {(item: filesType) => (
           <TableRow
             key={item.id}
-            className=" cursor-pointer hover:bg-zinc-50 text-xl"
+            className=" cursor-pointer text-xl bg-transparent "
           >
             <TableCell>
               <div className="flex items-center space-x-4">
@@ -150,14 +149,18 @@ export default function AllUserDeletedFiles() {
                   alt="file"
                   width={40}
                   height={40}
-                  className="rounded-md"
+                  className="rounded-md -ml-2 "
                 />
                 <span>{item.name}</span>
               </div>
             </TableCell>
-            <TableCell>{bytesToMegaBytes(item.size)}</TableCell>
-            <TableCell>{FormatTheDate(item.createdAt)}</TableCell>
-            <TableCell>
+            <TableCell className="text-center">
+              {bytesToMegaBytes(item.size)}
+            </TableCell>
+            <TableCell className="text-center">
+              {FormatTheDate(item.createdAt)}
+            </TableCell>
+            <TableCell className="text-center">
               <Chip
                 size="sm"
                 color="warning"
@@ -167,8 +170,8 @@ export default function AllUserDeletedFiles() {
                 {item.topic}
               </Chip>
             </TableCell>
-            <TableCell className=" rounded-xl text-center">
-              <FilesSettings fileId={item.id} />
+            <TableCell className="text-center">
+              <FilesSettings fileId={item.id} routeName={routeName} />
             </TableCell>
           </TableRow>
         )}
@@ -178,8 +181,14 @@ export default function AllUserDeletedFiles() {
 }
 
 const TableWraper = ({ children }: { children: ReactNode }) => {
+  const path = usePathname();
+
   return (
-    <div className=" h-[86.8vh] relative bg-white rounded-t-2xl p-10  shadow-small">
+    <div
+      className={` ${
+        path == "/dashboard" ? " h-[61.6vh] " : "h-[82.2vh]"
+      } bg-white relative rounded-t-2xl p-10  shadow-small`}
+    >
       {children}
     </div>
   );

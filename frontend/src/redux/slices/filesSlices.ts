@@ -1,34 +1,35 @@
+import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-// import { FilesState } from "@/types/types";
 import cookie from "js-cookie";
 
 type FilesState = {
-  loadFiles: {
+  loadFilesState: {
     files: any[];
     isLoading: boolean;
     error: any;
   };
-  recentFiles: {
+  recentFilesState: {
     files: any[];
     isLoading: boolean;
     error: any;
   };
-  removeFile: {
-    file: string | null;
+  removeFileState: {
+    isMany: boolean;
+    confirmRemoveModal: boolean;
+    files: string[];
+    isPremanently: boolean;
+    isLoading: boolean;
     isFileDeleted: boolean;
-    fileDeletLoading: boolean;
-    confirmeRemoveModal: boolean;
     error: any;
   };
-  removeManyFiles: {
-    files: String[];
-    isManyFileDeleted: boolean;
+  loadRemovedFilesState: {
+    files: any[];
     isLoading: boolean;
-    confirmeRemoveModal: boolean;
     error: any;
   };
-  uploadFile: {
+
+  uploadFileState: {
     isFileUploaded: boolean;
     isLoading: boolean;
     openUploadModal: boolean;
@@ -37,31 +38,31 @@ type FilesState = {
 };
 
 const initialState: FilesState = {
-  loadFiles: {
+  loadFilesState: {
     files: [],
     isLoading: true,
     error: null,
   },
-  recentFiles: {
+  recentFilesState: {
     files: [],
     isLoading: true,
     error: null,
   },
-  removeFile: {
-    file: null,
-    confirmeRemoveModal: false,
+  removeFileState: {
+    isMany: false,
+    confirmRemoveModal: false,
+    files: [],
+    isPremanently: false,
+    isLoading: false,
     isFileDeleted: false,
-    fileDeletLoading: false,
     error: null,
   },
-  removeManyFiles: {
+  loadRemovedFilesState: {
     files: [],
-    isManyFileDeleted: false,
     isLoading: true,
-    confirmeRemoveModal: false,
     error: null,
   },
-  uploadFile: {
+  uploadFileState: {
     isFileUploaded: false,
     openUploadModal: false,
     isLoading: false,
@@ -112,13 +113,16 @@ export const uploadFiles = createAsyncThunk(
   }
 );
 
-export const deleteFile = createAsyncThunk(
-  "files/deleteFile",
-  async (fileid: string, { rejectWithValue }) => {
+export const removeFile = createAsyncThunk(
+  "files/removeFileState",
+  async (
+    { fileId, isPremanently }: { fileId: string; isPremanently: boolean },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await fetch(`http://127.0.0.1:9010/api/files/remove`, {
         method: "DELETE",
-        body: JSON.stringify({ fileid }),
+        body: JSON.stringify({ fileId, isPremanently }),
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
@@ -135,15 +139,18 @@ export const deleteFile = createAsyncThunk(
   }
 );
 
-export const deleteManyFiles = createAsyncThunk(
-  "files/deleteManyFiles",
-  async (files: String[], { rejectWithValue }) => {
+export const removeManyFiles = createAsyncThunk(
+  "files/removeManyFiles",
+  async (
+    { files, isPremanently }: { files: string[]; isPremanently: boolean },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await fetch(
         "http://127.0.0.1:9010/api/files/removemany",
         {
           method: "DELETE",
-          body: JSON.stringify({ files }),
+          body: JSON.stringify({ files, isPremanently }),
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${cookie.get("token")}`,
@@ -183,107 +190,164 @@ export const loadRecentFiles = createAsyncThunk(
   }
 );
 
+export const loadRemovedFiles = createAsyncThunk(
+  "files/loadRemovedFiles",
+  async (_, { rejectWithValue }) => {
+    try {
+      const respone = await fetch("http://127.0.0.1:9010/api/files/removed", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.get("token")}`,
+        },
+      });
+      const res = await respone.json();
+      if (!respone.ok) {
+        return rejectWithValue(await res);
+      }
+      return res;
+    } catch (error: any) {
+      throw new error(error);
+    }
+  }
+);
+
 export const filesSlice = createSlice({
   name: "files",
   initialState,
   reducers: {
     resetFiles: (state) => {
-      state.removeFile.isFileDeleted = false;
-      state.removeFile.fileDeletLoading = false;
-      state.removeManyFiles.isManyFileDeleted = false;
-      state.removeManyFiles.isLoading = false;
-      state.uploadFile.isFileUploaded = false;
-      state.uploadFile.isLoading = false;
+      state.loadFilesState.files = [];
+      state.loadFilesState.isLoading = true;
+      state.loadFilesState.error = null;
+      state.recentFilesState.files = [];
+      state.recentFilesState.isLoading = true;
+      state.recentFilesState.error = null;
+      state.removeFileState.isMany = false;
+      state.removeFileState.confirmRemoveModal = false;
+      state.removeFileState.files = [];
+      state.removeFileState.isPremanently = false;
+      state.removeFileState.isLoading = false;
+      state.removeFileState.isFileDeleted = false;
+      state.removeFileState.error = null;
+      state.loadRemovedFilesState.files = [];
+      state.loadRemovedFilesState.isLoading = true;
+      state.loadRemovedFilesState.error = null;
+      state.uploadFileState.isFileUploaded = false;
+      state.uploadFileState.isLoading = false;
+      state.uploadFileState.error = null;
     },
-    setConfirmManyFileRemove: (state, action) => {
-      state.removeManyFiles.files = action.payload.files;
-      state.removeManyFiles.confirmeRemoveModal = action.payload.active;
+    setRemoveFiles: (state, action) => {
+      state.removeFileState.isMany = action.payload.isMany;
+      state.removeFileState.files = action.payload.files;
+      state.removeFileState.isPremanently = action.payload.isPremanently;
     },
-    setConfirmFileRemove: (state, action) => {
-      state.removeFile.file = action.payload.fileId;
-      state.removeFile.confirmeRemoveModal = action.payload.active;
+    setConfirmFileRemoveModal: (state, action) => {
+      state.removeFileState.confirmRemoveModal = action.payload;
     },
     setUploadModal: (state, action) => {
-      state.uploadFile.openUploadModal = action.payload;
+      state.uploadFileState.openUploadModal = action.payload;
     },
   },
   extraReducers(builder) {
-    // Load files
-    builder.addCase(loadAllFiles.pending, (state) => {
-      state.loadFiles.isLoading = true;
-      state.loadFiles.error = null;
-    });
-    builder.addCase(loadAllFiles.fulfilled, (state, action) => {
-      state.loadFiles.files = action.payload;
-      state.loadFiles.isLoading = false;
-      state.loadFiles.error = null;
-    });
-    builder.addCase(loadAllFiles.rejected, (state, action: any) => {
-      state.loadFiles.isLoading = false;
-      state.loadFiles.error = action.payload || null;
-    });
-
-    // Load Recent Files
-    builder.addCase(loadRecentFiles.pending, (state) => {
-      state.recentFiles.isLoading = true;
-      state.recentFiles.error = null;
-    });
-    builder.addCase(loadRecentFiles.fulfilled, (state, action) => {
-      state.recentFiles.files = action.payload;
-      state.recentFiles.isLoading = false;
-      state.recentFiles.error = null;
-    });
-    builder.addCase(loadRecentFiles.rejected, (state, action: any) => {
-      state.recentFiles.isLoading = false;
-      state.recentFiles.error = action.payload || null;
-    });
     // Upload files
 
     builder.addCase(uploadFiles.pending, (state) => {
-      state.uploadFile.isLoading = true;
-      state.uploadFile.error = null;
+      state.uploadFileState.isLoading = true;
+      state.uploadFileState.error = null;
     });
     builder.addCase(uploadFiles.fulfilled, (state) => {
-      state.uploadFile.isFileUploaded = true;
-      state.uploadFile.isLoading = false;
-      state.uploadFile.error = null;
+      state.uploadFileState.isFileUploaded = true;
+      state.uploadFileState.isLoading = false;
+      state.uploadFileState.error = null;
     });
     builder.addCase(uploadFiles.rejected, (state, action: any) => {
-      state.uploadFile.isLoading = false;
-      state.uploadFile.error = action.payload || null;
+      state.uploadFileState.isLoading = false;
+      state.uploadFileState.error = action.payload || null;
     });
 
-    // Delete file
+    // Load files
 
-    builder.addCase(deleteFile.pending, (state) => {
-      state.removeFile.fileDeletLoading = true;
-      state.removeFile.error = null;
+    builder.addCase(loadAllFiles.pending, (state) => {
+      state.loadFilesState.isLoading = true;
+      state.loadFilesState.error = null;
     });
-    builder.addCase(deleteFile.fulfilled, (state) => {
-      state.removeFile.isFileDeleted = true;
-      state.removeFile.fileDeletLoading = false;
-      state.removeFile.error = null;
+    builder.addCase(loadAllFiles.fulfilled, (state, action) => {
+      state.loadFilesState.files = action.payload;
+      state.loadFilesState.isLoading = false;
+      state.loadFilesState.error = null;
     });
-    builder.addCase(deleteFile.rejected, (state, action: any) => {
-      state.removeFile.fileDeletLoading = false;
-      state.removeFile.error = action.payload || null;
+    builder.addCase(loadAllFiles.rejected, (state, action: any) => {
+      state.loadFilesState.isLoading = false;
+      state.loadFilesState.error = action.payload || null;
     });
 
-    // Delete many files
+    // Load Recent Files
 
-    builder.addCase(deleteManyFiles.pending, (state) => {
-      state.removeManyFiles.isLoading = true;
-      state.removeManyFiles.error = null;
+    builder.addCase(loadRecentFiles.pending, (state) => {
+      state.recentFilesState.isLoading = true;
+      state.recentFilesState.error = null;
     });
-    builder.addCase(deleteManyFiles.fulfilled, (state) => {
-      state.removeManyFiles.isManyFileDeleted = true;
-      state.removeManyFiles.isLoading = false;
-      state.removeManyFiles.error = null;
+    builder.addCase(loadRecentFiles.fulfilled, (state, action) => {
+      state.recentFilesState.files = action.payload;
+      state.recentFilesState.isLoading = false;
+      state.recentFilesState.error = null;
     });
-    builder.addCase(deleteManyFiles.rejected, (state, action: any) => {
-      state.removeManyFiles.isLoading = false;
-      state.removeManyFiles.error = action.payload || null;
+    builder.addCase(loadRecentFiles.rejected, (state, action: any) => {
+      state.recentFilesState.isLoading = false;
+      state.recentFilesState.error = action.payload || null;
     });
+
+    // lead removed files
+
+    builder.addCase(loadRemovedFiles.pending, (state) => {
+      state.loadRemovedFilesState.isLoading = true;
+      state.loadRemovedFilesState.error = null;
+    });
+    builder.addCase(loadRemovedFiles.fulfilled, (state, action) => {
+      state.loadRemovedFilesState.files = action.payload;
+      state.loadRemovedFilesState.isLoading = false;
+      state.loadRemovedFilesState.error = null;
+    });
+    builder.addCase(loadRemovedFiles.rejected, (state, action: any) => {
+      state.loadRemovedFilesState.isLoading = false;
+      state.loadRemovedFilesState.error = action.payload || null;
+    });
+
+    // remove files
+
+    builder.addCase(removeFile.pending, (state) => {
+      state.removeFileState.isLoading = true;
+      state.removeFileState.error = null;
+    });
+    builder.addCase(removeFile.fulfilled, (state) => {
+      state.removeFileState.isLoading = false;
+      state.removeFileState.isFileDeleted = true;
+      state.removeFileState.error = null;
+    });
+    builder.addCase(removeFile.rejected, (state, action: any) => {
+      state.removeFileState.isLoading = false;
+      state.removeFileState.error = action.payload || null;
+    });
+
+    // remove many files
+
+    builder.addCase(removeManyFiles.pending, (state) => {
+      state.removeFileState.isLoading = true;
+      state.removeFileState.error = null;
+    });
+    builder.addCase(removeManyFiles.fulfilled, (state) => {
+      state.removeFileState.isLoading = false;
+      state.removeFileState.isFileDeleted = true;
+      state.removeFileState.error = null;
+    });
+    builder.addCase(removeManyFiles.rejected, (state, action: any) => {
+      state.removeFileState.isLoading = false;
+      state.removeFileState.error = action.payload || null;
+    });
+
+
+
 
     // load removed files
   },
@@ -291,7 +355,7 @@ export const filesSlice = createSlice({
 
 export const {
   resetFiles,
-  setConfirmFileRemove,
-  setConfirmManyFileRemove,
+  setConfirmFileRemoveModal,
+  setRemoveFiles,
   setUploadModal,
 } = filesSlice.actions;

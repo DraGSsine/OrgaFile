@@ -8,21 +8,20 @@ import ProgressBar from "./Progress";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
-import { set } from "zod";
 
 export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { uploadFile } = useSelector((state: RootState) => state.files);
+  const { uploadFileState } = useSelector((state: RootState) => state.files);
 
   const startSimulatedProgress = () => {
     setLoading(true);
     setUploadProgress(0);
     const interval = setInterval(() => {
       setUploadProgress((prevProgress) => {
-        if (prevProgress >= 95 || uploadFile.isFileUploaded) {
+        if (prevProgress >= 95 || uploadFileState.isFileUploaded) {
           clearInterval(interval);
           return 100;
         }
@@ -33,14 +32,18 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   };
 
   useEffect(() => {
-    if (uploadFile.isFileUploaded) {
-      router.push("/dashboard/files");
-      toast.success("Files uploaded successfully");
-      dispatch(setUploadModal(false));
-    } else if (uploadFile.error) {
-      toast.error(uploadFile.error.message);
+    if (uploadFileState.isFileUploaded) {
+      setUploadProgress(100);
+      setTimeout(() => {
+        toast.success("Files uploaded successfully");
+        dispatch(setUploadModal(false));
+        router.push("/dashboard/repository");
+      }, 2000);
     }
-  }, [uploadFile.isFileUploaded, uploadFile.error]);
+    if (uploadFileState.error) {
+      toast.error("Failed to upload files");
+    }
+  }, [uploadFileState.isFileUploaded, uploadFileState.error]);
 
   return (
     <Dropzone

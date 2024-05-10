@@ -8,10 +8,10 @@ import { UpdateUploadDto } from './dto/update-upload.dto';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Files, userDocument } from 'src/schemas/auth.schema';
 import { AnalyzeFile } from 'src/ai/openai-setup';
-
+import * as crypto from 'crypto';
 @Injectable()
 export class UploadService {
   constructor(
@@ -32,17 +32,18 @@ export class UploadService {
       throw new NotFoundException('User not found');
     }
     try {
+      const nameKey = `${file.originalname}-${crypto.randomBytes(16).toString('hex')}`;
       const fileType = file.mimetype;
       const params = {
         Bucket: this.configService.get('S3_BUCKET_NAME'),
-        Key: file.originalname,
+        Key: nameKey,
         Body: file.buffer,
       };
 
       await this.s3Client.upload(params).promise();
 
       const data: Files = {
-        id: new mongoose.Types.ObjectId(),
+        id: nameKey,
         topic: 'General',
         url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
         format: file.originalname.split('.').pop(),
@@ -111,32 +112,54 @@ export class UploadService {
     }
   }
 
-  async remove(req: any, fileId: ObjectId) {
+  async remove(req: any, fileId: string, isPremanently: boolean) {
     try {
       const id = req.user.userId;
       const user = await this.userModel.findById(id);
-
+      let DeleteFile: any;
+      let fileIndex: number;
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      const fileIndex = user.files.findIndex(
-        (file: any) => file.id.toString() === fileId.toString(),
-      );
-      if (fileIndex === -1) {
-        throw new NotFoundException('File does not exist');
+      if (isPremanently) {
+        console.log('permanently');
+        console.log(fileId);
+        fileIndex = user.deletedFiles.findIndex(
+          (file: any) => file.id === fileId,
+        );
+        if (fileIndex === -1) {
+          throw new NotFoundException('File does not exist');
+        }
+        // delete file from deletedFiles
+
+        DeleteFile = user.deletedFiles[fileIndex];
+        user.deletedFiles.splice(fileIndex, 1);
+
+        // Delete file from S3
+        const params = {
+          Bucket: this.configService.get('S3_BUCKET_NAME'),
+          Key: DeleteFile.id,
+        };
+        await this.s3Client.deleteObject(params).promise();
+      } else {
+        // Move file to deletedFiles
+        fileIndex = user.files.findIndex((file: any) => file.id === fileId);
+        console.log(fileIndex == -1);
+        if (fileIndex === -1) {
+          throw new NotFoundException('File does not exist');
+        }
+        DeleteFile = user.files[fileIndex];
+        user.deletedFiles.push(DeleteFile);
+        user.files.splice(fileIndex, 1);
       }
-      const DeleteFile = user.files[fileIndex];
-      user.deletedFiles.push(DeleteFile);
-      user.files.splice(fileIndex, 1);
       await user.save();
       return DeleteFile;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to remove file');
+      throw new InternalServerErrorException('Failed to remove file', error.message);
     }
   }
 
-  async removeMany(req: any, fileIds: ObjectId[]) {
-    console.log(fileIds);
+  async removeMany(req: any, fileIds: string[], isPremanently: boolean) {
     try {
       const id = req.user.userId;
       const user = await this.userModel.findById(id);
@@ -144,22 +167,41 @@ export class UploadService {
         throw new NotFoundException('User not found');
       }
       const deletedFiles = [];
-      for (const fileId of fileIds) {
-        const fileIndex = user.files.findIndex(
-          (file: any) => file.id.toString() === fileId.toString(),
-        );
-        if (fileIndex === -1) {
-          throw new NotFoundException('File does not exist');
+      if (isPremanently) {
+        for (const fileId of fileIds) {
+          const fileIndex = user.deletedFiles.findIndex(
+            (file: any) => file.id === fileId,
+          );
+          if (fileIndex === -1) {
+            throw new NotFoundException('File does not exist');
+          }
+          const DeleteFile = user.deletedFiles[fileIndex];
+          user.deletedFiles.splice(fileIndex, 1);
+          deletedFiles.push(DeleteFile);
+          const params = {
+            Bucket: this.configService.get('S3_BUCKET_NAME'),
+            Key: DeleteFile.id,
+          };
+          await this.s3Client.deleteObject(params).promise();
         }
-        const DeleteFile = user.files[fileIndex];
-        user.deletedFiles.push(DeleteFile);
-        deletedFiles.push(DeleteFile);
-        user.files.splice(fileIndex, 1);
+      } else {
+        for (const fileId of fileIds) {
+          const fileIndex = user.files.findIndex(
+            (file: any) => file.id === fileId,
+          );
+          if (fileIndex === -1) {
+            throw new NotFoundException('File does not exist');
+          }
+          const DeleteFile = user.files[fileIndex];
+          user.files.splice(fileIndex, 1);
+          user.deletedFiles.push(DeleteFile);
+          deletedFiles.push(DeleteFile);
+        }
       }
       await user.save();
       return deletedFiles;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to remove files');
+      throw new InternalServerErrorException('Failed to remove files: ',error.message);
     }
   }
 }

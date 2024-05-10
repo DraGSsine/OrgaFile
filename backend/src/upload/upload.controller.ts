@@ -37,32 +37,38 @@ export class UploadController {
     file: Express.Multer.File,
     @Req() req: any,
   ) {
-      return this.uploadService.UploadFiles(file, req.user.userId);
+    return this.uploadService.UploadFiles(file, req.user.userId);
   }
 
   @Get('load')
-  async findAll(@Req() req: any){
+  async findAll(@Req() req: any) {
     return this.uploadService.LoadFiles(req.user.userId);
   }
 
-  @Get("recent")
-  async findRecentFiles(@Req() req: any){
-    console.log("request reached here")
+  @Get('recent')
+  async findRecentFiles(@Req() req: any) {
+    console.log('request reached here');
     return this.uploadService.LoadRecentFiles(req.user.userId);
   }
 
-  @Get("removed-files")
-  async findRemovedFiles(@Req() req: any){
+  @Get('removed')
+  async findRemovedFiles(@Req() req: any) {
     return this.uploadService.LoadRemovedFiles(req.user.userId);
   }
 
   @Delete('remove')
-  remove(@Req() req:any, @Body('fileid') fileId: ObjectId) {
-    return this.uploadService.remove(req, fileId);
+  remove(
+    @Req() req: any,
+    @Body() requestBody: { fileId: string; isPremanently: boolean },
+  ) {
+    const { fileId, isPremanently } = requestBody;
+    console.log("is the file will be removed "+isPremanently)
+    return this.uploadService.remove(req, fileId,isPremanently);
   }
 
   @Delete('removemany')
-  removeMany(@Req() req:any, @Body('files') files: ObjectId[]) {
-    return this.uploadService.removeMany(req, files);
+  removeMany(@Req() req: any, @Body() requestBody: { files: string[]; isPremanently: boolean }) {
+    const { files, isPremanently } = requestBody;
+    return this.uploadService.removeMany(req, files,isPremanently);
   }
 }
