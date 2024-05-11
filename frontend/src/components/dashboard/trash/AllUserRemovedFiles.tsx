@@ -1,12 +1,11 @@
 "use client";
 import TableFiles from "@/components/dashboard/TableFiles";
-import ConfirmDelete from "@/components/dashboard/ConfirmeDelete";
 import { useEffect } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loadRemovedFiles,
-  resetFiles,
+  resetFilesState,
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
@@ -14,7 +13,7 @@ import React from "react";
 
 const AllUserRemovedFiles = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loadRemovedFilesState, removeFileState } =
+  const { loadRemovedFilesState, removeFileState , restoreFileState } =
     useSelector((state: RootState) => state.files);
   useEffect(() => {
     dispatch(loadRemovedFiles());
@@ -30,8 +29,8 @@ const AllUserRemovedFiles = () => {
         toast.success("Files deleted successfully");
         break;
     }
-    dispatch(resetFiles());
-  }, [removeFileState.isFileDeleted]);
+    dispatch(resetFilesState());
+  }, [removeFileState.isFileDeleted,restoreFileState.fileRestored]);
   return (
     <div>
       <h1 className=" font-medium text-2xl pl-2 pb-6 ">All Files</h1>

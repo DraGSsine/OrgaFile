@@ -10,6 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import {
+  ArchiveRestore,
   ArrowDownToLineIcon,
   Clipboard,
   EllipsisVertical,
@@ -19,8 +20,8 @@ import { RouteNameType } from "@/types/types";
 import {
   setConfirmFileRemoveModal,
   setRemoveFiles,
+  restoreFile,
 } from "@/redux/slices/filesSlices";
-import { array } from "zod";
 
 const FilesSettings = ({
   fileId,
@@ -41,6 +42,9 @@ const FilesSettings = ({
           isMany: false,
         })
       );
+    }
+    else if (key === "restore") {
+      dispatch(restoreFile({fileId}));
     }
   }
   return (
@@ -67,9 +71,16 @@ const FilesSettings = ({
           >
             Download file
           </DropdownItem>
-          <DropdownItem startContent={<Clipboard size={20} />} key="copy">
-            Copy link
-          </DropdownItem>
+          {routeName === "removedFiles" ? (
+            <DropdownItem startContent={<ArchiveRestore size={20} />} key="restore">
+              Restore file
+            </DropdownItem>
+          ) : (
+            
+            <DropdownItem hidden={true} startContent={<Clipboard size={20} />} key="copy">
+              Copy link
+            </DropdownItem>
+          )}
           <DropdownItem
             startContent={<Trash2 size={20} />}
             key="delete"

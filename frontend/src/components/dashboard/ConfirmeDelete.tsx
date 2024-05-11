@@ -13,6 +13,7 @@ import {
   removeFile,
   removeManyFiles,
   setConfirmFileRemoveModal,
+  resetFilesState,
 } from "@/redux/slices/filesSlices";
 import { AlertTriangleIcon } from "lucide-react";
 
@@ -23,6 +24,7 @@ export default function ConfirmDelete() {
     ? "delete these files"
     : "delete this file";
   const closeModal = () => {
+    dispatch(resetFilesState())
     dispatch(setConfirmFileRemoveModal(false));
   };
   const handleDelete = () => {

@@ -3,6 +3,17 @@ import mongoose, { Document, ObjectId } from 'mongoose';
 
 export type userDocument = User & Document;
 
+export class Folder{
+  @Prop({ required: true })
+  id: string;
+
+  @Prop({ required: true })
+  topic: string;
+
+  @Prop({ required: true })
+  numberOfFiles: number;
+}
+
 export class Files {
   @Prop({ required: true })
   id: string;

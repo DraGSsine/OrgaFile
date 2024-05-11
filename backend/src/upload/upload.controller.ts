@@ -40,6 +40,11 @@ export class UploadController {
     return this.uploadService.UploadFiles(file, req.user.userId);
   }
 
+  @Post("restore")
+  async restoreFile(@Body() requestBody: { fileId: string }, @Req() req: any) {
+    const { fileId } = requestBody;
+    return this.uploadService.restoreFile(req, fileId);
+  }
   @Get('load')
   async findAll(@Req() req: any) {
     return this.uploadService.LoadFiles(req.user.userId);
@@ -62,13 +67,16 @@ export class UploadController {
     @Body() requestBody: { fileId: string; isPremanently: boolean },
   ) {
     const { fileId, isPremanently } = requestBody;
-    console.log("is the file will be removed "+isPremanently)
-    return this.uploadService.remove(req, fileId,isPremanently);
+    console.log('is the file will be removed ' + isPremanently);
+    return this.uploadService.remove(req, fileId, isPremanently);
   }
 
   @Delete('removemany')
-  removeMany(@Req() req: any, @Body() requestBody: { files: string[]; isPremanently: boolean }) {
+  removeMany(
+    @Req() req: any,
+    @Body() requestBody: { files: string[]; isPremanently: boolean },
+  ) {
     const { files, isPremanently } = requestBody;
-    return this.uploadService.removeMany(req, files,isPremanently);
+    return this.uploadService.removeMany(req, files, isPremanently);
   }
 }

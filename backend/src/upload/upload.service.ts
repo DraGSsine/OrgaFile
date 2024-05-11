@@ -66,6 +66,29 @@ export class UploadService {
     }
   }
 
+  async restoreFile(req: any, fileId: string) {
+    try {
+      const id = req.user.userId;
+      const user = await this.userModel.findById(id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      const fileIndex = user.deletedFiles.findIndex(
+        (file: any) => file.id === fileId,
+      );
+      if (fileIndex === -1) {
+        throw new NotFoundException('File does not exist');
+      }
+      const restoredFile = user.deletedFiles[fileIndex];
+      user.deletedFiles.splice(fileIndex, 1);
+      user.files.push(restoredFile);
+      await user.save();
+      return restoredFile;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to restore file');
+    }
+  }
+
   async LoadFiles(userId: ObjectId) {
     try {
       const files = await this.userModel.findById(userId);
@@ -155,7 +178,10 @@ export class UploadService {
       await user.save();
       return DeleteFile;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to remove file', error.message);
+      throw new InternalServerErrorException(
+        'Failed to remove file',
+        error.message,
+      );
     }
   }
 
@@ -201,7 +227,10 @@ export class UploadService {
       await user.save();
       return deletedFiles;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to remove files: ',error.message);
+      throw new InternalServerErrorException(
+        'Failed to remove files: ',
+        error.message,
+      );
     }
   }
 }

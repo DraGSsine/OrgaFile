@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loadRecentFiles,
-  resetFiles,
+  resetFilesState,
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
@@ -35,7 +35,7 @@ const recentFilesState = () => {
         toast.success("Files uploaded successfully");
         break;
     }
-    dispatch(resetFiles());
+    dispatch(resetFilesState());
   }, [
     removeFileState.isFileDeleted,
     uploadFileState.isFileUploaded,

@@ -35,6 +35,11 @@ type FilesState = {
     openUploadModal: boolean;
     error: any;
   };
+  restoreFileState: {
+    fileRestored: boolean;
+    isLoading: boolean;
+    error: any;
+  };
 };
 
 const initialState: FilesState = {
@@ -65,6 +70,11 @@ const initialState: FilesState = {
   uploadFileState: {
     isFileUploaded: false,
     openUploadModal: false,
+    isLoading: false,
+    error: null,
+  },
+  restoreFileState: {
+    fileRestored: false,
     isLoading: false,
     error: null,
   },
@@ -212,11 +222,34 @@ export const loadRemovedFiles = createAsyncThunk(
   }
 );
 
+export const restoreFile = createAsyncThunk(
+  "files/restoreFile",
+  async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://127.0.0.1:9010/api/files/restore", {
+        method: "POST",
+        body: JSON.stringify({ fileId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.get("token")}`,
+        },
+      });
+      const res = await response.json();
+      if (!response.ok) {
+        return rejectWithValue(await res);
+      }
+      return res;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+);
+
 export const filesSlice = createSlice({
   name: "files",
   initialState,
   reducers: {
-    resetFiles: (state) => {
+    resetFilesState: (state) => {
       state.loadFilesState.files = [];
       state.loadFilesState.isLoading = true;
       state.loadFilesState.error = null;
@@ -236,6 +269,10 @@ export const filesSlice = createSlice({
       state.uploadFileState.isFileUploaded = false;
       state.uploadFileState.isLoading = false;
       state.uploadFileState.error = null;
+      // state.uploadFileState.openUploadModal = false;
+      state.restoreFileState.fileRestored = false;
+      state.restoreFileState.isLoading = false;
+      state.restoreFileState.error = null;      
     },
     setRemoveFiles: (state, action) => {
       state.removeFileState.isMany = action.payload.isMany;
@@ -346,15 +383,26 @@ export const filesSlice = createSlice({
       state.removeFileState.error = action.payload || null;
     });
 
+    // restore file
 
-
-
-    // load removed files
+    builder.addCase(restoreFile.pending, (state) => {
+      state.restoreFileState.isLoading = true;
+      state.restoreFileState.error = null;
+    });
+    builder.addCase(restoreFile.fulfilled, (state) => {
+      state.restoreFileState.isLoading = false;
+      state.restoreFileState.error = null;
+      state.restoreFileState.fileRestored = true;
+    });
+    builder.addCase(restoreFile.rejected, (state, action: any) => {
+      state.restoreFileState.isLoading = false;
+      state.restoreFileState.error = action.payload || null;
+    });
   },
 });
 
 export const {
-  resetFiles,
+  resetFilesState,
   setConfirmFileRemoveModal,
   setRemoveFiles,
   setUploadModal,
