@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { base_url } from "../store";
-import { act } from "react-dom/test-utils";
-
+import Cookies from "js-cookie";
 type FolderState = {
   loadFolders: {
     folders: any[];
@@ -26,7 +25,7 @@ export const loadFolders = createAsyncThunk(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
       if (!res.ok) {
