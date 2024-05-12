@@ -8,7 +8,7 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignInAction } from "@/redux/slices/authSlice";
+import { SignInAction,resetAuthState } from "@/redux/slices/authSlice";
 
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,7 +42,7 @@ export const SignInForm = () => {
       toast.success('Sign in successful')
       router.push('/dashboard')
     }
-
+    dispatch(resetAuthState())
   });
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">

@@ -2,6 +2,7 @@ import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import cookie from "js-cookie";
+import { base_url } from "../store";
 
 type FilesState = {
   loadFilesState: {
@@ -84,7 +85,7 @@ export const loadAllFiles = createAsyncThunk(
   "files/loadAllFiles",
   async (signal: any, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:9010/api/files/load", {
+      const response = await fetch(`${base_url}api/files/load`, {
         method: "GET",
         signal,
         headers: {
@@ -107,7 +108,7 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: any, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:9010/api/files/upload", {
+      const response = await fetch(`${base_url}api/files/upload`, {
         method: "POST",
         body: files,
         headers: {
@@ -130,7 +131,7 @@ export const removeFile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(`http://127.0.0.1:9010/api/files/remove`, {
+      const response = await fetch(`${base_url}api/files/remove`, {
         method: "DELETE",
         body: JSON.stringify({ fileId, isPremanently }),
         headers: {
@@ -157,7 +158,7 @@ export const removeManyFiles = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:9010/api/files/removemany",
+        `${base_url}api/files/removemany`,
         {
           method: "DELETE",
           body: JSON.stringify({ files, isPremanently }),
@@ -182,7 +183,7 @@ export const loadRecentFiles = createAsyncThunk(
   "files/loadRecentFiles",
   async () => {
     try {
-      const response = await fetch("http://127.0.0.1:9010/api/files/recent", {
+      const response = await fetch(`${base_url}api/files/recent`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +205,7 @@ export const loadRemovedFiles = createAsyncThunk(
   "files/loadRemovedFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const respone = await fetch("http://127.0.0.1:9010/api/files/removed", {
+      const respone = await fetch(`${base_url}api/files/removed`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -226,7 +227,7 @@ export const restoreFile = createAsyncThunk(
   "files/restoreFile",
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://127.0.0.1:9010/api/files/restore", {
+      const response = await fetch(`${base_url}api/files/restore`, {
         method: "POST",
         body: JSON.stringify({ fileId }),
         headers: {
@@ -272,7 +273,7 @@ export const filesSlice = createSlice({
       // state.uploadFileState.openUploadModal = false;
       state.restoreFileState.fileRestored = false;
       state.restoreFileState.isLoading = false;
-      state.restoreFileState.error = null;      
+      state.restoreFileState.error = null;
     },
     setRemoveFiles: (state, action) => {
       state.removeFileState.isMany = action.payload.isMany;

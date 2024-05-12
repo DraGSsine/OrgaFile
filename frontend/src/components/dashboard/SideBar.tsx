@@ -6,7 +6,6 @@ import {
 } from "../../../public/icons";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
-import Cookie from "js-cookie";
 import {
   Files,
   FolderMinus,
@@ -15,8 +14,11 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logOut } from "@/redux/slices/authSlice";
 
 const SideBar = () => {
+  const dispatch = useDispatch();
   const pathname = usePathname();
   const routeName =
     pathname
@@ -101,7 +103,7 @@ const SideBar = () => {
         </div>
         <div>
           <Button
-            onClick={() => Cookie.remove("token")}
+            onClick={() => dispatch(logOut()) }
             radius="sm"
             variant="light"
             className="text-black text-[1.1rem] font-medium flex justify-between"

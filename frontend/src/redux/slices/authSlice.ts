@@ -47,7 +47,6 @@ export const SignInAction = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue(await response.json());
       }
-      console.log(response);
       const responseData = await response.json();
       return responseData;
     } catch (error) {
@@ -58,7 +57,19 @@ export const SignInAction = createAsyncThunk(
 export const AuthSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logOut: (state) => {
+      state.isAuthenticated = false;
+      state.userCreated = null;
+      cookie.remove("token");
+      window.location.href = "/";
+    },
+    resetAuthState: (state) => {
+      state.isAuthenticated = false;
+      state.userCreated = null;
+      state.error = null;
+    }
+  },
   extraReducers(builder) {
     builder.addCase(SignUpAction.pending, (state) => {
       state.isLoading = true;
@@ -83,12 +94,13 @@ export const AuthSlice = createSlice({
       cookie.set("token", action.payload.token, {
         expires: 7 * 24 * 60 * 60 * 1000,
       });
-      console.log(action.payload);
     });
     builder.addCase(SignInAction.rejected, (state, action: any) => {
       state.isLoading = false;
-      state.error = action.payload.message || null;
+      state.error = action.payload || null;
       state.userCreated = null;
     });
   },
 });
+
+export const { logOut,resetAuthState } = AuthSlice.actions;

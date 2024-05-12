@@ -11,7 +11,6 @@ export const PasswordInput = ({ errorState, label, name, onChange }: { errorStat
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   useEffect(() => {
-    console.log(error)
     setError(errorState);
   }, [errorState]);
   return (

@@ -11,7 +11,7 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignUpAction } from "@/redux/slices/authSlice";
+import { SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
 const SignupPageForm = () => {
   const router = useRouter();
   const dispatch = useDispatch<any>();
@@ -53,12 +53,12 @@ const SignupPageForm = () => {
   useEffect(() => {
     if (error) {
       toast.error(error.message);
-      console.log(error)
     }
     if (userCreated) {
       toast.success(userCreated.message);
       router.push("/auth/signin");
     }
+    dispatch(resetAuthState())
   }, [error, userCreated]);
 
   return (
