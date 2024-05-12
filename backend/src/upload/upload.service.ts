@@ -12,6 +12,7 @@ import { Model, ObjectId } from 'mongoose';
 import { Files, userDocument } from 'src/schemas/auth.schema';
 import { AnalyzeFile } from 'src/ai/openai-setup';
 import * as crypto from 'crypto';
+import { uploadFiles } from 'src/helpers/uploadFiles';
 @Injectable()
 export class UploadService {
   constructor(
@@ -26,36 +27,15 @@ export class UploadService {
     region: this.configService.get('S3_REGION'),
   });
 
-  async UploadFiles(file: Express.Multer.File, userId: ObjectId) {
+  async UploadFiles(file: Array<Express.Multer.File>, userId: ObjectId) {
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     try {
-      const nameKey = `${file.originalname}-${crypto.randomBytes(16).toString('hex')}`;
-      const fileType = file.mimetype;
-      const params = {
-        Bucket: this.configService.get('S3_BUCKET_NAME'),
-        Key: nameKey,
-        Body: file.buffer,
-      };
-
-      await this.s3Client.upload(params).promise();
-
-      const data: Files = {
-        id: nameKey,
-        topic: 'General',
-        url: `${this.configService.get('S3_BUCKET_URL')}${file.originalname}`,
-        format: file.originalname.split('.').pop(),
-        name: file.originalname,
-        size: file.size,
-        createdAt: new Date(),
-      };
+      
       // const res = await AnalyzeFile(data, fileType);
-      const res = 'General';
-      data.topic = res;
-      user.files.push(data);
-      await user.save();
+      const data = uploadFiles(file, userId, this.s3Client,this.userModel);
       return data;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {
@@ -95,7 +75,6 @@ export class UploadService {
       if (!files) {
         throw new NotFoundException('User not found');
       }
-      console.log(files);
       return files.files;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
@@ -145,8 +124,6 @@ export class UploadService {
         throw new NotFoundException('User not found');
       }
       if (isPremanently) {
-        console.log('permanently');
-        console.log(fileId);
         fileIndex = user.deletedFiles.findIndex(
           (file: any) => file.id === fileId,
         );
@@ -167,7 +144,6 @@ export class UploadService {
       } else {
         // Move file to deletedFiles
         fileIndex = user.files.findIndex((file: any) => file.id === fileId);
-        console.log(fileIndex == -1);
         if (fileIndex === -1) {
           throw new NotFoundException('File does not exist');
         }

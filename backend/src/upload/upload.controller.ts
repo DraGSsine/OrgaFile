@@ -13,11 +13,12 @@ import {
   Req,
   UseGuards,
   Query,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
 import { AuthGuard } from 'src/guards/auth.guard';
 
@@ -27,32 +28,26 @@ export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('files'))
-  async UploadFiles(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 100000000 })],
-      }),
-    )
-    file: Express.Multer.File,
+  @UseInterceptors(FilesInterceptor('files'))
+  uploadFile(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-    return this.uploadService.UploadFiles(file, req.user.userId);
+    return this.uploadService.UploadFiles(files, req.user.userId);
   }
 
-  @Post("restore")
+  @Post('restore')
   async restoreFile(@Body() requestBody: { fileId: string }, @Req() req: any) {
     const { fileId } = requestBody;
     return this.uploadService.restoreFile(req, fileId);
   }
   @Get('load')
-  async findAll(@Req() req: any) {
+  async loadAllFiles(@Req() req: any) {
     return this.uploadService.LoadFiles(req.user.userId);
   }
 
   @Get('recent')
   async findRecentFiles(@Req() req: any) {
-    console.log('request reached here');
     return this.uploadService.LoadRecentFiles(req.user.userId);
   }
 
@@ -67,7 +62,6 @@ export class UploadController {
     @Body() requestBody: { fileId: string; isPremanently: boolean },
   ) {
     const { fileId, isPremanently } = requestBody;
-    console.log('is the file will be removed ' + isPremanently);
     return this.uploadService.remove(req, fileId, isPremanently);
   }
 

@@ -12,6 +12,9 @@ export class Folder{
 
   @Prop({ required: true })
   numberOfFiles: number;
+
+  @Prop()
+  files: Files[];
 }
 
 export class Files {
@@ -53,6 +56,9 @@ export class User {
 
   @Prop({ type: [Files], default: [] })
   files: Files[];
+
+  @Prop({ type: [Folder], default: [] })
+  folders: Folder[];
 
   @Prop({ type: [Files], default: [] })
   deletedFiles: Files[];
