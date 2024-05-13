@@ -57,4 +57,11 @@ export type FilesState = {
   error: {message:string , error:string, statusCode:number} | null;
 };
 
-export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles";
+export type FolderType = {
+  id: string;
+  name: string;
+  topics: string[];
+  files: filesType[];
+};
+
+export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folder";

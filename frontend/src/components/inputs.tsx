@@ -80,12 +80,8 @@ export const SearchInput = () => {
       variant="bordered"
       radius="sm"
       className="custom-input"
-      style={{ width: '450px', height: '40px'}}
-      startContent={
-        <button>
-          <SearchIcon className="h-6 w-6 stroke-zinc-400" />
-        </button>
-      }
+      style={{ width: '450px', height: '400px'}}
+
     />
   );
 };

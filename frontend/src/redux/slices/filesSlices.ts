@@ -2,7 +2,7 @@ import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import cookie from "js-cookie";
-import { base_url } from "../store";
+const base_url = "http://localhost:9010/"
 
 type FilesState = {
   loadFilesState: {

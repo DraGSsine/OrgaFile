@@ -34,7 +34,6 @@ export class UploadService {
     }
     try {
       
-      // const res = await AnalyzeFile(data, fileType);
       const data = uploadFiles(file, userId, this.s3Client,this.userModel);
       return data;
     } catch (error) {

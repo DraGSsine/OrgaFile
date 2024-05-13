@@ -1,21 +1,66 @@
+import { FolderType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { base_url } from "../store";
 import Cookies from "js-cookie";
-type FolderState = {
+
+const base_url = "http://localhost:9010/";
+
+type initialStateType = {
+  downloadFolder: {
+    archive: any;
+    isLoading: boolean;
+    error: boolean;
+  };
+  loadOneFolder: {
+    folder: FolderType | null;
+    isLoading: boolean;
+    error: boolean;
+  };
   loadFolders: {
-    folders: any[];
-    loading: boolean;
-    error: null | string;
+    folders: FolderType[];
+    isLoading: boolean;
+    error: boolean;
   };
 };
 
-const initialState: FolderState = {
+const initialState: initialStateType = {
+  downloadFolder: {
+    archive: null,
+    isLoading: false,
+    error: false,
+  },
+  loadOneFolder: {
+    folder: null,
+    isLoading: true,
+    error: false,
+  },
   loadFolders: {
     folders: [],
-    loading: false,
-    error: null,
+    isLoading: false,
+    error: false,
   },
 };
+
+export const loadOneFolder = createAsyncThunk(
+  "folders/loadOneFolder",
+  async (folderId: string, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${base_url}api/folders/load/${folderId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      if (!res.ok) {
+        return rejectWithValue("Failed to fetch folders");
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const loadFolders = createAsyncThunk(
   "folders/loadFolders",
@@ -39,29 +84,82 @@ export const loadFolders = createAsyncThunk(
   }
 );
 
+export const downloadFolder = createAsyncThunk(
+  "folders/downloadFolder",
+  async ({folderId,folderName}:{folderId:string,folderName:string}, { rejectWithValue, dispatch }) => {
+    try {
+      const res = await fetch(`${base_url}api/folders/download/${folderId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      if (!res.ok) {
+        return rejectWithValue("Failed to fetch folders");
+      }
+      const data = await res.blob();
+      const url = window.URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${folderName}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 
 export const foldersSlice = createSlice({
-  name: "auth",
+  name: "folders",
   initialState,
   reducers: {
     resetFolderState: (state) => {
-      state.loadFolders.loading = false;
-      state.loadFolders.folders = [];
-      state.loadFolders.error = null;
-    }
+      state.loadOneFolder = {
+        folder: null,
+        isLoading: false,
+        error: false,
+      };
+    },
   },
-  extraReducers(builder) {
+  extraReducers: (builder) => {
+    builder.addCase(loadOneFolder.pending, (state) => {
+      state.loadOneFolder.isLoading = true;
+    });
+    builder.addCase(loadOneFolder.fulfilled, (state, action) => {
+      state.loadOneFolder.folder = action.payload;
+      state.loadOneFolder.isLoading = false;
+    });
+    builder.addCase(loadOneFolder.rejected, (state) => {
+      state.loadOneFolder.error = true;
+      state.loadOneFolder.isLoading = false;
+    });
+
     builder.addCase(loadFolders.pending, (state) => {
-      state.loadFolders.loading = true;
+      state.loadFolders.isLoading = true;
     });
-    builder.addCase(loadFolders.fulfilled, (state, action: any) => {
-      state.loadFolders.loading = false;
+    builder.addCase(loadFolders.fulfilled, (state, action) => {
       state.loadFolders.folders = action.payload;
-      state.loadFolders.error = null;
+      state.loadFolders.isLoading = false;
     });
-    builder.addCase(loadFolders.rejected, (state, action: any) => {
-      state.loadFolders.loading = false;
-      state.loadFolders.error = action.payload || null;
+    builder.addCase(loadFolders.rejected, (state) => {
+      state.loadFolders.error = true;
+      state.loadFolders.isLoading = false;
+    });
+
+    builder.addCase(downloadFolder.pending, (state) => {
+      state.downloadFolder.isLoading = true;
+    });
+    builder.addCase(downloadFolder.fulfilled, (state, action) => {
+      state.downloadFolder.archive = action.payload;
+      state.downloadFolder.isLoading = false;
+    });
+    builder.addCase(downloadFolder.rejected, (state) => {
+      state.downloadFolder.error = true;
+      state.downloadFolder.isLoading = false;
     });
   },
 });

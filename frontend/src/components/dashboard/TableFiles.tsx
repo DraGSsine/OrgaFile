@@ -45,13 +45,13 @@ export default function TableFiles({
   const [page, setPage] = React.useState(1);
   const rowsPerPage = maxRows;
 
-  const pages = Math.ceil(files.length / rowsPerPage);
+  const pages = Math.ceil(files?.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return files.slice(start, end);
+    return files?.slice(start, end);
   }, [page, files]);
 
   const removeSelectedKeys = () => {
@@ -76,7 +76,7 @@ export default function TableFiles({
       onSelectionChange={(keys) => {
         let allKeys = new Set<string>([]);
         if (keys == "all") {
-          files.map((file: any) => {
+          files?.map((file: any) => {
             allKeys.add(file.id);
             setSelectedKeys(allKeys);
           });

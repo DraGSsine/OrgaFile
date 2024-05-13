@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Res,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
@@ -21,7 +22,18 @@ export class FoldersController {
 
   @Get('load')
   loadFolders(@Req() req: any) {
-    console.log(req.user.userId)
     return this.foldersService.loadFolders(req.user.userId);
+  }
+  @Get('load/:id')
+  loadOneFolder(@Param('id') id: string,@Req() req: any) {
+    return this.foldersService.loadOneFolder(id,req.user.userId);
+  }
+  @Get('download/:id')
+  async downloadFolder(@Param('id') id: string,@Req() req:any, @Res() res: any) {
+    const archive = await this.foldersService.downloadFolder(id, req.user.userId);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename=archive.zip');
+    res.setHeader('Content-Length', archive.length);
+    res.send(archive);
   }
 }
