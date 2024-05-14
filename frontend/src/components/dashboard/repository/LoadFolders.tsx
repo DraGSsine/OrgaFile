@@ -16,7 +16,6 @@ const LoadFolders = () => {
   );
   useEffect(() => {
     dispatch(loadFolders());
-    console.log(folders);
   }, []);
 
   return (
