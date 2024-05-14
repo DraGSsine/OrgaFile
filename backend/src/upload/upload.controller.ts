@@ -3,23 +3,14 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
   Delete,
   UseInterceptors,
-  UploadedFile,
-  ParseFilePipe,
-  MaxFileSizeValidator,
   Req,
   UseGuards,
-  Query,
   UploadedFiles,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
-import { CreateUploadDto } from './dto/create-upload.dto';
-import { UpdateUploadDto } from './dto/update-upload.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ObjectId } from 'mongoose';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('api/files')
@@ -33,7 +24,7 @@ export class UploadController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-    return this.uploadService.UploadFiles(files, req.user.userId);
+    return this.uploadService.uploadFiles(files, req.user.userId);
   }
 
   @Post('restore')
@@ -43,17 +34,17 @@ export class UploadController {
   }
   @Get('load')
   async loadAllFiles(@Req() req: any) {
-    return this.uploadService.LoadFiles(req.user.userId);
+    return this.uploadService.loadFiles(req.user.userId);
   }
 
   @Get('recent')
   async findRecentFiles(@Req() req: any) {
-    return this.uploadService.LoadRecentFiles(req.user.userId);
+    return this.uploadService.loadRecentFiles(req.user.userId);
   }
 
   @Get('removed')
   async findRemovedFiles(@Req() req: any) {
-    return this.uploadService.LoadRemovedFiles(req.user.userId);
+    return this.uploadService.loadRemovedFiles(req.user.userId);
   }
 
   @Delete('remove')

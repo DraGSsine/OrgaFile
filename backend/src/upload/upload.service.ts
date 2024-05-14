@@ -9,15 +9,23 @@ import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { Files, userDocument } from 'src/schemas/auth.schema';
 import { AnalyzeFile } from 'src/ai/openai-setup';
 import * as crypto from 'crypto';
 import { uploadFiles } from 'src/helpers/uploadFiles';
+import { FileDocument, FileInfo } from 'src/schemas/files.schema';
+import { User, userDocument } from 'src/schemas/auth.schema';
+import {
+  RemovedFiles,
+  RemovedFilesDocument,
+} from 'src/schemas/removedFiles.schema';
 @Injectable()
 export class UploadService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectModel('user') private readonly userModel: Model<userDocument>,
+    @InjectModel('RemovedFile')
+    private readonly removedFilesModel: Model<RemovedFilesDocument>,
+    @InjectModel('File') private readonly fileModel: Model<FileDocument>,
+    @InjectModel('User') private readonly userModel: Model<userDocument>,
   ) {}
   private readonly s3Client = new AWS.S3({
     credentials: {
@@ -27,15 +35,19 @@ export class UploadService {
     region: this.configService.get('S3_REGION'),
   });
 
-  async UploadFiles(file: Array<Express.Multer.File>, userId: ObjectId) {
+  async uploadFiles(files: Array<Express.Multer.File>, userId: ObjectId) {
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     try {
-      
-      const data = uploadFiles(file, userId, this.s3Client,this.userModel);
-      return data;
+      const fileDocuments = await uploadFiles(
+        files,
+        userId,
+        this.fileModel,
+        this.s3Client,
+      );
+      return fileDocuments;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {
         throw new UnsupportedMediaTypeException();
@@ -47,32 +59,29 @@ export class UploadService {
 
   async restoreFile(req: any, fileId: string) {
     try {
-      const id = req.user.userId;
-      const user = await this.userModel.findById(id);
+      const userId = req.user.userId;
+      const user = await this.userModel.findById(userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      const fileIndex = user.deletedFiles.findIndex(
-        (file: any) => file.id === fileId,
+
+      const removedFiles = await this.removedFilesModel.find({ userId });
+
+      await this.fileModel.findOneAndUpdate(
+        { userId },
+        { files: removedFiles },
       );
-      if (fileIndex === -1) {
-        throw new NotFoundException('File does not exist');
-      }
-      const restoredFile = user.deletedFiles[fileIndex];
-      user.deletedFiles.splice(fileIndex, 1);
-      user.files.push(restoredFile);
-      await user.save();
-      return restoredFile;
+      return 'files restored successfully';
     } catch (error) {
-      throw new InternalServerErrorException('Failed to restore file');
+      throw new InternalServerErrorException('Failed to restore files');
     }
   }
 
-  async LoadFiles(userId: ObjectId) {
+  async loadFiles(userId: ObjectId) {
     try {
-      const files = await this.userModel.findById(userId);
+      const files = await this.fileModel.findOne({ userId });
       if (!files) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('Files not found');
       }
       return files.files;
     } catch (error) {
@@ -80,132 +89,162 @@ export class UploadService {
     }
   }
 
-  async LoadRecentFiles(userId: ObjectId) {
+  async loadRecentFiles(userId: ObjectId) {
     try {
-      const user = await this.userModel.findById(userId);
-      if (!user) {
-        throw new NotFoundException('User not found');
+      // load the last 10 files if ther's less than 10 lead them
+      const files = await this.fileModel
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .limit(10);
+      if (!files) {
+        throw new NotFoundException('Files not found');
       }
-
-      const now = new Date();
-      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-      // Filter files that are 7 days old or newer
-      const recentFiles = user.files.filter(
-        (file: any) => new Date(file.createdAt) > oneWeekAgo,
-      );
-
-      return recentFiles;
+      return files;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
     }
   }
 
-  async LoadRemovedFiles(userId: ObjectId) {
+  async loadRemovedFiles(userId: ObjectId) {
     try {
-      const user = await this.userModel.findById(userId);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      return user.deletedFiles;
+      const removedFiles = await this.removedFilesModel.find({ userId });
+      return removedFiles;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
     }
   }
 
-  async remove(req: any, fileId: string, isPremanently: boolean) {
+  async remove(req: any, fileId: string, isPermanently: boolean) {
     try {
-      const id = req.user.userId;
-      const user = await this.userModel.findById(id);
-      let DeleteFile: any;
-      let fileIndex: number;
+      // Find the user by ID
+      const user = await this.userModel.findById(req.user.userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      if (isPremanently) {
-        fileIndex = user.deletedFiles.findIndex(
-          (file: any) => file.id === fileId,
+
+      if (isPermanently) {
+        // Remove the file from removedFilesModel
+        const removeResult = await this.removedFilesModel.updateOne(
+          { userId: req.user.userId },
+          { $pull: { files: { fileId } } },
         );
-        if (fileIndex === -1) {
-          throw new NotFoundException('File does not exist');
+
+        if (removeResult.modifiedCount === 0) {
+          throw new NotFoundException('File not found in removed files');
         }
-        // delete file from deletedFiles
 
-        DeleteFile = user.deletedFiles[fileIndex];
-        user.deletedFiles.splice(fileIndex, 1);
-
-        // Delete file from S3
-        const params = {
+        // Delete the file from S3
+        const fileKey = `${req.user.userId}/${fileId}`;
+        const deleteParams = {
           Bucket: this.configService.get('S3_BUCKET_NAME'),
-          Key: DeleteFile.id,
+          Key: fileKey,
         };
-        await this.s3Client.deleteObject(params).promise();
+
+        await this.s3Client.deleteObject(deleteParams).promise();
+
+        return 'File deleted permanently';
       } else {
-        // Move file to deletedFiles
-        fileIndex = user.files.findIndex((file: any) => file.id === fileId);
-        if (fileIndex === -1) {
-          throw new NotFoundException('File does not exist');
+        const file = await this.fileModel.findOne({
+          userId: req.user.userId,
+          'files.fileId': fileId,
+        });
+
+        if (!file) {
+          throw new NotFoundException('File not found');
         }
-        DeleteFile = user.files[fileIndex];
-        user.deletedFiles.push(DeleteFile);
-        user.files.splice(fileIndex, 1);
+
+        await this.fileModel.updateOne(
+          { userId: req.user.userId },
+          { $pull: { files: { fileId } } },
+        );
+        const removedFile = file.files.find((file) => file.fileId === fileId);
+
+        const doc = await this.removedFilesModel.findOneAndUpdate(
+          { userId: req.user.userId },
+          { $push: { files: removedFile } },
+          { upsert: true, new: true },
+        );
+
+        // If the document was newly created, handle it here
+        if (!doc) {
+          console.log('New document created.');
+        } else {
+          console.log('Document found and updated.');
+        }
+
+        return removedFile;
       }
-      await user.save();
-      return DeleteFile;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to remove file',
-        error.message,
-      );
+      console.error('Error removing file:', error);
+      throw new InternalServerErrorException('Failed to remove file');
     }
   }
 
   async removeMany(req: any, fileIds: string[], isPremanently: boolean) {
     try {
-      const id = req.user.userId;
-      const user = await this.userModel.findById(id);
+      const user = await this.userModel.findById(req.user.userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      const deletedFiles = [];
+
       if (isPremanently) {
-        for (const fileId of fileIds) {
-          const fileIndex = user.deletedFiles.findIndex(
-            (file: any) => file.id === fileId,
-          );
-          if (fileIndex === -1) {
-            throw new NotFoundException('File does not exist');
-          }
-          const DeleteFile = user.deletedFiles[fileIndex];
-          user.deletedFiles.splice(fileIndex, 1);
-          deletedFiles.push(DeleteFile);
-          const params = {
-            Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: DeleteFile.id,
-          };
-          await this.s3Client.deleteObject(params).promise();
+        const removeResult = await this.removedFilesModel.updateOne(
+          { userId: req.user.userId },
+          { $pull: { files: { fileId: { $in: fileIds } } } },
+        );
+
+        if (removeResult.modifiedCount === 0) {
+          throw new NotFoundException('Files not found in removed files');
         }
+
+        const deleteParams = {
+          Bucket: this.configService.get('S3_BUCKET_NAME'),
+          Delete: {
+            Objects: fileIds.map((fileId) => ({
+              Key: `${req.user.userId}/${fileId}`,
+            })),
+          },
+        };
+
+        await this.s3Client.deleteObjects(deleteParams).promise();
+
+        return 'Files deleted permanently';
       } else {
-        for (const fileId of fileIds) {
-          const fileIndex = user.files.findIndex(
-            (file: any) => file.id === fileId,
-          );
-          if (fileIndex === -1) {
-            throw new NotFoundException('File does not exist');
-          }
-          const DeleteFile = user.files[fileIndex];
-          user.files.splice(fileIndex, 1);
-          user.deletedFiles.push(DeleteFile);
-          deletedFiles.push(DeleteFile);
+        const files = await this.fileModel.find({
+          userId: req.user.userId,
+          'files.fileId': { $in: fileIds },
+        });
+
+        if (!files) {
+          throw new NotFoundException('Files not found');
         }
+
+        await this.fileModel.updateOne(
+          { userId: req.user.userId },
+          { $pull: { files: { fileId: { $in: fileIds } } } },
+        );
+
+        const removedFiles = files.map((file) =>
+          file.files.filter((file) => fileIds.includes(file.fileId)),
+        );
+
+        const doc = await this.removedFilesModel.findOneAndUpdate(
+          { userId: req.user.userId },
+          { $push: { files: { $each: removedFiles } } },
+          { upsert: true, new: true },
+        );
+
+        if (!doc) {
+          console.log('New document created.');
+        } else {
+          console.log('Document found and updated.');
+        }
+
+        return removedFiles;
       }
-      await user.save();
-      return deletedFiles;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to remove files: ',
-        error.message,
-      );
+      console.error('Error removing files:', error);
+      throw new InternalServerErrorException('Failed to remove files');
     }
   }
 }
