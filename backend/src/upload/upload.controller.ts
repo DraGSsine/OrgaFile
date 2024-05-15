@@ -50,18 +50,18 @@ export class UploadController {
   @Delete('remove')
   remove(
     @Req() req: any,
-    @Body() requestBody: { fileId: string; isPremanently: boolean },
+    @Body() requestBody: { fileId: string; isPermanently: boolean },
   ) {
-    const { fileId, isPremanently } = requestBody;
-    return this.uploadService.remove(req, fileId, isPremanently);
+    const { fileId, isPermanently } = requestBody;
+    return this.uploadService.remove(req, fileId, isPermanently);
   }
 
   @Delete('removemany')
   removeMany(
     @Req() req: any,
-    @Body() requestBody: { files: string[]; isPremanently: boolean },
+    @Body() requestBody: { files: string[]; isPermanently: boolean },
   ) {
-    const { files, isPremanently } = requestBody;
-    return this.uploadService.removeMany(req, files, isPremanently);
+    const { files, isPermanently } = requestBody;
+    return this.uploadService.removeMany(req, files, isPermanently);
   }
 }

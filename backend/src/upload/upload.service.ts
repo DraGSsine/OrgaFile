@@ -18,6 +18,7 @@ import {
   RemovedFiles,
   RemovedFilesDocument,
 } from 'src/schemas/removedFiles.schema';
+import { FolderDocument } from 'src/schemas/folders.schema';
 @Injectable()
 export class UploadService {
   constructor(
@@ -26,6 +27,7 @@ export class UploadService {
     private readonly removedFilesModel: Model<RemovedFilesDocument>,
     @InjectModel('File') private readonly fileModel: Model<FileDocument>,
     @InjectModel('User') private readonly userModel: Model<userDocument>,
+    @InjectModel('Folder') private readonly folderModel: Model<FolderDocument>,
   ) {}
   private readonly s3Client = new AWS.S3({
     credentials: {
@@ -45,6 +47,7 @@ export class UploadService {
         files,
         userId,
         this.fileModel,
+        this.folderModel,
         this.s3Client,
       );
       return fileDocuments;
@@ -59,21 +62,38 @@ export class UploadService {
 
   async restoreFile(req: any, fileId: string) {
     try {
-      const userId = req.user.userId;
-      const user = await this.userModel.findById(userId);
-      if (!user) {
-        throw new NotFoundException('User not found');
+      const file = await this.removedFilesModel.findOne({
+        userId: req.user.userId,
+        'files.fileId': fileId,
+      });
+
+      if (!file) {
+        throw new NotFoundException('File not found');
       }
 
-      const removedFiles = await this.removedFilesModel.find({ userId });
-
-      await this.fileModel.findOneAndUpdate(
-        { userId },
-        { files: removedFiles },
+      await this.removedFilesModel.updateOne(
+        { userId: req.user.userId },
+        { $pull: { files: { fileId } } },
       );
-      return 'files restored successfully';
+
+      const restoredFile = file.files.find((file) => file.fileId === fileId);
+
+      const doc = await this.fileModel.findOneAndUpdate(
+        { userId: req.user.userId },
+        { $push: { files: restoredFile } },
+        { upsert: true, new: true },
+      );
+
+      if (!doc) {
+        console.log('New document created.');
+      } else {
+        console.log('Document found and updated.');
+      }
+
+      return restoredFile;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to restore files');
+      console.error('Error restoring file:', error);
+      throw new InternalServerErrorException('Failed to restore file');
     }
   }
 
@@ -91,15 +111,20 @@ export class UploadService {
 
   async loadRecentFiles(userId: ObjectId) {
     try {
-      // load the last 10 files if ther's less than 10 lead them
-      const files = await this.fileModel
-        .find({ userId })
-        .sort({ createdAt: -1 })
-        .limit(10);
-      if (!files) {
+      const userFiles = await this.fileModel
+        .findOne({ userId })
+        .sort({ 'files.createdAt': -1 });
+      if (!userFiles) {
         throw new NotFoundException('Files not found');
       }
-      return files;
+
+      const res = userFiles.files
+        .slice()
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        .slice(0, 9);
+
+      console.log(res.length);
+      return res;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
     }
@@ -107,8 +132,11 @@ export class UploadService {
 
   async loadRemovedFiles(userId: ObjectId) {
     try {
-      const removedFiles = await this.removedFilesModel.find({ userId });
-      return removedFiles;
+      const files = await this.removedFilesModel.findOne({ userId });
+      if (!files) {
+        throw new NotFoundException('Files not found');
+      }
+      return files.files;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
     }
@@ -180,14 +208,9 @@ export class UploadService {
     }
   }
 
-  async removeMany(req: any, fileIds: string[], isPremanently: boolean) {
+  async removeMany(req: any, fileIds: string[], isPermanently: boolean) {
     try {
-      const user = await this.userModel.findById(req.user.userId);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      if (isPremanently) {
+      if (isPermanently) {
         const removeResult = await this.removedFilesModel.updateOne(
           { userId: req.user.userId },
           { $pull: { files: { fileId: { $in: fileIds } } } },
@@ -210,7 +233,7 @@ export class UploadService {
 
         return 'Files deleted permanently';
       } else {
-        const files = await this.fileModel.find({
+        const files = await this.fileModel.findOne({
           userId: req.user.userId,
           'files.fileId': { $in: fileIds },
         });
@@ -224,13 +247,14 @@ export class UploadService {
           { $pull: { files: { fileId: { $in: fileIds } } } },
         );
 
-        const removedFiles = files.map((file) =>
-          file.files.filter((file) => fileIds.includes(file.fileId)),
+        const removedFiles = files.files.filter((file) =>
+          fileIds.includes(file.fileId),
         );
+        const flattenedRemovedFiles = removedFiles.flat();
 
         const doc = await this.removedFilesModel.findOneAndUpdate(
           { userId: req.user.userId },
-          { $push: { files: { $each: removedFiles } } },
+          { $push: { files: { $each: flattenedRemovedFiles } } },
           { upsert: true, new: true },
         );
 
@@ -240,7 +264,7 @@ export class UploadService {
           console.log('Document found and updated.');
         }
 
-        return removedFiles;
+        return flattenedRemovedFiles;
       }
     } catch (error) {
       console.error('Error removing files:', error);

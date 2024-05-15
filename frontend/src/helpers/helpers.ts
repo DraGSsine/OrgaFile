@@ -12,7 +12,7 @@ export function bytesToMegaBytes(bytes: number) {
   }
 }
 
-export function FormatTheDate(date: string) {
+export function FormatTheDate(date: Date) {
   const d = new Date(date);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - d.getTime());

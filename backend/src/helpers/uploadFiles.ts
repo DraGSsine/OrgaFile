@@ -1,12 +1,15 @@
 import { UnsupportedMediaTypeException } from '@nestjs/common';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import * as crypto from 'crypto';
 import { AnalyzeFile, organizeFilesAnalysis } from 'src/ai/openai-setup';
 import AWS from 'aws-sdk';
 import { File, FileDocument, FileInfo } from 'src/schemas/files.schema';
-import { Folder } from 'src/schemas/folders.schema';
+import { FolderDocument, FolderInfo } from 'src/schemas/folders.schema';
 
-const addFileToCategoryBasedOnTopic = (categories: any, files: FileInfo[]) => {
+const addFileToCategoryBasedOnTopic = (
+  categories: any,
+  files: FileInfo[],
+): FolderInfo[] => {
   const folders = [];
 
   for (const category of categories) {
@@ -14,9 +17,8 @@ const addFileToCategoryBasedOnTopic = (categories: any, files: FileInfo[]) => {
       category.topics.includes(file.topic),
     );
     folders.push({
-      id: crypto.randomBytes(16).toString('hex'),
+      folderId: new Types.ObjectId(),
       name: category.name,
-      topics: category.topics,
       files: filesInCategory,
       numberOfFiles: filesInCategory.length,
     });
@@ -51,12 +53,18 @@ export const uploadFiles = async (
   files: Array<Express.Multer.File>,
   userId: ObjectId,
   fileModel: Model<FileDocument>,
+  folderModel: Model<FolderDocument>,
   s3Client: AWS.S3,
 ) => {
   try {
     const fileData = [];
-    // const db_folders: Folder[] = await userModel.find({}, 'folders');
-    // const getAllCategories = await getAllCategoryNames(db_folders);
+    const getAllCategories = [];
+
+    // Retrieve all folders categories from MongoDB
+    const db_folders = await folderModel.find({ userId });
+    const allCategories = await getAllCategoryNames(db_folders);
+    getAllCategories.push(...allCategories);
+    // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file) => {
       const nameKey = crypto.randomBytes(16).toString('hex');
       const type = file.mimetype.split('/').pop();
@@ -66,39 +74,66 @@ export const uploadFiles = async (
         Body: file.buffer,
       };
 
+      // Upload file to S3
       await s3Client.upload(params).promise();
+
+      // Prepare file metadata
       const data: FileInfo = {
         fileId: nameKey,
-        topic: 'general',
-        url: `${process.env.S3_BUCKET_URL}${nameKey}`,
+        topic: 'general', // Default topic
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${userId}/${nameKey}`,
         format: file.originalname.split('.').pop(),
         name: file.originalname,
         size: file.size,
         createdAt: new Date(),
       };
 
-      const topic = ' await AnalyzeFile(data, type)';
+      // Analyze file to determine its topic
+      const topic = await AnalyzeFile(data, type);
       data.topic = topic;
+
+      // Push file metadata to array
       fileData.push(data);
     });
+
+    // Wait for all uploads and metadata processing to finish
     await Promise.all(uploadPromises);
-    // const res = await organizeFiles(fileData, getAllCategories);
-    // const folder = addFileToCategoryBasedOnTopic(res, fileData);
 
-    // folder.forEach(async (folder) => {
-    //   const folderToUpdate = await userModel.findOne({
-    //     _id: userId,
-    //     'folders.name': folder.name,
-    //   });
-    //   console.log(folderToUpdate);
-    // });
-
-    const doc = await fileModel.findOneAndUpdate(
-      { userId: userId },
+    // Insert uploaded file metadata into MongoDB
+    await fileModel.findOneAndUpdate(
+      { userId },
       { $push: { files: { $each: fileData } } },
-      { upsert: true, new: true },
+      { upsert: true },
     );
-    return doc;
+    // Organize files into folders based on topics
+    const res = await organizeFiles(fileData, []);
+    // console.log(res);
+    const folderData: FolderInfo[] = addFileToCategoryBasedOnTopic(
+      res,
+      fileData,
+    );
+    for (const folder of folderData) {
+      // Check if the folder exists for the user
+      const existingFolder = await folderModel.findOne({ userId, "folders.name": folder.name });
+    
+      if (existingFolder) {
+        // Folder exists, update its files
+        await folderModel.findOneAndUpdate(
+          { userId, "folders.name": folder.name },
+          { $push: { "folders.$.files": { $each: folder.files } } }
+        );
+      } else {
+        // Folder does not exist, create a new document
+        await folderModel.findOneAndUpdate(
+          { userId },
+          { $push: { folders: folder } },
+          { upsert: true }
+        );
+      }
+    }
+    
+
+    // console.log('Folders:', folderData);
   } catch (error) {
     if (error.code === 'UnsupportedMediaType') {
       throw new UnsupportedMediaTypeException();

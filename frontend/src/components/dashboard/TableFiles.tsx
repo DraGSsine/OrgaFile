@@ -59,7 +59,7 @@ export default function TableFiles({
       setRemoveFiles({
         files: Array.from(selectedKeys),
         isMany: true,
-        isPremanently: routeName == "removedFiles",
+        isPermanently: routeName == "removedFiles",
       })
     );
     dispatch(setConfirmFileRemoveModal(true));
@@ -77,7 +77,7 @@ export default function TableFiles({
         let allKeys = new Set<string>([]);
         if (keys == "all") {
           files?.map((file: any) => {
-            allKeys.add(file.id);
+            allKeys.add(file.fileId);
             setSelectedKeys(allKeys);
           });
         } else {
@@ -102,13 +102,15 @@ export default function TableFiles({
       bottomContent={
         <div className="flex w-full justify-center absolute bottom-5  ">
           <Pagination
-            isCompact
+            initialPage={1}
             showControls
             showShadow
-            color="primary"
-            page={page}
-            total={pages}
+            boundaries={2}
+            total={pages || 1}
+            page={page || 1}
             onChange={(page) => setPage(page)}
+            color="primary"
+            variant="flat"
           />
         </div>
       }
@@ -139,7 +141,7 @@ export default function TableFiles({
       >
         {(item: filesType) => (
           <TableRow
-            key={item.id}
+            key={item.fileId}
             className=" cursor-pointer text-xl bg-transparent "
           >
             <TableCell>
@@ -171,7 +173,7 @@ export default function TableFiles({
               </Chip>
             </TableCell>
             <TableCell className="text-center">
-              <FilesSettings fileId={item.id} routeName={routeName} />
+              <FilesSettings fileId={item.fileId} routeName={routeName} />
             </TableCell>
           </TableRow>
         )}

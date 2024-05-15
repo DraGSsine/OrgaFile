@@ -1,11 +1,13 @@
 import { FolderType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
+import { set } from "zod";
 
 const base_url = "http://localhost:9010/";
 
 type initialStateType = {
   downloadFolder: {
+    downloadingFolderId: string[];
     archive: any;
     isLoading: boolean;
     error: boolean;
@@ -24,6 +26,7 @@ type initialStateType = {
 
 const initialState: initialStateType = {
   downloadFolder: {
+    downloadingFolderId: [],
     archive: null,
     isLoading: false,
     error: false,
@@ -106,6 +109,7 @@ export const downloadFolder = createAsyncThunk(
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
+      return {data, folderId};
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -124,6 +128,10 @@ export const foldersSlice = createSlice({
         error: false,
       };
     },
+    // set downloading foldre
+    setDownloadingFolder: (state, action) => {
+      state.downloadFolder.downloadingFolderId.push(action.payload)
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(loadOneFolder.pending, (state) => {
@@ -154,8 +162,9 @@ export const foldersSlice = createSlice({
       state.downloadFolder.isLoading = true;
     });
     builder.addCase(downloadFolder.fulfilled, (state, action) => {
-      state.downloadFolder.archive = action.payload;
+      state.downloadFolder.archive = JSON.stringify(action.payload.data);
       state.downloadFolder.isLoading = false;
+      state.downloadFolder.downloadingFolderId.filter((id) => id !== action.payload.folderId)
     });
     builder.addCase(downloadFolder.rejected, (state) => {
       state.downloadFolder.error = true;
@@ -164,4 +173,4 @@ export const foldersSlice = createSlice({
   },
 });
 
-export const { resetFolderState } = foldersSlice.actions;
+export const { resetFolderState , setDownloadingFolder } = foldersSlice.actions;

@@ -29,26 +29,26 @@ export default function ConfirmDelete() {
   };
   const handleDelete = () => {
     if (removeFileState.isMany) {
-      if (removeFileState.isPremanently) {
+      if (removeFileState.isPermanently) {
         dispatch(
-          removeManyFiles({ files: removeFileState.files, isPremanently: true })
+          removeManyFiles({ files: removeFileState.files, isPermanently: true })
         );
       } else {
         dispatch(
           removeManyFiles({
             files: removeFileState.files,
-            isPremanently: false,
+            isPermanently: false,
           })
         );
       }
     } else {
-      if (removeFileState.isPremanently) {
+      if (removeFileState.isPermanently) {
         dispatch(
-          removeFile({ fileId: removeFileState.files[0], isPremanently: true })
+          removeFile({ fileId: removeFileState.files[0], isPermanently: true })
         );
       } else {
         dispatch(
-          removeFile({ fileId: removeFileState.files[0], isPremanently: false })
+          removeFile({ fileId: removeFileState.files[0], isPermanently: false })
         );
       }
     }

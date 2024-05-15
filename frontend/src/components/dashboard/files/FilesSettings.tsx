@@ -38,7 +38,7 @@ const FilesSettings = ({
       dispatch(
         setRemoveFiles({
           files: [fileId],
-          isPremanently: routeName === "removedFiles",
+          isPermanently: routeName === "removedFiles",
           isMany: false,
         })
       );

@@ -15,6 +15,7 @@
     "@react-stately/data": "^3.11.2",
     "@reduxjs/toolkit": "^2.2.1",
     "@tremor/react": "^3.16.2",
+    "axios": "^1.6.8",
     "framer-motion": "^11.0.3",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.372.0",

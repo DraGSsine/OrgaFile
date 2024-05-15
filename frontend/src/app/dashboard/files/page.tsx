@@ -19,10 +19,8 @@ const page = () => {
     uploadFileState,
   } = useSelector((state: RootState) => state.files);
   useEffect(() => {
-    dispatch(loadAllFiles(null));
-    if (loadFilesState.error) {
-      toast.error("Failed to load files");
-    }
+    dispatch(loadAllFiles());
+
     switch (true) {
       case !removeFileState.isMany && removeFileState.isFileDeleted:
         toast.success("File deleted successfully");
@@ -34,11 +32,15 @@ const page = () => {
       case uploadFileState.isFileUploaded:
         toast.success("Files uploaded successfully");
         break;
+      case uploadFileState.error:
+        toast.error("Failed to upload files");
+        break;
     }
     dispatch(resetFilesState());
   }, [
     removeFileState.isFileDeleted,
     uploadFileState.isFileUploaded,
+    uploadFileState.error,
   ]);
   return (
     <div>

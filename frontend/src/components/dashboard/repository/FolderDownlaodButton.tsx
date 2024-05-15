@@ -1,20 +1,30 @@
-import { downloadFolder } from "@/redux/slices/foldersSlice";
-import { AppDispatch } from "@/redux/store";
+import { downloadFolder, setDownloadingFolder } from "@/redux/slices/foldersSlice";
+import { AppDispatch, RootState } from "@/redux/store";
 import { FolderType } from "@/types/types";
 import { Button } from "@nextui-org/button";
+import { Spinner } from "@nextui-org/react";
 import { CloudDownload, Download, Link } from "lucide-react";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { set, string } from "zod";
 
 const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
+  const { isLoading, downloadingFolderId } = useSelector(
+    (state: RootState) => state.folders.downloadFolder
+  );
   const dispatch = useDispatch<AppDispatch>();
-  //   const downloadFolder = () => {
 
-  //   };
+  console.log(downloadingFolderId);
+  if (isLoading && downloadingFolderId.includes(folder.folderId)) {
+    return <Spinner size="sm" />;
+  }
   return (
     <Button
       onClick={() => {
-        dispatch(downloadFolder({folderId:folder.id,folderName:folder.name}));
+        dispatch(setDownloadingFolder(folder.folderId));
+        dispatch(
+          downloadFolder({ folderId: folder.folderId, folderName: folder.name })
+        );
       }}
       isIconOnly
       disableRipple

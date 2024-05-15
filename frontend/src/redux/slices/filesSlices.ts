@@ -1,17 +1,18 @@
 import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 import cookie from "js-cookie";
 const base_url = "http://localhost:9010/"
 
 type FilesState = {
   loadFilesState: {
-    files: any[];
+    files: filesType[];
     isLoading: boolean;
     error: any;
   };
   recentFilesState: {
-    files: any[];
+    files: filesType[];
     isLoading: boolean;
     error: any;
   };
@@ -19,7 +20,7 @@ type FilesState = {
     isMany: boolean;
     confirmRemoveModal: boolean;
     files: string[];
-    isPremanently: boolean;
+    isPermanently: boolean;
     isLoading: boolean;
     isFileDeleted: boolean;
     error: any;
@@ -58,7 +59,7 @@ const initialState: FilesState = {
     isMany: false,
     confirmRemoveModal: false,
     files: [],
-    isPremanently: false,
+    isPermanently: false,
     isLoading: false,
     isFileDeleted: false,
     error: null,
@@ -83,43 +84,41 @@ const initialState: FilesState = {
 
 export const loadAllFiles = createAsyncThunk(
   "files/loadAllFiles",
-  async (signal: any, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${base_url}api/files/load`, {
-        method: "GET",
-        signal,
+      const response = await axios.get(`${base_url}api/files/load`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
-      if (!response.ok) {
-        return rejectWithValue(await response.json());
-      }
-      const responseData = await response.json();
-      return responseData;
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to load files');
+      }
     }
   }
 );
 
 export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
-  async (files: any, { rejectWithValue }) => {
+  async (files: FormData, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${base_url}api/files/upload`, {
-        method: "POST",
-        body: files,
+      const response = await axios.post(`${base_url}api/files/upload`, files, {
         headers: {
           Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
-      if (!response.ok) {
-        return rejectWithValue(await response.json());
-      }
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to upload files');
+      }
     }
   }
 );
@@ -127,25 +126,24 @@ export const uploadFiles = createAsyncThunk(
 export const removeFile = createAsyncThunk(
   "files/removeFileState",
   async (
-    { fileId, isPremanently }: { fileId: string; isPremanently: boolean },
+    { fileId, isPermanently }: { fileId: string; isPermanently: boolean },
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(`${base_url}api/files/remove`, {
-        method: "DELETE",
-        body: JSON.stringify({ fileId, isPremanently }),
+      const response = await axios.delete(`${base_url}api/files/remove`, {
+        data: { fileId, isPermanently },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
-      const res = await response.json();
-      if (!response.ok) {
-        return rejectWithValue(await res);
-      }
-      return res;
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to remove file');
+      }
     }
   }
 );
@@ -153,50 +151,45 @@ export const removeFile = createAsyncThunk(
 export const removeManyFiles = createAsyncThunk(
   "files/removeManyFiles",
   async (
-    { files, isPremanently }: { files: string[]; isPremanently: boolean },
+    { files, isPermanently }: { files: string[]; isPermanently: boolean },
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(
-        `${base_url}api/files/removemany`,
-        {
-          method: "DELETE",
-          body: JSON.stringify({ files, isPremanently }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
-        }
-      );
-      const res = await response.json();
-      if (!response.ok) {
-        return rejectWithValue(await res);
-      }
-      return res;
+      const response = await axios.delete(`${base_url}api/files/removemany`, {
+        data: { files, isPermanently },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.get("token")}`,
+        },
+      });
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to remove files');
+      }
     }
   }
 );
 
 export const loadRecentFiles = createAsyncThunk(
   "files/loadRecentFiles",
-  async () => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${base_url}api/files/recent`, {
-        method: "GET",
+      const response = await axios.get(`${base_url}api/files/recent`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
-      const res = await response.json();
-      if (!response.ok) {
-        throw new Error(res);
-      }
-      return res;
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to load recent files');
+      }
     }
   }
 );
@@ -205,20 +198,19 @@ export const loadRemovedFiles = createAsyncThunk(
   "files/loadRemovedFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const respone = await fetch(`${base_url}api/files/removed`, {
-        method: "GET",
+      const response = await axios.get(`${base_url}api/files/removed`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
         },
       });
-      const res = await respone.json();
-      if (!respone.ok) {
-        return rejectWithValue(await res);
-      }
-      return res;
+      return response.data;
     } catch (error: any) {
-      throw new error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to load removed files');
+      }
     }
   }
 );
@@ -227,25 +219,25 @@ export const restoreFile = createAsyncThunk(
   "files/restoreFile",
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${base_url}api/files/restore`, {
-        method: "POST",
-        body: JSON.stringify({ fileId }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
-      const res = await response.json();
-      if (!response.ok) {
-        return rejectWithValue(await res);
-      }
-      return res;
+      const response = await axios.post(`${base_url}api/files/restore`, 
+        { fileId }, 
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
+      return response.data;
     } catch (error: any) {
-      throw new Error(error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue('Failed to restore file');
+      }
     }
   }
 );
-
 export const filesSlice = createSlice({
   name: "files",
   initialState,
@@ -260,7 +252,7 @@ export const filesSlice = createSlice({
       state.removeFileState.isMany = false;
       state.removeFileState.confirmRemoveModal = false;
       state.removeFileState.files = [];
-      state.removeFileState.isPremanently = false;
+      state.removeFileState.isPermanently = false;
       state.removeFileState.isLoading = false;
       state.removeFileState.isFileDeleted = false;
       state.removeFileState.error = null;
@@ -278,7 +270,7 @@ export const filesSlice = createSlice({
     setRemoveFiles: (state, action) => {
       state.removeFileState.isMany = action.payload.isMany;
       state.removeFileState.files = action.payload.files;
-      state.removeFileState.isPremanently = action.payload.isPremanently;
+      state.removeFileState.isPermanently = action.payload.isPermanently;
     },
     setConfirmFileRemoveModal: (state, action) => {
       state.removeFileState.confirmRemoveModal = action.payload;

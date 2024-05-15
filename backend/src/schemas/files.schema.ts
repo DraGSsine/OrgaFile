@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 
 export type FileDocument = File & Document;
 
@@ -29,7 +29,7 @@ export class FileInfo {
 @Schema()
 export class File {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  userId: object;
+  userId: ObjectId;
 
   @Prop({ type: [{ type: FileInfo }], default: [] })
   files: FileInfo[];

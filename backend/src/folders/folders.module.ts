@@ -1,13 +1,19 @@
-// import { Module } from '@nestjs/common';
-// import { FoldersService } from './folders.service';
-// import { FoldersController } from './folders.controller';
-// import { JwtService } from '@nestjs/jwt';
-// import { userSchema } from 'src/schemas/auth.schema';
-// import { MongooseModule } from '@nestjs/mongoose';
+import { Module } from '@nestjs/common';
+import { FoldersService } from './folders.service';
+import { FoldersController } from './folders.controller';
+import { JwtService } from '@nestjs/jwt';
+import { userSchema } from 'src/schemas/auth.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+import { folderSchema } from 'src/schemas/folders.schema';
 
-// @Module({
-//   imports: [MongooseModule.forFeature([{ name: 'user', schema: userSchema }])],
-//   controllers: [FoldersController],
-//   providers: [FoldersService,JwtService],
-// })
-// export class FoldersModule {}
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'user', schema: userSchema },
+      { name: 'Folder', schema: folderSchema },
+    ]),
+  ],
+  controllers: [FoldersController],
+  providers: [FoldersService, JwtService],
+})
+export class FoldersModule {}

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  loadAllFiles,
   loadRecentFiles,
   resetFilesState,
   setConfirmFileRemoveModal,
@@ -11,20 +12,18 @@ import {
 import { toast } from "sonner";
 import React from "react";
 
-const recentFilesState = () => {
+const page = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    recentFilesState,
-    removeFileState,
-    uploadFileState,
-  } = useSelector((state: RootState) => state.files);
+  const { recentFilesState, removeFileState, uploadFileState } = useSelector(
+    (state: RootState) => state.files
+  );
   useEffect(() => {
     dispatch(loadRecentFiles());
     if (recentFilesState.error) {
       toast.error("Failed to load files");
     }
     switch (true) {
-      case removeFileState.isFileDeleted && !removeFileState.isMany:
+      case !removeFileState.isMany && removeFileState.isFileDeleted:
         toast.success("File deleted successfully");
         dispatch(setConfirmFileRemoveModal(false));
         break;
@@ -34,23 +33,23 @@ const recentFilesState = () => {
       case uploadFileState.isFileUploaded:
         toast.success("Files uploaded successfully");
         break;
+      case uploadFileState.error:
+        toast.error("Failed to upload files");
+        break;
     }
     dispatch(resetFilesState());
-  }, [
-    removeFileState.isFileDeleted,
-    uploadFileState.isFileUploaded,
-  ]);
+  }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded,uploadFileState.error]);
   return (
     <div>
-      <h1 className=" font-medium text-2xl pb-6 ">Recent Files</h1>
+      <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploaded </h1>
       <TableFiles
         maxRows={9}
         files={recentFilesState.files}
         isLoading={recentFilesState.isLoading}
-        routeName="recentFiles"
+        routeName="allFiles"
       />
     </div>
   );
 };
 
-export default recentFilesState;
+export default page;

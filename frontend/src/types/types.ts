@@ -34,15 +34,15 @@ export type initialStateType = {
 };
 
 export type filesType = {
+  fileId: string;
   name: string;
-  createdAt: string;
-  size: number;
-  format: string;
   url: string;
-  id: string;
+  format: string;
+  size: number;
+  createdAt: Date;
   topic: string;
 };
-
+ 
 export type FilesState = {
   isFilesUploaded: boolean,
   confirmFileDelete: boolean,
@@ -58,9 +58,8 @@ export type FilesState = {
 };
 
 export type FolderType = {
-  id: string;
+  folderId: string;
   name: string;
-  topics: string[];
   files: filesType[];
 };
 
