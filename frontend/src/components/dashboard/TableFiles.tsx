@@ -10,6 +10,7 @@ import {
   Chip,
   Spinner,
   Tooltip,
+  Skeleton,
 } from "@nextui-org/react";
 import FilesSettings from "./files/FilesSettings";
 import Image from "next/image";
@@ -133,10 +134,9 @@ export default function TableFiles({
         </TableColumn>
       </TableHeader>
       <TableBody
-        className=""
-        emptyContent="No files to load"
+        emptyContent={!isLoading && "No files found"}
         isLoading={isLoading}
-        loadingContent={<Spinner />}
+        loadingContent={<FilesLoadingSkeleton />}
         items={items}
       >
         {(item: filesType) => (
@@ -192,6 +192,18 @@ const TableWraper = ({ children }: { children: ReactNode }) => {
       } bg-white relative rounded-t-2xl p-10  shadow-small`}
     >
       {children}
+    </div>
+  );
+};
+
+const FilesLoadingSkeleton = () => {
+  return (
+    <div className="w-full h-full space-y-4 px-10">
+      {Array.from({ length: 3 }, (_, i) => (
+        <Skeleton className="rounded-lg h-14 w-full top-24 opacity-40 ">
+          <div className="h-24 rounded-lg bg-default-300"></div>
+        </Skeleton>
+      ))}
     </div>
   );
 };

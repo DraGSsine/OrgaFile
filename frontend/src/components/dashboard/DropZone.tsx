@@ -35,7 +35,6 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     if (uploadFileState.isFileUploaded) {
       setUploadProgress(100);
       setTimeout(() => {
-        toast.success("Files uploaded successfully");
         dispatch(setUploadModal(false));
         router.push("/dashboard/repository");
       }, 2000);

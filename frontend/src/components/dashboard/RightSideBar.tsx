@@ -1,6 +1,6 @@
 import { ProgressBar } from "../ProgresBar"
 import { ProgressCircle } from "../ProgressCircle"
-import UserProfile from "../User"
+import UserProfile from "./UserProfile"
 
 export const RightSideBar = () => {
     return (
