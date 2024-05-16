@@ -6,6 +6,7 @@ import FolderDownlaodButton from "./FolderDownlaodButton";
 import { bytesToMegaBytes } from "@/helpers/helpers";
 const FolderComponent = ({ folder }: { folder: FolderType }) => {
   const filesSize = folder.files.reduce((acc, file) => acc + file.size, 0);
+
   return (
     <div className=" w-64 justify-between flex  flex-col bg-blue-50 p-6 rounded-2xl">
       <div className="flex justify-between items-center mb-5">

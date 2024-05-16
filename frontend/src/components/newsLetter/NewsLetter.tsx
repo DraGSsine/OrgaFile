@@ -10,11 +10,11 @@ const NewsLetter = () => {
           <div className="items-end justify-between md:flex">
             <div className="h-max py-16 md:w-6/12 xl:w-5/12">
               <div className="text-center md:text-left">
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white md:w-max md:text-4xl xl:text-5xl">
-                  One step to improve <br />
+                <h2 className="text-3xl max-w-[500px] capitalize lea font-bold text-gray-800 dark:text-white md:w-max md:text-4xl xl:text-5xl">
+                  One step to improve
                   your workflow
                 </h2>
-                <p className="mb-8 mt-6 text-gray-600 dark:text-gray-300">
+                <p className="mb-8 capitalize mt-6 text-gray-600 dark:text-gray-300">
                   Subscribe to our newsletter and get the latest updates and
                   news about DocTify.
                 </p>

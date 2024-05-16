@@ -47,12 +47,12 @@ type FilesState = {
 const initialState: FilesState = {
   loadFilesState: {
     files: [],
-    isLoading: true,
+    isLoading: false,
     error: null,
   },
   recentFilesState: {
     files: [],
-    isLoading: true,
+    isLoading: false,
     error: null,
   },
   removeFileState: {
@@ -66,7 +66,7 @@ const initialState: FilesState = {
   },
   loadRemovedFilesState: {
     files: [],
-    isLoading: true,
+    isLoading: false,
     error: null,
   },
   uploadFileState: {
@@ -242,12 +242,15 @@ export const filesSlice = createSlice({
   name: "files",
   initialState,
   reducers: {
+    resetConfirmFileRemoveModal: (state) => {
+      state.removeFileState.confirmRemoveModal = false;
+    },
     resetFilesState: (state) => {
       state.loadFilesState.files = [];
-      state.loadFilesState.isLoading = true;
+      state.loadFilesState.isLoading = false;
       state.loadFilesState.error = null;
       state.recentFilesState.files = [];
-      state.recentFilesState.isLoading = true;
+      state.recentFilesState.isLoading = false;
       state.recentFilesState.error = null;
       state.removeFileState.isMany = false;
       state.removeFileState.confirmRemoveModal = false;
@@ -257,7 +260,7 @@ export const filesSlice = createSlice({
       state.removeFileState.isFileDeleted = false;
       state.removeFileState.error = null;
       state.loadRemovedFilesState.files = [];
-      state.loadRemovedFilesState.isLoading = true;
+      state.loadRemovedFilesState.isLoading = false;
       state.loadRemovedFilesState.error = null;
       state.uploadFileState.isFileUploaded = false;
       state.uploadFileState.isLoading = false;
@@ -399,4 +402,5 @@ export const {
   setConfirmFileRemoveModal,
   setRemoveFiles,
   setUploadModal,
+  resetConfirmFileRemoveModal,
 } = filesSlice.actions;

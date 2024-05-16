@@ -17,9 +17,9 @@ const Hero = () => {
             </span>
           </h1>
           <p className="pt-4 pb-14 capitalize text-center mt-4 text-zinc-400 max-w-[60%] text-medium leading-8 ">
-            Powered by AI, Doctify offers a sophisticated document management
-            system designed to streamline file and folder organization, ensuring
-            seamless efficiency and accessibility.
+            Doctify is a cutting-edge document management system powered by AI.
+            Our sophisticated platform is designed to streamline file and folder
+            organization, ensuring seamless efficiency and accessibility for you
           </p>
           <div className=" space-x-8">
             <Link href="/auth/signup">

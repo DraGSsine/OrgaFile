@@ -29,6 +29,11 @@
   --zip-color: #1600707e;
   --doc-color: #f5f5f57e;
 }
+/* Global CSS */
+html {
+  scrollbar-gutter: stable;
+}
+
 @layer components {
   .pretty-text-small{
     @apply text-lg mt-4 text-slate-600;

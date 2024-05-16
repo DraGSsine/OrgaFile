@@ -46,11 +46,17 @@ const SideBar = () => {
   return (
     <div className=" min-w-64 w-64 bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
       <div>
-        <div className="px-8">
-          <DocTifyLogo />
+        <div className=" px-3 ">
+          <Link
+            href="/"
+            className="text-3xl font-semibold flex items-center transition focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:shadow-outline-indigo rounded-full px-2 -ml-2"
+          >
+            <span className="font-bold text-primary-500">Doc</span>
+            <span className="text-slate-600">Tify</span>
+          </Link>
         </div>
         <nav
-          className="py-6 w-full flex flex-col flex-wrap"
+          className="py-8 w-full flex flex-col flex-wrap"
           data-hs-accordion-always-open=""
         >
           <ul className="space-y-3">

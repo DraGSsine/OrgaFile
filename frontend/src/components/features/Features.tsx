@@ -7,14 +7,13 @@ const Features = () => {
     <MaxWidthWrapper>
       <div className="mt-48">
         <h2 className="text-4xl lg:text-5xl font-bold lg:tracking-tight">
-          Everything you need to
-          <span className="text-indigo-600"> manage Your Files </span>
+          Experience the Future of
+          <span className="text-primary-500"> File Management </span>
         </h2>
         <p className="pretty-text-small w-[60%]">
-          Doctify redefines file management with simplicity and ease of use at
-          its core. Leveraging AI, it seamlessly brings your files together and
-          organizes them effortlessly, revolutionizing your approach to document
-          organization.
+          Doctify redefines file management, prioritizing simplicity and ease of
+          use. Leveraging AI technology, Doctify effortlessly organizes your
+          files, revolutionizing your approach to document organization.
         </p>
       </div>
       <div className=" w-full">
@@ -34,23 +33,25 @@ const Features = () => {
             </div>
             <div className="mt-2">
               <span className="bg-purple-100 border-purple-200 border text-purple-600 rounded-full text-xs font-medium px-3 py-1 ">
-                <span> Artificle intiligent </span>
+                <span> AI File Organization </span>
               </span>
               <h3 className="text-xl lg:text-2xl font-medium mt-2">
-                <span> File Organaizer </span>
+                <span> Smart Document Categorization </span>
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify harnesses the advanced capabilities of GPT-4 to
-                  efficiently process and organize your files. Seamlessly
-                  categorizing them into folders based on their respective
-                  topics, Doctify streamlines your document management
-                  experience
+                  Doctify harnesses the advanced capabilities of AI to
+                  efficiently process and organize your files. Our AI seamlessly
+                  categorizes your documents into relevant folders, streamlining
+                  your document management experience.
                 </span>
               </p>
             </div>
           </div>
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-2">
+          <div className="rounded-2xl relative p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-2">
+            <span className="bg-green-100 border-green-200 absolute z-10 -top-3 -translate-x-[50%]  left-[50%] border text-green-600 rounded-full text-xs font-medium px-3 py-1">
+              Coming soon
+            </span>
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
@@ -64,11 +65,11 @@ const Features = () => {
               />
             </div>
             <div className="mt-2">
-              <span className="bg-indigo-100 border-indigo-200 border text-indigo-600 rounded-full text-xs font-medium px-3 py-1 ">
-                <span>simplisty</span>
+              <span className="bg-indigo-100 border-indigo-200 border text-primary-500 rounded-full text-xs font-medium px-3 py-1 ">
+                <span>AI-Powered Search</span>
               </span>
               <h3 className="text-xl lg:text-2xl font-medium mt-2">
-                <span>Ai search</span>
+                <span>Intuitive File Retrieval</span>
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
@@ -80,8 +81,11 @@ const Features = () => {
             </div>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-10 gap-10">
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-10 gap-10 ">
+          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 relative ring-gray-200/50 shadow hover:shadow-lg">
+            <span className="bg-green-100 border-green-200 absolute z-10 -top-3 -translate-x-[50%]  left-[50%] border text-green-600 rounded-full text-xs font-medium px-3 py-1">
+              Coming soon
+            </span>
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-60">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
 
@@ -96,16 +100,17 @@ const Features = () => {
               />
             </div>
             <div className="mt-2">
-              <span className="bg-indigo-100 border-indigo-200 border text-indigo-600 rounded-full text-xs font-medium px-3 py-1 ">
-                <span>Team Work</span>
+              <span className="bg-indigo-100 border-indigo-200 border text-primary-500 rounded-full text-xs font-medium px-3 py-1 ">
+                <span>Efficient Teamwork</span>
               </span>
               <h3 className="text-xl lg:text-2xl font-medium mt-2">
-                <span>Share Files</span>
+                <span>Easily Share Files</span>
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Easily and swiftly share your files with your team using
-                  Doctify's intuitive sharing features
+                  Doctify's intuitive sharing features allow you to easily and
+                  swiftly share files with your team, facilitating seamless
+                  collaboration and productivity.
                 </span>
               </p>
             </div>
@@ -125,15 +130,17 @@ const Features = () => {
             </div>
             <div className="mt-2">
               <span className="bg-purple-100 border-purple-200 border text-purple-600 rounded-full text-xs font-medium px-3 py-1 ">
-                <span>cloud</span>
+                <span>Cloud Storage</span>
               </span>
               <h3 className="text-xl lg:text-2xl font-medium mt-2">
-                <span>File storage</span>
+                <span>Store Files Safely</span>
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Safely store your files in the cloud with Doctify, ensuring
-                  secure access from anywhere in the world.
+                  Store your files securely in the cloud with Doctify. Our
+                  platform ensures that your documents are accessible from
+                  anywhere in the world, while maintaining robust security
+                  measures.
                 </span>
               </p>
             </div>
@@ -152,16 +159,17 @@ const Features = () => {
               />
             </div>
             <div className="mt-2">
-              <span className="bg-gray-100 border-gray-200 border text-gray-800 rounded-full text-xs font-medium px-3 py-1 ">
-                <span>Modern</span>
+              <span className="bg-indigo-100 border-indigo-200 border text-primary-500 rounded-full text-xs font-medium px-3 py-1 ">
+                <span>Contemporary Design</span>
               </span>
               <h3 className="text-xl lg:text-2xl font-medium mt-2">
-                <span> Experince </span>
+                <span> User-Friendly Experience </span>
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Our focus is on making Doctify incredibly user-friendly and
-                  straightforward.
+                  At Doctify, we prioritize the user experience. Our platform is
+                  designed to be incredibly user-friendly and straightforward,
+                  making file management a breeze.
                 </span>
               </p>
             </div>

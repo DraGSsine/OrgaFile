@@ -33,7 +33,7 @@ const initialState: initialStateType = {
   },
   loadOneFolder: {
     folder: null,
-    isLoading: true,
+    isLoading: false,
     error: false,
   },
   loadFolders: {
@@ -124,6 +124,17 @@ export const foldersSlice = createSlice({
     resetFolderState: (state) => {
       state.loadOneFolder = {
         folder: null,
+        isLoading: false,
+        error: false,
+      };
+      state.loadFolders = {
+        folders: [],
+        isLoading: false,
+        error: false,
+      };
+      state.downloadFolder = {
+        downloadingFolderId: [],
+        archive: null,
         isLoading: false,
         error: false,
       };

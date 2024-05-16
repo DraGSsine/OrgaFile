@@ -75,12 +75,7 @@ const FilesSettings = ({
             <DropdownItem startContent={<ArchiveRestore size={20} />} key="restore">
               Restore file
             </DropdownItem>
-          ) : (
-            
-            <DropdownItem hidden={true} startContent={<Clipboard size={20} />} key="copy">
-              Copy link
-            </DropdownItem>
-          )}
+          ) : null as any}
           <DropdownItem
             startContent={<Trash2 size={20} />}
             key="delete"

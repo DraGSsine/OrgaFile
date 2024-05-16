@@ -13,6 +13,7 @@ const config: Config = {
       screens: {
         xs: "475px",
         "3xl": "1920px",
+        sm: "720px",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -49,7 +50,7 @@ const config: Config = {
           colors: {
             primary: {
               foreground: "#FFFFFF",
-              DEFAULT: "#3b37ff",
+              DEFAULT: "#0070F0",
             },
           },
         },

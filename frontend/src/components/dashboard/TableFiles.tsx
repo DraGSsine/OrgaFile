@@ -200,7 +200,7 @@ const FilesLoadingSkeleton = () => {
   return (
     <div className="w-full h-full space-y-4 px-10">
       {Array.from({ length: 3 }, (_, i) => (
-        <Skeleton className="rounded-lg h-14 w-full top-24 opacity-40 ">
+        <Skeleton className="rounded-lg h-14 w-full top-24 opacity-35 ">
           <div className="h-24 rounded-lg bg-default-300"></div>
         </Skeleton>
       ))}

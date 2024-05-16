@@ -2,15 +2,16 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("token")?.value;
-
+  const protectedRoutes = ["/dashboard"];
+  const publicRoutes = ["/", "/auth/signin", "/auth/signup"];
   try {
-    if (request.nextUrl.pathname.startsWith("/dashboard")) {
+    if (protectedRoutes.includes(request.nextUrl.pathname)) {
       if (!accessToken) {
         return NextResponse.redirect(
           new URL("/auth/signin", request.nextUrl.origin).href
         );
       }
-    } else if (request.nextUrl.pathname.startsWith("/auth")) {
+    } else if (publicRoutes.includes(request.nextUrl.pathname)) {
       if (accessToken) {
         return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin).href);
       }
