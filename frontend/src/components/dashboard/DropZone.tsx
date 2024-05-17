@@ -42,7 +42,7 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     if (uploadFileState.error) {
       toast.error("Failed to upload files");
     }
-  }, [uploadFileState.isFileUploaded, uploadFileState.error,router,dispatch]);
+  }, [uploadFileState.isFileUploaded, uploadFileState.error]);
 
   return (
     <Dropzone

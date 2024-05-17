@@ -66,14 +66,13 @@ export const uploadFiles = async (
     getAllCategories.push(...allCategories);
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file) => {
-      const nameKey = crypto.randomBytes(16).toString('hex');
       const type = file.mimetype.split('/').pop();
+      const nameKey = `${crypto.randomBytes(16).toString('hex')}-${file.originalname}`;
       const params = {
         mimetype: file.mimetype,
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${userId}/${nameKey}`,
         Body: file.buffer,
-        ContentDisposition: 'inline',
       };
 
       // Upload file to S3
@@ -116,26 +115,24 @@ export const uploadFiles = async (
     );
     for (const folder of folderData) {
       // Check if the folder exists for the user
-      const existingFolder = await folderModel.findOne({
-        userId,
-        'folders.name': folder.name,
-      });
-
+      const existingFolder = await folderModel.findOne({ userId, "folders.name": folder.name });
+    
       if (existingFolder) {
         // Folder exists, update its files
         await folderModel.findOneAndUpdate(
-          { userId, 'folders.name': folder.name },
-          { $push: { 'folders.$.files': { $each: folder.files } } },
+          { userId, "folders.name": folder.name },
+          { $push: { "folders.$.files": { $each: folder.files } } }
         );
       } else {
         // Folder does not exist, create a new document
         await folderModel.findOneAndUpdate(
           { userId },
           { $push: { folders: folder } },
-          { upsert: true },
+          { upsert: true }
         );
       }
     }
+    
 
     // console.log('Folders:', folderData);
   } catch (error) {
