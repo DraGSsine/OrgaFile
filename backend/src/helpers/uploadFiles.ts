@@ -69,9 +69,11 @@ export const uploadFiles = async (
       const nameKey = crypto.randomBytes(16).toString('hex');
       const type = file.mimetype.split('/').pop();
       const params = {
+        mimetype: file.mimetype,
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${userId}/${nameKey}`,
         Body: file.buffer,
+        ContentDisposition: 'inline',
       };
 
       // Upload file to S3
@@ -114,24 +116,26 @@ export const uploadFiles = async (
     );
     for (const folder of folderData) {
       // Check if the folder exists for the user
-      const existingFolder = await folderModel.findOne({ userId, "folders.name": folder.name });
-    
+      const existingFolder = await folderModel.findOne({
+        userId,
+        'folders.name': folder.name,
+      });
+
       if (existingFolder) {
         // Folder exists, update its files
         await folderModel.findOneAndUpdate(
-          { userId, "folders.name": folder.name },
-          { $push: { "folders.$.files": { $each: folder.files } } }
+          { userId, 'folders.name': folder.name },
+          { $push: { 'folders.$.files': { $each: folder.files } } },
         );
       } else {
         // Folder does not exist, create a new document
         await folderModel.findOneAndUpdate(
           { userId },
           { $push: { folders: folder } },
-          { upsert: true }
+          { upsert: true },
         );
       }
     }
-    
 
     // console.log('Folders:', folderData);
   } catch (error) {

@@ -149,7 +149,7 @@ export class UploadService {
       if (!user) {
         throw new NotFoundException('User not found');
       }
-
+      console.log(isPermanently)
       if (isPermanently) {
         // Remove the file from removedFilesModel
         const removeResult = await this.removedFilesModel.updateOne(
@@ -163,6 +163,7 @@ export class UploadService {
 
         // Delete the file from S3
         const fileKey = `${req.user.userId}/${fileId}`;
+        console.log(fileKey)
         const deleteParams = {
           Bucket: this.configService.get('S3_BUCKET_NAME'),
           Key: fileKey,

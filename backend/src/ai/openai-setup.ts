@@ -11,7 +11,7 @@ export async function AnalyzeFile(data: FileInfo, type: string) {
   const model = new ChatMistralAI({
     temperature: 1,
     apiKey: process.env.MISTRAL_API_KEY,
-    model: 'mistral-large-latest',
+    model: 'open-mistral-7b',
   });
 
   try {
