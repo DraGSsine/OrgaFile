@@ -56,7 +56,7 @@ const config: Config = {
         },
       },
     }),
-    function ({ addBase }) {
+    function ({ addBase }:{addBase: any}) {
       const newUtil = {
         ".scrollbar-thin": {
           scrollbarWidth: "thin",

@@ -59,7 +59,7 @@ const SignupPageForm = () => {
       router.push("/auth/signin");
     }
     dispatch(resetAuthState())
-  }, [error, userCreated]);
+  }, [error, userCreated,dispatch,router]);
 
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">

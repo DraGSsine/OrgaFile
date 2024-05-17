@@ -53,7 +53,7 @@ export default function TableFiles({
     const end = start + rowsPerPage;
 
     return files?.slice(start, end);
-  }, [page, files]);
+  }, [page, files,rowsPerPage]);
 
   const removeSelectedKeys = () => {
     dispatch(
@@ -109,7 +109,7 @@ export default function TableFiles({
             boundaries={2}
             total={pages || 1}
             page={page || 1}
-            onChange={(page) => setPage(page)}
+            onChange={(Page) => setPage(Page)}
             color="primary"
             variant="flat"
           />
@@ -188,7 +188,7 @@ const TableWraper = ({ children }: { children: ReactNode }) => {
   return (
     <div
       className={` ${
-        path == "/dashboard" ? " h-[61.6vh] " : "h-[82.2vh]"
+        path == "/dashboard" ? " h-[63.2vh] " : "h-[84.3vh]"
       } bg-white relative rounded-t-2xl p-10  shadow-small`}
     >
       {children}
@@ -200,7 +200,7 @@ const FilesLoadingSkeleton = () => {
   return (
     <div className="w-full h-full space-y-4 px-10">
       {Array.from({ length: 3 }, (_, i) => (
-        <Skeleton className="rounded-lg h-14 w-full top-24 opacity-35 ">
+        <Skeleton key={i} className="rounded-lg h-14 w-full top-24 opacity-35 ">
           <div className="h-24 rounded-lg bg-default-300"></div>
         </Skeleton>
       ))}

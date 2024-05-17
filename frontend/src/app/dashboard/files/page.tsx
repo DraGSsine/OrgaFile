@@ -9,18 +9,25 @@ import {
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
-import React from "react";
 
-const page = () => {
+const AllFilesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
     loadFilesState,
     removeFileState,
     uploadFileState,
   } = useSelector((state: RootState) => state.files);
-  useEffect(() => {
+
+  const LoadAllFiles = () => {
     dispatch(loadAllFiles());
 
+    if (loadFilesState.error) {
+      toast.error("Failed to load files");
+      console.error(loadFilesState.error); // Logging the error
+    }
+  };
+
+  const handleFileStates = () => {
     switch (true) {
       case !removeFileState.isMany && removeFileState.isFileDeleted:
         toast.success("File deleted successfully");
@@ -34,17 +41,27 @@ const page = () => {
         break;
       case uploadFileState.error:
         toast.error("Failed to upload files");
+        console.error(uploadFileState.error); // Logging the error
         break;
     }
+  };
+
+  // Calling functions in useEffect
+  useEffect(() => {
+    LoadAllFiles();
+    handleFileStates();
     dispatch(resetFilesState());
   }, [
+    removeFileState.error,
     removeFileState.isFileDeleted,
     uploadFileState.isFileUploaded,
     uploadFileState.error,
+    dispatch
   ]);
+
   return (
     <div>
-      <h1 className=" font-medium text-2xl pl-2 pb-6 ">All Files</h1>
+      <h1 className=" font-medium text-2xl pl-2 pb-6 "> All Files </h1>
       <TableFiles
         maxRows={12}
         files={loadFilesState.files}
@@ -55,4 +72,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AllFilesPage;

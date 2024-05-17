@@ -1,7 +1,7 @@
 import AllUserRemovedFiles from '@/components/dashboard/trash/AllUserRemovedFiles'
 import React from 'react'
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <AllUserRemovedFiles/>
@@ -9,4 +9,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

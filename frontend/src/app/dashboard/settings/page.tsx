@@ -1,7 +1,7 @@
 import React from 'react'
 import EditProfile from '@/components/dashboard/settings/EditProfile'
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <EditProfile />
@@ -9,4 +9,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

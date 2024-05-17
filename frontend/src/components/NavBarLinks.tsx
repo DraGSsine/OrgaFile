@@ -3,13 +3,25 @@ import { Tab, Tabs } from "@nextui-org/react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+type TabItem = {
+  key: string;
+  title: string;
+};
+
+const tabItems: TabItem[] = [
+  { key: "/", title: "Home" },
+  { key: "/about", title: "About" },
+  { key: "/pricing", title: "Pricing" },
+  { key: "/contact", title: "Contact" },
+];
+
 const NavBarLinks = () => {
   const router = useRouter();
   const pathName = usePathname();
-  const [activeTab, setActiveTab] = useState<string | number>("/");
+  const [activeTab, setActiveTab] = useState<string | number>(pathName || "/");
 
   useEffect(() => {
-    setActiveTab(pathName);
+    setActiveTab(pathName || "/");
   }, [pathName]);
 
   const handleSelectedTab = (key: string | number) => {
@@ -22,14 +34,13 @@ const NavBarLinks = () => {
       <Tabs
         color="primary"
         selectedKey={activeTab}
-        onSelectionChange={(key) => handleSelectedTab(key)}
+        onSelectionChange={handleSelectedTab}
         aria-label="Tabs colors"
         radius="full"
       >
-        <Tab key="/" title="Home" />
-        <Tab key="/about" title="About" />
-        <Tab key="/pricing" title="Pricing" />
-        <Tab key="/contact" title="Contact" />
+        {tabItems.map((item) => (
+          <Tab key={item.key} title={item.title} />
+        ))}
       </Tabs>
     </nav>
   );

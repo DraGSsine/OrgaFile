@@ -3,9 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import cookie from "js-cookie";
-const base_url = "http://localhost:9010/"
+const base_url = "http://localhost:9010/";
 
 type FilesState = {
+  toggleFile: {
+    isOpen: boolean;
+  };
   loadFilesState: {
     files: filesType[];
     isLoading: boolean;
@@ -45,6 +48,9 @@ type FilesState = {
 };
 
 const initialState: FilesState = {
+  toggleFile: {
+    isOpen: false,
+  },
   loadFilesState: {
     files: [],
     isLoading: false,
@@ -97,7 +103,7 @@ export const loadAllFiles = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to load files');
+        return rejectWithValue("Failed to load files");
       }
     }
   }
@@ -117,7 +123,7 @@ export const uploadFiles = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to upload files');
+        return rejectWithValue("Failed to upload files");
       }
     }
   }
@@ -142,7 +148,7 @@ export const removeFile = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to remove file');
+        return rejectWithValue("Failed to remove file");
       }
     }
   }
@@ -167,7 +173,7 @@ export const removeManyFiles = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to remove files');
+        return rejectWithValue("Failed to remove files");
       }
     }
   }
@@ -188,7 +194,7 @@ export const loadRecentFiles = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to load recent files');
+        return rejectWithValue("Failed to load recent files");
       }
     }
   }
@@ -209,7 +215,7 @@ export const loadRemovedFiles = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to load removed files');
+        return rejectWithValue("Failed to load removed files");
       }
     }
   }
@@ -219,8 +225,9 @@ export const restoreFile = createAsyncThunk(
   "files/restoreFile",
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${base_url}api/files/restore`, 
-        { fileId }, 
+      const response = await axios.post(
+        `${base_url}api/files/restore`,
+        { fileId },
         {
           headers: {
             "Content-Type": "application/json",
@@ -233,7 +240,7 @@ export const restoreFile = createAsyncThunk(
       if (error.response) {
         return rejectWithValue(error.response.data);
       } else {
-        return rejectWithValue('Failed to restore file');
+        return rejectWithValue("Failed to restore file");
       }
     }
   }
@@ -242,6 +249,9 @@ export const filesSlice = createSlice({
   name: "files",
   initialState,
   reducers: {
+    ToggleFile: (state, action) => {
+      state.toggleFile.isOpen = action.payload;
+    },
     resetConfirmFileRemoveModal: (state) => {
       state.removeFileState.confirmRemoveModal = false;
     },
@@ -403,4 +413,5 @@ export const {
   setRemoveFiles,
   setUploadModal,
   resetConfirmFileRemoveModal,
+  ToggleFile,
 } = filesSlice.actions;

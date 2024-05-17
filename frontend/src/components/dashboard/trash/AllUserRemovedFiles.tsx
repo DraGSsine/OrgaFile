@@ -13,7 +13,7 @@ import React from "react";
 
 const AllUserRemovedFiles = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loadRemovedFilesState, removeFileState , restoreFileState } =
+  const { loadRemovedFilesState, removeFileState, restoreFileState } =
     useSelector((state: RootState) => state.files);
   useEffect(() => {
     dispatch(loadRemovedFiles());
@@ -21,7 +21,7 @@ const AllUserRemovedFiles = () => {
       toast.error("Failed to load files");
     }
     switch (true) {
-      case removeFileState.isFileDeleted && !removeFileState.isMany:
+      case removeFileState.isFileDeleted && removeFileState.files.length <= 1:
         toast.success("File deleted successfully");
         dispatch(setConfirmFileRemoveModal(false));
         break;
@@ -30,10 +30,10 @@ const AllUserRemovedFiles = () => {
         break;
     }
     dispatch(resetFilesState());
-  }, [removeFileState.isFileDeleted,restoreFileState.fileRestored]);
+  }, [removeFileState.isFileDeleted, restoreFileState.fileRestored,loadRemovedFilesState.error,dispatch]);
   return (
     <div>
-      <h1 className=" font-medium text-2xl pl-2 pb-6 ">All Files</h1>
+      <h1 className="font-medium text-2xl pl-2 pb-6">My Trash</h1>
       <TableFiles
         maxRows={12}
         files={loadRemovedFilesState.files}

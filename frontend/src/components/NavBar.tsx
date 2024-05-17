@@ -25,7 +25,12 @@ const NavBar = () => {
     return null;
   }
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className=" py-2 " >
+    <Navbar
+      isBordered
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+      className=" py-2 "
+    >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -70,7 +75,7 @@ const NavBar = () => {
       </NavbarContent>
 
       <NavbarMenu className="sm:hidden">
-        <div className="flex flex-col" >
+        <div className="flex flex-col">
           <Link href="/">
             <Button
               variant="flat"

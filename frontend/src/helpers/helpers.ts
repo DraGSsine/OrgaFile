@@ -72,7 +72,7 @@ export function getFileImage(format: string) : string
     case excelFormats.includes(format):
       return "/formatImages/excel.png";
     case wordFormats.includes(format):
-      return "/formatImages/word.png";
+      return "/formatImages/doc.png";
     case pdfFormats.includes(format):
       return "/formatImages/pdf.png";
     case powerpointFormats.includes(format):

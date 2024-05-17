@@ -1,5 +1,5 @@
 "use client";
-import TableFiles from "@/components/dashboard/TableFiles";
+import RecentFilesTable from "@/components/dashboard/TableFiles";
 import { useEffect } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,18 +10,23 @@ import {
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
-import React from "react";
 
-const page = () => {
+const RecentUploadsPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { recentFilesState, removeFileState, uploadFileState } = useSelector(
     (state: RootState) => state.files
   );
-  useEffect(() => {
+
+  const LoadRecentFiles = () => {
     dispatch(loadRecentFiles());
+
     if (recentFilesState.error) {
       toast.error("Failed to load files");
+      console.error(recentFilesState.error);
     }
+  };
+
+  const handleFileStates = () => {
     switch (true) {
       case !removeFileState.isMany && removeFileState.isFileDeleted:
         toast.success("File deleted successfully");
@@ -35,14 +40,22 @@ const page = () => {
         break;
       case uploadFileState.error:
         toast.error("Failed to upload files");
+        console.error(uploadFileState.error); // Logging the error
         break;
     }
+  };
+
+  // Calling functions in useEffect
+  useEffect(() => {
+    LoadRecentFiles();
+    handleFileStates();
     dispatch(resetFilesState());
-  }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded,uploadFileState.error]);
+  }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded, recentFilesState.error]);
+
   return (
     <div>
-      <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploaded </h1>
-      <TableFiles
+      <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploads </h1>
+      <RecentFilesTable
         maxRows={9}
         files={recentFilesState.files}
         isLoading={recentFilesState.isLoading}
@@ -52,4 +65,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default RecentUploadsPage;

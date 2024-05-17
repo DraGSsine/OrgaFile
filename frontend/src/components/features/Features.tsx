@@ -73,7 +73,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify uses Ai to search for your files by it's content and
+                  Doctify uses Ai to search for your files by it&apos;s content and
                   give you the best result just by enter a keyword doctiyf will
                   searhc for the best result
                 </span>
@@ -108,7 +108,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify's intuitive sharing features allow you to easily and
+                  Doctify&apos;s intuitive sharing features allow you to easily and
                   swiftly share files with your team, facilitating seamless
                   collaboration and productivity.
                 </span>

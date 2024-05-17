@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <SideBar/>
             <div className="flex flex-grow h-screen flex-col">
                 <NavBar/>
-                <main className=" scrollbar-webkit scrollbar-thin flex-grow bg-slate-50 px-10 pt-10 max-h-screen overflow-y-scroll  ">
+                <main className=" scrollbar-webkit scrollbar-thin flex-grow bg-gray-50 px-10 pt-10 max-h-screen overflow-y-scroll  ">
                     {children}
                 </main>
             </div>

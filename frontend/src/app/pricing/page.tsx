@@ -17,7 +17,7 @@ const Pricing = () => {
                   Our Pricing Plan
                 </h2>
                 <p className="text-base text-body-color dark:text-dark-6">
-                Whether you're new to our service or looking to level up your experience, we've got solutions that fit just right.
+                Whether you&apos;re new to our service or looking to level up your experience, we&apos;ve got solutions that fit just right.
                 </p>
               </div>
             </div>

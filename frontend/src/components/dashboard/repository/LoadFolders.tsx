@@ -14,13 +14,15 @@ const LoadFolders = () => {
   );
   useEffect(() => {
     dispatch(loadFolders());
-  }, []);
+  }, [dispatch]);
   if (isLoading) {
     return (
       <div className="flex flex-wrap gap-6">
-        <FolderLoadSkeleton />
-        <FolderLoadSkeleton />
-        <FolderLoadSkeleton />
+          {
+            Array.from({ length: 10 }).map((_, i) => (
+              <FolderLoadSkeleton key={i} />
+            ))
+          }
       </div>
     );
   }

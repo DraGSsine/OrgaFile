@@ -44,7 +44,7 @@ const SideBar = () => {
   }, [router]);
 
   return (
-    <div className=" min-w-64 w-64 bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
+    <div className=" w-[15vw] bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
       <div>
         <div className=" px-3 ">
           <Link
@@ -56,7 +56,7 @@ const SideBar = () => {
           </Link>
         </div>
         <nav
-          className="py-8 w-full flex flex-col flex-wrap"
+          className="py-12 w-full flex flex-col flex-wrap"
           data-hs-accordion-always-open=""
         >
           <ul className="space-y-3">

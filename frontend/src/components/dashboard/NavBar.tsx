@@ -6,10 +6,8 @@ import { PlusCircle } from "lucide-react";
 
 export default function NavBar() {
   return (
-    <nav className="flex items-center justify-around min-h-[10vh] max-h-[10vh]  border-b">
-      <div>
+    <nav className="flex items-center justify-between px-20 h-[8vh]  border-b">
         <SearchInput />
-      </div>
       <div className="flex gap-5 ml-16 ">
         {/* <Button
           radius="sm"

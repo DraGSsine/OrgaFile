@@ -1,10 +1,13 @@
-import { CircularProgress, Card, CardBody } from "@nextui-org/react";
+import { CircularProgress, Card, CardBody, Progress } from "@nextui-org/react";
 import UserProfile from "./UserProfile";
+import { Cloudy, Server } from "lucide-react";
+
+
 
 export const RightSideBar = () => {
   return (
-    <div className="min-w-[25vw] border-l">
-      <div className=" pl-5 items-center flex h-[10vh] border-b justify-between ">
+    <div className="w-[15vw] border-l">
+      <div className=" px-8 items-center flex h-[8vh] border-b justify-between ">
         <div className=" flex flex-col">
           <span className=" font-semibold">Yassine ouchen</span>
           <span className=" text-primary">@Youchen</span>
@@ -12,36 +15,67 @@ export const RightSideBar = () => {
         <UserProfile />
       </div>
       <div className="py-10 px-4">
-        <div className="flex justify-between ">
-          <CircularChart />
-          <CircularChart />
+        <div className="flex justify-between items-center 3xl:justify-around flex-col gap-8 ">
+          <CloudStorage />
+          <UserLimitCard />
         </div>
       </div>
     </div>
   );
 };
-
-export default function CircularChart() {
+const CloudStorage = () => {
   return (
-    <Card className="rounded-2xl w-52 h-60 p-2 flex flex-col bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-l">
-      <CardBody className="justify-center items-center py-0">
-        <h2 className=" font-semibold text-center pb-4 text-xl ">
-          Request Limit
-        </h2>
-
-        <CircularProgress
-          classNames={{
-            svg: "w-36 h-36",
-            indicator: "stroke-green-500",
-            track: "stroke-green-100",
-            value: "text-2xl font-semibold text-gray-800",
-          }}
-          valueLabel="1 of 10"
-          value={70}
-          strokeWidth={4}
+    <Card className="rounded-2xl w-full h-52 flex flex-col bg-gray-50 transition-all">
+      <CardBody className="p-6 flex flex-col justify-between">
+        <div>
+          <div className="bg-primary-100 w-fit p-3 rounded-2xl">
+            <Cloudy color="#0070F0" size={30} />
+          </div>
+          <h2 className="font-medium py-4 text-xl">Cloud Storage Usage</h2>
+        </div>
+        <Progress
           showValueLabel={true}
+          value={50}
+          label="3Gb of 10Gb"
+          maxValue={100}
+          size="md"
+          classNames={{
+            base: "max-w-md",
+            track: "bg-primary-200",
+            indicator: "bg-gradient-to-r from-primary-600 to-primary-400",
+            label: "tracking-wider font-medium text-default-600",
+            value: "text-foreground/60",
+          }}
         />
       </CardBody>
     </Card>
   );
-}
+};
+const UserLimitCard = () => {
+  return (
+    <Card className="rounded-2xl w-full h-52 flex flex-col bg-gray-50 transition-all">
+      <CardBody className="p-6 flex flex-col justify-between">
+        <div>
+          <div className="bg-green-100 w-fit p-3 rounded-2xl">
+            <Server color="#18C964" size={30} />
+          </div>
+          <h2 className=" font-medium py-4 text-md 2xl:text-xl">Daily Usage Limit</h2>
+        </div>
+        <Progress
+          showValueLabel={true}
+          value={50}
+          label="1 of 2"
+          maxValue={100}
+          size="md"
+          classNames={{
+            base: "max-w-md",
+            track: "bg-green-200",
+            indicator: "bg-gradient-to-r from-green-600 to-green-400",
+            label: "tracking-wider font-medium text-default-600",
+            value: "text-foreground/60",
+          }}
+        />
+      </CardBody>
+    </Card>
+  );
+};
