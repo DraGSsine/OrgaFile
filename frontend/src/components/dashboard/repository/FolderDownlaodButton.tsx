@@ -14,7 +14,6 @@ const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  console.log(downloadingFolderId);
   if (isLoading && downloadingFolderId.includes(folder.folderId)) {
     return <Spinner size="sm" />;
   }

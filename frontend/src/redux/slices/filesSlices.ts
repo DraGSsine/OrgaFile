@@ -8,6 +8,8 @@ const base_url = "http://localhost:9010/";
 type FilesState = {
   toggleFile: {
     isOpen: boolean;
+    url: string | null;
+    isSupported?: boolean;
   };
   loadFilesState: {
     files: filesType[];
@@ -50,6 +52,8 @@ type FilesState = {
 const initialState: FilesState = {
   toggleFile: {
     isOpen: false,
+    url: "" || null,
+    isSupported: false,
   },
   loadFilesState: {
     files: [],
@@ -250,7 +254,9 @@ export const filesSlice = createSlice({
   initialState,
   reducers: {
     ToggleFile: (state, action) => {
-      state.toggleFile.isOpen = action.payload;
+      state.toggleFile.isOpen = action.payload.isOpen;
+      state.toggleFile.url = action.payload.url;
+      state.toggleFile.isSupported = action.payload.url?.includes(".pdf");
     },
     resetConfirmFileRemoveModal: (state) => {
       state.removeFileState.confirmRemoveModal = false;

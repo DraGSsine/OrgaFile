@@ -92,7 +92,7 @@ export const organizeFilesAnalysis = async (
 
   const model = new ChatMistralAI({
     apiKey: process.env.MISTRAL_API_KEY,
-    model: 'mistral-large-latest',
+    model: 'open-mistral-7b',
   });
 
   try {

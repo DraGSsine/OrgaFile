@@ -3,7 +3,6 @@ import { Document } from 'mongoose';
 
 export type userDocument = User & Document;
 
-
 @Schema()
 export class User {
   @Prop({ required: true })
@@ -15,8 +14,20 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
+  @Prop({ required: true })
   field: string;
+
+  @Prop({ required: true })
+  plan: 'Basic' | 'Standard' | 'Premium';
+
+  @Prop({ required: true })
+  storage: number;
+
+  @Prop({ required: true })
+  storageUsed: number;
+
+  @Prop({ required: true })
+  requestLimit: number;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

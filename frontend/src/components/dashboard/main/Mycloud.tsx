@@ -1,30 +1,28 @@
 import { getFileImage } from "@/helpers/helpers";
 import { Card, CardBody, Progress } from "@nextui-org/react";
+import { FolderArchive, FolderOpen } from "lucide-react";
 import Image from "next/image";
 
 const data = [
   {
-    barColor: "bg-green-400",
-    backGroundColor: "bg-green-100",
-    format: "png",
+    barColor: "bg-primary-400",
+    backGroundColor: "bg-primary-100",
     name: "Images",
     filesNum: 120,
     used: 30,
     maxStorage: 100,
   },
   {
-    barColor: "bg-red-400",
-    backGroundColor: "bg-red-100",
-    format: "pdf",
+    barColor: "bg-primary-400",
+    backGroundColor: "bg-primary-100",
     name: "Documents",
     filesNum: 120,
     used: 30,
     maxStorage: 100,
   },
   {
-    barColor: "bg-gray-600",
-    backGroundColor: "bg-gray-300",
-    format: "txt",
+    barColor: "bg-primary-400",
+    backGroundColor: "bg-primary-100",
     name: "Text Files",
     filesNum: 120,
     used: 30,
@@ -33,7 +31,6 @@ const data = [
   {
     barColor: "bg-primary-400",
     backGroundColor: "bg-primary-100",
-    format: "c",
     name: "Other Files",
     filesNum: 120,
     used: 30,
@@ -52,7 +49,6 @@ const Mycloud = () => {
             name={item.name}
             filesNum={item.filesNum}
             used={item.used}
-            format={item.format}
             backGroundColor={item.backGroundColor}
             barColor={item.barColor}
             maxStorage={item.maxStorage}
@@ -70,7 +66,6 @@ const Cloud = ({
   filesNum,
   used,
   maxStorage,
-  format,
   backGroundColor,
   barColor,
 }: {
@@ -78,7 +73,6 @@ const Cloud = ({
   filesNum: number;
   used: number;
   maxStorage: number;
-  format: string;
   backGroundColor: string;
   barColor: string;
 }) => {
@@ -87,12 +81,7 @@ const Cloud = ({
       <CardBody className="p-6 flex flex-col justify-between">
         <div className="flex items-center">
           <div className={`${backGroundColor} w-fit p-3 rounded-2xl flex items-center justify-center`}>
-            <Image
-              src={getFileImage(format)}
-              alt="file"
-              width={40}
-              height={40}
-            />
+            <FolderOpen size={30} fill="#0070F0" stroke="#0070F0" />
           </div>
           <div className="flex-grow pl-7">
             <h1 className=" text-lg">{name}</h1>

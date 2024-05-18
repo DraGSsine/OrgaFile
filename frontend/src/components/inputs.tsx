@@ -13,10 +13,10 @@ import {
 } from "@nextui-org/react";
 import { ZodIssue } from "zod";
 import Image from "next/image";
-import { getFileImage } from "@/helpers/helpers";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { ToggleFile } from "@/redux/slices/filesSlices";
+import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
 
 export const PasswordInput = ({
   errorState,
@@ -105,41 +105,31 @@ export const EmailInput = ({
 };
 
 export const SearchInput = () => {
+  const {files} = useSelector((state: RootState) => state.files.loadFilesState);
   const dispatch = useDispatch<AppDispatch>();
   type FileSearch = {
     name: string;
     format: string;
     size: string;
+    url?: string;
   };
-  const files: FileSearch[] = [
-    {
-      name: "How to learn React",
-      format: "pdf",
-      size: "1.2MB",
-    },
-    {
-      name: "the truth about the universe",
-      format: "doc",
-      size: "2.2MB",
-    },
-    {
-      name: "The best way to learn javascript",
-      format: "pdf",
-      size: "3.2MB",
-    },
-  ];
 
   return (
     <Autocomplete
+      onFocus={() => dispatch(loadAllFiles())}
       variant="bordered"
       placeholder="Search for files"
-      className=" w-[400px] 2xl:w-[600px]"
-      scrollShadowProps={{
-        isEnabled: false,
-      }}
+      className=" w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
+      startContent={
+        <SearchIcon className="text-gray-600" width="25" height="25" />
+      }
     >
       {files.map((file) => (
-        <AutocompleteItem onClick={()=>dispatch(ToggleFile(true))} textValue={file.name} key={file.name}>
+        <AutocompleteItem
+          onClick={() => dispatch(ToggleFile({ isOpen: true, url: file.url }))}
+          textValue={file.name}
+          key={file.name}
+        >
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center px-2">
               <Image
@@ -151,7 +141,7 @@ export const SearchInput = () => {
               />
               <span>{file.name}</span>
             </div>
-            <span>{file.size}</span>
+            <span>{bytesToMegaBytes(file.size)}</span>
           </div>
         </AutocompleteItem>
       ))}
