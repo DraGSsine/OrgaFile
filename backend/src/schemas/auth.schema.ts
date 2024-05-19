@@ -21,6 +21,9 @@ export class User {
   plan: 'Basic' | 'Standard' | 'Premium';
 
   @Prop({ required: true })
+  paymentSessionId: string;
+
+  @Prop({ required: true })
   storage: number;
 
   @Prop({ required: true })

@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+} from '@nestjs/common';
+import { PaymentService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
 
-@Controller('payments')
+@Controller('api/payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(private readonly paymentsService: PaymentService ) {}
 
-  @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentsService.create(createPaymentDto);
+  @Post('stripe')
+  async pay(
+    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+    createPaymentDto: CreatePaymentDto,
+  ) {
+    return this.paymentsService.pay(createPaymentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.paymentsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentsService.update(+id, updatePaymentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentsService.remove(+id);
+  @Post('webhook')
+  async createOrder(@Body() body: any) {
+    return this.paymentsService.createOrder(body);
   }
 }
