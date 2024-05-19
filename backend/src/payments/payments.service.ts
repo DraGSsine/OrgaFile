@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+// src/payment/payment.service.ts
+
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Stripe } from 'stripe';
+import Stripe from 'stripe';
+import { Request, Response } from 'express';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { userDocument } from 'src/schemas/auth.schema';
+import { AnyAaaaRecord } from 'dns';
 
 @Injectable()
 export class PaymentService {
@@ -15,9 +19,10 @@ export class PaymentService {
     this.stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
 
-  async pay(createPaymentDto: CreatePaymentDto): Promise<{ url: string }> {
+  async pay(createPaymentDto: CreatePaymentDto){
     const session = await this.stripeClient.checkout.sessions.create({
       payment_method_types: ['card'],
+      mode: 'subscription',
       line_items: [
         {
           price_data: {
@@ -33,28 +38,54 @@ export class PaymentService {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
       client_reference_id: createPaymentDto.user_id,
-      success_url: createPaymentDto.url_success,
+      success_url: `${process.env.NEXT_APP_URL}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: createPaymentDto.url_cancel,
     });
+
     const session_id = session.id;
+
     await this.userModel.updateOne(
       { _id: createPaymentDto.user_id },
-      { paymentSessionId:session_id },
+      { paymentSessionId: session_id },
     );
-    return { url: session.url };
+
+    return { url: session.url,succesUrl:session.success_url};
   }
 
-  async createOrder(body: any) {
-    const user_id = body.user_id
-    const { paymentSessionId } = await this.userModel.findOne({ _id: user_id }).select('paymentSessionId').lean();
-    const {subscription,id,customer,status} = await this.stripeClient.checkout.sessions.retrieve(paymentSessionId);
-    const list = await this.stripeClient.checkout.sessions.listLineItems(paymentSessionId);
-    // await this.userModel.updateOne({_id: user_id},{plan:subscription.plan.product});
-    return ({subscription,id,customer,status,list});
-  
-    // const session = await this.stripeClient.checkout.sessions.retrieve(session_id);
+  async handleWebhook(request: Request, response: Response) {
+    const sig = request.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+    let event: Stripe.Event;
+
+    try {
+      event = this.stripeClient.webhooks.constructEvent(request.body, sig, webhookSecret);
+    } catch (err) {
+      console.log(`⚠️  Webhook signature verification failed.`);
+      return response.status(HttpStatus.BAD_REQUEST).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object as Stripe.Checkout.Session;
+        await this.handleCheckoutSession(session);
+        break;
+      // Handle other event types as needed
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    response.status(HttpStatus.OK).send();
+  }
+
+  private async handleCheckoutSession(session: Stripe.Checkout.Session) {
+    const userId = session.client_reference_id;
+    await this.userModel.updateOne(
+      { _id: userId },
+      { subscriptionStatus: 'active' } // Update with your desired field and value
+    );
+    console.log('Payment was successful for user:', userId);
   }
 }

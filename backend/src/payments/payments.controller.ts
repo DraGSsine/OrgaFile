@@ -1,30 +1,22 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ValidationPipe,
-} from '@nestjs/common';
-import { PaymentService } from './payments.service';
+// src/payment/payment.controller.ts
+
+import { Controller, Post, Body, Req, Res } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { Request, Response } from 'express';
+import { PaymentService } from './payments.service';
 
-@Controller('api/payments')
-export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentService ) {}
+@Controller('api/payment')
+export class PaymentController {
+  constructor(private readonly paymentService: PaymentService) {}
 
-  @Post('stripe')
-  async pay(
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-    createPaymentDto: CreatePaymentDto,
-  ) {
-    return this.paymentsService.pay(createPaymentDto);
+  @Post('create-session')
+  async createSession(@Body() createPaymentDto: CreatePaymentDto) {
+    const result = await this.paymentService.pay(createPaymentDto);
+    return result;
   }
 
   @Post('webhook')
-  async createOrder(@Body() body: any) {
-    return this.paymentsService.createOrder(body);
+  async webhook(@Req() request: Request, @Res() response: Response) {
+    return this.paymentService.handleWebhook(request, response);
   }
 }
