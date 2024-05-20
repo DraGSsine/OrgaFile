@@ -16,7 +16,7 @@ import { PaymentsModule } from './payments/payments.module';
   imports: [ConfigModule.forRoot({
     envFilePath: '.env',
     isGlobal: true,
-  }),AuthModule,MongooseModule.forRoot("mongodb+srv://dragssine:Jvunu5pgBA2FsBou@fleeso.j7mpc5c.mongodb.net/doctify?retryWrites=true&w=majority&appName=fleeso/"), DashboardModule, UploadModule, UserModule,FoldersModule, PaymentsModule],
+  }),AuthModule,MongooseModule.forRoot(process.env.MONGO_DB_URI), DashboardModule, UploadModule, UserModule,FoldersModule, PaymentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

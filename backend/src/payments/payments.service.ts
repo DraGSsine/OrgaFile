@@ -19,7 +19,7 @@ export class PaymentService {
     this.stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
 
-  async pay(createPaymentDto: CreatePaymentDto){
+  async createCheckoutSession(createPaymentDto: CreatePaymentDto) {
     const session = await this.stripeClient.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
@@ -50,7 +50,7 @@ export class PaymentService {
       { paymentSessionId: session_id },
     );
 
-    return { url: session.url,succesUrl:session.success_url};
+    return { url: session.url, succesUrl: session.success_url };
   }
 
   async handleWebhook(request: Request, response: Response) {
@@ -60,10 +60,16 @@ export class PaymentService {
     let event: Stripe.Event;
 
     try {
-      event = this.stripeClient.webhooks.constructEvent(request.body, sig, webhookSecret);
+      event = this.stripeClient.webhooks.constructEvent(
+        request.body,
+        sig,
+        webhookSecret,
+      );
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`);
-      return response.status(HttpStatus.BAD_REQUEST).send(`Webhook Error: ${err.message}`);
+      return response
+        .status(HttpStatus.BAD_REQUEST)
+        .send(`Webhook Error: ${err.message}`);
     }
 
     // Handle the event
@@ -72,7 +78,9 @@ export class PaymentService {
         const session = event.data.object as Stripe.Checkout.Session;
         await this.handleCheckoutSession(session);
         break;
-      // Handle other event types as needed
+      case 'invoice.payment_succeeded':
+        const subscription = await this.stripeClient.subscriptions.retrieve(session.subscription as string);
+        await this.handleSubscription(subscription);
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
@@ -84,7 +92,22 @@ export class PaymentService {
     const userId = session.client_reference_id;
     await this.userModel.updateOne(
       { _id: userId },
-      { subscriptionStatus: 'active' } // Update with your desired field and value
+      {
+        subscriptionStatus: 'active',
+        currentPeriodEnd: new Date(session.expires_at * 1000),
+      },
+    );
+    console.log('Payment was successful for user:', userId);
+  }
+
+  private async handleSubscription(subscription: Stripe.Subscription) {
+    const userId = subscription.customer as any;
+    await this.userModel.updateOne(
+      { _id: userId },
+      {
+        subscriptionStatus: 'active',
+        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      },
     );
     console.log('Payment was successful for user:', userId);
   }

@@ -28,7 +28,8 @@ export class User {
 
   @Prop({ required: true })
   storageUsed: number;
-
+  @Prop({ required: true , default: 'inactive'})
+  subscriptionStatus: 'active' | 'inactive';
   @Prop({ required: true })
   requestLimit: number;
 }

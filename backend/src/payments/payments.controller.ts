@@ -9,9 +9,9 @@ import { PaymentService } from './payments.service';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Post('create-session')
+  @Post('create-checkout-session')
   async createSession(@Body() createPaymentDto: CreatePaymentDto) {
-    const result = await this.paymentService.pay(createPaymentDto);
+    const result = await this.paymentService.createCheckoutSession(createPaymentDto);
     return result;
   }
 
