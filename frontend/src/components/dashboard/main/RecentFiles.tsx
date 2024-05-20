@@ -50,7 +50,7 @@ const RecentUploadsPage = () => {
     LoadRecentFiles();
     handleFileStates();
     dispatch(resetFilesState());
-  }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded, recentFilesState.error]);
+  }, []);
 
   return (
     <div>

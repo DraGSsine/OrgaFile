@@ -3,7 +3,6 @@ import { DashboardService } from './dashboard.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('api/dashboard')
-@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
   

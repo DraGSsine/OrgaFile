@@ -20,6 +20,7 @@ export class PaymentService {
   }
 
   async createCheckoutSession(createPaymentDto: CreatePaymentDto) {
+    const user_id = "664b8461c7430fdd838c240f"
     const session = await this.stripeClient.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
@@ -38,15 +39,18 @@ export class PaymentService {
           quantity: 1,
         },
       ],
-      client_reference_id: createPaymentDto.user_id,
-      success_url: `${process.env.NEXT_APP_URL}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: createPaymentDto.url_cancel,
+      metadata: {
+        user_id: user_id,
+      },
+      client_reference_id:user_id,
+      success_url: `${process.env.NEXT_APP_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_APP_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     const session_id = session.id;
 
     await this.userModel.updateOne(
-      { _id: createPaymentDto.user_id },
+      { _id: user_id },
       { paymentSessionId: session_id },
     );
 
@@ -58,15 +62,15 @@ export class PaymentService {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     let event: Stripe.Event;
-
+    
     try {
       event = this.stripeClient.webhooks.constructEvent(
-        request.body,
+        JSON.stringify(request.body),
         sig,
         webhookSecret,
       );
     } catch (err) {
-      console.log(`⚠️  Webhook signature verification failed.`);
+      console.log(`⚠️  Webhook signature verification failed. ${err}`);
       return response
         .status(HttpStatus.BAD_REQUEST)
         .send(`Webhook Error: ${err.message}`);

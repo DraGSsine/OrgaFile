@@ -13,7 +13,7 @@ export const SignUpAction = createAsyncThunk(
   "auth/signup",
   async (data: userInfoType, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:9010/api/auth/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const SignInAction = createAsyncThunk(
   "auth/signin",
   async (data: userInfoType, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:9010/api/auth/signin`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

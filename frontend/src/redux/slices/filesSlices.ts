@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import cookie from "js-cookie";
-const base_url = "http://localhost:9010/";
 
 type FilesState = {
   toggleFile: {
@@ -96,7 +95,7 @@ export const loadAllFiles = createAsyncThunk(
   "files/loadAllFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${base_url}api/files/load`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/load`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
@@ -117,7 +116,7 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${base_url}api/files/upload`, files, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/upload`, files, {
         headers: {
           Authorization: `Bearer ${cookie.get("token")}`,
         },
@@ -140,7 +139,7 @@ export const removeFile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.delete(`${base_url}api/files/remove`, {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/remove`, {
         data: { fileId, isPermanently },
         headers: {
           "Content-Type": "application/json",
@@ -165,7 +164,7 @@ export const removeManyFiles = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.delete(`${base_url}api/files/removemany`, {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removemany`, {
         data: { files, isPermanently },
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +186,7 @@ export const loadRecentFiles = createAsyncThunk(
   "files/loadRecentFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${base_url}api/files/recent`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/recent`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
@@ -208,7 +207,7 @@ export const loadRemovedFiles = createAsyncThunk(
   "files/loadRemovedFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${base_url}api/files/removed`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removed`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie.get("token")}`,
@@ -230,7 +229,7 @@ export const restoreFile = createAsyncThunk(
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${base_url}api/files/restore`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/restore`,
         { fileId },
         {
           headers: {

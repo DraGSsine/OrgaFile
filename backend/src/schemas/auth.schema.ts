@@ -17,20 +17,20 @@ export class User {
   @Prop({ required: true })
   field: string;
 
-  @Prop({ required: true })
+  @Prop()
   plan: 'Basic' | 'Standard' | 'Premium';
 
-  @Prop({ required: true })
+  @Prop()
   paymentSessionId: string;
 
-  @Prop({ required: true })
+  @Prop()
   storage: number;
 
-  @Prop({ required: true })
+  @Prop()
   storageUsed: number;
-  @Prop({ required: true , default: 'inactive'})
+  @Prop({default: 'inactive'})
   subscriptionStatus: 'active' | 'inactive';
-  @Prop({ required: true })
+  @Prop()
   requestLimit: number;
 }
 

@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { set } from "zod";
 
-const base_url = "http://localhost:9010/";
+const base_url = "${process.env.NEXT_PUBLIC_BASE_URL}/";
 
 type initialStateType = {
   downloadFolder: {
