@@ -3,6 +3,7 @@ import { AuthSlice } from "./slices/authSlice";
 import { filesSlice } from "./slices/filesSlices";
 import { landingSlice } from "./slices/landingSlice";
 import { foldersSlice } from './slices/foldersSlice';
+import { dashboardSlice } from "./slices/dashboardSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         files: filesSlice.reducer,
         landing: landingSlice.reducer,
         folders: foldersSlice.reducer,
+        dashboard: dashboardSlice.reducer,
     },
 });
 

@@ -8,10 +8,10 @@ async function bootstrap() {
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   };
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
-  app.enableCors(options)
+  app.enableCors(options);
   await app.listen(9010);
 }
 bootstrap();

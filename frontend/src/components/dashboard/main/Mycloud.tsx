@@ -1,57 +1,63 @@
-import { getFileImage } from "@/helpers/helpers";
+import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
+import { loadClouInfo, loadUserLimits } from "@/redux/slices/dashboardSlice";
+import { AppDispatch, RootState } from "@/redux/store";
 import { Card, CardBody, Progress } from "@nextui-org/react";
-import { FolderArchive, FolderOpen } from "lucide-react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-const data = [
-  {
-    barColor: "bg-primary-400",
-    backGroundColor: "bg-primary-100",
-    name: "Images",
-    filesNum: 120,
-    used: 30,
-    maxStorage: 100,
-  },
-  {
-    barColor: "bg-primary-400",
-    backGroundColor: "bg-primary-100",
-    name: "Documents",
-    filesNum: 120,
-    used: 30,
-    maxStorage: 100,
-  },
-  {
-    barColor: "bg-primary-400",
-    backGroundColor: "bg-primary-100",
-    name: "Text Files",
-    filesNum: 120,
-    used: 30,
-    maxStorage: 100,
-  },
-  {
-    barColor: "bg-primary-400",
-    backGroundColor: "bg-primary-100",
-    name: "Other Files",
-    filesNum: 120,
-    used: 30,
-    maxStorage: 100,
-  },
-];
-
+const getColorBaseOnFormat = (format: string) => {
+  switch (format) {
+    case "pdf":
+      return {
+        barColor: "bg-red-400",
+        backGroundColor: "bg-red-100",
+      };
+    case "docx":
+      return {
+        barColor: "bg-primary-400",
+        backGroundColor: "bg-primary-100",
+      };
+    case "txt":
+      return {
+        barColor: "bg-gray-500",
+        backGroundColor: "bg-gray-200",
+      };
+    case "rtf":
+      return {
+        barColor: "bg-purple-400",
+        backGroundColor: "bg-purple-100",
+      };
+    default:
+      return {
+        barColor: "bg-gray-500",
+        backGroundColor: "bg-gray-200",
+      };
+  }
+};
 const Mycloud = () => {
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.dashboard.cloudInfo
+  );
+  const { filesFormatInfo, storage, storageUsed } = data;
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(loadClouInfo());
+  }, []);
   return (
     <div>
       <h1 className=" font-medium text-2xl pb-6 ">My Cloud</h1>
       <div className="grid grid-cols-2  2xl:grid-cols-4 gap-8">
-        {data.map((item) => (
+        {filesFormatInfo.map((item) => (
           <Cloud
             key={item.name}
             name={item.name}
-            filesNum={item.filesNum}
-            used={item.used}
-            backGroundColor={item.backGroundColor}
-            barColor={item.barColor}
-            maxStorage={item.maxStorage}
+            filesNum={item.numberOfFiles}
+            used={+(item.size / 1024 / 1024 / 1024).toString().slice(0, 3)}
+            backGroundColor={getColorBaseOnFormat(item.name).backGroundColor}
+            barColor={getColorBaseOnFormat(item.name).barColor}
+            maxStorage={storage}
+            icon={getFileImage(item.name.toLowerCase())}
           />
         ))}
       </div>
@@ -68,6 +74,7 @@ const Cloud = ({
   maxStorage,
   backGroundColor,
   barColor,
+  icon,
 }: {
   name: string;
   filesNum: number;
@@ -75,13 +82,16 @@ const Cloud = ({
   maxStorage: number;
   backGroundColor: string;
   barColor: string;
+  icon: string;
 }) => {
   return (
     <Card className="rounded-2xl w-full h-48 flex flex-col bg-gray-50 transition-all select-none ">
       <CardBody className="p-6 flex flex-col justify-between">
         <div className="flex items-center">
-          <div className={`${backGroundColor} w-fit p-3 rounded-2xl flex items-center justify-center`}>
-            <FolderOpen size={30} fill="#0070F0" stroke="#0070F0" />
+          <div
+            className={`${backGroundColor} w-fit p-3 rounded-2xl flex items-center justify-center`}
+          >
+            <Image src={icon} width={40} height={40} alt={name} />
           </div>
           <div className="flex-grow pl-7">
             <h1 className=" text-lg">{name}</h1>
@@ -100,11 +110,12 @@ const Cloud = ({
               indicator: `${barColor} rounded-2xl`,
             }}
             size="sm"
-            value={30}
+            value={used}
+            maxValue={maxStorage}
           />
           <div className=" flex justify-between font-medium text-gray-600 ">
-            <span>{used}GB</span>
-            <span>{maxStorage}GB</span>
+            <span>{used}Gb</span>
+            <span>{maxStorage}Gb</span>
           </div>
         </div>
       </CardBody>

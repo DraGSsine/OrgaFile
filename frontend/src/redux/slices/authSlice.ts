@@ -94,6 +94,9 @@ export const AuthSlice = createSlice({
       cookie.set("token", action.payload.token, {
         expires: 7 * 24 * 60 * 60 * 1000,
       });
+      cookie.set("email", action.payload.email,{
+        expires: 7 * 24 * 60 * 60 * 1000,
+      })
     });
     builder.addCase(SignInAction.rejected, (state, action: any) => {
       state.isLoading = false;

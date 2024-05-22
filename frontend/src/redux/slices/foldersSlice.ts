@@ -1,9 +1,7 @@
 import { FolderType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
-import { set } from "zod";
 
-const base_url = "${process.env.NEXT_PUBLIC_BASE_URL}/";
 
 type initialStateType = {
   downloadFolder: {
@@ -47,7 +45,7 @@ export const loadOneFolder = createAsyncThunk(
   "folders/loadOneFolder",
   async (folderId: string, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${base_url}api/folders/load/${folderId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load/${folderId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +67,7 @@ export const loadFolders = createAsyncThunk(
   "folders/loadFolders",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${base_url}api/folders/load`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +89,7 @@ export const downloadFolder = createAsyncThunk(
   "folders/downloadFolder",
   async ({folderId,folderName}:{folderId:string,folderName:string}, { rejectWithValue, dispatch }) => {
     try {
-      const res = await fetch(`${base_url}api/folders/download/${folderId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/download/${folderId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,

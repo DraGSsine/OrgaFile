@@ -11,12 +11,20 @@ import { FoldersModule } from './folders/folders.module';
 // import { FoldersModule } from './folders/folders.module';
 import { PaymentsModule } from './payments/payments.module';
 
-
 @Module({
-  imports: [ConfigModule.forRoot({
-    envFilePath: '.env',
-    isGlobal: true,
-  }),AuthModule,MongooseModule.forRoot(process.env.MONGO_DB_URI), DashboardModule, UploadModule, UserModule,FoldersModule, PaymentsModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    AuthModule,
+    MongooseModule.forRoot(process.env.MONGO_DB_URI),
+    DashboardModule,
+    UploadModule,
+    UserModule,
+    FoldersModule,
+    PaymentsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

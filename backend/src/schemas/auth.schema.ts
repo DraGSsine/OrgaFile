@@ -1,14 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type userDocument = User & Document;
+export type UserDocument = User & Document;
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, enum: ['Projects', 'Designs'] })
   signInFor: 'Projects' | 'Designs';
 
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    unique: true,
+    match: /^\S+@\S+\.\S+$/,
+  })
   email: string;
 
   @Prop({ required: true })
@@ -18,20 +24,24 @@ export class User {
   field: string;
 
   @Prop()
-  plan: 'Basic' | 'Standard' | 'Premium';
-
-  @Prop()
-  paymentSessionId: string;
-
-  @Prop()
   storage: number;
 
-  @Prop()
+  @Prop({ default: 0 })
   storageUsed: number;
-  @Prop({default: 'inactive'})
-  subscriptionStatus: 'active' | 'inactive';
+
   @Prop()
   requestLimit: number;
+
+  @Prop({ default: 0 })
+  requestUsed: number;
+  @Prop({ enum: ['user', 'admin'], default: 'user' })
+  role: 'user' | 'admin';
+
+  @Prop()
+  profilePictureUrl: string;
+
+  @Prop({ default: false })
+  isEmailVerified: boolean;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

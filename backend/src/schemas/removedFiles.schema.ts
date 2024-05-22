@@ -3,11 +3,10 @@ import mongoose, { Document } from 'mongoose';
 
 export type RemovedFilesDocument = RemovedFiles & Document;
 
-
 export class FileInfo {
   @Prop({ required: true, unique: true })
   fileId: string;
-  
+
   @Prop({ required: true })
   name: string;
 

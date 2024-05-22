@@ -10,16 +10,18 @@ import React from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 const UserProfile = () => {
+  const email = Cookies.get("email");
   const router = useRouter();
   const handleItemSelect = (e: string | number) => {
     if (e === "logout") {
       Cookies.remove("token");
       router.push("/auth/signin");
-    }
+    } else if (e === "settings") router.push("/dashboard/settings");
+    else if (e === "help") router.push("/help");
   };
   return (
-    <Dropdown className=" cursor-pointer" placement="bottom-end">
-      <DropdownTrigger>
+    <Dropdown placement="bottom-end">
+      <DropdownTrigger className="cursor-pointer">
         <Avatar
           isBordered
           color="primary"
@@ -33,11 +35,10 @@ const UserProfile = () => {
       >
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">zoey@example.com</p>
+          <p className="font-semibold">{email}</p>
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>
-        <DropdownItem key="analytics">Analytics</DropdownItem>
-        <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+        <DropdownItem key="help">Help</DropdownItem>
         <DropdownItem key="logout" color="danger">
           Log Out
         </DropdownItem>

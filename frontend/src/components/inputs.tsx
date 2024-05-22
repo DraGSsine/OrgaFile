@@ -128,7 +128,7 @@ export const SearchInput = () => {
         <AutocompleteItem
           onClick={() => dispatch(ToggleFile({ isOpen: true, url: file.url }))}
           textValue={file.name}
-          key={file.name}
+          key={file.url}
         >
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center px-2">

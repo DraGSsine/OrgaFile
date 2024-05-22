@@ -1,33 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('api/dashboard')
+@UseGuards(AuthGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
-  
-  @Post()
-  create() {
-    return this.dashboardService.create();
-  }
-  
-  @Get()
-  findAll() {
-    return this.dashboardService.findAll();
-  }
-  
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dashboardService.findOne(+id);
+
+  @Get('load-cloud-info')
+  async cloudInfo(@Req() req: any) {
+    return this.dashboardService.cloudInfo(req.user.userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.dashboardService.update(+id);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.dashboardService.remove(+id);
+  @Get('load-user-limits')
+  loadUserLimits(@Req() req: any) {
+    return this.dashboardService.loadUserLimits(req.user.userId);
   }
 }

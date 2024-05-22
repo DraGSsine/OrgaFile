@@ -13,7 +13,7 @@ import { AnalyzeFile } from 'src/ai/openai-setup';
 import * as crypto from 'crypto';
 import { uploadFiles } from 'src/helpers/uploadFiles';
 import { FileDocument, FileInfo } from 'src/schemas/files.schema';
-import { User, userDocument } from 'src/schemas/auth.schema';
+import { User, UserDocument } from 'src/schemas/auth.schema';
 import {
   RemovedFiles,
   RemovedFilesDocument,
@@ -26,7 +26,7 @@ export class UploadService {
     @InjectModel('RemovedFile')
     private readonly removedFilesModel: Model<RemovedFilesDocument>,
     @InjectModel('File') private readonly fileModel: Model<FileDocument>,
-    @InjectModel('User') private readonly userModel: Model<userDocument>,
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
     @InjectModel('Folder') private readonly folderModel: Model<FolderDocument>,
   ) {}
   private readonly s3Client = new AWS.S3({
@@ -50,6 +50,12 @@ export class UploadService {
         this.folderModel,
         this.s3Client,
       );
+      console.log(files.length)
+      const fileSize = files.reduce((acc, file) => acc + file.size, 0);
+      const fileSizeInGB = fileSize / 1000000000;
+      user.storageUsed += fileSizeInGB;
+      user.requestUsed += files.length;
+      await user.save();
       return fileDocuments;
     } catch (error) {
       if (error.code === 'UnsupportedMediaType') {
@@ -145,13 +151,17 @@ export class UploadService {
   async remove(req: any, fileId: string, isPermanently: boolean) {
     try {
       // Find the user by ID
+      const userFiles = await this.removedFilesModel.findOne({
+        userId: req.user.userId,
+        'files.fileId': fileId,
+      });
       const user = await this.userModel.findById(req.user.userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      console.log(isPermanently)
       if (isPermanently) {
         // Remove the file from removedFilesModel
+
         const removeResult = await this.removedFilesModel.updateOne(
           { userId: req.user.userId },
           { $pull: { files: { fileId } } },
@@ -163,14 +173,18 @@ export class UploadService {
 
         // Delete the file from S3
         const fileKey = `${req.user.userId}/${fileId}`;
-        console.log(fileKey)
         const deleteParams = {
           Bucket: this.configService.get('S3_BUCKET_NAME'),
           Key: fileKey,
         };
 
         await this.s3Client.deleteObject(deleteParams).promise();
-
+        // Update the user's storageUsed property
+        const size = userFiles.files.find(
+          (file) => file.fileId === fileId,
+        ).size;
+        user.storageUsed -= size / 1000000000;
+        await user.save();
         return 'File deleted permanently';
       } else {
         const file = await this.fileModel.findOne({
