@@ -1,4 +1,6 @@
+import { Button } from "@nextui-org/button";
 import { PricingShape } from "../../../public/svgShapes";
+import Upgrade from "./Upgrade";
 
 type PricingCardProps = {
   children: React.ReactNode;
@@ -6,7 +8,6 @@ type PricingCardProps = {
   price: string;
   type: string;
   subscription: string;
-  buttonText: string;
   active?: boolean;
   mostpopular?: boolean;
 };
@@ -17,42 +18,39 @@ const PricingCard = ({
   price,
   type,
   subscription,
-  buttonText,
   active,
   mostpopular,
 }: PricingCardProps) => {
   return (
     <>
-      <div className={` relative w-[400px] p-1 rounded-xl bg-blue-200 ${mostpopular && " bg-gradient-to-br from-[#4b81f7] via-[#4bf79b] to-[#4b81f7]"}  `}>
+      <div
+        className={`  relative w-[400px] p-1 rounded-xl bg-blue-200 ${
+          mostpopular &&
+          " bg-gradient-to-br from-[#4b81f7] via-[#baedd2] to-[#4b81f7]"
+        }  `}
+      >
         {mostpopular && (
-          <div className=" text-center absolute z-20 -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-sm font-medium text-white">
+          <div className="  text-center absolute z-20 -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-sm font-medium text-white">
             Most Popular
           </div>
         )}
-        <div className="relative z-10  overflow-hidden rounded-[10px] bg-white px-8 py-10 shadow-pricing dark:border-dark-3 dark:bg-dark-2 sm:p-12 lg:px-6 lg:py-10 xl:p-[50px]">
-          <span className="mb-3 block text-lg font-semibold text-primary">
-            {type}
-          </span>
-          <h2 className="mb-5 text-[42px] font-bold text-dark dark:text-white">
-            {price}
-            <span className="text-base font-medium text-body-color dark:text-dark-6">
-              / {subscription}
+        <div className="relative z-10 h-full  overflow-hidden rounded-[10px] bg-white px-8 py-10 shadow-pricing dark:border-dark-3 dark:bg-dark-2 sm:p-12 lg:px-6 lg:py-10 xl:p-[50px]">
+          <div className="border-b border-stroke h-[250px]">
+            <span className="mb-3 block text-lg font-semibold text-primary">
+              {type}
             </span>
-          </h2>
-          <p className="mb-8 border-b border-stroke pb-8 text-base text-body-color dark:border-dark-3 dark:text-dark-6">
-            {description}
-          </p>
-          <div className="mb-9 flex flex-col gap-[14px]">{children}</div>
-          <a
-            href="/#"
-            className={` ${
-              active
-                ? "block w-full rounded-md border border-primary bg-primary p-3 text-center text-base font-medium text-white transition hover:bg-opacity-90"
-                : "block w-full rounded-md border border-stroke bg-transparent p-3 text-center text-base font-medium text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3"
-            } `}
-          >
-            {buttonText}
-          </a>
+            <h2 className="mb-5 text-[42px] font-bold text-dark dark:text-white">
+              {price}
+              <span className="text-base font-medium text-body-color dark:text-dark-6">
+                / {subscription}
+              </span>
+            </h2>
+            <p className="mb-8  text-base text-body-color  dark:text-dark-6">
+              {description}
+            </p>
+          </div>
+          <div className="mb-9 pt-12 flex flex-col gap-[14px]">{children}</div>
+        <Upgrade plan={type} active={active} />
           <div>
             <span className="absolute right-0 top-7 z-[-1]">
               <svg

@@ -1,20 +1,25 @@
-import React from 'react'
-import {User, Link} from "@nextui-org/react";
+import React from "react";
+import { User, Link } from "@nextui-org/react";
 const Avatar = ({ className }: { className: string }) => {
-    return (
-        <User
-          className={`${className} text-white`}
-          name="Junior Garcia"
-          description={(
-            <Link className=' text-gray-200' href="https://twitter.com/jrgarciadev" size="sm" isExternal>
-              @jrgarciadev
-            </Link>
-          )}
-          avatarProps={{
-            src: "https://avatars.githubusercontent.com/u/30373425?v=4"
-          }}
-        />
-      );
-}
+  return (
+    <User
+      className={`${className} text-white`}
+      name="Adam akbil"
+      description={
+        <Link
+          className=" text-gray-200"
+          href="https://twitter.com/jrgarciadev"
+          size="sm"
+          isExternal
+        >
+          @DraGSsine
+        </Link>
+      }
+      avatarProps={{
+        src: "/images/person.png",
+      }}
+    />
+  );
+};
 
-export default Avatar
+export default Avatar;
