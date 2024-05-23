@@ -15,9 +15,6 @@ const Upgrade = ({
   const router = useRouter();
   const upgradPlan = (plan: string) => {
     Cookies.set("plan", plan);
-    setTimeout(() => {
-        
-    }, timeout);
     router.push("/auth/signup");
   };
   return (

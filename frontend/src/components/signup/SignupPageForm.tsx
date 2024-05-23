@@ -12,12 +12,15 @@ import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
+import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 const SignupPageForm = () => {
   const router = useRouter();
   const dispatch = useDispatch<any>();
   const { isLoading, userCreated, error } = useSelector(
     (state: RootState) => state.auth
   );
+  // payemnt state
+  const { checkoutSession } = useSelector((state: RootState) => state.payment);
   const [isSelected, setIsSelected] = useState(false);
   const [userCredential, setUserInfo] = useState<userInfoType>({
     email: null,
@@ -44,6 +47,7 @@ const SignupPageForm = () => {
     } else {
       setErrorState(null);
       dispatch(SignUpAction(userCredential));
+      console.log(checkoutSession)
     }
   };
   useEffect(() => {
@@ -52,7 +56,7 @@ const SignupPageForm = () => {
     }
     if (userCreated) {
       toast.success(userCreated.message);
-      router.push("/auth/signin");
+      dispatch(createCheckoutSession({ priceId: "price_1JZ9ZvK5J6J9J9Zv" }))
     }
     dispatch(resetAuthState());
   }, [error, userCreated, dispatch, router]);

@@ -65,8 +65,8 @@ export class PaymentService {
         ],
         payment_method_types: ['card'],
         mode: 'subscription',
-        success_url: `${process.env.NEXT_APP_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_APP_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.NEXT_APP_URL}/payment-successful?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_APP_URL}`,
         customer: customer.id,
         metadata: {
           userId: userId,

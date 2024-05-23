@@ -9,16 +9,7 @@ import {useRouter} from "next/navigation"
 const Dashboard = () => {
   const router = useRouter()
   const handleSubs = async () => {
-    try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/create-checkout-session`,{
-        price_id:"price_1PIwvSCRq7xCj4sRtnFgoawN",
-      },{headers:{
-        Authorization:`Bearer ${Cookies.get('token')}`
-      }})
-      router.push(res.data.url)
-    } catch (error) {
-      console.log(error)
-    }
+
 
   }
   return (
