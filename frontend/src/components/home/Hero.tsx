@@ -12,7 +12,7 @@ const Hero = () => {
         <div className=" w-full flex flex-col items-center pb-10 pt-20">
           <h1 className=" text-6xl md:text-7xl font-bold text-center w-[70%] 3xl:w-[52%] ">
             <span className="boujee-text block py-2 ">Streamline Your Day</span>
-            <span className=" inline-block leading-[5rem]">
+            <span className=" inline-block duration-700 leading-[5rem]">
               Organize Your Files Effortlessly
             </span>
           </h1>

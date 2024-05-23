@@ -7,9 +7,6 @@ export type UserDocument = User & Document;
   timestamps: true,
 })
 export class User {
-  @Prop({ required: true, enum: ['Projects', 'Designs'] })
-  signInFor: 'Projects' | 'Designs';
-
   @Prop({
     required: true,
     unique: true,
@@ -19,9 +16,6 @@ export class User {
 
   @Prop({ required: true })
   password: string;
-
-  @Prop({ required: true })
-  field: string;
 
   @Prop()
   storage: number;

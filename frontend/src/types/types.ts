@@ -10,11 +10,9 @@ export type colorType =
 export type buttonType = "button" | "submit" | "reset" | undefined;
 
 export type userInfoType = {
-  signInFor?: "Projects" | "Designs" | null;
   email: string | null;
   password: string | null;
   confirmPassword?: string | null;
-  field?: string | null;
 };
 
 export type variantType =
