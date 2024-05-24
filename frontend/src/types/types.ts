@@ -10,6 +10,7 @@ export type colorType =
 export type buttonType = "button" | "submit" | "reset" | undefined;
 
 export type userInfoType = {
+  fullName?: string | null;
   email: string | null;
   password: string | null;
   confirmPassword?: string | null;
@@ -25,7 +26,7 @@ export type variantType =
   | undefined;
 export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
 export type initialStateType = {
-  userCreated: {message:string} | null;
+  userCreated: {message:string, isSubscribed:boolean } | null;
   error: {message:string , error:string, statusCode:number} | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -59,6 +60,7 @@ export type FolderType = {
   folderId: string;
   name: string;
   files: filesType[];
+  numberOfFiles: number;
 };
 
 export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folder";

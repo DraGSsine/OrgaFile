@@ -8,12 +8,15 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignInAction,resetAuthState } from "@/redux/slices/authSlice";
-
+import { SignInAction, resetAuthState } from "@/redux/slices/authSlice";
+import { createCheckoutSession } from "@/redux/slices/paymentSlice";
+import Cookies from "js-cookie";
 export const SignInForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isLoading, error , isAuthenticated} = useSelector((state: RootState) => state.auth);
-  const router = useRouter()
+  const { isLoading, error, isAuthenticated, userCreated } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const router = useRouter();
   const [userInfo, setUserInfo] = useState<userInfoType>({
     email: null,
     password: null,
@@ -38,11 +41,20 @@ export const SignInForm = () => {
     if (error) {
       toast.error(error.message);
     }
-    if (isAuthenticated){
-      toast.success('Sign in successful')
-      router.push('/dashboard')
+    if (isAuthenticated) {
+      toast.success("Sign in successful");
+      if (userCreated?.isSubscribed) {
+        router.push("/dashboard");
+      } else {
+        dispatch(
+          createCheckoutSession({
+            price_id:
+              Cookies.get("price_id") || "price_1PIwwECRq7xCj4sRV1O6QKeK",
+          })
+        );
+      }
     }
-    dispatch(resetAuthState())
+    dispatch(resetAuthState());
   });
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">

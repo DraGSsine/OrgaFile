@@ -5,24 +5,22 @@ import SelectSkill from "../SelectSkill";
 import CheckBox from "../CheckBox";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { Button, Checkbox, RadioGroup } from "@nextui-org/react";
+import { Button, Checkbox, Input, RadioGroup } from "@nextui-org/react";
 import { CustomRadio } from "../RadiosGroup";
 import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
-import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 const SignupPageForm = () => {
   const router = useRouter();
   const dispatch = useDispatch<any>();
   const { isLoading, userCreated, error } = useSelector(
     (state: RootState) => state.auth
   );
-  // payemnt state
-  const { checkoutSession } = useSelector((state: RootState) => state.payment);
   const [isSelected, setIsSelected] = useState(false);
   const [userCredential, setUserInfo] = useState<userInfoType>({
+    fullName: null,
     email: null,
     password: null,
     confirmPassword: null,
@@ -30,6 +28,7 @@ const SignupPageForm = () => {
   const [errorState, setErrorState] = useState<ZodIssue | null>(null);
   const User = z
     .object({
+      fullName: z.string().min(3).max(30),
       email: z.string().email(),
       password: z.string().min(6).max(30),
       confirmPassword: z.string().min(6).max(30),
@@ -47,7 +46,6 @@ const SignupPageForm = () => {
     } else {
       setErrorState(null);
       dispatch(SignUpAction(userCredential));
-      console.log(checkoutSession)
     }
   };
   useEffect(() => {
@@ -56,13 +54,20 @@ const SignupPageForm = () => {
     }
     if (userCreated) {
       toast.success(userCreated.message);
-      dispatch(createCheckoutSession({ priceId: "price_1JZ9ZvK5J6J9J9Zv" }))
+      router.push("/auth/signin");
     }
     dispatch(resetAuthState());
   }, [error, userCreated, dispatch, router]);
 
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
+      <Input
+        variant="bordered"
+        placeholder="Full Name"
+        onChange={(e) =>
+          setUserInfo({ ...userCredential, fullName: e.target.value })
+        }
+      />
       <EmailInput
         errorState={errorState}
         onChange={(e) => setUserInfo({ ...userCredential, email: e })}

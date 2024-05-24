@@ -14,7 +14,22 @@ const Upgrade = ({
 }) => {
   const router = useRouter();
   const upgradPlan = (plan: string) => {
-    Cookies.set("plan", plan);
+    Cookies.set("plan", plan, {
+      expires: 7 * 24 * 60 * 60,
+      sameSite: "strict",
+      secure: true,
+    });
+    let price_id: string = "price_1PIwvSCRq7xCj4sRtnFgoawN"; // basic as default
+    if (plan === "Standard") {
+      price_id = "price_1PIwwECRq7xCj4sRV1O6QKeK";
+    } else if (plan === "Premium") {
+      price_id = "price_1PIwwvCRq7xCj4sRxgJYesQ8";
+    }
+    Cookies.set("price_id", price_id, {
+      expires: 7 * 24 * 60 * 60,
+      sameSite: "strict",
+      secure: true,
+    });
     router.push("/auth/signup");
   };
   return (

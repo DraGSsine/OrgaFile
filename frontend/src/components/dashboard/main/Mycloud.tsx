@@ -1,5 +1,6 @@
-import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
-import { loadClouInfo, loadUserLimits } from "@/redux/slices/dashboardSlice";
+"use client";
+import { getFileImage } from "@/helpers/helpers";
+import { loadClouInfo } from "@/redux/slices/dashboardSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Card, CardBody, Progress } from "@nextui-org/react";
 import Image from "next/image";
@@ -47,20 +48,24 @@ const Mycloud = () => {
   return (
     <div>
       <h1 className=" font-medium text-2xl pb-6 ">My Cloud</h1>
-      <div className="grid grid-cols-2  2xl:grid-cols-4 gap-8">
-        {filesFormatInfo.map((item) => (
-          <Cloud
-            key={item.name}
-            name={item.name}
-            filesNum={item.numberOfFiles}
-            used={+(item.size / 1024 / 1024 / 1024).toString().slice(0, 3)}
-            backGroundColor={getColorBaseOnFormat(item.name).backGroundColor}
-            barColor={getColorBaseOnFormat(item.name).barColor}
-            maxStorage={storage}
-            icon={getFileImage(item.name.toLowerCase())}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <CoudSkeleton />
+      ) : (
+        <div className="grid grid-cols-2  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
+          {filesFormatInfo.map((item) => (
+            <Cloud
+              key={item.name}
+              name={item.name}
+              filesNum={item.numberOfFiles}
+              used={+(item.size / 1024 / 1024 / 1024).toString().slice(0, 3)}
+              backGroundColor={getColorBaseOnFormat(item.name).backGroundColor}
+              barColor={getColorBaseOnFormat(item.name).barColor}
+              maxStorage={storage}
+              icon={getFileImage(item.name.toLowerCase())}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -120,5 +125,57 @@ const Cloud = ({
         </div>
       </CardBody>
     </Card>
+  );
+};
+
+const CoudSkeleton = () => {
+  return (
+    <div>
+      <div className="grid grid-cols-2  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
+        {[1, 2, 3, 4].map((item) => (
+          <Card
+            key={item}
+            className="rounded-2xl w-full h-48 flex flex-col bg-gray-50 transition-all select-none "
+          >
+            <CardBody className="p-6 flex flex-col justify-between">
+              <div className="flex items-center">
+                <div
+                  className={`bg-gray-200 w-fit p-3 rounded-2xl flex items-center justify-center`}
+                >
+                  <Image
+                    src="/images/icons/pdf.svg"
+                    width={40}
+                    height={40}
+                    alt="pdf"
+                  />
+                </div>
+                <div className="flex-grow pl-7">
+                  <h1 className=" text-lg">PDF</h1>
+                  <p className="text-gray-400 font-light text-sm ">10 Files</p>
+                </div>
+              </div>
+
+              <div className=" space-y-5">
+                <Progress
+                  color="default"
+                  classNames={{
+                    base: "max-w-md",
+                    track: `bg-gray-200 rounded-2xl`,
+                    indicator: `bg-red-400 rounded-2xl`,
+                  }}
+                  size="sm"
+                  value={10}
+                  maxValue={100}
+                />
+                <div className=" flex justify-between font-medium text-gray-600 ">
+                  <span>10Gb</span>
+                  <span>100Gb</span>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 };

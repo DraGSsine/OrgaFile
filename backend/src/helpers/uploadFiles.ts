@@ -66,7 +66,6 @@ export const uploadFiles = async (
     getAllCategories.push(...allCategories);
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file) => {
-      const type = file.mimetype.split('/').pop();
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${file.originalname}`;
       const params = {
         mimetype: file.mimetype,
@@ -90,7 +89,7 @@ export const uploadFiles = async (
       };
 
       // Analyze file to determine its topic
-      const topic = await AnalyzeFile(data, type);
+      const topic = await AnalyzeFile(file);
       data.topic = topic;
 
       // Push file metadata to array

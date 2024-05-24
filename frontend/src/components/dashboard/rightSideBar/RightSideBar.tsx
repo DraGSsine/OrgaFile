@@ -9,7 +9,6 @@ export const RightSideBar = () => {
     <div className="w-[15vw] border-l">
       <div className=" px-8 items-center flex h-[8vh] border-b justify-between ">
         <UserOverview />
-        <UserProfile />
       </div>
       <div className="py-10 px-4">
         <div className="flex justify-between items-center 3xl:justify-around flex-col gap-8 ">

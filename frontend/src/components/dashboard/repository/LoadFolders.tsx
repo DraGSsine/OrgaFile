@@ -5,7 +5,7 @@ import { FolderType } from "@/types/types";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FolderComponent from "./Folder";
-import { Folder } from "lucide-react";
+import { Folder, FolderOpen } from "lucide-react";
 
 const LoadFolders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,11 +18,27 @@ const LoadFolders = () => {
   if (isLoading) {
     return (
       <div className="flex flex-wrap gap-6">
-          {
-            Array.from({ length: 10 }).map((_, i) => (
-              <FolderLoadSkeleton key={i} />
-            ))
-          }
+        {Array.from({ length: 10 }).map((_, i) => (
+          <FolderLoadSkeleton key={i} />
+        ))}
+      </div>
+    );
+  } else if (folders.length === 0) {
+    return (
+      <div className=" h-full w-full flex items-center justify-center ">
+        <div className="grid h-60 gap-4 w-60">
+          <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
+            <FolderOpen size={50} className="fill-white stroke-blue-500 stroke-1 " />
+          </div>
+          <div>
+            <h2 className="text-center text-black text-base font-semibold leading-relaxed pb-1">
+              No folders found
+            </h2>
+            <p className="text-center text-black text-sm font-normal leading-snug pb-4">
+              Upload Your files to show your organized folders
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

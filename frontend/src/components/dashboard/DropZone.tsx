@@ -1,55 +1,68 @@
 "use client";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2 } from "lucide-react";
+import { Cloud, File, FileWarning, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "./Progress";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
 
-export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
+export const UploadDropzone = () => {
   const router = useRouter();
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const { uploadFileState } = useSelector((state: RootState) => state.files);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startSimulatedProgress = () => {
     setLoading(true);
     setUploadProgress(0);
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setUploadProgress((prevProgress) => {
-        if (prevProgress >= 95 || uploadFileState.isFileUploaded) {
-          clearInterval(interval);
-          return 100;
+        if (prevProgress < 95) {
+          return prevProgress + Math.floor(Math.random() * 5);
+        } else {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+          }
+          return prevProgress;
         }
-        return prevProgress + 5;
       });
     }, 500);
-    return interval;
   };
 
   useEffect(() => {
     if (uploadFileState.isFileUploaded) {
       setUploadProgress(100);
+      toast.success("File uploaded successfully");
       setTimeout(() => {
         dispatch(setUploadModal(false));
         router.push("/dashboard/repository");
       }, 2000);
+    } else if (uploadFileState.error) {
+      toast.error(uploadFileState.error.message || "File upload failed");
+      setLoading(false);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     }
-    if (uploadFileState.error) {
-      toast.error("Failed to upload files");
-    }
-  }, [uploadFileState.isFileUploaded, uploadFileState.error]);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [uploadFileState.isFileUploaded, uploadFileState.error, dispatch, router]);
 
   return (
     <Dropzone
       multiple
       onDrop={async (acceptedFiles) => {
         const formData = new FormData();
-        const interval = startSimulatedProgress();
+        startSimulatedProgress();
         acceptedFiles.forEach((file) => {
           formData.append("files", file);
         });
@@ -72,9 +85,7 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">
-                  PDF (up to {isSubscribed ? "16" : "4"}MB)
-                </p>
+                <p className="text-xs text-zinc-500">PDF (up to 20MB)</p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (
@@ -88,7 +99,7 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                 </div>
               ) : null}
 
-              {loading ? (
+              {loading && (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <ProgressBar
                     indicatorColor={
@@ -103,8 +114,15 @@ export const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                     </div>
                   )}
                 </div>
-              ) : null}
-
+              )}
+              {uploadFileState.error && (
+                <div className=" flex gap-4 items-center justify-center py-6">
+                  <p className="text-danger-500 text-medium">
+                    Filed to Upload files{" "}
+                  </p>
+                  <FileWarning size={20} className=" stroke-danger-500" />
+                </div>
+              )}
               <input
                 {...getInputProps()}
                 type="file"

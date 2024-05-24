@@ -82,21 +82,6 @@ const SideBar = () => {
           </ul>
         </nav>
       </div>
-      <div className=" flex flex-col items-center gap-16 ">
-        <div className="bg-primary flex flex-col justify-between p-4 rounded-lg gap-2">
-          <h1 className="text-2xl text-white font-medium">Go To Premium</h1>
-          <p className=" text-sm text-white font-normal leading-6 ">
-            Unlock the real power of DocTify with the premium plan
-          </p>
-          <Button
-            radius="sm"
-            variant="flat"
-            className="text-lg font-semibold p-6 bg-black text-white"
-          >
-            Upgrade
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

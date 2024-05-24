@@ -7,7 +7,7 @@ import { FileInfo } from 'src/schemas/files.schema';
 import { promptContent } from './ai-const';
 import { AIMessagePromptTemplate } from 'langchain/prompts';
 
-export async function AnalyzeFile(data: FileInfo, type: string) {
+export async function AnalyzeFile(file: any) {
   const model = new ChatMistralAI({
     temperature: 1,
     apiKey: process.env.MISTRAL_API_KEY,
@@ -15,7 +15,7 @@ export async function AnalyzeFile(data: FileInfo, type: string) {
   });
 
   try {
-    const fileContents: string = await parseFile(data.url, type);
+    const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 2000,
       separators: ['\n\n', '\n', '.', '!', '?'],

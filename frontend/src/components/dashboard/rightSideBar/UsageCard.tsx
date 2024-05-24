@@ -8,6 +8,7 @@ export const CloudStorage = ({
   storageLimit: number;
   storageUsed: number;
 }) => {
+
   return (
     <Card className="rounded-2xl w-full h-52 flex flex-col bg-gray-50 transition-all">
       <CardBody className="p-6 flex flex-col justify-between">
@@ -20,7 +21,7 @@ export const CloudStorage = ({
         <Progress
           showValueLabel={true}
           value={storageUsed}
-          label={`${storageUsed.toString().slice(0, 3)}Gb of ${storageLimit}Gb`}
+          label={`${storageUsed.toString().split(".")[0]}Gb of ${storageLimit}Gb`}
           maxValue={storageLimit}
           size="md"
           classNames={{

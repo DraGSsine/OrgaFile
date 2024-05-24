@@ -27,7 +27,7 @@ export default function ModalComponent() {
       >
         <ModalContent>
           <ModalBody className="bg-zinc-100">
-            <UploadDropzone isSubscribed={false} />
+            <UploadDropzone/>
           </ModalBody>
         </ModalContent>
       </Modal>

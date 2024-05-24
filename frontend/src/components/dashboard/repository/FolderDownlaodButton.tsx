@@ -1,4 +1,7 @@
-import { downloadFolder, setDownloadingFolder } from "@/redux/slices/foldersSlice";
+import {
+  downloadFolder,
+  setDownloadingFolder,
+} from "@/redux/slices/foldersSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { FolderType } from "@/types/types";
 import { Button } from "@nextui-org/button";
@@ -17,6 +20,7 @@ const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
   if (isLoading && downloadingFolderId.includes(folder.folderId)) {
     return <Spinner size="sm" />;
   }
+
   return (
     <Button
       onClick={() => {

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -43,6 +44,13 @@ export class UploadService {
       throw new NotFoundException('User not found');
     }
     try {
+      const fileSize = files.reduce((acc, file) => acc + file.size, 0);
+      const fileSizeInGB = fileSize / 1000000000;
+      if (user.storageUsed + fileSizeInGB > user.storage) {
+        throw new BadRequestException('Storage limit exceeded');
+      } else if (user.requestUsed + files.length > user.requestLimit) {
+        throw new BadRequestException('Request limit exceeded');
+      }
       const fileDocuments = await uploadFiles(
         files,
         userId,
@@ -50,9 +58,6 @@ export class UploadService {
         this.folderModel,
         this.s3Client,
       );
-      console.log(files.length)
-      const fileSize = files.reduce((acc, file) => acc + file.size, 0);
-      const fileSizeInGB = fileSize / 1000000000;
       user.storageUsed += fileSizeInGB;
       user.requestUsed += files.length;
       await user.save();
@@ -107,7 +112,7 @@ export class UploadService {
     try {
       const files = await this.fileModel.findOne({ userId });
       if (!files) {
-        throw new NotFoundException('Files not found');
+        return [];
       }
       return files.files;
     } catch (error) {
@@ -121,7 +126,7 @@ export class UploadService {
         .findOne({ userId })
         .sort({ 'files.createdAt': -1 });
       if (!userFiles) {
-        throw new NotFoundException('Files not found');
+        return [];
       }
 
       const res = userFiles.files
@@ -140,7 +145,7 @@ export class UploadService {
     try {
       const files = await this.removedFilesModel.findOne({ userId });
       if (!files) {
-        throw new NotFoundException('Files not found');
+        return [];
       }
       return files.files;
     } catch (error) {
@@ -226,6 +231,22 @@ export class UploadService {
   async removeMany(req: any, fileIds: string[], isPermanently: boolean) {
     try {
       if (isPermanently) {
+        const files = await this.removedFilesModel.findOne({
+          userId: req.user.userId,
+          'files.fileId': { $in: fileIds },
+        });
+
+        if (!files) {
+          throw new NotFoundException('Files not found in removed files');
+        }
+
+        const removedFilesSize = files.files.reduce((totalSize, file) => {
+          if (fileIds.includes(file.fileId)) {
+            return totalSize + file.size;
+          }
+          return totalSize;
+        }, 0);
+
         const removeResult = await this.removedFilesModel.updateOne(
           { userId: req.user.userId },
           { $pull: { files: { fileId: { $in: fileIds } } } },
@@ -244,6 +265,9 @@ export class UploadService {
           },
         };
 
+        const user = await this.userModel.findById(req.user.userId);  
+        user.storageUsed -= removedFilesSize / 1000000000;
+        await user.save();
         await this.s3Client.deleteObjects(deleteParams).promise();
 
         return 'Files deleted permanently';

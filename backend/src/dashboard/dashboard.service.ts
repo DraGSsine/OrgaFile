@@ -48,6 +48,13 @@ export class DashboardService {
       ];
 
       const userFiles = await this.fileModel.findOne({ userId });
+      if (!userFiles) {
+        return {
+          filesFormatInfo,
+          storageUsed: 0,
+          storage: user.storage,
+        };
+      }
       const files = userFiles.files;
 
       files.forEach((file) => {

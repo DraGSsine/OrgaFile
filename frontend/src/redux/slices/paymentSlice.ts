@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { redirect } from "next/dist/server/api-utils";
 
 export interface PaymentState {
   checkoutSession: any;
@@ -16,12 +17,12 @@ const initialState: PaymentState = {
 
 export const createCheckoutSession = createAsyncThunk(
   "payment/createCheckoutSession",
-  async ({priceId}:{priceId:string}, { rejectWithValue }) => {
+  async ({price_id}:{price_id:string}, { rejectWithValue }) => {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/create-checkout-session`,
         {
-            priceId: priceId,
+          price_id,
         },
         {
           headers: {
@@ -48,6 +49,7 @@ export const paymentSlice = createSlice({
     builder.addCase(createCheckoutSession.fulfilled, (state, action) => {
       state.loading = false;
       state.checkoutSession = action.payload;
+      location.href = action.payload.url;
     });
     builder.addCase(createCheckoutSession.rejected, (state, action) => {
       state.loading = false;

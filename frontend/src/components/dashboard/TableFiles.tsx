@@ -188,7 +188,7 @@ const TableWraper = ({ children }: { children: ReactNode }) => {
   return (
     <div
       className={` ${
-        path == "/dashboard" ? " h-[63.2vh] " : "h-[84.3vh]"
+        path == "/dashboard" ? "h-[63.2vh] " : "h-[84.3vh]"
       } bg-white relative rounded-t-2xl p-10  shadow-small`}
     >
       {children}

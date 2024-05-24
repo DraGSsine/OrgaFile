@@ -194,11 +194,11 @@ export class PaymentService {
     requestLimit: number;
   } {
     if (plan == 'Basic') {
-      return { storage: 5, requestLimit: 10 };
+      return { storage: 5, requestLimit: 100 };
     } else if (plan == 'Standard') {
-      return { storage: 10, requestLimit: 20 };
+      return { storage: 15, requestLimit: 400 };
     } else if (plan == 'Premium') {
-      return { storage: 20, requestLimit: 50 };
+      return { storage: 20, requestLimit: 500 };
     } else {
       throw new Error('Invalid plan');
     }

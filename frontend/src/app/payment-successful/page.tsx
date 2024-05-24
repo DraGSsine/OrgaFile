@@ -5,6 +5,7 @@
  */
 
 import { Button } from "@nextui-org/button";
+import Link from "next/link";
 
 export default function Component() {
   return (
@@ -18,9 +19,9 @@ export default function Component() {
           Congratulations, your payment was processed successfully.
         </p>
       </div>
-      <Button href="/dashboard" className="w-full max-w-xs">
-        Continue
-      </Button>
+      <Link className=" w-[200px]" href="/dashboard">
+        <Button color="primary" className="w-full max-w-xs">Continue</Button>
+      </Link>
     </div>
   );
 }

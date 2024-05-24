@@ -8,10 +8,12 @@ import {
   Req,
   UseGuards,
   UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import multer from 'multer';
 
 @Controller('api/files')
 @UseGuards(AuthGuard)
@@ -19,12 +21,47 @@ export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('upload')
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(
+    FilesInterceptor('files', null, {
+      limits: {
+        fileSize: 20 * 1024 * 1024, // 20 MB
+      },
+      fileFilter: (req, file, callback) => {
+        const allowedMimeTypes = [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'text/plain',
+          'application/rtf',
+        ];
+
+        if (allowedMimeTypes.includes(file.mimetype)) {
+          callback(null, true);
+        } else {
+          callback(
+            new BadRequestException(
+              'Only PDF, DOCX, TXT, and RTF files are allowed',
+            ),
+            false,
+          );
+        }
+      },
+    }),
+  )
   uploadFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-    return this.uploadService.uploadFiles(files, req.user.userId);
+    try {
+      return this.uploadService.uploadFiles(files, req.user.userId);
+    } catch (error) {
+      if (
+        error instanceof multer.MulterError &&
+        error.code === 'LIMIT_FILE_SIZE'
+      ) {
+        throw new BadRequestException('File size exceeds the limit of 20 MB');
+      }
+      throw new BadRequestException('An error occurred during file upload');
+    }
   }
 
   @Post('restore')

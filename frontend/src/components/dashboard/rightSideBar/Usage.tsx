@@ -15,10 +15,11 @@ const Usage = () => {
     storageLimit,
     requestLimit,
   } = useSelector((state: RootState) => state.dashboard.userLimits);
-
+  const {isFileUploaded} = useSelector((state: RootState) => state.files.uploadFileState);
+  const {isFileDeleted} = useSelector((state: RootState) => state.files.removeFileState);
   useEffect(() => {
     dispatch(loadUserLimits());
-  },[])
+  },[isFileUploaded,isFileDeleted])
   return (
     <>
       <CloudStorage storageLimit={storageLimit} storageUsed={storageUsed}  />

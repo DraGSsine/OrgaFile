@@ -40,7 +40,7 @@ const Pricing = () => {
             </PricingCard>
 
             <PricingCard
-              type=" Standard"
+              type="Standard"
               price="$19"
               subscription="year"
               description="Ideal for individuals or small teams seeking enhanced file organization and efficient sorting capabilities."
@@ -55,7 +55,7 @@ const Pricing = () => {
             </PricingCard>
 
             <PricingCard
-              type=" Premium"
+              type="Premium"
               price="$39"
               subscription=" month"
               description="The ultimate solution for extensive file management needs, offering advanced sorting capabilities and customization options."

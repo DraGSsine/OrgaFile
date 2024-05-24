@@ -4,11 +4,11 @@ const Avatar = ({ className }: { className: string }) => {
   return (
     <User
       className={`${className} text-white`}
-      name="Adam akbil"
+      name="Yassine Ouchen"
       description={
         <Link
           className=" text-gray-200"
-          href="https://twitter.com/jrgarciadev"
+          href="https://x.com/Yassin_ouchn"
           size="sm"
           isExternal
         >
