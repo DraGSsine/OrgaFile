@@ -22,7 +22,7 @@ const Features = () => {
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
-                src="/images/1.png"
+                src="/images/folders.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"
@@ -55,7 +55,7 @@ const Features = () => {
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
-                src="/images/1.png"
+                src="/images/search.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"
@@ -90,7 +90,7 @@ const Features = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
 
               <Image
-                src="/images/2.png"
+                src="/images/share.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"
@@ -119,7 +119,7 @@ const Features = () => {
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-60">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
-                src="/images/1.png"
+                src="/images/files.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"
@@ -149,7 +149,7 @@ const Features = () => {
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-60">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
-                src="/images/2.png"
+                src="/images/dashboard.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"

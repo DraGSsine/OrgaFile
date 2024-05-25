@@ -62,7 +62,7 @@ const HowItWorks = () => {
             ))}
           </div>
           <div className="hidden lg:mt-20 lg:pt-2 lg:block">
-            <Slider image={"/images/profit-loss.webp"} />
+            <Slider/>
           </div>
         </div>
       </section>

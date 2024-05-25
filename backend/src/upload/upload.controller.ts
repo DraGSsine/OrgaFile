@@ -31,7 +31,7 @@ export class UploadController {
           'application/pdf',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
           'text/plain',
-          'application/rtf',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
 
         if (allowedMimeTypes.includes(file.mimetype)) {
@@ -39,7 +39,7 @@ export class UploadController {
         } else {
           callback(
             new BadRequestException(
-              'Only PDF, DOCX, TXT, and RTF files are allowed',
+              'Only PDF, DOCX, TXT, and SLSX files are allowed',
             ),
             false,
           );

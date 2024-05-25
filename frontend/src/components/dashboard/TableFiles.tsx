@@ -127,7 +127,7 @@ export default function TableFiles({
           CREATED AT
         </TableColumn>
         <TableColumn className=" text-center w-[15%]" key="status">
-          STATUS
+          TOPIC
         </TableColumn>
         <TableColumn className=" w-[15%] text-center" key="settings">
           SETTINGS

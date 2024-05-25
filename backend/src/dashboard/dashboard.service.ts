@@ -41,7 +41,7 @@ export class DashboardService {
           numberOfFiles: 0,
         },
         {
-          name: 'rtf',
+          name: 'xlsx',
           size: 0,
           numberOfFiles: 0,
         },
@@ -64,9 +64,6 @@ export class DashboardService {
         if (index !== -1) {
           filesFormatInfo[index].size += file.size;
           filesFormatInfo[index].numberOfFiles += 1;
-        } else {
-          filesFormatInfo[4].size += file.size;
-          filesFormatInfo[4].numberOfFiles += 1;
         }
       });
       // to gb 

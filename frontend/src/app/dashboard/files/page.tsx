@@ -52,11 +52,8 @@ const AllFilesPage = () => {
     handleFileStates();
     dispatch(resetFilesState());
   }, [
-    removeFileState.error,
     removeFileState.isFileDeleted,
     uploadFileState.isFileUploaded,
-    uploadFileState.error,
-    dispatch
   ]);
 
   return (

@@ -64,10 +64,10 @@ const FooterBar = () => {
               <h3 className="font-medium text-sm text-slate-800">Legal</h3>
               <div className="flex flex-col mt-3">
                 <Link
-                  href="/terms"
+                  href="/legal"
                   className="py-2 text-sm text-slate-600 hover:text-indigo-600"
                 >
-                  terms
+                  legal
                 </Link>
               </div>
             </div>

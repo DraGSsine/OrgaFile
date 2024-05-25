@@ -1,7 +1,7 @@
 import { UnsupportedMediaTypeException } from '@nestjs/common';
 import { Model, ObjectId, Types } from 'mongoose';
 import * as crypto from 'crypto';
-import { AnalyzeFile, organizeFilesAnalysis } from 'src/ai/openai-setup';
+import { analyzeDocument, organizeFilesAnalysis } from 'src/ai/openai-setup';
 import AWS from 'aws-sdk';
 import { File, FileDocument, FileInfo } from 'src/schemas/files.schema';
 import { FolderDocument, FolderInfo } from 'src/schemas/folders.schema';
@@ -63,9 +63,10 @@ export const uploadFiles = async (
     // Retrieve all folders categories from MongoDB
     const db_folders = await folderModel.find({ userId });
     const allCategories = await getAllCategoryNames(db_folders);
+    console.log('All categories:', allCategories);
     getAllCategories.push(...allCategories);
     // Upload files to S3 and collect their metadata
-    const uploadPromises = files.map(async (file) => {
+    const uploadPromises = files.map(async (file:Express.Multer.File) => {
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${file.originalname}`;
       const params = {
         mimetype: file.mimetype,
@@ -89,7 +90,8 @@ export const uploadFiles = async (
       };
 
       // Analyze file to determine its topic
-      const topic = await AnalyzeFile(file);
+      const topic = await analyzeDocument(file);
+      console.log('Topic:', topic);
       data.topic = topic;
 
       // Push file metadata to array
@@ -98,7 +100,7 @@ export const uploadFiles = async (
 
     // Wait for all uploads and metadata processing to finish
     await Promise.all(uploadPromises);
-
+    console.log("Done uploading files")
     // Insert uploaded file metadata into MongoDB
     await fileModel.findOneAndUpdate(
       { userId },

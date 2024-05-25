@@ -56,15 +56,13 @@ export function getFileImage(format: string) : string
     case textFormats.includes(format):
       return "/formatImages/txt.png";
     case excelFormats.includes(format):
-      return "/formatImages/excel.png";
+      return "/formatImages/xlsx.png";
     case wordFormats.includes(format):
       return "/formatImages/docx.png";
     case pdfFormats.includes(format):
       return "/formatImages/pdf.png";
     case powerpointFormats.includes(format):
       return "/formatImages/powerpoint.png";
-    case "rtf" === format:
-      return "/formatImages/rtf.png";
     default:
       return "/formatImages/file.png";
   }

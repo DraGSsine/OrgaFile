@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import { useSelector } from "react-redux";
 
-const Slider = ({ image }: { image: string }) => {
+const Slider = () => {
   const { activeStep } = useSelector((state: RootState) => state.landing);
 
   let translateX = 0;
@@ -28,7 +28,7 @@ const Slider = ({ image }: { image: string }) => {
             className="w-full"
             style={{ color: "transparent" }}
             sizes="52.75rem"
-            src={image}
+            src="/images/upload.png"
           />
         </div>
       </div>
@@ -47,7 +47,7 @@ const Slider = ({ image }: { image: string }) => {
             className="w-full"
             style={{ color: "transparent" }}
             sizes="52.75rem"
-            src={image}
+            src="/images/magic.png"
           />
         </div>
       </div>
@@ -66,7 +66,7 @@ const Slider = ({ image }: { image: string }) => {
             className="w-full"
             style={{ color: "transparent" }}
             sizes="52.75rem"
-            src={image}
+            src="/images/folders.png"
           />
         </div>
       </div>

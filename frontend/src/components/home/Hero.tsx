@@ -63,8 +63,8 @@ const Hero = () => {
                   <Image
                     src="/images/dashboard.png"
                     alt="product preview"
-                    width={1364}
-                    height={866}
+                    width={2064}
+                    height={1766}
                     quality={100}
                     className="rounded-md bg-white shadow-2xl ring-1 ring-gray-900/10"
                   />

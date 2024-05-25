@@ -24,10 +24,10 @@ const getColorBaseOnFormat = (format: string) => {
         barColor: "bg-gray-500",
         backGroundColor: "bg-gray-200",
       };
-    case "rtf":
+    case "xlsx":
       return {
-        barColor: "bg-purple-400",
-        backGroundColor: "bg-purple-100",
+        barColor: "bg-green-400",
+        backGroundColor: "bg-green-100",
       };
     default:
       return {

@@ -86,16 +86,6 @@ const NavBar = () => {
             </Button>
           </Link>
 
-          <Link href="/about">
-            <Button
-              variant="flat"
-              radius="full"
-              className="bg-white-500 text-primary-500"
-            >
-              About
-            </Button>
-          </Link>
-
           <Link href="/pricing">
             <Button
               variant="flat"
@@ -116,15 +106,6 @@ const NavBar = () => {
             </Button>
           </Link>
 
-          <Link href="/terms">
-            <Button
-              variant="flat"
-              radius="full"
-              className="bg-white-500 text-primary-500"
-            >
-              Terms
-            </Button>
-          </Link>
         </div>
         <div className=" flex space-y-3 flex-col">
           <Link href="/auth/signin">

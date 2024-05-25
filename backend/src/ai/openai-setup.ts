@@ -1,19 +1,9 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChatMistralAI } from '@langchain/mistralai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { stripIndent } from 'common-tags';
 import { parseFile } from './prase-files';
-import { FileInfo } from 'src/schemas/files.schema';
-import { promptContent } from './ai-const';
-import { AIMessagePromptTemplate } from 'langchain/prompts';
 
-export async function AnalyzeFile(file: any) {
-  const model = new ChatMistralAI({
-    temperature: 1,
-    apiKey: process.env.MISTRAL_API_KEY,
-    model: 'open-mistral-7b',
-  });
-
+export const analyzeDocument = async (file: Express.Multer.File) => {
   try {
     const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
@@ -41,16 +31,21 @@ export async function AnalyzeFile(file: any) {
     Identify the most specific and distinctive main topic, focusing on unique and distinguishing aspects.
     If the context discusses something famous or well-known, prioritize that as the main topic.
     Provide the main topic as a concise phrase of less than four words. Do not include additional explanations or details in your response.
-    Respond in the following format: "Main Topic: <your_response>"`;
+    Respond in the following format: "Main Topic: <your_response>".`;
+
+    const model = new ChatMistralAI({
+      apiKey: process.env.MISTRAL_API_KEY,
+      model: 'open-mistral-7b',
+    });
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ['system', promptContent],
-      ['human', '{input}'],
+      ['system', 'You are a helpful assistant.'],
+      ['user', promptContent],
+      ['user', contextText],
     ]);
+
     const chain = prompt.pipe(model);
-    const response = await chain.invoke({
-      input: contextText,
-    });
+    const response = await chain.invoke({});
 
     // Extract the main topic from the response
     const mainTopic = (response.content as string)
@@ -62,14 +57,14 @@ export async function AnalyzeFile(file: any) {
     console.error('Error analyzing file:', error);
     return null;
   }
-}
+};
 
 export const organizeFilesAnalysis = async (
   topics: string[],
   categories: string[],
 ) => {
-  const folderPromptContent = `Analyze the following topics and categorize them into broad categories. Each topic should be assigned to only one category and should not be changed or rephrased.
-  If a topic is specific, like a particular TV show, movie, or book, assign it to a broader category, like 'TV Shows', 'Movies', or 'Books'.
+  const folderPromptContent = `Analyze the following topics and categorize them into broad, general categories. Each topic should be assigned to only one category and should not be changed or rephrased.
+  If a topic is specific, like a particular TV show, movie, book, or technology, assign it to a broader category, such as 'TV Shows', 'Movies', 'Books', 'Programming', etc.
   Prioritize using the following existing categories whenever possible: ${categories.join(', ')}. Provide the response in a well-structured JSON format.
 
   Topics: ${topics.join(', ')}
@@ -88,7 +83,9 @@ export const organizeFilesAnalysis = async (
     ]
   }}
 
-  Ensure that each category has a unique name and that there are no duplicate topics within or across categories. Use the exact topic names provided in the topics list and the exact category names provided in the existing categories list.`;
+  Ensure that each category has a unique name and that there are no duplicate topics within or across categories. Use the exact topic names provided in the topics list and the exact category names provided in the existing categories list. Make sure the categories are broad and general.
+  Ensure that the categories contain only one word as maximum.
+  `;
 
   const model = new ChatMistralAI({
     apiKey: process.env.MISTRAL_API_KEY,
@@ -104,6 +101,17 @@ export const organizeFilesAnalysis = async (
     const chain = prompt.pipe(model);
     const response = await chain.invoke({});
     const assignments = JSON.parse(response.content as string).data;
+
+    // Validate categories to ensure they contain only one word
+    const invalidCategories = categories.filter(
+      (category) => category.split(/\s+/).length > 1,
+    );
+    if (invalidCategories.length > 0) {
+      throw new Error(
+        `Invalid categories found: ${invalidCategories.join(', ')}. Categories must contain only one word.`,
+      );
+    }
+
     return assignments;
   } catch (error) {
     throw error;

@@ -10,7 +10,6 @@ type TabItem = {
 
 const tabItems: TabItem[] = [
   { key: "/", title: "Home" },
-  { key: "/about", title: "About" },
   { key: "/pricing", title: "Pricing" },
   { key: "/contact", title: "Contact" },
 ];

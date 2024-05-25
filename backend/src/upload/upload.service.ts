@@ -5,18 +5,14 @@ import {
   NotFoundException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
-import { UpdateUploadDto } from './dto/update-upload.dto';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { AnalyzeFile } from 'src/ai/openai-setup';
-import * as crypto from 'crypto';
 import { uploadFiles } from 'src/helpers/uploadFiles';
-import { FileDocument, FileInfo } from 'src/schemas/files.schema';
-import { User, UserDocument } from 'src/schemas/auth.schema';
+import { FileDocument } from 'src/schemas/files.schema';
+import { UserDocument } from 'src/schemas/auth.schema';
 import {
-  RemovedFiles,
   RemovedFilesDocument,
 } from 'src/schemas/removedFiles.schema';
 import { FolderDocument } from 'src/schemas/folders.schema';
@@ -94,13 +90,6 @@ export class UploadService {
         { $push: { files: restoredFile } },
         { upsert: true, new: true },
       );
-
-      if (!doc) {
-        console.log('New document created.');
-      } else {
-        console.log('Document found and updated.');
-      }
-
       return restoredFile;
     } catch (error) {
       console.error('Error restoring file:', error);
@@ -134,7 +123,6 @@ export class UploadService {
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
         .slice(0, 9);
 
-      console.log(res.length);
       return res;
     } catch (error) {
       throw new InternalServerErrorException('Failed to load files');
@@ -212,14 +200,6 @@ export class UploadService {
           { $push: { files: removedFile } },
           { upsert: true, new: true },
         );
-
-        // If the document was newly created, handle it here
-        if (!doc) {
-          console.log('New document created.');
-        } else {
-          console.log('Document found and updated.');
-        }
-
         return removedFile;
       }
     } catch (error) {
@@ -296,13 +276,6 @@ export class UploadService {
           { $push: { files: { $each: flattenedRemovedFiles } } },
           { upsert: true, new: true },
         );
-
-        if (!doc) {
-          console.log('New document created.');
-        } else {
-          console.log('Document found and updated.');
-        }
-
         return flattenedRemovedFiles;
       }
     } catch (error) {
