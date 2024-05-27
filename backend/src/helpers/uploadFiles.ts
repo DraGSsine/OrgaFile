@@ -66,7 +66,7 @@ export const uploadFiles = async (
     console.log('All categories:', allCategories);
     getAllCategories.push(...allCategories);
     // Upload files to S3 and collect their metadata
-    const uploadPromises = files.map(async (file:Express.Multer.File) => {
+    const uploadPromises = files.map(async (file: Express.Multer.File) => {
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${file.originalname}`;
       const params = {
         mimetype: file.mimetype,
@@ -91,6 +91,7 @@ export const uploadFiles = async (
 
       // Analyze file to determine its topic
       const topic = await analyzeDocument(file);
+
       console.log('Topic:', topic);
       data.topic = topic;
 
@@ -100,7 +101,6 @@ export const uploadFiles = async (
 
     // Wait for all uploads and metadata processing to finish
     await Promise.all(uploadPromises);
-    console.log("Done uploading files")
     // Insert uploaded file metadata into MongoDB
     await fileModel.findOneAndUpdate(
       { userId },
@@ -116,24 +116,26 @@ export const uploadFiles = async (
     );
     for (const folder of folderData) {
       // Check if the folder exists for the user
-      const existingFolder = await folderModel.findOne({ userId, "folders.name": folder.name });
-    
+      const existingFolder = await folderModel.findOne({
+        userId,
+        'folders.name': folder.name,
+      });
+
       if (existingFolder) {
         // Folder exists, update its files
         await folderModel.findOneAndUpdate(
-          { userId, "folders.name": folder.name },
-          { $push: { "folders.$.files": { $each: folder.files } } }
+          { userId, 'folders.name': folder.name },
+          { $push: { 'folders.$.files': { $each: folder.files } } },
         );
       } else {
         // Folder does not exist, create a new document
         await folderModel.findOneAndUpdate(
           { userId },
           { $push: { folders: folder } },
-          { upsert: true }
+          { upsert: true },
         );
       }
     }
-    
 
     // console.log('Folders:', folderData);
   } catch (error) {
