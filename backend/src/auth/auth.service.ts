@@ -56,21 +56,4 @@ export class AuthService {
     });
     return { message: 'User created successfully' };
   }
-  async refresh(user: any) {
-    const token = await this.jwtService.signAsync(
-      { email: user.email },
-      { expiresIn: '1h', secret: process.env.JWT_SECRET_KEY },
-    );
-    const refreshToken = await this.jwtService.signAsync(
-      { email: user.email },
-      { expiresIn: '7d', secret: process.env.REFRESH_TOKEN },
-    );
-    return { token , refreshToken };
-  }
-  async verify(user: any) {
-    // const {token} = user.Authorization;
-    // console.log(token);
-    // const decoded = this.jwtService.verify(token, {secret:process.env.jwtSecretKey});
-    // console.log(decoded);
-  }
 }
