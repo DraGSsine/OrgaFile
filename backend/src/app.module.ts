@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { FoldersModule } from './folders/folders.module';
 // import { FoldersModule } from './folders/folders.module';
 import { PaymentsModule } from './payments/payments.module';
+import { TestsModule } from './tests/tests.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PaymentsModule } from './payments/payments.module';
     UserModule,
     FoldersModule,
     PaymentsModule,
+    TestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

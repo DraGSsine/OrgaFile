@@ -28,10 +28,6 @@ export class AuthService {
       { userId: user._id },
       { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },
     );
-    const refreshToken = await this.jwtService.signAsync(
-      { userId: user._id },
-      { expiresIn: '7d', secret: process.env.REFRESH_TOKEN },
-    );
     const isSubscribed = await this.subscriptionModel.findOne({
       userId: user._id,
     });

@@ -1,17 +1,15 @@
 "use client";
 import React, { FormEvent, use, useEffect, useState } from "react";
 import { EmailInput, PasswordInput } from "../inputs";
-import SelectSkill from "../SelectSkill";
-import CheckBox from "../CheckBox";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { RootState } from "@/redux/store";
 import { Button, Checkbox, Input, RadioGroup } from "@nextui-org/react";
-import { CustomRadio } from "../RadiosGroup";
 import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
+
 const SignupPageForm = () => {
   const router = useRouter();
   const dispatch = useDispatch<any>();

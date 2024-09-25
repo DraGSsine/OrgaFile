@@ -83,7 +83,7 @@ export class UploadService {
 
       const restoredFile = file.files.find((file) => file.fileId === fileId);
 
-      const doc = await this.fileModel.findOneAndUpdate(
+      await this.fileModel.findOneAndUpdate(
         { userId: req.user.userId },
         { $push: { files: restoredFile } },
         { upsert: true, new: true },
