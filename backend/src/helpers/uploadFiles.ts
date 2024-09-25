@@ -1,10 +1,10 @@
 import { UnsupportedMediaTypeException } from '@nestjs/common';
 import { Model, ObjectId, Types } from 'mongoose';
 import * as crypto from 'crypto';
-import { analyzeDocument, organizeFilesAnalysis } from 'src/ai/openai-setup';
+import { analyzeDocument, organizeFilesAnalysis } from '../ai/openai-setup';
 import AWS from 'aws-sdk';
-import { File, FileDocument, FileInfo } from 'src/schemas/files.schema';
-import { FolderDocument, FolderInfo } from 'src/schemas/folders.schema';
+import { File, FileDocument, FileInfo } from '../schemas/files.schema';
+import { FolderDocument, FolderInfo } from '../schemas/folders.schema';
 
 const addFileToCategoryBasedOnTopic = (
   categories: any,

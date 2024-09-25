@@ -1,15 +1,14 @@
 import { signInDto, signUpDto } from './dto/auth.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument } from 'src/schemas/auth.schema';
+import { UserDocument } from '../schemas/auth.schema';
 import {
   Injectable,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { subscriptionDocument } from 'src/schemas/subscriptions.schema';
+import { subscriptionDocument } from '../schemas/subscriptions.schema';
 @Injectable()
 export class AuthService {
   constructor(

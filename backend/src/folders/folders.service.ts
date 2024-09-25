@@ -7,8 +7,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import * as admZip from 'adm-zip';
-import { FolderDocument } from 'src/schemas/folders.schema';
-import { FileInfo } from 'src/schemas/files.schema';
+import { FolderDocument } from '../schemas/folders.schema';
+import { FileInfo } from '../schemas/files.schema';
 
 type FileContent = {
   name: string;

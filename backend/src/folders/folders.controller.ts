@@ -13,7 +13,7 @@ import {
 import { FoldersService } from './folders.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { ObjectId } from 'mongoose';
 
 @Controller('api/folders')

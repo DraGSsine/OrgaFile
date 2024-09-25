@@ -9,13 +9,13 @@ import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { uploadFiles } from 'src/helpers/uploadFiles';
-import { FileDocument } from 'src/schemas/files.schema';
-import { UserDocument } from 'src/schemas/auth.schema';
+import { uploadFiles } from '../helpers/uploadFiles';
+import { FileDocument } from '../schemas/files.schema';
+import { UserDocument } from '../schemas/auth.schema';
 import {
   RemovedFilesDocument,
-} from 'src/schemas/removedFiles.schema';
-import { FolderDocument } from 'src/schemas/folders.schema';
+} from '../schemas/removedFiles.schema';
+import { FolderDocument } from '../schemas/folders.schema';
 @Injectable()
 export class UploadService {
   constructor(

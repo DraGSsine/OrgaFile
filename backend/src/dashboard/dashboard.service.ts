@@ -1,9 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { FoldersModule } from 'src/folders/folders.module';
-import { FolderDocument } from 'src/schemas/folders.schema';
+import { FoldersModule } from '../folders/folders.module';
+import { FolderDocument } from '../schemas/folders.schema';
 import { Model } from 'mongoose';
-import { FileDocument } from 'src/schemas/files.schema';
-import { UserDocument } from 'src/schemas/auth.schema';
+import { FileDocument } from '../schemas/files.schema';
+import { UserDocument } from '../schemas/auth.schema';
 import { Injectable, NotFoundException } from '@nestjs/common';
 @Injectable()
 export class DashboardService {

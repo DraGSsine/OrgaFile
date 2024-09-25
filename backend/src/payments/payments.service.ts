@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import Stripe from 'stripe';
 import { Request, Response } from 'express';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UserDocument } from 'src/schemas/auth.schema';
-import { subscriptionDocument } from 'src/schemas/subscriptions.schema';
+import { UserDocument } from '../schemas/auth.schema';
+import { subscriptionDocument } from '../schemas/subscriptions.schema';
 
 @Injectable()
 export class PaymentService {

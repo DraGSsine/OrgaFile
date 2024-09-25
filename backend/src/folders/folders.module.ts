@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { FoldersController } from './folders.controller';
 import { JwtService } from '@nestjs/jwt';
-import { userSchema } from 'src/schemas/auth.schema';
+import { userSchema } from '../schemas/auth.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { folderSchema } from 'src/schemas/folders.schema';
+import { folderSchema } from '../schemas/folders.schema';
 
 @Module({
   imports: [

@@ -2,11 +2,11 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { UploadController } from './upload.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { userSchema } from 'src/schemas/auth.schema';
+import { userSchema } from '../schemas/auth.schema';
 import { JwtService } from '@nestjs/jwt';
-import { folderSchema } from 'src/schemas/folders.schema';
-import { fileSchema } from 'src/schemas/files.schema';
-import { removedFilesSchema } from 'src/schemas/removedFiles.schema';
+import { folderSchema } from '../schemas/folders.schema';
+import { fileSchema } from '../schemas/files.schema';
+import { removedFilesSchema } from '../schemas/removedFiles.schema';
 
 @Module({
   imports: [

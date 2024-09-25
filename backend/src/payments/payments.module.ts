@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { PaymentService } from './payments.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PaymentController } from './payments.controller';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { subscriptionSchema } from 'src/schemas/subscriptions.schema';
-import { userSchema } from 'src/schemas/auth.schema';
+import { subscriptionSchema } from '../schemas/subscriptions.schema';
+import { userSchema } from '../schemas/auth.schema';
 
 @Module({
   imports: [

@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import multer from 'multer';
 
 @Controller('api/files')
