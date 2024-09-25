@@ -12,7 +12,7 @@ import {
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Request, Response } from 'express';
 import { PaymentService } from './payments.service';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('api/payment')
 export class PaymentController {
