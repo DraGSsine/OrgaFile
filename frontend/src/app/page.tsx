@@ -12,9 +12,7 @@ import { useEffect } from "react";
 export default function Home() {
   const fetchTest = async () => {
     try {
-      const data = await axios.post("https://doctify-nam3ykj03-dragssines-projects.vercel.app/payment/create-checkout-session",{
-        userId: "1",
-      })
+      const data = await axios.post("https://doctify-m1igesmgd-dragssines-projects.vercel.app/api/tests",{})
       console.log(data);
     } catch (error) {
       console.log(error);
