@@ -61,7 +61,7 @@ export async function parseFile(file) {
     } else if (file.mimetype === 'application/pdf') {
       return await parsePdfFile(file.buffer);
     } else {
-      return "General";
+      return 'General';
     }
   } catch (error) {
     console.error('Error fetching or parsing file:', error);

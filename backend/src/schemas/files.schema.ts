@@ -6,7 +6,7 @@ export type FileDocument = File & Document;
 export class FileInfo {
   @Prop({ required: true, unique: true })
   fileId: string;
-  
+
   @Prop({ required: true })
   name: string;
 

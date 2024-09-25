@@ -150,7 +150,10 @@ export class PaymentService {
         currentPeriodEnd: new Date(subscription.current_period_end * 1000),
       });
       const { storage, requestLimit } = this.setStorageBaseOnPlan(plan);
-      await this.userModel.updateOne({ _id: userId }, { storage, requestLimit });
+      await this.userModel.updateOne(
+        { _id: userId },
+        { storage, requestLimit },
+      );
     } catch (error) {
       console.error('Error handling checkout session:', error);
     }

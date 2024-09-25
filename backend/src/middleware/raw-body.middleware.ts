@@ -14,11 +14,10 @@ export function RawBodyMiddleware() {
       buffer: Buffer,
     ) => {
       if (request.url === '/api/payment/webhook' && Buffer.isBuffer(buffer)) {
-        console.log("body rawed")
+        console.log('body rawed');
         request.rawBody = Buffer.from(buffer);
       }
       return true;
     },
   });
 }
-

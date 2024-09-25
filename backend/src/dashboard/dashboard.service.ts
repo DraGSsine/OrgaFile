@@ -24,7 +24,7 @@ export class DashboardService {
         size: number;
         numberOfFiles: number;
       };
-      let filesFormatInfo: filesFormatInfoType[] = [
+      const filesFormatInfo: filesFormatInfoType[] = [
         {
           name: 'pdf',
           size: 0,
@@ -66,10 +66,10 @@ export class DashboardService {
           filesFormatInfo[index].numberOfFiles += 1;
         }
       });
-      // to gb 
+      // to gb
       return {
         filesFormatInfo,
-        storageUsed:  user.storageUsed / 1024 / 1024 / 1024,
+        storageUsed: user.storageUsed / 1024 / 1024 / 1024,
         storage: user.storage,
       };
     } catch (error) {

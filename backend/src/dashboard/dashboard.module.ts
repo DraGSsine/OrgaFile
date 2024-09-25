@@ -19,6 +19,6 @@ import { AuthGuard } from '../guards/auth.guard';
     ]),
   ],
   controllers: [DashboardController],
-  providers: [DashboardService, JwtService,AuthGuard],
+  providers: [DashboardService, JwtService, AuthGuard],
 })
 export class DashboardModule {}

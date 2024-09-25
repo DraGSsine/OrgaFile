@@ -12,9 +12,7 @@ import { Model, ObjectId } from 'mongoose';
 import { uploadFiles } from '../helpers/uploadFiles';
 import { FileDocument } from '../schemas/files.schema';
 import { UserDocument } from '../schemas/auth.schema';
-import {
-  RemovedFilesDocument,
-} from '../schemas/removedFiles.schema';
+import { RemovedFilesDocument } from '../schemas/removedFiles.schema';
 import { FolderDocument } from '../schemas/folders.schema';
 @Injectable()
 export class UploadService {
@@ -245,7 +243,7 @@ export class UploadService {
           },
         };
 
-        const user = await this.userModel.findById(req.user.userId);  
+        const user = await this.userModel.findById(req.user.userId);
         user.storageUsed -= removedFilesSize / 1000000000;
         await user.save();
         await this.s3Client.deleteObjects(deleteParams).promise();

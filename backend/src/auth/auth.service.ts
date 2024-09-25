@@ -2,10 +2,7 @@ import { signInDto, signUpDto } from './dto/auth.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from '../schemas/auth.schema';
-import {
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
@@ -38,7 +35,11 @@ export class AuthService {
     const isSubscribed = await this.subscriptionModel.findOne({
       userId: user._id,
     });
-    return { token, isSubscribed:isSubscribed?true:false , userInfo: { email: user.email, fullName: user.fullName } };
+    return {
+      token,
+      isSubscribed: isSubscribed ? true : false,
+      userInfo: { email: user.email, fullName: user.fullName },
+    };
   }
   async signUp(signUpDto: signUpDto) {
     const { email, password } = signUpDto;

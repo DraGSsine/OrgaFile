@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
-  async canActivate(context: ExecutionContext):Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer') {
@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       });
       request.user = payload;
     } catch (error) {
-        throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Invalid token');
     }
     return true;
   }

@@ -26,12 +26,19 @@ export class FoldersController {
     return this.foldersService.loadFolders(req.user.userId);
   }
   @Get('load/:id')
-  loadOneFolder(@Param('id') id: ObjectId,@Req() req: any) {
-    return this.foldersService.loadOneFolder(id,req.user.userId);
+  loadOneFolder(@Param('id') id: ObjectId, @Req() req: any) {
+    return this.foldersService.loadOneFolder(id, req.user.userId);
   }
   @Get('download/:id')
-  async downloadFolder(@Param('id') id: ObjectId,@Req() req:any, @Res() res: any) {
-    const archive = await this.foldersService.downloadFolder(id, req.user.userId);
+  async downloadFolder(
+    @Param('id') id: ObjectId,
+    @Req() req: any,
+    @Res() res: any,
+  ) {
+    const archive = await this.foldersService.downloadFolder(
+      id,
+      req.user.userId,
+    );
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename=archive.zip');
     res.setHeader('Content-Length', archive.length);
