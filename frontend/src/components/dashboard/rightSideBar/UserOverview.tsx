@@ -2,16 +2,16 @@
 import React from "react";
 import Cookies from "js-cookie";
 import UserProfile from "../UserProfile";
+import { useRouter } from "next/navigation";
+import { userCookieInfoType } from "@/types/types";
+
 const UserOverview = () => {
-  interface userInfoType {
-    fullName?: string | null;
-    email: string | null;
-  }
   const userData = Cookies.get("userInfo");
-  let userInfo: userInfoType | null = null;
+  const router = useRouter();
+  let userInfo: userCookieInfoType | null = null;
   if (!userData) {
     Cookies.remove("token");
-    window.location.href = "/auth/signin";
+    router.push("/auth/signin");
   } else {
     userInfo = JSON.parse(userData);
   }

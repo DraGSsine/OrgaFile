@@ -3,23 +3,25 @@ import { PricingShape } from "../../../public/svgShapes";
 import Upgrade from "./Upgrade";
 
 type PricingCardProps = {
-  children: React.ReactNode;
   description: string;
   price: string;
   type: string;
   subscription: string;
   active?: boolean;
   mostpopular?: boolean;
+  features: string[];
+  productId: string;
 };
 
 const PricingCard = ({
-  children,
   description,
   price,
   type,
   subscription,
   active,
   mostpopular,
+  features,
+  productId,
 }: PricingCardProps) => {
   return (
     <>
@@ -49,8 +51,14 @@ const PricingCard = ({
               {description}
             </p>
           </div>
-          <div className="mb-9 pt-12 flex flex-col gap-[14px]">{children}</div>
-        <Upgrade plan={type} active={active} />
+          <div className="mb-9 pt-12 flex flex-col gap-[14px]">
+              <p className="text-base text-body-color dark:text-dark-6">{features[0]}</p>
+              <p className="text-base text-body-color dark:text-dark-6">{features[1]}</p>
+              <p className="text-base text-body-color dark:text-dark-6">{features[2]}</p>
+              <p className="text-base text-body-color dark:text-dark-6">{features[3]}</p>
+              <p className="text-base text-body-color dark:text-dark-6">{features[4]}</p>
+          </div>
+        <Upgrade plan={type} active={active} productId={productId} />
           <div>
             <span className="absolute right-0 top-7 z-[-1]">
               <svg

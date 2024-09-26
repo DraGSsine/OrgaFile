@@ -44,12 +44,18 @@ export const SignInForm = () => {
     if (isAuthenticated) {
       toast.success("Sign in successful");
       if (userCreated?.isSubscribed) {
+        console.log(userCreated);
         router.push("/dashboard");
       } else {
+        const price_id = Cookies.get("price_id");
+        console.log(price_id);
+        if (!price_id) {
+          router.push("/pricing");
+          return;
+        }
         dispatch(
           createCheckoutSession({
-            price_id:
-              Cookies.get("price_id") || "price_1PIwwECRq7xCj4sRV1O6QKeK",
+            price_id,
           })
         );
       }
