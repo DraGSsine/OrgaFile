@@ -69,7 +69,7 @@ export default function TableFiles({
 
   return (
     <Table
-      className="border-collapse "
+      className="border-collapse flex-grow  "
       aria-label="Example static collection table"
       BaseComponent={TableWraper}
       selectionMode="multiple"
@@ -183,13 +183,10 @@ export default function TableFiles({
 }
 
 const TableWraper = ({ children }: { children: ReactNode }) => {
-  const path = usePathname();
 
   return (
     <div
-      className={` ${
-        path == "/dashboard" ? "h-[63.2vh] " : "h-[84.3vh]"
-      } bg-white relative rounded-t-2xl p-10  shadow-small`}
+      className=" h-full bg-white relative rounded-t-2xl p-10  shadow-small"
     >
       {children}
     </div>

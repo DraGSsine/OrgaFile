@@ -57,7 +57,7 @@ const AllFilesPage = () => {
   ]);
 
   return (
-    <div>
+    <div className=" h-full flex flex-col " >
       <h1 className=" font-medium text-2xl pl-2 pb-6 "> All Files </h1>
       <TableFiles
         maxRows={12}

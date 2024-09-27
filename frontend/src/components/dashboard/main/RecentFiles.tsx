@@ -45,7 +45,6 @@ const RecentUploadsPage = () => {
     }
   };
 
-  // Calling functions in useEffect
   useEffect(() => {
     LoadRecentFiles();
     handleFileStates();
@@ -53,7 +52,7 @@ const RecentUploadsPage = () => {
   }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded]);
 
   return (
-    <div>
+    <div className=" flex flex-col h-full " >
       <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploads </h1>
       <RecentFilesTable
         maxRows={9}

@@ -20,10 +20,11 @@ const Usage = () => {
   useEffect(() => {
     dispatch(loadUserLimits());
   },[isFileUploaded,isFileDeleted])
+
   return (
     <>
-      <CloudStorage storageLimit={storageLimit} storageUsed={storageUsed}  />
-      <UserLimitCard requestUsed={requestUsed} requestLimit={requestLimit}  />
+      <CloudStorage isLoading={loading} storageLimit={storageLimit} storageUsed={storageUsed}  />
+      <UserLimitCard isLoading={loading} requestUsed={requestUsed} requestLimit={requestLimit}  />
     </>
   );
 };

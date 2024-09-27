@@ -5,7 +5,7 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 const Pricing = () => {
   const plans = [
     {
-      productId:"prod_QvD6540AKhUajl",
+      productId:"price_1Q3MfoHbzmnInIZ1CsBh5rGj",
       type: "Basic",
       price: "$9",
       subscription: "month",
@@ -21,7 +21,7 @@ const Pricing = () => {
       ],
     },
     {
-      productId:"prod_QvD7iqnCkTxXgA",
+      productId:"price_1Q3Mh3HbzmnInIZ1QvC4glTC",
       type: "Standard",
       price: "$19",
       subscription: "year",
@@ -38,7 +38,7 @@ const Pricing = () => {
       ],
     },
     {
-      productId:"prod_QvD8ySiPOAO1Xm",
+      productId:"price_1Q3MiPHbzmnInIZ1kdQAFHqH",
       type: "Premium",
       price: "$39",
       subscription: " month",

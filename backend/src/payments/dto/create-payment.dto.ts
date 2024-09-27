@@ -4,3 +4,4 @@ export class CreatePaymentDto {
   @IsString()
   price_id: string;
 }
+

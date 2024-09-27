@@ -69,4 +69,5 @@ export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folde
 export interface userCookieInfoType {
   fullName?: string | null;
   email: string | null;
+  plan: string | null;
 }

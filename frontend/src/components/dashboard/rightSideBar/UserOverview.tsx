@@ -1,29 +1,49 @@
 "use client";
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import UserProfile from "../UserProfile";
 import { useRouter } from "next/navigation";
 import { userCookieInfoType } from "@/types/types";
 
 const UserOverview = () => {
-  const userData = Cookies.get("userInfo");
+  const [userInfo, setUserInfo] = useState<userCookieInfoType | null>(null);
   const router = useRouter();
-  let userInfo: userCookieInfoType | null = null;
-  if (!userData) {
-    Cookies.remove("token");
-    router.push("/auth/signin");
-  } else {
-    userInfo = JSON.parse(userData);
-  }
+
+  useEffect(() => {
+    const userData = Cookies.get("userInfo");
+    if (!userData) {
+      Cookies.remove("token");
+      router.push("/auth/signin");
+    } else {
+      setUserInfo(JSON.parse(userData));
+    }
+  }, [router]);
+
   return (
     <>
-      <div className=" flex flex-col">
-        <span className=" font-semibold">{userInfo?.fullName}</span>
-        <span className=" text-primary">@{userInfo?.email?.split("@")[0]}</span>
-      </div>
+      {userInfo ? (
+        <div className="flex flex-col">
+          <span className="font-semibold">{userInfo.email}</span>
+          <span className="text-primary">
+            {userInfo.plan}
+          </span>
+        </div>
+      ) : (
+        <InfoSkeleton />
+      )}
       <UserProfile email={userInfo?.email || ""} />
     </>
   );
 };
 
 export default UserOverview;
+
+const InfoSkeleton = () => {
+  return (
+    <div className="flex flex-col">
+      <div className="h-4 bg-gray-200 w-40 rounded-md mb-2"></div>
+      <div className="h-4 w-24 bg-gray-200 rounded-md mb-2"></div>
+    </div>
+  );
+};

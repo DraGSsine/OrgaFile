@@ -32,7 +32,7 @@ const initialState: initialStateType = {
     storageUsed: 0,
     requestLimit: 0,
     requestUsed: 0,
-    loading: false,
+    loading: true,
     error: null,
   },
   cloudInfo: {
@@ -41,7 +41,7 @@ const initialState: initialStateType = {
       storageUsed: 0,
       storage: 0,
     },
-    loading: false,
+    loading: true,
     error: null,
   },
 };

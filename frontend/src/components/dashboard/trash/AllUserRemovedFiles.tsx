@@ -32,7 +32,7 @@ const AllUserRemovedFiles = () => {
     dispatch(resetFilesState());
   }, [removeFileState.isFileDeleted, restoreFileState.fileRestored,loadRemovedFilesState.error,dispatch]);
   return (
-    <div>
+    <div className=" flex flex-col h-full " >
       <h1 className="font-medium text-2xl pl-2 pb-6">My Trash</h1>
       <TableFiles
         maxRows={12}

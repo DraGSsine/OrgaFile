@@ -1,0 +1,7 @@
+POST http://localhost:9010/api/payment/create-checkout-session
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmY1YjQ3NzI4NzIxYWQ4YjM0ZTQwYTQiLCJpYXQiOjE3MjczNzkxNDEsImV4cCI6MTcyNzk4Mzk0MX0.KWkza3j-GSWq0Pv8ZSJ41_irX4a3DkwH_QIj8p_zmEE
+
+{
+  "price_id": "price_1Q3MfoHbzmnInIZ1CsBh5rGj"
+}

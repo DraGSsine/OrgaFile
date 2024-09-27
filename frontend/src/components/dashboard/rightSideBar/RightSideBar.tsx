@@ -2,8 +2,6 @@ import UserProfile from "../UserProfile";
 import Usage from "./Usage";
 import UserOverview from "./UserOverview";
 
-
-
 export const RightSideBar = () => {
   return (
     <div className="w-[15vw] border-l">

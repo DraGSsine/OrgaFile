@@ -34,7 +34,7 @@ export class AuthService {
     return {
       token,
       isSubscribed: isSubscribed ? true : false,
-      userInfo: { email: user.email, fullName: user.fullName },
+      userInfo: { email: user.email, fullName: user.fullName, plan:isSubscribed.plan },
     };
   }
   async signUp(signUpDto: signUpDto) {
