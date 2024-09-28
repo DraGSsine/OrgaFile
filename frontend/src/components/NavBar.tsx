@@ -17,13 +17,7 @@ import {
 } from "@nextui-org/react";
 
 const NavBar = () => {
-  // dispalye navbar links based on the current path
-  const enabledPaths = ["/", "/pricing", "/about", "/contact", "/terms"];
-  const pathNmae = usePathname();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  if (!enabledPaths.includes(pathNmae)) {
-    return null;
-  }
   return (
     <Navbar
       isBordered
