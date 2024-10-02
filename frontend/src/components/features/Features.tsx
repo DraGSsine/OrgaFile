@@ -11,8 +11,8 @@ const Features = () => {
           <span className="text-primary-500"> File Management </span>
         </h2>
         <p className="pretty-text-small w-[60%]">
-          Doctify redefines file management, prioritizing simplicity and ease of
-          use. Leveraging AI technology, Doctify effortlessly organizes your
+          OrgaFile redefines file management, prioritizing simplicity and ease of
+          use. Leveraging AI technology, OrgaFile effortlessly organizes your
           files, revolutionizing your approach to document organization.
         </p>
       </div>
@@ -40,7 +40,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify harnesses the advanced capabilities of AI to
+                  OrgaFile harnesses the advanced capabilities of AI to
                   efficiently process and organize your files. Our AI seamlessly
                   categorizes your documents into relevant folders, streamlining
                   your document management experience.
@@ -73,7 +73,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify uses Ai to search for your files by it&apos;s content and
+                  OrgaFile uses Ai to search for your files by it&apos;s content and
                   give you the best result just by enter a keyword doctiyf will
                   searhc for the best result
                 </span>
@@ -108,7 +108,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Doctify&apos;s intuitive sharing features allow you to easily and
+                  OrgaFile&apos;s intuitive sharing features allow you to easily and
                   swiftly share files with your team, facilitating seamless
                   collaboration and productivity.
                 </span>
@@ -137,7 +137,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  Store your files securely in the cloud with Doctify. Our
+                  Store your files securely in the cloud with OrgaFile. Our
                   platform ensures that your documents are accessible from
                   anywhere in the world, while maintaining robust security
                   measures.
@@ -167,7 +167,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 <span>
-                  At Doctify, we prioritize the user experience. Our platform is
+                  At OrgaFile, we prioritize the user experience. Our platform is
                   designed to be incredibly user-friendly and straightforward,
                   making file management a breeze.
                 </span>

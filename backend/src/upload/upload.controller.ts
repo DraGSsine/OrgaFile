@@ -9,6 +9,7 @@ import {
   UseGuards,
   UploadedFiles,
   BadRequestException,
+  Param,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -100,5 +101,10 @@ export class UploadController {
   ) {
     const { files, isPermanently } = requestBody;
     return this.uploadService.removeMany(req, files, isPermanently);
+  }
+  @Get('download/:fileId')
+  downloadFile(@Param() params: any, @Req() req: any) {
+    const { fileId } = params;
+    return this.uploadService.downloadFile(req, fileId);
   }
 }

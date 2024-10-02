@@ -37,8 +37,8 @@ const NavBar = () => {
             href="/"
             className="text-3xl font-semibold flex items-center transition focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:shadow-outline-indigo rounded-full px-2 -ml-2"
           >
-            <span className="font-bold text-primary-500">Doc</span>
-            <span className="text-slate-600">Tify</span>
+            <span className="font-bold text-primary-500">Orga</span>
+            <span className="text-slate-600">File</span>
           </Link>
         </NavbarBrand>
       </NavbarContent>

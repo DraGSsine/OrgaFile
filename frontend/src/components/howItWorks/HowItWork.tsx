@@ -16,16 +16,16 @@ const HowItWorks = () => {
     {
       icon: <WandSparkles size={24} stroke="#4b81f7" />,
       step: "Step 2",
-      feature: "DocTify Analysis",
+      feature: "OrgaFile Analysis",
       description:
-        "Sit back and let DocTify work its magic. Our AI-driven document management system will analyze and organize your uploads for optimal efficiency.",
+        "Sit back and let OrgaFile work its magic. Our AI-driven document management system will analyze and organize your uploads for optimal efficiency.",
     },
     {
       icon: <Download size={24} stroke="#4b81f7" />,
       step: "Step 3",
       feature: "Download Files",
       description:
-        "Access and download your files with just one click. DocTify ensures your files are always ready and available when you need them.",
+        "Access and download your files with just one click. OrgaFile ensures your files are always ready and available when you need them.",
     },
   ];
 
@@ -45,7 +45,7 @@ const HowItWorks = () => {
               Streamline Your Workflow
             </h2>
             <p className="text-lg mt-4 text-slate-600 text-center [text-wrap:pretty]">
-              DocTify is designed to optimize your everyday business tasks. Our
+              OrgaFile is designed to optimize your everyday business tasks. Our
               platform offers a range of features to help you manage your
               documents efficiently and effectively.
             </p>

@@ -95,12 +95,15 @@ export const loadAllFiles = createAsyncThunk(
   "files/loadAllFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/load`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/load`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -116,11 +119,15 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/upload`, files, {
-        headers: {
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/upload`,
+        files,
+        {
+          headers: {
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -139,13 +146,16 @@ export const removeFile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/remove`, {
-        data: { fileId, isPermanently },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/remove`,
+        {
+          data: { fileId, isPermanently },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -164,13 +174,16 @@ export const removeManyFiles = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removemany`, {
-        data: { files, isPermanently },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removemany`,
+        {
+          data: { files, isPermanently },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -186,12 +199,15 @@ export const loadRecentFiles = createAsyncThunk(
   "files/loadRecentFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/recent`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/recent`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -207,12 +223,15 @@ export const loadRemovedFiles = createAsyncThunk(
   "files/loadRemovedFiles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removed`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie.get("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removed`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -248,6 +267,31 @@ export const restoreFile = createAsyncThunk(
     }
   }
 );
+
+export const downloadFile = createAsyncThunk(
+  "files/download",
+  async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/download/${fileId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie.get("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue("Failed to download file");
+      }
+    }
+  }
+);
+
 export const filesSlice = createSlice({
   name: "files",
   initialState,

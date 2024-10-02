@@ -21,6 +21,7 @@ import {
   setConfirmFileRemoveModal,
   setRemoveFiles,
   restoreFile,
+  downloadFile,
 } from "@/redux/slices/filesSlices";
 
 const FilesSettings = ({
@@ -46,6 +47,9 @@ const FilesSettings = ({
     else if (key === "restore") {
       dispatch(restoreFile({fileId}));
     }
+    else if (key === "downloadFile") {
+      dispatch(downloadFile({fileId}));
+    }
   }
   return (
     <>
@@ -67,7 +71,7 @@ const FilesSettings = ({
         >
           <DropdownItem
             startContent={<ArrowDownToLineIcon size={20} />}
-            key="new"
+            key="downloadFile"
           >
             Download file
           </DropdownItem>

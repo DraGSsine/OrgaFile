@@ -281,4 +281,33 @@ export class UploadService {
       throw new InternalServerErrorException('Failed to remove files');
     }
   }
+
+  async downloadFile(req: any, fileId: string) {
+    console.log('Downloading file:', fileId);
+    try {
+      const file = await this.fileModel.findOne({
+        userId: req.user.userId,
+        'files.fileId': fileId,
+      });
+
+      if (!file) {
+        throw new NotFoundException('File not found');
+      }
+
+      const { name } = file.files.find((file) => file.fileId === fileId);
+
+      const fileKey = `${req.user.userId}/${fileId}`;
+      const downloadParams = {
+        Bucket: this.configService.get('S3_BUCKET_NAME'),
+        Key: fileKey,
+      };
+      const fileStream = this.s3Client
+        .getObject(downloadParams)
+        .createReadStream();
+      return { fileStream, fileName: name };
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      throw new InternalServerErrorException('Failed to download file');
+    }
+  }
 }

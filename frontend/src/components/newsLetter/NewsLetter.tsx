@@ -16,7 +16,7 @@ const NewsLetter = () => {
                 </h2>
                 <p className="mb-8 capitalize mt-6 text-gray-600 dark:text-gray-300">
                   Subscribe to our newsletter and get the latest updates and
-                  news about DocTify.
+                  news about OrgaFile.
                 </p>
                 <form action="" className="mt-12">
                   <div className="relative flex items-center rounded-full border border-primary/20 bg-white p-1 px-2 shadow-md dark:border-white/10 dark:bg-dark md:p-2 lg:pr-3">
@@ -48,7 +48,7 @@ const NewsLetter = () => {
             <div className="md:w-[42%] lg:w-1/2">
               <Image
                 src="/images/cta-cards.webp"
-                alt="DocTify stat cards components"
+                alt="OrgaFile stat cards components"
                 loading="lazy"
                 width={1299}
                 height={678}
