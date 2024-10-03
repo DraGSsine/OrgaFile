@@ -44,7 +44,7 @@ const Mycloud = () => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(loadClouInfo());
-  }, []);
+  }, [dispatch]);
   return (
     <div>
       <h1 className=" font-medium text-2xl pb-6 ">My Cloud</h1>

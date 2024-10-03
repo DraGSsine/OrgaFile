@@ -33,7 +33,6 @@ const HowItWorks = () => {
     <MaxWidthWrapper>
       <section
         id="secondary-features"
-        aria-label="Features for simplifying everyday business tasks"
         className="pb-14 pt-20 sm:pb-20 sm:pt-20 lg:pb-32"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

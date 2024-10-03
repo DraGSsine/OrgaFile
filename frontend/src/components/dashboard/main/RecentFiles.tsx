@@ -17,39 +17,40 @@ const RecentUploadsPage = () => {
     (state: RootState) => state.files
   );
 
-  const LoadRecentFiles = () => {
-    dispatch(loadRecentFiles());
-
-    if (recentFilesState.error) {
-      toast.error("Failed to load files");
-      console.error(recentFilesState.error);
-    }
-  };
-
-  const handleFileStates = () => {
-    switch (true) {
-      case !removeFileState.isMany && removeFileState.isFileDeleted:
-        toast.success("File deleted successfully");
-        dispatch(setConfirmFileRemoveModal(false));
-        break;
-      case removeFileState.isMany:
-        toast.success("Files deleted successfully");
-        break;
-      case uploadFileState.isFileUploaded:
-        toast.success("Files uploaded successfully");
-        break;
-      case uploadFileState.error:
-        toast.error("Failed to upload files");
-        console.error(uploadFileState.error); // Logging the error
-        break;
-    }
-  };
-
   useEffect(() => {
+    const handleFileStates = () => {
+      switch (true) {
+        case !removeFileState.isMany && removeFileState.isFileDeleted:
+          toast.success("File deleted successfully");
+          dispatch(setConfirmFileRemoveModal(false));
+          break;
+        case removeFileState.isMany:
+          toast.success("Files deleted successfully");
+          break;
+        case uploadFileState.isFileUploaded:
+          toast.success("Files uploaded successfully");
+          break;
+        case uploadFileState.error:
+          toast.error("Failed to upload files");
+          console.error(uploadFileState.error); 
+          break;
+      }
+    };
+
+    const LoadRecentFiles = () => {
+      dispatch(loadRecentFiles());
+
+      if (recentFilesState.error) {
+        toast.error("Failed to load files");
+        console.error(recentFilesState.error);
+      }
+    };
+
     LoadRecentFiles();
     handleFileStates();
     dispatch(resetFilesState());
-  }, [removeFileState.isFileDeleted, uploadFileState.isFileUploaded]);
+  }, []);
+
 
   return (
     <div className=" flex flex-col h-full " >

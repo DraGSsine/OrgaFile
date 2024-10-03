@@ -24,17 +24,20 @@ export class AuthService {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch)
       throw new UnprocessableEntityException('Email or password is incorrect');
-    const token = await this.jwtService.signAsync(
-      { userId: user._id },
-      { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },
-    );
     const isSubscribed = await this.subscriptionModel.findOne({
       userId: user._id,
     });
+    const token = await this.jwtService.signAsync(
+      { userId: user._id, isSubscribed: isSubscribed },
+      { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },
+    );
     return {
       token,
       isSubscribed: isSubscribed ? true : false,
-      userInfo: { email: user.email, fullName: user.fullName, plan:isSubscribed.plan },
+      userInfo: {
+        email: user.email,
+        fullName: user.fullName,
+      },
     };
   }
   async signUp(signUpDto: signUpDto) {

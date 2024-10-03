@@ -10,7 +10,7 @@ const Page = () => {
       <section className="mb-10">
         <h2 className="text-2xl font-semibold mb-2">Terms of Use</h2>
         <p className="mb-2">
-          By accessing and using our service ("OrgaFile"), you accept and
+          By accessing and using our service (&ldquo;OrgaFile&ldquo;), you accept and
           agree to be bound by the terms and provisions of this agreement. You
           are responsible for your use of the service, for any content you upload, and
           for any consequences thereof.

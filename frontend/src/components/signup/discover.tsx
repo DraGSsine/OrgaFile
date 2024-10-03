@@ -12,7 +12,7 @@ const Discover = () => {
           </h1>
           <p className=" text-gray-200 font-extralight">
             Simplify your workflow by uploading multiple files at once.
-            OrgaFile's intelligent system sorts and organizes your files into the
+            OrgaFile&apos;s intelligent system sorts and organizes your files into the
             appropriate folders based on their content, saving you time and
             effort.
           </p>

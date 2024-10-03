@@ -25,7 +25,6 @@ const NewsLetter = () => {
                     </div>
                     <input
                       autoComplete="email"
-                      aria-label="your email"
                       placeholder="Your mail address"
                       className="w-full outline-none rounded-full bg-transparent p-4 placeholder-gray-600 dark:placeholder-white"
                       type="email"

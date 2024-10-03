@@ -30,7 +30,7 @@ const AllUserRemovedFiles = () => {
         break;
     }
     dispatch(resetFilesState());
-  }, [removeFileState.isFileDeleted, restoreFileState.fileRestored,loadRemovedFilesState.error,dispatch]);
+  }, [removeFileState.isFileDeleted, restoreFileState.fileRestored, loadRemovedFilesState.error, removeFileState.files.length, removeFileState.isMany, dispatch]);
   return (
     <div className=" flex flex-col h-full " >
       <h1 className="font-medium text-2xl pl-2 pb-6">My Trash</h1>
