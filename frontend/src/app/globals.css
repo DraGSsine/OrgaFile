@@ -39,6 +39,11 @@
     @apply text-lg mt-4 text-slate-600;
   }
 }
+/*Hide the scroll bar*/
+html{
+  scrollbar-width: none;
+}
+
 tbody tr {
   height: 70px !important;
 }

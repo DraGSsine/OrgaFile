@@ -14,7 +14,7 @@ const FooterBar = () => {
             <p className="mt-4 text-sm text-slate-700 max-w-xs"></p>
             <div className="flex gap-3 mt-4 items-center">
               <Link
-                href="https://twitter.com/surjithctly"
+                href="https://twitter.com/yassineouchen"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"
@@ -23,7 +23,7 @@ const FooterBar = () => {
                 <span className="sr-only">Twitter or X</span>
               </Link>
               <Link
-                href="https://instagram.com/"
+                href="https://instagram.com/yassin.ouchn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"

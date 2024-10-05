@@ -8,12 +8,14 @@ import NewsLetter from "@/components/newsLetter/NewsLetter";
 
 export default function Home() {
   return (
-    <MaxWidthWrapper>
-      <Hero />
-      {/* <Features /> */}
-      {/* <HowItWorks />
+    <>
+      <MaxWidthWrapper>
+        <Hero />
+        <Features />
+        <HowItWorks />
+      </MaxWidthWrapper>
+      <NewsLetter />
       <FooterBar />
-      <NewsLetter /> */}
-    </MaxWidthWrapper>
+    </>
   );
 }

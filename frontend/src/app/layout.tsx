@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fleeso",
-  description: "fleeso a way to Generate things",
+  title: "OrgaFile",
+  description: "OrgaFile is a file management system.",
 };
 
 export default function RootLayout({

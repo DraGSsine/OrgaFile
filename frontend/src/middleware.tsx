@@ -50,7 +50,6 @@ async function validateToken(token?: string) {
       throw new Error("User is not subscribed to the service");
     return { isTokenValid: true };
   } catch (error) {
-    console.error(error);
     return { isTokenValid: false };
   }
 }
