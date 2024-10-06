@@ -98,10 +98,7 @@ export const loadAllFiles = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/load`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -123,9 +120,7 @@ export const uploadFiles = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/upload`,
         files,
         {
-          headers: {
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -150,10 +145,7 @@ export const removeFile = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/remove`,
         {
           data: { fileId, isPermanently },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -178,10 +170,7 @@ export const removeManyFiles = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removemany`,
         {
           data: { files, isPermanently },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -202,10 +191,7 @@ export const loadRecentFiles = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/recent`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -226,10 +212,7 @@ export const loadRemovedFiles = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removed`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -251,10 +234,7 @@ export const restoreFile = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/restore`,
         { fileId },
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -275,10 +255,7 @@ export const downloadFile = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/download/${fileId}`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;

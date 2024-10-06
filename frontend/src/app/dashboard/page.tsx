@@ -3,7 +3,7 @@ import RecentFiles from '@/components/dashboard/main/RecentFiles'
 const Dashboard = () => {
   return (
     <div className='flex h-full flex-col gap-4 '>
-      {/* <Mycloud /> */}
+      <Mycloud />
       <RecentFiles/>
     </div>
   )

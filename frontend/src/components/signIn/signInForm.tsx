@@ -44,7 +44,6 @@ export const SignInForm = () => {
     if (isAuthenticated) {
       toast.success("Sign in successful");
       if (userCreated?.isSubscribed) {
-        console.log(userCreated);
         router.push("/dashboard");
       } else {
         const price_id = Cookies.get("price_id");
@@ -57,11 +56,16 @@ export const SignInForm = () => {
           createCheckoutSession({
             price_id,
           })
-        );
+        ).then((action) => {
+          console.log(action);
+          if (createCheckoutSession.fulfilled.match(action)) {
+            router.push(action.payload.url);
+          }
+        });
       }
     }
     dispatch(resetAuthState());
-  });
+  }, [dispatch, error, isAuthenticated, userCreated,router]);
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <EmailInput

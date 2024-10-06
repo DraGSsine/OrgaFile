@@ -2,10 +2,11 @@ import { signInDto, signUpDto } from './dto/auth.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from '../schemas/auth.schema';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,45 +15,76 @@ export class AuthService {
     @InjectModel('Subscription')
     private readonly subscriptionModel: Model<subscriptionDocument>,
   ) {}
+
   async signIn(signInDto: signInDto) {
     const { email, password } = signInDto;
-    const user = await this.userModel.findOne({
-      email: email,
-    });
-    if (!user)
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
       throw new UnprocessableEntityException('Email or password is incorrect');
+    }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch)
+    if (!isPasswordMatch) {
       throw new UnprocessableEntityException('Email or password is incorrect');
-    const isSubscribed = await this.subscriptionModel.findOne({
-      userId: user._id,
-    });
-    const token = await this.jwtService.signAsync(
-      { userId: user._id, isSubscribed: isSubscribed },
-      { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },
-    );
+    }
+    const isSubscribed = await this.subscriptionModel.findOne({ userId: user._id });
+    const tokens = await this.generateTokens(user._id, !!isSubscribed);
     return {
-      token,
-      isSubscribed: isSubscribed ? true : false,
-      userInfo: {
+      ...tokens,
+      user: {
         email: user.email,
         fullName: user.fullName,
       },
     };
   }
+
   async signUp(signUpDto: signUpDto) {
     const { email, password } = signUpDto;
-    const userExists = await this.userModel.findOne({
-      email: email,
-    });
+    const userExists = await this.userModel.findOne({ email });
     if (userExists) {
       throw new UnprocessableEntityException('User already exists');
     }
     const encryptedPassword = await bcrypt.hash(password, 10);
-    this.userModel.create({
+    const newUser = await this.userModel.create({
       ...signUpDto,
       password: encryptedPassword,
     });
-    return { message: 'User created successfully' };
+    return { message: 'User created successfully', userId: newUser._id };
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET_KEY,
+      });
+      const user = await this.userModel.findById(payload.userId);
+      if (!user) {
+        throw new UnprocessableEntityException('User not found');
+      }
+      const isSubscribed = await this.subscriptionModel.findOne({ userId: user._id });
+      const tokens = await this.generateTokens(user._id, !!isSubscribed);
+      return {
+        ...tokens,
+        user: {
+          email: user.email,
+          fullName: user.fullName,
+        },
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  private async generateTokens(userId: string, isSubscribed: boolean) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        { userId, isSubscribed },
+        { expiresIn: '15m', secret: process.env.JWT_SECRET_KEY },
+      ),
+      this.jwtService.signAsync(
+        { userId },
+        { expiresIn: '7d', secret: process.env.JWT_REFRESH_SECRET_KEY },
+      ),
+    ]);
+    return { accessToken, refreshToken };
   }
 }

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ManageBilling = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { checkoutSession } = useSelector((state: RootState) => state.payment);
+  const { session } = useSelector((state: RootState) => state.payment);
   const mangePlan = () => {
     dispatch(createCheckoutSession({ price_id: "" }));
   };

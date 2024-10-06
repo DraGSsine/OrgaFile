@@ -1,6 +1,6 @@
 import { FolderType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
+import axios from "axios";
 
 
 type initialStateType = {
@@ -45,17 +45,13 @@ export const loadOneFolder = createAsyncThunk(
   "folders/loadOneFolder",
   async (folderId: string, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load/${folderId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load/${folderId}`, {
+        withCredentials: true,
       });
-      if (!res.ok) {
+      if (res.status !== 200) {
         return rejectWithValue("Failed to fetch folders");
       }
-      const data = await res.json();
+      const data = await res.data;
       return data;
     } catch (error) {
       return rejectWithValue(error);
@@ -67,17 +63,13 @@ export const loadFolders = createAsyncThunk(
   "folders/loadFolders",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load`, {
+        withCredentials: true,
       });
-      if (!res.ok) {
+      if (res.status !== 200) {
         return rejectWithValue("Failed to fetch folders");
       }
-      const data = await res.json();
+      const data = await res.data;
       return data;
     } catch (error) {
       return rejectWithValue(error);
@@ -89,16 +81,13 @@ export const downloadFolder = createAsyncThunk(
   "folders/downloadFolder",
   async ({folderId,folderName}:{folderId:string,folderName:string}, { rejectWithValue, dispatch }) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/download/${folderId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/download/${folderId}`, {
+        withCredentials: true,
       });
-      if (!res.ok) {
+      if (res.status !== 200) {
         return rejectWithValue("Failed to fetch folders");
       }
-      const data = await res.blob();
+      const data = await res.data.blob();
       const url = window.URL.createObjectURL(data);
       const a = document.createElement("a");
       a.href = url;

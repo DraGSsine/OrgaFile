@@ -9,12 +9,15 @@ import {
 import React from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { SignOutAction } from "@/redux/slices/authSlice";
 const UserProfile = ({email}:{email:string}) => {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const handleItemSelect = (e: string | number) => {
     if (e === "logout") {
-      Cookies.remove("token");
-      router.push("/auth/signin");
+      dispatch(SignOutAction());
     } else if (e === "settings") router.push("/dashboard/settings");
     else if (e === "help") router.push("/help");
   };

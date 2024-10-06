@@ -53,10 +53,7 @@ export const loadUserLimits = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/load-user-limits`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;
@@ -73,10 +70,7 @@ export const loadClouInfo = createAsyncThunk(
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/load-cloud-info`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie.get("token")}`,
-          },
+          withCredentials: true,
         }
       );
       return response.data;

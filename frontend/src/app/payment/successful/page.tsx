@@ -1,7 +1,18 @@
+"use client";
+import { checkSubscription } from "@/redux/slices/paymentSlice";
+import { AppDispatch, RootState } from "@/redux/store";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Component() {
+  const dispatch = useDispatch<AppDispatch>();
+  const {subscription} = useSelector((state: RootState) => state.payment);
+
+  useEffect(() => {
+    dispatch(checkSubscription())
+  },[]);
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-6">
       <div className="bg-green-100 rounded-full p-4 text-green-500">
@@ -14,7 +25,9 @@ export default function Component() {
         </p>
       </div>
       <Link className=" w-[200px]" href="/dashboard">
-        <Button color="primary" className="w-full max-w-xs">Continue</Button>
+        <Button color="primary" className="w-full max-w-xs">
+          Continue
+        </Button>
       </Link>
     </div>
   );

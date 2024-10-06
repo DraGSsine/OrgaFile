@@ -8,6 +8,7 @@ import {
   Res,
   UseGuards,
   RawBodyRequest,
+  Get,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Request, Response } from 'express';
@@ -36,5 +37,18 @@ export class PaymentController {
     @Res() response: Response,
   ) {
     return this.paymentService.handleWebhook(request, response);
+  }
+  @Get('check-subscription')
+  @UseGuards(AuthGuard)
+  async checkSubscription(@Req() request: any, @Res() res: Response) {
+    const { newToken } = await this.paymentService.checkSubscription(request.user.userId);
+    res.cookie('token', newToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+    res.send( {
+      message: 'Subscription checked',
+    });
   }
 }

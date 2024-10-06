@@ -5,18 +5,20 @@ import Cookies from "js-cookie";
 import UserProfile from "../UserProfile";
 import { useRouter } from "next/navigation";
 import { userCookieInfoType } from "@/types/types";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { SignOutAction, signOut } from "@/redux/slices/authSlice";
 
 const UserOverview = () => {
   const [userInfo, setUserInfo] = useState<userCookieInfoType | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const userData = Cookies.get("userInfo");
-    if (!userData) {
-      Cookies.remove("token");
-      router.push("/auth/signin");
-    } else {
+    const userData = localStorage.getItem("userInfo");
+    if (userData) {
       setUserInfo(JSON.parse(userData));
+    } else {
+      router.push("/auth/signin");
     }
   }, [router]);
 
@@ -25,9 +27,7 @@ const UserOverview = () => {
       {userInfo ? (
         <div className="flex flex-col">
           <span className="font-semibold">{userInfo.email}</span>
-          <span className="text-primary">
-            {userInfo.plan}
-          </span>
+          <span className="text-primary">{userInfo.plan}</span>
         </div>
       ) : (
         <InfoSkeleton />

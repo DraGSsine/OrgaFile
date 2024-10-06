@@ -1,4 +1,9 @@
-import { Injectable, HttpStatus, RawBodyRequest } from '@nestjs/common';
+import {
+  Injectable,
+  HttpStatus,
+  RawBodyRequest,
+  HttpException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import Stripe from 'stripe';
@@ -6,6 +11,7 @@ import { Request, Response } from 'express';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UserDocument } from '../schemas/auth.schema';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class PaymentService {
@@ -16,6 +22,7 @@ export class PaymentService {
     private readonly subscriptionModel: Model<subscriptionDocument>,
     @InjectModel('User')
     private readonly userModel: Model<UserDocument>,
+    private jwtService: JwtService,
   ) {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
@@ -24,6 +31,27 @@ export class PaymentService {
     this.stripeClient = new Stripe(stripeSecretKey, {
       apiVersion: '2024-04-10',
     });
+  }
+
+  async checkSubscription(userId: string) {
+    try {
+      const subscription = await this.subscriptionModel.findOne({
+        userId,
+        subscriptionStatus: 'active',
+      });
+
+      const newToken = await this.jwtService.signAsync(
+        { userId, isSubscribed: !!subscription },
+        { expiresIn: '15m', secret: process.env.JWT_SECRET_KEY },
+      );
+      return {
+        isSubscribed: !!subscription,
+        newToken,
+      };
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      throw new Error('Could not check subscription');
+    }
   }
 
   async createCheckoutSession(
@@ -37,19 +65,7 @@ export class PaymentService {
         subscriptionStatus: 'active',
       });
       if (existingSubscription && existingSubscription.customerId) {
-        console.log(
-          'User is already subscribed, redirecting to billing portal',
-        );
-        try {
-          const sessionPortal =
-            await this.stripeClient.billingPortal.sessions.create({
-              customer: existingSubscription.customerId,
-              return_url: `${process.env.NEXT_APP_URL}/dashboard`,
-            });
-          return { url: sessionPortal.url! };
-        } catch (error) {
-          throw new Error(`Could not create billing portal session ${error} `);
-        }
+        throw new Error('User is already subscribed');
       }
       // Create a new Stripe customer
       const customer = await this.stripeClient.customers.create({
@@ -65,7 +81,7 @@ export class PaymentService {
         ],
         payment_method_types: ['card'],
         mode: 'subscription',
-        success_url: `${process.env.NEXT_APP_URL}/payment-successful?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.NEXT_APP_URL}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_APP_URL}`,
         customer: customer.id,
         metadata: {
@@ -74,8 +90,19 @@ export class PaymentService {
       });
       return { url: session.url! };
     } catch (error) {
-      console.error('Error creating checkout session:', error);
-      throw new Error('Could not create checkout session');
+      if (error.message === 'User is already subscribed') {
+        // Handle the case when the user is already subscribed
+        throw new HttpException(
+          'User is already subscribed',
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        // Handle other errors
+        throw new HttpException(
+          'Could not create checkout session',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
 

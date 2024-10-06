@@ -2,12 +2,13 @@ import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
+  console.log(request.cookies.get("token")?.value);
   const accessToken = request.cookies.get("token")?.value;
   const plan = request.cookies.get("plan")?.value;
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup"];
 
-  const { isTokenValid } = await validateToken(accessToken);
+  const { isTokenValid} = await validateToken(accessToken);
 
   try {
     if (!plan && request.nextUrl.pathname === "/auth/signup") {
@@ -39,17 +40,18 @@ export async function middleware(request: NextRequest) {
 async function validateToken(token?: string) {
   try {
     const key = process.env.JWT_SECRET_KEY;
-    if (!key || !token) {
-      throw new Error("JWT_SECRET_KEY is not defined");
-    }
-    const SECRET_KEY = new TextEncoder().encode(
-      "5c13190f1f5ab19da6a803a61f1440e26b581802c373dda6f5b3c34d8de03a09"
-    );
+    if (!key || !token)
+      throw new Error("Token or secret key is not provided");
+    const SECRET_KEY = new TextEncoder().encode(key);
     const { payload } = await jwtVerify(token, SECRET_KEY);
+
+    console.log(payload);
     if (!payload.isSubscribed)
-      throw new Error("User is not subscribed to the service");
+      throw new Error("User is not subscribed to any plan");
+
     return { isTokenValid: true };
   } catch (error) {
+    // console.error(error);
     return { isTokenValid: false };
   }
 }
