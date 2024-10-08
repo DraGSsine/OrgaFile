@@ -2,7 +2,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
-  console.log(request.cookies.get("token")?.value);
   const accessToken = request.cookies.get("token")?.value;
   const plan = request.cookies.get("plan")?.value;
   const protectedRoutes = ["/dashboard"];

@@ -2,7 +2,8 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { ChatMistralAI } from '@langchain/mistralai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
-
+import { JsonOutputParser } from '@langchain/core/output_parsers';
+import { AiRespone } from 'src/types/type';
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
   documentType: string;
@@ -14,6 +15,8 @@ export const analyzeDocument = async (
   file: Express.Multer.File,
 ): Promise<AIAnalyzeDocumnetResponse> => {
   try {
+    const parser = new JsonOutputParser<AIAnalyzeDocumnetResponse>();
+
     const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 2000,
@@ -56,11 +59,9 @@ export const analyzeDocument = async (
       ['user', contextText],
     ]);
 
-    const chain = prompt.pipe(model);
+    const chain = prompt.pipe(model).pipe(parser);
     const response = await chain.invoke({});
-    console.log('Analyze document response:', response.content);
-    const result = JSON.parse(response.content as string);
-    return result;
+    return response;
   } catch (error) {
     console.error('Error analyzing file:', error);
     return null;
@@ -74,14 +75,15 @@ export const organizeFilesAnalysis = async (
     keyEntities: string[];
   }>,
   existingCategories: string[],
-) => {
+): Promise<AiRespone> => {
+  const parser = new JsonOutputParser<AiRespone>();
   const categorizePromptContent = `Analyze the following documents and categorize them into broad, general categories. Each document should be assigned to up to 3 categories with confidence scores.
   Prioritize using the following existing categories whenever possible: ${existingCategories.join(', ')}.
   If a new category is needed, ensure it's broad and general, containing only one word.
 
   Documents: ${JSON.stringify(documents).replace(/{/g, '{{').replace(/}/g, '}}')}
 
-  Response format:
+  Respond in JSON format like this:
   {{
     "categorizations": [
       {{
@@ -108,12 +110,10 @@ export const organizeFilesAnalysis = async (
       ['user', categorizePromptContent],
     ]);
 
-    const chain = prompt.pipe(model);
+    const chain = prompt.pipe(model).pipe(parser);
     const response = await chain.invoke({});
-    console.log('-------------------------------------------');
-    console.log(response.content);
-    console.log('-------------------------------------------');
-    return JSON.parse(response.content as string);
+    console.log(response);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -129,10 +129,8 @@ export const generateFileName = async (documentInfo: {
   ${JSON.stringify(documentInfo).replace(/{/g, '{{').replace(/}/g, '}}')}.
 
   The filename should:
-  1. Be concise and meaningful, max 50 characters
-  2. Include the document type and main topic
-  3. Incorporate key entities if relevant
-  4. Use underscores for spaces and be lowercase
+  1. Be concise and meaningful, max 20 characters
+  2. Include the document type
 
   Respond with only the generated filename.`;
 
@@ -148,5 +146,5 @@ export const generateFileName = async (documentInfo: {
 
   const chain = prompt.pipe(model);
   const response = await chain.invoke({});
-  return (response.content as string).trim().toLowerCase().replace(/\s+/g, '_');
+  return response.content as string;
 };

@@ -8,7 +8,8 @@ import {
 } from '../ai/openai-setup';
 import AWS from 'aws-sdk';
 import { FileDocument, FileInfo } from '../schemas/files.schema';
-import { FolderDocument, FolderInfo } from '../schemas/folders.schema';
+import { FolderDocument } from '../schemas/folders.schema';
+import { AiRespone, FolderInfoType } from 'src/types/type';
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];
@@ -84,7 +85,7 @@ export const uploadFiles = async (
     );
 
     // Organize files into folders based on enhanced categorization
-    const categorizationResult = await organizeFilesAnalysis(
+    const categorizationResult: AiRespone = await organizeFilesAnalysis(
       fileData.map((file) => ({
         mainTopic: file.topic,
         documentType: file.documentType,
@@ -94,8 +95,8 @@ export const uploadFiles = async (
     );
 
     // Process the categorization result
-    const folderData: FolderInfo[] = categorizationResult.categorizations.map(
-      (cat) => {
+    const folderData: FolderInfoType[] =
+      categorizationResult.categorizations.map((cat) => {
         const filesInCategory = fileData.filter(
           (file) => file.topic === cat.mainTopic,
         );
@@ -106,8 +107,7 @@ export const uploadFiles = async (
           numberOfFiles: filesInCategory.length,
           confidence: cat.categories[0].confidence,
         };
-      },
-    );
+      });
 
     // Update or create folders in the database
     for (const folder of folderData) {
@@ -135,8 +135,6 @@ export const uploadFiles = async (
         );
       }
     }
-
-    console.log('Folders:', folderData);
   } catch (error) {
     if (error.code === 'UnsupportedMediaType') {
       throw new UnsupportedMediaTypeException();
