@@ -9,7 +9,7 @@ const ManageBilling = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { session } = useSelector((state: RootState) => state.payment);
   const mangePlan = () => {
-    dispatch(createCheckoutSession({ price_id: "" }));
+    dispatch(createCheckoutSession());
   };
   return (
     <div>

@@ -8,7 +8,8 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
+import { SignInAction, SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
+import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 
 const SignupPageForm = () => {
   const router = useRouter();
@@ -43,19 +44,22 @@ const SignupPageForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      dispatch(SignUpAction(userCredential));
+      dispatch(SignUpAction(userCredential)).then((action: any) => {
+        if (SignUpAction.fulfilled.match(action)) {
+          dispatch(createCheckoutSession()).then((action:any) => {
+            toast.success("Account created successfully");
+            if (createCheckoutSession.fulfilled.match(action)) {
+              router.push(action.payload.url);
+            }
+          });
+        } else {
+          toast.error(
+            (action.payload.message as string) || "An error occurred"
+          );
+        }
+      });
     }
   };
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-    if (userCreated) {
-      toast.success(userCreated.message);
-      router.push("/auth/signin");
-    }
-    dispatch(resetAuthState());
-  }, [error, userCreated, dispatch, router]);
 
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">

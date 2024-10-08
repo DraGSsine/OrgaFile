@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { signInDto, signUpDto } from './dto/auth.dto';
 import { Response } from 'express';
+import { signInDto, signUpDto } from './dto/auth.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -36,8 +36,32 @@ export class AuthController {
   }
 
   @Post('signup')
-  signUp(@Body() signUpDto: signUpDto) {
-    return this.authService.signUp(signUpDto);
+  async signUp(@Body() signUpDto: signUpDto, @Res() res: Response) {
+    const { accessToken, refreshToken, user } =
+      await this.authService.signUp(signUpDto);
+
+    res.cookie('token', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+    res.cookie(
+      'userInfo',
+      JSON.stringify({ email: user.email, fullName: user.fullName }),
+      { httpOnly: true, secure: false, sameSite: 'lax' },
+    );
+    return res.send({
+      message: 'User created successfully',
+      userInfo: {
+        email: user.email,
+        fullName: user.fullName,
+      },
+    });
   }
 
   @Post('refresh-token')

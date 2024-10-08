@@ -1,10 +1,6 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  isRejectedWithValue,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import cookies from "js-cookie";
 
 export interface CheckoutSessionType {
   checkoutSession: any;
@@ -36,18 +32,16 @@ const initialState: {
 
 export const createCheckoutSession = createAsyncThunk(
   "payment/createCheckoutSession",
-  async ({ price_id }: { price_id: string }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
+    const plan = cookies.get("plan");
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/create-checkout-session`,
-        {
-          price_id,
-        },
+        {plan},
         {
           withCredentials: true,
         }
       );
-
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data.message);
@@ -67,7 +61,6 @@ export const checkSubscription = createAsyncThunk(
       );
       return res.data;
     } catch (error: any) {
-      console.log(error);
       return rejectWithValue(error.response.data.message);
     }
   }

@@ -1,8 +1,6 @@
 import { initialStateType, userInfoType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { sign } from "crypto";
-import cookie from "js-cookie";
 
 const initialState: initialStateType = {
   isAuthenticated: false,
@@ -19,7 +17,8 @@ export const SignUpAction = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/signup`,
         {
           ...data,
-        }
+        },
+        { withCredentials: true }
       );
       const responseData = await response.data;
       return responseData;
@@ -82,6 +81,7 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
+      localStorage.setItem("userInfo", JSON.stringify(action.payload.userInfo));
     });
     builder.addCase(SignUpAction.rejected, (state, action: any) => {
       state.isLoading = false;

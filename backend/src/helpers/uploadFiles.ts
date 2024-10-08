@@ -1,53 +1,24 @@
 import { UnsupportedMediaTypeException } from '@nestjs/common';
 import { Model, ObjectId, Types } from 'mongoose';
 import * as crypto from 'crypto';
-import { analyzeDocument, organizeFilesAnalysis } from '../ai/openai-setup';
+import {
+  analyzeDocument,
+  generateFileName,
+  organizeFilesAnalysis,
+} from '../ai/openai-setup';
 import AWS from 'aws-sdk';
-import { File, FileDocument, FileInfo } from '../schemas/files.schema';
+import { FileDocument, FileInfo } from '../schemas/files.schema';
 import { FolderDocument, FolderInfo } from '../schemas/folders.schema';
 
-const addFileToCategoryBasedOnTopic = (
-  categories: any,
-  files: FileInfo[],
-): FolderInfo[] => {
-  const folders = [];
-
-  for (const category of categories) {
-    const filesInCategory = files.filter((file) =>
-      category.topics.includes(file.topic),
-    );
-    folders.push({
-      folderId: new Types.ObjectId(),
-      name: category.name,
-      files: filesInCategory,
-      numberOfFiles: filesInCategory.length,
-    });
+const getAllCategoryNames = async (folders: FolderDocument[]) => {
+  const categories = [];
+  for (const folder of folders) {
+    for (const category of folder.folders) {
+      categories.push(category.name);
+    }
   }
-  return folders;
+  return categories;
 };
-
-const extractTopicsFromFiles = async (files: FileInfo[]) => {
-  return files.map((file) => file.topic);
-};
-
-const organizeFiles = async (files: FileInfo[], getAllCategories: string[]) => {
-  const topics = await extractTopicsFromFiles(files);
-  return await organizeFilesAnalysis(topics, getAllCategories);
-};
-
-async function getAllCategoryNames(db_folders: any) {
-  try {
-    // Extract the category names using the map() function
-    const categoryNames = db_folders
-      .flatMap((doc) => doc.folders.map((folder) => folder.name))
-      .filter((name) => name !== null && name !== undefined);
-
-    return categoryNames;
-  } catch (error) {
-    console.error('Error retrieving category names:', error);
-    throw error;
-  }
-}
 
 export const uploadFiles = async (
   files: Array<Express.Multer.File>,
@@ -65,14 +36,20 @@ export const uploadFiles = async (
     const allCategories = await getAllCategoryNames(db_folders);
     console.log('All categories:', allCategories);
     getAllCategories.push(...allCategories);
+
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file: Express.Multer.File) => {
-      const nameKey = `${crypto.randomBytes(16).toString('hex')}-${file.originalname}`;
+      // Analyze file to determine its content and topic
+      const documentInfo = await analyzeDocument(file);
+      // Generate a new filename based on the document info
+      const newFileName = await generateFileName(documentInfo);
+
+      const nameKey = `${crypto.randomBytes(16).toString('hex')}-${newFileName}`;
       const params = {
-        mimetype: file.mimetype,
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${userId}/${nameKey}`,
         Body: file.buffer,
+        ContentType: file.mimetype,
       };
 
       // Upload file to S3
@@ -81,19 +58,16 @@ export const uploadFiles = async (
       // Prepare file metadata
       const data: FileInfo = {
         fileId: nameKey,
-        topic: 'general', // Default topic
+        topic: documentInfo.mainTopic,
         url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${userId}/${nameKey}`,
         format: file.originalname.split('.').pop(),
-        name: file.originalname,
+        name: newFileName,
         size: file.size,
         createdAt: new Date(),
+        documentType: documentInfo.documentType,
+        keyEntities: documentInfo.keyEntities,
+        summary: documentInfo.summary,
       };
-
-      // Analyze file to determine its topic
-      const topic = await analyzeDocument(file);
-
-      console.log('Topic:', topic);
-      data.topic = topic;
 
       // Push file metadata to array
       fileData.push(data);
@@ -101,19 +75,41 @@ export const uploadFiles = async (
 
     // Wait for all uploads and metadata processing to finish
     await Promise.all(uploadPromises);
+
     // Insert uploaded file metadata into MongoDB
     await fileModel.findOneAndUpdate(
       { userId },
       { $push: { files: { $each: fileData } } },
       { upsert: true },
     );
-    // Organize files into folders based on topics
-    const res = await organizeFiles(fileData, []);
-    // console.log(res);
-    const folderData: FolderInfo[] = addFileToCategoryBasedOnTopic(
-      res,
-      fileData,
+
+    // Organize files into folders based on enhanced categorization
+    const categorizationResult = await organizeFilesAnalysis(
+      fileData.map((file) => ({
+        mainTopic: file.topic,
+        documentType: file.documentType,
+        keyEntities: file.keyEntities,
+      })),
+      getAllCategories,
     );
+
+    // Process the categorization result
+    const folderData: FolderInfo[] = categorizationResult.categorizations.map(
+      (cat) => {
+        const filesInCategory = fileData.filter(
+          (file) => file.topic === cat.mainTopic,
+        );
+        return {
+          folderId: new Types.ObjectId(),
+          name: cat.categories[0].name, // Use the highest confidence category
+          files: filesInCategory,
+          numberOfFiles: filesInCategory.length,
+          confidence: cat.categories[0].confidence,
+        };
+      },
+    );
+
+    // Update or create folders in the database
     for (const folder of folderData) {
       // Check if the folder exists for the user
       const existingFolder = await folderModel.findOne({
@@ -125,7 +121,10 @@ export const uploadFiles = async (
         // Folder exists, update its files
         await folderModel.findOneAndUpdate(
           { userId, 'folders.name': folder.name },
-          { $push: { 'folders.$.files': { $each: folder.files } } },
+          {
+            $push: { 'folders.$.files': { $each: folder.files } },
+            $set: { 'folders.$.confidence': folder.confidence },
+          },
         );
       } else {
         // Folder does not exist, create a new document
@@ -137,7 +136,7 @@ export const uploadFiles = async (
       }
     }
 
-    // console.log('Folders:', folderData);
+    console.log('Folders:', folderData);
   } catch (error) {
     if (error.code === 'UnsupportedMediaType') {
       throw new UnsupportedMediaTypeException();

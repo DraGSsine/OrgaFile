@@ -12,6 +12,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UserDocument } from '../schemas/auth.schema';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
 import { JwtService } from '@nestjs/jwt';
+import { setPlanByItName, setPlanByItsId } from '../helpers/getPlanIdAndName';
 
 @Injectable()
 export class PaymentService {
@@ -65,7 +66,7 @@ export class PaymentService {
         subscriptionStatus: 'active',
       });
       if (existingSubscription && existingSubscription.customerId) {
-        throw new Error('User is already subscribed');
+        return { url: process.env.NEXT_APP_URL! };
       }
       // Create a new Stripe customer
       const customer = await this.stripeClient.customers.create({
@@ -75,7 +76,7 @@ export class PaymentService {
       const session = await this.stripeClient.checkout.sessions.create({
         line_items: [
           {
-            price: createPaymentDto.price_id,
+            price: setPlanByItName(createPaymentDto.plan),
             quantity: 1,
           },
         ],
@@ -90,19 +91,11 @@ export class PaymentService {
       });
       return { url: session.url! };
     } catch (error) {
-      if (error.message === 'User is already subscribed') {
-        // Handle the case when the user is already subscribed
-        throw new HttpException(
-          'User is already subscribed',
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
-        // Handle other errors
-        throw new HttpException(
-          'Could not create checkout session',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      // Handle other errors
+      throw new HttpException(
+        'Could not create checkout session',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -166,7 +159,7 @@ export class PaymentService {
         );
         return;
       }
-      const plan = this.setPlanByItsId(subscription.items.data[0].price.id);
+      const plan = setPlanByItsId(subscription.items.data[0].price.id);
       await this.subscriptionModel.create({
         userId,
         plan,
@@ -203,18 +196,6 @@ export class PaymentService {
       );
     } catch (error) {
       console.error('Error handling invoice payment succeeded:', error);
-    }
-  }
-
-  private setPlanByItsId(priceId: string) {
-    if (priceId == 'price_1Q3MfoHbzmnInIZ1CsBh5rGj') {
-      return 'Basic';
-    } else if (priceId == 'price_1Q3MiPHbzmnInIZ1kdQAFHqH') {
-      return 'Premium';
-    } else if (priceId == 'price_1Q3Mh3HbzmnInIZ1QvC4glTC') {
-      return 'Standard';
-    } else {
-      throw new Error('Invalid price ID');
     }
   }
 

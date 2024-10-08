@@ -193,7 +193,7 @@ export class UploadService {
         );
         const removedFile = file.files.find((file) => file.fileId === fileId);
 
-        const doc = await this.removedFilesModel.findOneAndUpdate(
+        await this.removedFilesModel.findOneAndUpdate(
           { userId: req.user.userId },
           { $push: { files: removedFile } },
           { upsert: true, new: true },
@@ -269,7 +269,7 @@ export class UploadService {
         );
         const flattenedRemovedFiles = removedFiles.flat();
 
-        const doc = await this.removedFilesModel.findOneAndUpdate(
+        await this.removedFilesModel.findOneAndUpdate(
           { userId: req.user.userId },
           { $push: { files: { $each: flattenedRemovedFiles } } },
           { upsert: true, new: true },

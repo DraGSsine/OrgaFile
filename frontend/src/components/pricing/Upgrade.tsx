@@ -16,17 +16,23 @@ const Upgrade = ({
 }) => {
   const router = useRouter();
   const upgradPlan = (plan: string) => {
-    Cookies.set("plan", plan, {
-      expires: 7 * 24 * 60 * 60,
-      sameSite: "strict",
-      secure: true,
+    return new Promise((resolve, reject) => {
+      Cookies.set("plan", plan, {
+        expires: 60,
+      });
+  
+      if (Cookies.get("plan") === plan) {
+        resolve(true);
+      } else {
+        reject(new Error("Failed to set cookie"));
+      }
+    })
+    .then(() => {
+      router.push("/auth/signup");
+    })
+    .catch((error) => {
+      console.error(error);
     });
-    Cookies.set("price_id", productId, {
-      expires: 7 * 24 * 60 * 60,
-      sameSite: "strict",
-      secure: true,
-    });
-    router.push("/auth/signup");
   };
   return (
     <Button

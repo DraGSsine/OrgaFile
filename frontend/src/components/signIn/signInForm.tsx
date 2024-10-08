@@ -34,38 +34,23 @@ export const SignInForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      dispatch(SignInAction(userInfo));
+      dispatch(SignInAction(userInfo)).then((res: any) => {
+        if (res.payload.error) {
+          toast.error(res.payload.message);
+        } else {
+          toast.success("Logged in successfully");
+          dispatch(createCheckoutSession()).then((res: any) => {
+            if (res.payload.error) {
+              console.log(res.payload);
+              toast.error(res.payload.message);
+            } else {
+              router.push(res.payload.url);
+            }
+          });
+        }
+      });
     }
   };
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-    if (isAuthenticated) {
-      toast.success("Sign in successful");
-      if (userCreated?.isSubscribed) {
-        router.push("/dashboard");
-      } else {
-        const price_id = Cookies.get("price_id");
-        console.log(price_id);
-        if (!price_id) {
-          router.push("/pricing");
-          return;
-        }
-        dispatch(
-          createCheckoutSession({
-            price_id,
-          })
-        ).then((action) => {
-          console.log(action);
-          if (createCheckoutSession.fulfilled.match(action)) {
-            router.push(action.payload.url);
-          }
-        });
-      }
-    }
-    dispatch(resetAuthState());
-  }, [dispatch, error, isAuthenticated, userCreated,router]);
   return (
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <EmailInput

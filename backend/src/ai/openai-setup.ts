@@ -3,7 +3,16 @@ import { ChatMistralAI } from '@langchain/mistralai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 
-export const analyzeDocument = async (file: Express.Multer.File) => {
+export interface AIAnalyzeDocumnetResponse {
+  mainTopic: string;
+  documentType: string;
+  keyEntities: string[];
+  summary: string;
+}
+
+export const analyzeDocument = async (
+  file: Express.Multer.File,
+): Promise<AIAnalyzeDocumnetResponse> => {
   try {
     const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
@@ -18,20 +27,23 @@ export const analyzeDocument = async (file: Express.Multer.File) => {
 
     let contextText = '';
     for (let i = 0; i < output.length; i++) {
-      const document = output[i];
-      const content = document.pageContent;
-
-      contextText += `${content.trim()}\n---\n`;
-
-      // Increased the limit to provide more context
+      contextText += `${output[i].pageContent.trim()}\n---\n`;
       if (contextText.length > 2000) break;
     }
 
-    const promptContent = `You are a helpful assistant analyzing a document. You are given some context sections from the document.
-    Identify the most specific and distinctive main topic, focusing on unique and distinguishing aspects.
-    If the context discusses something famous or well-known, prioritize that as the main topic.
-    Provide the main topic as a concise phrase of less than four words. Do not include additional explanations or details in your response.
-    Respond in the following format: "Main Topic: <your_response>".`;
+    const promptContent = `Analyze the following document context and provide:
+    1. Main Topic: A concise phrase of less than four words describing the most specific and distinctive main topic.
+    2. Document Type: Identify the type of document (e.g., report, article, code, etc.).
+    3. Key Entities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
+    4. Summary: A brief 2-3 sentence summary of the main points.
+
+    Respond in JSON format like this:
+    {{
+      "mainTopic": "string",
+      "documentType": "string",
+      "keyEntities": ["string", "string", ...],
+      "summary": "string"
+    }}`;
 
     const model = new ChatMistralAI({
       apiKey: process.env.MISTRAL_API_KEY,
@@ -46,13 +58,9 @@ export const analyzeDocument = async (file: Express.Multer.File) => {
 
     const chain = prompt.pipe(model);
     const response = await chain.invoke({});
-
-    // Extract the main topic from the response
-    const mainTopic = (response.content as string)
-      .trim()
-      .replace(/Main Topic: /, '');
-
-    return mainTopic;
+    console.log('Analyze document response:', response.content);
+    const result = JSON.parse(response.content as string);
+    return result;
   } catch (error) {
     console.error('Error analyzing file:', error);
     return null;
@@ -60,32 +68,34 @@ export const analyzeDocument = async (file: Express.Multer.File) => {
 };
 
 export const organizeFilesAnalysis = async (
-  topics: string[],
-  categories: string[],
+  documents: Array<{
+    mainTopic: string;
+    documentType: string;
+    keyEntities: string[];
+  }>,
+  existingCategories: string[],
 ) => {
-  const folderPromptContent = `Analyze the following topics and categorize them into broad, general categories. Each topic should be assigned to only one category and should not be changed or rephrased.
-  If a topic is specific, like a particular TV show, movie, book, or technology, assign it to a broader category, such as 'TV Shows', 'Movies', 'Books', 'Programming', etc.
-  Prioritize using the following existing categories whenever possible: ${categories.join(', ')}. Provide the response in a well-structured JSON format.
+  const categorizePromptContent = `Analyze the following documents and categorize them into broad, general categories. Each document should be assigned to up to 3 categories with confidence scores.
+  Prioritize using the following existing categories whenever possible: ${existingCategories.join(', ')}.
+  If a new category is needed, ensure it's broad and general, containing only one word.
 
-  Topics: ${topics.join(', ')}
+  Documents: ${JSON.stringify(documents).replace(/{/g, '{{').replace(/}/g, '}}')}
 
-  Response format example:
+  Response format:
   {{
-    "data": [
+    "categorizations": [
       {{
-        "name": "Category1",
-        "topics": ["Topic1", "Topic2"]
+        "mainTopic": "string",
+        "categories": [
+          {{ "name": "string", "confidence": number }},
+          {{ "name": "string", "confidence": number }},
+          {{ "name": "string", "confidence": number }}
+        ]
       }},
-      {{
-        "name": "Category2",
-        "topics": ["Topic3", "Topic4"]
-      }}
     ]
   }}
 
-  Ensure that each category has a unique name and that there are no duplicate topics within or across categories. Use the exact topic names provided in the topics list and the exact category names provided in the existing categories list. Make sure the categories are broad and general.
-  Ensure that the categories contain only one word as maximum.
-  `;
+  Ensure categories are unique and broad. Use exact names from existing categories list where possible.`;
 
   const model = new ChatMistralAI({
     apiKey: process.env.MISTRAL_API_KEY,
@@ -95,25 +105,48 @@ export const organizeFilesAnalysis = async (
   try {
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', 'You are a helpful assistant.'],
-      ['user', folderPromptContent],
+      ['user', categorizePromptContent],
     ]);
 
     const chain = prompt.pipe(model);
     const response = await chain.invoke({});
-    const assignments = JSON.parse(response.content as string).data;
-
-    // Validate categories to ensure they contain only one word
-    const invalidCategories = categories.filter(
-      (category) => category.split(/\s+/).length > 1,
-    );
-    if (invalidCategories.length > 0) {
-      throw new Error(
-        `Invalid categories found: ${invalidCategories.join(', ')}. Categories must contain only one word.`,
-      );
-    }
-
-    return assignments;
+    console.log('-------------------------------------------');
+    console.log(response.content);
+    console.log('-------------------------------------------');
+    return JSON.parse(response.content as string);
   } catch (error) {
     throw error;
   }
+};
+
+export const generateFileName = async (documentInfo: {
+  mainTopic: string;
+  documentType: string;
+  keyEntities: string[];
+  summary: string;
+}) => {
+  const promptContent = `Generate a descriptive filename based on the following document information:
+  ${JSON.stringify(documentInfo).replace(/{/g, '{{').replace(/}/g, '}}')}.
+
+  The filename should:
+  1. Be concise and meaningful, max 50 characters
+  2. Include the document type and main topic
+  3. Incorporate key entities if relevant
+  4. Use underscores for spaces and be lowercase
+
+  Respond with only the generated filename.`;
+
+  const model = new ChatMistralAI({
+    apiKey: process.env.MISTRAL_API_KEY,
+    model: 'open-mistral-7b',
+  });
+
+  const prompt = ChatPromptTemplate.fromMessages([
+    ['system', 'You are a helpful assistant.'],
+    ['user', promptContent],
+  ]);
+
+  const chain = prompt.pipe(model);
+  const response = await chain.invoke({});
+  return (response.content as string).trim().toLowerCase().replace(/\s+/g, '_');
 };

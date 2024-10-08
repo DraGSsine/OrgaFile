@@ -2,7 +2,11 @@ import { signInDto, signUpDto } from './dto/auth.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from '../schemas/auth.schema';
-import { Injectable, UnprocessableEntityException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnprocessableEntityException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
@@ -26,7 +30,9 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw new UnprocessableEntityException('Email or password is incorrect');
     }
-    const isSubscribed = await this.subscriptionModel.findOne({ userId: user._id });
+    const isSubscribed = await this.subscriptionModel.findOne({
+      userId: user._id,
+    });
     const tokens = await this.generateTokens(user._id, !!isSubscribed);
     return {
       ...tokens,
@@ -48,7 +54,11 @@ export class AuthService {
       ...signUpDto,
       password: encryptedPassword,
     });
-    return { message: 'User created successfully', userId: newUser._id };
+    const tokens = await this.generateTokens(newUser._id, false);
+    return {
+      ...tokens,
+      user: { email: newUser.email, fullName: newUser.fullName },
+    };
   }
 
   async refreshToken(refreshToken: string) {
@@ -60,7 +70,9 @@ export class AuthService {
       if (!user) {
         throw new UnprocessableEntityException('User not found');
       }
-      const isSubscribed = await this.subscriptionModel.findOne({ userId: user._id });
+      const isSubscribed = await this.subscriptionModel.findOne({
+        userId: user._id,
+      });
       const tokens = await this.generateTokens(user._id, !!isSubscribed);
       return {
         ...tokens,

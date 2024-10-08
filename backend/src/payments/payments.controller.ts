@@ -41,13 +41,15 @@ export class PaymentController {
   @Get('check-subscription')
   @UseGuards(AuthGuard)
   async checkSubscription(@Req() request: any, @Res() res: Response) {
-    const { newToken } = await this.paymentService.checkSubscription(request.user.userId);
+    const { newToken } = await this.paymentService.checkSubscription(
+      request.user.userId,
+    );
     res.cookie('token', newToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
     });
-    res.send( {
+    res.send({
       message: 'Subscription checked',
     });
   }

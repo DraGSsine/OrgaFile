@@ -6,10 +6,9 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("token")?.value;
   const plan = request.cookies.get("plan")?.value;
   const protectedRoutes = ["/dashboard"];
-  const publicRoutes = ["/", "/auth/signin", "/auth/signup"];
+  const publicRoutes = ["/", "/auth/signin", "/auth/signup","/pricing"];
 
-  const { isTokenValid} = await validateToken(accessToken);
-
+  const { isTokenValid , isSubscribed } = await validateToken(accessToken);
   try {
     if (!plan && request.nextUrl.pathname === "/auth/signup") {
       return NextResponse.redirect(
@@ -18,13 +17,15 @@ export async function middleware(request: NextRequest) {
     }
 
     if (protectedRoutes.includes(request.nextUrl.pathname)) {
-      if (!isTokenValid) {
+      if (!isTokenValid || !isSubscribed) {
+        if (!isSubscribed && isTokenValid && request.nextUrl.pathname === "/payment/successful")
+          return NextResponse.next();
         return NextResponse.redirect(
           new URL("/auth/signin", request.nextUrl.origin).href
         );
       }
     } else if (publicRoutes.includes(request.nextUrl.pathname)) {
-      if (isTokenValid) {
+      if (isTokenValid && isSubscribed) {
         return NextResponse.redirect(
           new URL("/dashboard", request.nextUrl.origin).href
         );
@@ -45,13 +46,8 @@ async function validateToken(token?: string) {
     const SECRET_KEY = new TextEncoder().encode(key);
     const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    console.log(payload);
-    if (!payload.isSubscribed)
-      throw new Error("User is not subscribed to any plan");
-
-    return { isTokenValid: true };
+    return { isTokenValid: true, isSubscribed: payload.isSubscribed };
   } catch (error) {
-    // console.error(error);
-    return { isTokenValid: false };
+    return { isTokenValid: false, isSubscribed: false };
   }
 }

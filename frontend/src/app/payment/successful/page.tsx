@@ -12,6 +12,7 @@ export default function Component() {
 
   useEffect(() => {
     dispatch(checkSubscription())
+    console.log(subscription)
   },[]);
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-6">

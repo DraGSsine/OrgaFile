@@ -13,6 +13,8 @@ export class FolderInfo {
   files: FileInfo[];
   @Prop({ required: true })
   numberOfFiles: number;
+  @Prop({ required: true })
+  confidence: number;
 }
 
 @Schema()

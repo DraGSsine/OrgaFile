@@ -1,4 +1,3 @@
-import { Button } from "@nextui-org/button";
 import { PricingShape } from "../../../public/svgShapes";
 import Upgrade from "./Upgrade";
 

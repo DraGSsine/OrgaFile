@@ -17,7 +17,10 @@ const UserProfile = ({email}:{email:string}) => {
   const dispatch = useDispatch<AppDispatch>();
   const handleItemSelect = (e: string | number) => {
     if (e === "logout") {
-      dispatch(SignOutAction());
+      dispatch(SignOutAction()).then(() => {
+        router.push("/auth/signin");
+      }
+      );
     } else if (e === "settings") router.push("/dashboard/settings");
     else if (e === "help") router.push("/help");
   };
