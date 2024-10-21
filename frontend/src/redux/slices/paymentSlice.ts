@@ -36,7 +36,7 @@ export const createCheckoutSession = createAsyncThunk(
     const plan = cookies.get("plan");
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/create-checkout-session`,
+        `${process.env.NEST_APP_URL}/api/payment/create-checkout-session`,
         {plan},
         {
           withCredentials: true,
@@ -54,7 +54,7 @@ export const checkSubscription = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/check-subscription`,
+        `${process.env.NEST_APP_URL}/api/payment/check-subscription`,
         {
           withCredentials: true,
         }

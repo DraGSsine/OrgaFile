@@ -45,7 +45,7 @@ export const loadOneFolder = createAsyncThunk(
   "folders/loadOneFolder",
   async (folderId: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load/${folderId}`, {
+      const res = await axios.get(`${process.env.NEST_APP_URL}/api/folders/load/${folderId}`, {
         withCredentials: true,
       });
       if (res.status !== 200) {
@@ -63,7 +63,7 @@ export const loadFolders = createAsyncThunk(
   "folders/loadFolders",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/load`, {
+      const res = await axios.get(`${process.env.NEST_APP_URL}/api/folders/load`, {
         withCredentials: true,
       });
       if (res.status !== 200) {
@@ -81,7 +81,7 @@ export const downloadFolder = createAsyncThunk(
   "folders/downloadFolder",
   async ({folderId,folderName}:{folderId:string,folderName:string}, { rejectWithValue, dispatch }) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/folders/download/${folderId}`, {
+      const res = await axios.get(`${process.env.NEST_APP_URL}/api/folders/download/${folderId}`, {
         withCredentials: true,
       });
       if (res.status !== 200) {

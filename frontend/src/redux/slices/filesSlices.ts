@@ -96,7 +96,7 @@ export const loadAllFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/load`,
+        `${process.env.NEST_APP_URL}/api/files/load`,
         {
           withCredentials: true,
         }
@@ -117,7 +117,7 @@ export const uploadFiles = createAsyncThunk(
   async (files: FormData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/upload`,
+        `${process.env.NEST_APP_URL}/api/files/upload`,
         files,
         {
           withCredentials: true,
@@ -142,7 +142,7 @@ export const removeFile = createAsyncThunk(
   ) => {
     try {
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/remove`,
+        `${process.env.NEST_APP_URL}/api/files/remove`,
         {
           data: { fileId, isPermanently },
           withCredentials: true,
@@ -167,7 +167,7 @@ export const removeManyFiles = createAsyncThunk(
   ) => {
     try {
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removemany`,
+        `${process.env.NEST_APP_URL}/api/files/removemany`,
         {
           data: { files, isPermanently },
           withCredentials: true,
@@ -189,7 +189,7 @@ export const loadRecentFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/recent`,
+        `${process.env.NEST_APP_URL}/api/files/recent`,
         {
           withCredentials: true,
         }
@@ -210,7 +210,7 @@ export const loadRemovedFiles = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/removed`,
+        `${process.env.NEST_APP_URL}/api/files/removed`,
         {
           withCredentials: true,
         }
@@ -231,7 +231,7 @@ export const restoreFile = createAsyncThunk(
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/restore`,
+        `${process.env.NEST_APP_URL}/api/files/restore`,
         { fileId },
         {
           withCredentials: true,
@@ -253,7 +253,7 @@ export const downloadFile = createAsyncThunk(
   async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/download/${fileId}`,
+        `${process.env.NEST_APP_URL}/api/files/download/${fileId}`,
         {
           withCredentials: true,
         }

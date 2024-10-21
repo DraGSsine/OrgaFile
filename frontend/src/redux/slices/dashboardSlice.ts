@@ -51,7 +51,7 @@ export const loadUserLimits = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/load-user-limits`,
+        `${process.env.NEST_APP_URL}/api/dashboard/load-user-limits`,
         {
           withCredentials: true,
         }
@@ -68,7 +68,7 @@ export const loadClouInfo = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/load-cloud-info`,
+        `${process.env.NEST_APP_URL}/api/dashboard/load-cloud-info`,
         {
           withCredentials: true,
         }
