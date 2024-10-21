@@ -45,6 +45,7 @@ async function validateToken(token?: string) {
     const SECRET_KEY = new TextEncoder().encode(key);
     const { payload } = await jwtVerify(token, SECRET_KEY);
 
+    console.log(payload);
     return { isTokenValid: true, isSubscribed: payload.isSubscribed };
   } catch (error) {
     return { isTokenValid: false, isSubscribed: false };

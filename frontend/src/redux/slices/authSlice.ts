@@ -12,9 +12,10 @@ const initialState: initialStateType = {
 export const SignUpAction = createAsyncThunk(
   "auth/signup",
   async (data: userInfoType, { rejectWithValue }) => {
+    console.log(process.env.NEXT_PUBLIC_NEST_APP_URL);
     try {
       const response = await axios.post(
-        `${process.env.NEST_APP_URL}/api/auth/signup`,
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signup`,
         {
           ...data,
         },
@@ -33,7 +34,7 @@ export const SignInAction = createAsyncThunk(
   async (data: userInfoType, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${process.env.NEST_APP_URL}/api/auth/signin`,
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signin`,
         {
           ...data,
         },
@@ -50,7 +51,7 @@ export const SignInAction = createAsyncThunk(
 
 export const SignOutAction = createAsyncThunk("auth/signout", async () => {
   try {
-    await axios.get(`${process.env.NEST_APP_URL}/api/auth/signout`, {
+    await axios.get(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signout`, {
       withCredentials: true,
     });
   } catch (error) {

@@ -32,7 +32,7 @@ const FooterBar = () => {
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
-                href="https://linkedin.com/"
+                href="https://www.linkedin.com/in/yassineouchen/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"

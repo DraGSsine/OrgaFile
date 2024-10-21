@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import cookie from "js-cookie";
+
 
 interface initialStateType {
   userLimits: {
@@ -24,6 +24,9 @@ interface initialStateType {
     loading: boolean;
     error: any;
   };
+  logOutModal: {
+    isOpen: boolean;
+  };
 }
 
 const initialState: initialStateType = {
@@ -44,6 +47,9 @@ const initialState: initialStateType = {
     loading: true,
     error: null,
   },
+  logOutModal: {
+    isOpen: false,
+  },
 };
 
 export const loadUserLimits = createAsyncThunk(
@@ -51,7 +57,7 @@ export const loadUserLimits = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEST_APP_URL}/api/dashboard/load-user-limits`,
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/dashboard/load-user-limits`,
         {
           withCredentials: true,
         }
@@ -68,7 +74,7 @@ export const loadClouInfo = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${process.env.NEST_APP_URL}/api/dashboard/load-cloud-info`,
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/dashboard/load-cloud-info`,
         {
           withCredentials: true,
         }
@@ -84,7 +90,12 @@ export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    // actions
+    openLogOutModal: (state) => {
+      state.logOutModal.isOpen = true;
+    },
+    closeLogOutModal: (state) => {
+      state.logOutModal.isOpen = false;
+    },
   },
   extraReducers(builder) {
     builder.addCase(loadUserLimits.pending, (state) => {
@@ -116,3 +127,5 @@ export const dashboardSlice = createSlice({
     });
   },
 });
+
+export const { openLogOutModal, closeLogOutModal } = dashboardSlice.actions;

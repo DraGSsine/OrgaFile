@@ -27,7 +27,7 @@ export const SignInForm = () => {
     password: z.string().min(6).max(30),
   });
 
-  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const parsedUser = User.safeParse(userInfo);
     if (!parsedUser.success) {
@@ -38,12 +38,12 @@ export const SignInForm = () => {
         if (res.payload.error) {
           toast.error(res.payload.message);
         } else {
-          toast.success("Logged in successfully");
           dispatch(createCheckoutSession()).then((res: any) => {
-            if (res.payload.error) {
-              console.log(res.payload);
-              toast.error(res.payload.message);
+            console.log(res);
+            if (res?.error) {
+              toast.error("An error occurred");
             } else {
+              toast.success("Logged in successfully");
               router.push(res.payload.url);
             }
           });
@@ -52,7 +52,7 @@ export const SignInForm = () => {
     }
   };
   return (
-    <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
+    <form onSubmit={(e) => handleSignin(e)} className="flex gap-6 flex-col">
       <EmailInput
         errorState={errorState}
         onChange={(e) => setUserInfo({ ...userInfo, email: e })}

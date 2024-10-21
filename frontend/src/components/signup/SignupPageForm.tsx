@@ -48,6 +48,8 @@ const SignupPageForm = () => {
         if (SignUpAction.fulfilled.match(action)) {
           dispatch(createCheckoutSession()).then((action:any) => {
             toast.success("Account created successfully");
+            console.log(action);
+            console.log(createCheckoutSession)
             if (createCheckoutSession.fulfilled.match(action)) {
               router.push(action.payload.url);
             }

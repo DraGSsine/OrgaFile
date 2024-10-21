@@ -11,27 +11,21 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
-import { SignOutAction } from "@/redux/slices/authSlice";
-const UserProfile = ({email}:{email:string}) => {
+import { openLogOutModal } from "@/redux/slices/dashboardSlice";
+
+const UserProfile = ({ email }: { email: string }) => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const handleItemSelect = (e: string | number) => {
     if (e === "logout") {
-      dispatch(SignOutAction()).then(() => {
-        router.push("/auth/signin");
-      }
-      );
+      dispatch(openLogOutModal());
     } else if (e === "settings") router.push("/dashboard/settings");
     else if (e === "help") router.push("/help");
   };
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger className="cursor-pointer">
-        <Avatar
-          isBordered
-          color="primary"
-          src="/images/profile.jpg"
-        />
+        <Avatar isBordered color="primary" src="/images/profile.jpg" />
       </DropdownTrigger>
       <DropdownMenu
         onAction={(key) => handleItemSelect(key)}
