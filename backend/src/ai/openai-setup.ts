@@ -4,6 +4,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
 import { AiRespone } from 'src/types/type';
+
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
   documentType: string;
@@ -40,13 +41,7 @@ export const analyzeDocument = async (
     3. Key Entities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
     4. Summary: A brief 2-3 sentence summary of the main points.
 
-    Respond in JSON format like this:
-    {{
-      "mainTopic": "string",
-      "documentType": "string",
-      "keyEntities": ["string", "string", ...],
-      "summary": "string"
-    }}`;
+    Respond in JSON format`;
 
     const model = new ChatMistralAI({
       apiKey: process.env.MISTRAL_API_KEY,
@@ -61,6 +56,7 @@ export const analyzeDocument = async (
 
     const chain = prompt.pipe(model).pipe(parser);
     const response = await chain.invoke({});
+    console.log(response);
     return response;
   } catch (error) {
     console.error('Error analyzing file:', error);
