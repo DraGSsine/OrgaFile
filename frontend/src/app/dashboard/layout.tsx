@@ -1,7 +1,8 @@
 import NavBar from "@/components/dashboard/NavBar";
 import { RightSideBar } from "@/components/dashboard/rightSideBar/RightSideBar";
 import SideBar from "@/components/dashboard/SideBar";
-import LogOutModal from "@/components/LogOutModal";
+import SignoutModal from "@/components/LogOutModal";
+
 
 
 export default function RootLayout({
@@ -19,7 +20,7 @@ export default function RootLayout({
         </main>
       </div>
       <RightSideBar />
-      <LogOutModal />
+      <SignoutModal />
     </div>
   );
 }

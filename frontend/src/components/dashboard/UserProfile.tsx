@@ -11,14 +11,14 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
-import { openLogOutModal } from "@/redux/slices/dashboardSlice";
+import { openSignoutModal } from "@/redux/slices/dashboardSlice";
 
 const UserProfile = ({ email }: { email: string }) => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const handleItemSelect = (e: string | number) => {
-    if (e === "logout") {
-      dispatch(openLogOutModal());
+    if (e === "signout") {
+      dispatch(openSignoutModal());
     } else if (e === "settings") router.push("/dashboard/settings");
     else if (e === "help") router.push("/help");
   };
@@ -38,7 +38,7 @@ const UserProfile = ({ email }: { email: string }) => {
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>
         <DropdownItem key="help">Help</DropdownItem>
-        <DropdownItem key="logout" color="danger">
+        <DropdownItem key="signout" color="danger">
           Log Out
         </DropdownItem>
       </DropdownMenu>

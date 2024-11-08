@@ -11,18 +11,13 @@ export default function ModalComponent() {
   return (
     <>
       <Modal
-        backdrop="opaque"
+        backdrop="blur"
         isOpen={uploadFileState.openUploadModal}
         onClose={() => dispatch(setUploadModal(false))}
         size="xl"
         radius="lg"
         classNames={{
-          body: "py-6",
-          backdrop: "bg-[#fff]/40 backdrop-opacity-40 blur-xs",
-          base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
-          header: "border-b-[1px] border-[#292f46]",
-          footer: "border-t-[1px] border-[#292f46]",
-          closeButton: "hover:bg-white/5 active:bg-white/10",
+          backdrop: "bg-[#fff] bg-opacity-50 backdrop-opacity-50 blur-xs",
         }}
       >
         <ModalContent>

@@ -61,7 +61,7 @@ export const UserLimitCard = ({
           <div className="bg-green-100 w-fit p-3 rounded-2xl">
             <Server color="#18C964" size={30} />
           </div>
-          <h2 className=" font-medium py-4 text-md 2xl:text-xl">Daily Usage</h2>
+          <h2 className=" font-medium py-4 text-md 2xl:text-xl">Monthly Usage</h2>
         </div>
         {isLoading ? (
         <ProgressSkeleton />

@@ -24,7 +24,7 @@ interface initialStateType {
     loading: boolean;
     error: any;
   };
-  logOutModal: {
+  SignoutModal: {
     isOpen: boolean;
   };
 }
@@ -47,7 +47,7 @@ const initialState: initialStateType = {
     loading: true,
     error: null,
   },
-  logOutModal: {
+  SignoutModal: {
     isOpen: false,
   },
 };
@@ -90,11 +90,11 @@ export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    openLogOutModal: (state) => {
-      state.logOutModal.isOpen = true;
+    openSignoutModal: (state) => {
+      state.SignoutModal.isOpen = true;
     },
-    closeLogOutModal: (state) => {
-      state.logOutModal.isOpen = false;
+    closeSignoutModal: (state) => {
+      state.SignoutModal.isOpen = false;
     },
   },
   extraReducers(builder) {
@@ -128,4 +128,4 @@ export const dashboardSlice = createSlice({
   },
 });
 
-export const { openLogOutModal, closeLogOutModal } = dashboardSlice.actions;
+export const { openSignoutModal, closeSignoutModal } = dashboardSlice.actions;

@@ -16,16 +16,23 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      { httpOnly: true, secure: false, sameSite: 'lax' },
+      {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      },
     );
     return res.send({
       userInfo: {
@@ -44,16 +51,23 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      { httpOnly: true, secure: false, sameSite: 'lax' },
+      {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      },
     );
     return res.send({
       message: 'User created successfully',
@@ -75,6 +89,7 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
 
     return res.send({
