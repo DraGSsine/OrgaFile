@@ -127,6 +127,9 @@ export default function TableFiles({
           CREATED AT
         </TableColumn>
         <TableColumn className=" text-center w-[15%]" key="status">
+          Type
+        </TableColumn>
+        <TableColumn className=" text-center w-[15%]" key="status">
           TOPIC
         </TableColumn>
         <TableColumn className=" w-[15%] text-center" key="settings">
@@ -161,6 +164,16 @@ export default function TableFiles({
             </TableCell>
             <TableCell className="text-center">
               {FormatTheDate(item.createdAt)}
+            </TableCell>
+            <TableCell className="text-center">
+              <Chip
+                size="sm"
+                color="warning"
+                variant="dot"
+                style={{ borderColor: "orange", borderWidth: 1 }}
+              >
+                {item.documentType}
+              </Chip>
             </TableCell>
             <TableCell className="text-center">
               <Chip

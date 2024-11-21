@@ -40,6 +40,7 @@ export type filesType = {
   size: number;
   createdAt: Date;
   topic: string;
+  documentType: string;
 };
  
 export type FilesState = {

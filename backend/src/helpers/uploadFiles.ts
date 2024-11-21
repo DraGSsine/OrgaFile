@@ -35,14 +35,16 @@ export const uploadFiles = async (
     // Retrieve all folders categories from MongoDB
     const db_folders = await folderModel.find({ userId });
     const allCategories = await getAllCategoryNames(db_folders);
-    console.log('All categories:', allCategories);
     getAllCategories.push(...allCategories);
 
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file: Express.Multer.File) => {
       // Analyze file to determine its content and topic
+      console.log('-----------------------------------');
       const documentInfo = await analyzeDocument(file);
-      // Generate a new filename based on the document info
+      console.log('Document info:', documentInfo);
+      console.log('-----------------------------------');
+
       const newFileName = await generateFileName(documentInfo);
 
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${newFileName}`;
@@ -69,20 +71,21 @@ export const uploadFiles = async (
         keyEntities: documentInfo.keyEntities,
         summary: documentInfo.summary,
       };
-
-      // Push file metadata to array
       fileData.push(data);
     });
 
     // Wait for all uploads and metadata processing to finish
     await Promise.all(uploadPromises);
-
     // Insert uploaded file metadata into MongoDB
     await fileModel.findOneAndUpdate(
       { userId },
       { $push: { files: { $each: fileData } } },
       { upsert: true },
     );
+    console.log('***********************************');
+    console.log(fileData);
+    console.log('***********************************');
+    return;
 
     // Organize files into folders based on enhanced categorization
     const categorizationResult: AiRespone = await organizeFilesAnalysis(

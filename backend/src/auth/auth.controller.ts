@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { signInDto, signUpDto } from './dto/auth.dto';
+import { resHeaders } from 'src/helpers/constant';
 
 @Controller('api/auth')
 export class AuthController {
@@ -12,27 +13,12 @@ export class AuthController {
     const { accessToken, refreshToken, user } =
       await this.authService.signIn(signInDto);
 
-    res.cookie('token', accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
+    res.cookie('token', accessToken, resHeaders);
+    res.cookie('refreshToken', refreshToken, resHeaders);
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      },
+      resHeaders,
     );
     return res.send({
       userInfo: {
@@ -47,27 +33,12 @@ export class AuthController {
     const { accessToken, refreshToken, user } =
       await this.authService.signUp(signUpDto);
 
-    res.cookie('token', accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
+    res.cookie('token', accessToken, resHeaders);
+    res.cookie('refreshToken', refreshToken, resHeaders);
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      },
+      resHeaders,
     );
     return res.send({
       message: 'User created successfully',
@@ -85,12 +56,7 @@ export class AuthController {
   ) {
     const { accessToken } = await this.authService.refreshToken(refreshToken);
 
-    res.cookie('token', accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
+    res.cookie('token', accessToken, resHeaders);
 
     return res.send({
       message: 'Token refreshed successfully',

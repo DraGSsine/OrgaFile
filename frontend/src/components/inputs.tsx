@@ -124,11 +124,11 @@ export const SearchInput = () => {
         <SearchIcon className="text-gray-600" width="25" height="25" />
       }
     >
-      {files.map((file) => (
+      {files.map((file,index) => (
         <AutocompleteItem
           onClick={() => dispatch(ToggleFile({ isOpen: true, url: file.url }))}
           textValue={file.name}
-          key={file.url}
+          key={index}
         >
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center px-2">

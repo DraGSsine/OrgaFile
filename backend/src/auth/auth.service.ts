@@ -22,6 +22,7 @@ export class AuthService {
 
   async signIn(signInDto: signInDto) {
     const { email, password } = signInDto;
+    console.log(email, password);
     const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new UnprocessableEntityException('Email or password is incorrect');

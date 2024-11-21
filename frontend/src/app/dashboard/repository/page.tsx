@@ -1,5 +1,5 @@
 import LoadFolders from "@/components/dashboard/repository/LoadFolders";
-import React, { Suspense } from "react";
+import React from "react";
 
 const Page = () => {
   return (

@@ -44,8 +44,8 @@ const LoadFolders = () => {
   }
   return (
     <div className="flex flex-wrap gap-6">
-      {folders.map((folder: FolderType) => (
-        <FolderComponent key={folder.folderId} folder={folder} />
+      {folders.map((folder: FolderType,index) => (
+        <FolderComponent key={index} folder={folder} />
       ))}
     </div>
   );

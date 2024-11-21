@@ -1,23 +1,19 @@
 "use client";
-import React from "react";
-import MaxWidthWrapper from "./MaxWidthWrapper";
+import React, { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import NavBarLinks from "./NavBarLinks";
-import { usePathname } from "next/navigation";
 import {
   Navbar,
   NavbarBrand,
   NavbarMenuToggle,
-  NavbarMenuItem,
   NavbarMenu,
   NavbarContent,
-  NavbarItem,
   Link,
   Button,
 } from "@nextui-org/react";
 
 const NavBar = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <Navbar
       isBordered
@@ -99,7 +95,6 @@ const NavBar = () => {
               Contact
             </Button>
           </Link>
-
         </div>
         <div className=" flex space-y-3 flex-col">
           <Link href="/auth/signin">
