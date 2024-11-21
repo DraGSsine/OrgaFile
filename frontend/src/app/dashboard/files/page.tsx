@@ -56,8 +56,6 @@ const AllFilesPage = () => {
     removeFileState.isMany,
     uploadFileState.isFileUploaded,
     uploadFileState.error,
-    LoadAllFiles,
-    dispatch
   ]);
 
   return (

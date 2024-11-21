@@ -11,7 +11,7 @@ export interface AIAnalyzeDocumnetResponse {
   keyEntities: string[];
   summary: string;
 }
-
+// Analyze the document and return the main topic, document type, key entities, and summary
 export const analyzeDocument = async (
   file: Express.Multer.File,
 ): Promise<AIAnalyzeDocumnetResponse> => {
@@ -36,10 +36,10 @@ export const analyzeDocument = async (
     }
 
     const promptContent = `Analyze the following document context and provide:
-    1. Main Topic: A concise phrase of less than four words describing the most specific and distinctive main topic.
-    2. Document Type: Identify the type of document (e.g., report, article, code, etc.).
-    3. Key Entities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
-    4. Summary: A brief 2-3 sentence summary of the main points.
+    1. mainTopic: A concise phrase of less than four words describing the most specific and distinctive main topic.
+    2. documentType: Identify the type of document (e.g., report, article, code, etc.).
+    3. keyEntities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
+    4. summary: A brief 2-3 sentence summary of the main points.
 
     Respond in JSON format`;
 
@@ -56,13 +56,14 @@ export const analyzeDocument = async (
 
     const chain = prompt.pipe(model).pipe(parser);
     const response = await chain.invoke({});
-    console.log(response);
     return response;
   } catch (error) {
     console.error('Error analyzing file:', error);
     return null;
   }
 };
+
+// add the files to the the perfect folder
 
 export const organizeFilesAnalysis = async (
   documents: DocumentAiInfo[],
@@ -138,6 +139,7 @@ export const organizeFilesAnalysis = async (
   return categorizations;
 };
 
+// Generate a descriptive filename based on the document information
 export const generateFileName = async (documentInfo: {
   mainTopic: string;
   documentType: string;
@@ -145,11 +147,16 @@ export const generateFileName = async (documentInfo: {
   summary: string;
 }) => {
   const promptContent = `Generate a descriptive filename based on the following document information:
-  ${JSON.stringify(documentInfo).replace(/{/g, '{{').replace(/}/g, '}}')}.
+  Main Topic: ${documentInfo.mainTopic}
+  Document Type: ${documentInfo.documentType}
+  summary: ${documentInfo.summary}
 
   The filename should:
-  1. Be concise and meaningful, max 20 characters
+  0. your response length should be less than 15 characters
+  1. Be concise and meaningful
   2. Include the document type
+  3. not include any special characters
+  4. not include file extension
 
   Respond with only the generated filename.`;
 

@@ -26,13 +26,12 @@ export class FileInfo {
   topic: string;
 
   @Prop({ required: true })
-  documentType: string;
-
-  @Prop({ required: true })
   keyEntities: string[];
 
   @Prop({ required: true })
   summary: string;
+  @Prop({ required: true })
+  documentType: string;
 }
 
 @Schema()
