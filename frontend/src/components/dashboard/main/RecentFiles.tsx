@@ -49,7 +49,7 @@ const RecentUploadsPage = () => {
     LoadRecentFiles();
     handleFileStates();
     dispatch(resetFilesState());
-  }, []);
+  }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
 
   return (

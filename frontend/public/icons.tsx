@@ -215,7 +215,7 @@ export function SettingsIcon({ className, outline, width, height }: any) {
     );
   }
 }
-export function LogOut(props: any) {
+export function SignOut(props: any) {
   return (
     <svg
       {...props}

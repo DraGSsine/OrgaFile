@@ -3,7 +3,7 @@ import { ChatMistralAI } from '@langchain/mistralai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
-import { AiRespone } from 'src/types/type';
+import { AiRespone, DocumentAiInfo } from 'src/types/type';
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
@@ -65,54 +65,77 @@ export const analyzeDocument = async (
 };
 
 export const organizeFilesAnalysis = async (
-  documents: Array<{
-    mainTopic: string;
-    documentType: string;
-    keyEntities: string[];
-  }>,
+  documents: DocumentAiInfo[],
   existingCategories: string[],
-): Promise<AiRespone> => {
-  const parser = new JsonOutputParser<AiRespone>();
-  const categorizePromptContent = `Analyze the following documents and categorize them into broad, general categories. Each document should be assigned to up to 3 categories with confidence scores.
-  Prioritize using the following existing categories whenever possible: ${existingCategories.join(', ')}.
-  If a new category is needed, ensure it's broad and general, containing only one word.
+): Promise<AiRespone[]> => {
+  const categorizations = await Promise.all(
+    documents.map(async (doc: DocumentAiInfo) => {
+      const parser = new JsonOutputParser<AiRespone>();
+      const categorizePromptContent = `
+        Your task is to categorize a single document into existing categories.
+        
+        Existing Categories: ${existingCategories.join(', ')}
+        
+        Document Details:
+        - Main Topic: ${doc.mainTopic}
+        - Document Type: ${doc.documentType}
+        - Key Entities: ${doc.keyEntities.join(', ')}
+        
+        Rules:
+        1. Prioritize matching to existing categories
+        2. Use the main topic, document type, and key entities for matching
+        3. If no existing category matches well, suggest the most appropriate category
+        4. Provide confidence scores for category matches
+        
+        Respond in this JSON format:
+        {{
+          "mainTopic": "{doc.mainTopic}",
+          "categories": [
+            {{ "name": "string", "confidence": number }},
+            {{ "name": "string", "confidence": number }},
+            {{ "name": "string", "confidence": number }}
+          ]
+        }}
+        
+        Ensure categories are unique and broad. Use exact names from existing categories list where possible.
+      `;
 
-  Documents: ${JSON.stringify(documents).replace(/{/g, '{{').replace(/}/g, '}}')}
+      const model = new ChatMistralAI({
+        apiKey: process.env.MISTRAL_API_KEY,
+        model: 'open-mistral-7b',
+      });
 
-  Respond in JSON format like this:
-  {{
-    "categorizations": [
-      {{
-        "mainTopic": "string",
-        "categories": [
-          {{ "name": "string", "confidence": number }},
-          {{ "name": "string", "confidence": number }},
-          {{ "name": "string", "confidence": number }}
-        ]
-      }},
-    ]
-  }}
+      try {
+        const prompt = ChatPromptTemplate.fromMessages([
+          ['system', 'You are an expert document categorization assistant.'],
+          ['user', categorizePromptContent],
+        ]);
 
-  Ensure categories are unique and broad. Use exact names from existing categories list where possible.`;
+        const chain = prompt.pipe(model).pipe(parser);
+        const response = await chain.invoke({});
 
-  const model = new ChatMistralAI({
-    apiKey: process.env.MISTRAL_API_KEY,
-    model: 'open-mistral-7b',
-  });
+        // Sort categories by confidence in descending order
+        if (response.categories) {
+          response.categories.sort((a, b) => b.confidence - a.confidence);
+        }
 
-  try {
-    const prompt = ChatPromptTemplate.fromMessages([
-      ['system', 'You are a helpful assistant.'],
-      ['user', categorizePromptContent],
-    ]);
+        return {
+          ...response,
+          originalDocument: doc,
+        };
+      } catch (error) {
+        console.error('Error analyzing document:', error);
+        return {
+          mainTopic: doc.mainTopic,
+          categories: [],
+          originalDocument: doc,
+          error: true,
+        };
+      }
+    }),
+  );
 
-    const chain = prompt.pipe(model).pipe(parser);
-    const response = await chain.invoke({});
-    console.log(response);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  return categorizations;
 };
 
 export const generateFileName = async (documentInfo: {

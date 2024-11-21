@@ -11,43 +11,59 @@ import {
 } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { closeLogOutModal } from "@/redux/slices/dashboardSlice";
+import { closeSignoutModal } from "@/redux/slices/dashboardSlice";
 import { SignOutAction } from "@/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
+import { AlertTriangle, AlertTriangleIcon } from "lucide-react";
 
-const LogOutModal = () => {
+const SignoutModal = () => {
   const router = useRouter();
-  const { logOutModal } = useSelector((state: RootState) => state.dashboard);
+  const { SignoutModal } = useSelector((state: RootState) => state.dashboard);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const handleSignOut = () => {
     console.log("signing out");
     setLoading(true);
     dispatch(SignOutAction()).then(() => {
-      dispatch(closeLogOutModal());
+      dispatch(closeSignoutModal());
       router.push("/auth/signin");
       setLoading(false);
     });
   };
   return (
-    <div className=" absolute inset-0">
+    <div className=" -z-50 absolute inset-0">
       <Modal
-        isOpen={logOutModal.isOpen}
+        backdrop="blur"
+        isOpen={SignoutModal.isOpen}
         isDismissable={false}
         isKeyboardDismissDisabled={true}
+        classNames={{
+          backdrop: "bg-[#fff] bg-opacity-50 backdrop-opacity-50 blur-xs",
+        }}
       >
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Sign Out Confirmation
+                <div className="flex items-center justify-center gap-4">
+                  <div className="bg-red-100 flex items-center justify-center min-w-14 min-h-14 rounded-full ">
+                    <AlertTriangleIcon className=" stroke-red-500" />
+                  </div>
+                  <div className=" space-y-3">
+                    <p className=" font-semibold"> Sign Out </p>
+                    <p className=" font-normal text-sm text-zinc-500">
+                      {" "}
+                      Are you sure you would like to sign out of your Orgafile
+                      account?{" "}
+                    </p>
+                  </div>
+                </div>
               </ModalHeader>
-              <ModalBody>Are you sure you want to sign out?</ModalBody>
               <ModalFooter>
                 <Button
                   color="primary"
                   variant="light"
-                  onPress={() => dispatch(closeLogOutModal())}
+                  onPress={() => dispatch(closeSignoutModal())}
                 >
                   Close
                 </Button>
@@ -56,7 +72,7 @@ const LogOutModal = () => {
                   color="danger"
                   onPress={handleSignOut}
                 >
-                  Action {loading}
+                  Signout {loading}
                 </Button>
               </ModalFooter>
             </>
@@ -67,4 +83,4 @@ const LogOutModal = () => {
   );
 };
 
-export default LogOutModal;
+export default SignoutModal;

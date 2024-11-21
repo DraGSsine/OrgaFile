@@ -21,12 +21,15 @@ export interface FileInfo {
 }
 
 export interface AiRespone {
-  categorizations: Array<{
-    mainTopic: string;
-    categories: Array<{ name: string; confidence: number }>;
-  }>;
+  mainTopic: string;
+  categories: Array<{ name: string; confidence: number }>;
 }
 
+export interface DocumentAiInfo {
+  mainTopic: string;
+  documentType: string;
+  keyEntities: string[];
+}
 export interface FolderInfoType {
   folderId: Types.ObjectId;
   name: string;

@@ -85,7 +85,7 @@ export const uploadFiles = async (
     );
 
     // Organize files into folders based on enhanced categorization
-    const categorizationResult: AiRespone = await organizeFilesAnalysis(
+    const categorizationResult: AiRespone[] = await organizeFilesAnalysis(
       fileData.map((file) => ({
         mainTopic: file.topic,
         documentType: file.documentType,
@@ -93,21 +93,22 @@ export const uploadFiles = async (
       })),
       getAllCategories,
     );
-
+    console.log('-----------------------------------------');
+    console.log('Categorization result:', categorizationResult);
+    console.log('-----------------------------------------');
     // Process the categorization result
-    const folderData: FolderInfoType[] =
-      categorizationResult.categorizations.map((cat) => {
-        const filesInCategory = fileData.filter(
-          (file) => file.topic === cat.mainTopic,
-        );
-        return {
-          folderId: new Types.ObjectId(),
-          name: cat.categories[0].name, // Use the highest confidence category
-          files: filesInCategory,
-          numberOfFiles: filesInCategory.length,
-          confidence: cat.categories[0].confidence,
-        };
-      });
+    const folderData: FolderInfoType[] = categorizationResult.map((cat) => {
+      const filesInCategory = fileData.filter(
+        (file) => file.topic === cat.mainTopic,
+      );
+      return {
+        folderId: new Types.ObjectId(),
+        name: cat.categories[0].name, // Use the highest confidence category
+        files: filesInCategory,
+        numberOfFiles: filesInCategory.length,
+        confidence: cat.categories[0].confidence,
+      };
+    });
 
     // Update or create folders in the database
     for (const folder of folderData) {
