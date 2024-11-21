@@ -61,7 +61,6 @@ export type FolderType = {
   folderId: string;
   name: string;
   files: filesType[];
-  numberOfFiles: number;
 };
 
 export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folder";

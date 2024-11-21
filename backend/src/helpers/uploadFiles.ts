@@ -40,10 +40,7 @@ export const uploadFiles = async (
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.map(async (file: Express.Multer.File) => {
       // Analyze file to determine its content and topic
-      console.log('-----------------------------------');
       const documentInfo = await analyzeDocument(file);
-      console.log('Document info:', documentInfo);
-      console.log('-----------------------------------');
 
       const newFileName = await generateFileName(documentInfo);
 
@@ -82,11 +79,6 @@ export const uploadFiles = async (
       { $push: { files: { $each: fileData } } },
       { upsert: true },
     );
-    console.log('***********************************');
-    console.log(fileData);
-    console.log('***********************************');
-    return;
-
     // Organize files into folders based on enhanced categorization
     const categorizationResult: AiRespone[] = await organizeFilesAnalysis(
       fileData.map((file) => ({
@@ -106,10 +98,8 @@ export const uploadFiles = async (
       );
       return {
         folderId: new Types.ObjectId(),
-        name: cat.categories[0].name, // Use the highest confidence category
+        name: cat.category,
         files: filesInCategory,
-        numberOfFiles: filesInCategory.length,
-        confidence: cat.categories[0].confidence,
       };
     });
 
@@ -127,7 +117,6 @@ export const uploadFiles = async (
           { userId, 'folders.name': folder.name },
           {
             $push: { 'folders.$.files': { $each: folder.files } },
-            $set: { 'folders.$.confidence': folder.confidence },
           },
         );
       } else {

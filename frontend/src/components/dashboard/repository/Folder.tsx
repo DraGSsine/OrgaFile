@@ -16,7 +16,7 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
 
       <div>
         <p className=" font-medium text-[1.1rem] mb-1 ">{folder.name}</p>
-        <p className=" text-zinc-500 text-sm">{folder.numberOfFiles} files</p>
+        <p className=" text-zinc-500 text-sm">{folder.files.length} files</p>
       </div>
       <div
         className="

@@ -22,7 +22,8 @@ export interface FileInfo {
 
 export interface AiRespone {
   mainTopic: string;
-  categories: Array<{ name: string; confidence: number }>;
+  category: string;
+  originalDocument: DocumentAiInfo;
 }
 
 export interface DocumentAiInfo {
@@ -34,6 +35,4 @@ export interface FolderInfoType {
   folderId: Types.ObjectId;
   name: string;
   files: FileInfo[];
-  numberOfFiles: number;
-  confidence: number;
 }

@@ -73,33 +73,26 @@ export const organizeFilesAnalysis = async (
     documents.map(async (doc: DocumentAiInfo) => {
       const parser = new JsonOutputParser<AiRespone>();
       const categorizePromptContent = `
-        Your task is to categorize a single document into existing categories.
-        
-        Existing Categories: ${existingCategories.join(', ')}
-        
-        Document Details:
-        - Main Topic: ${doc.mainTopic}
-        - Document Type: ${doc.documentType}
-        - Key Entities: ${doc.keyEntities.join(', ')}
-        
-        Rules:
-        1. Prioritize matching to existing categories
-        2. Use the main topic, document type, and key entities for matching
-        3. If no existing category matches well, suggest the most appropriate category
-        4. Provide confidence scores for category matches
-        
-        Respond in this JSON format:
-        {{
-          "mainTopic": "{doc.mainTopic}",
-          "categories": [
-            {{ "name": "string", "confidence": number }},
-            {{ "name": "string", "confidence": number }},
-            {{ "name": "string", "confidence": number }}
-          ]
-        }}
-        
-        Ensure categories are unique and broad. Use exact names from existing categories list where possible.
-      `;
+      Your task is to categorize a single document into existing categories.
+      
+      Existing Categories: ${existingCategories.join(', ')}
+      
+      Document Details:
+      - Main Topic: ${doc.mainTopic}
+      - Document Type: ${doc.documentType}
+      - Key Entities: ${doc.keyEntities.join(', ')}
+      
+      Rules:
+      1. Prioritize matching to existing categories
+      2. Use the main topic, document type, and key entities for matching
+      3. If no existing category matches well, suggest the most appropriate category
+      
+      Respond in this JSON format:
+      {{
+        "mainTopic": "mainTopic",
+        "category": "categoryName"
+      }}
+    `;
 
       const model = new ChatMistralAI({
         apiKey: process.env.MISTRAL_API_KEY,
@@ -115,11 +108,7 @@ export const organizeFilesAnalysis = async (
         const chain = prompt.pipe(model).pipe(parser);
         const response = await chain.invoke({});
 
-        // Sort categories by confidence in descending order
-        if (response.categories) {
-          response.categories.sort((a, b) => b.confidence - a.confidence);
-        }
-
+        existingCategories.push(response.category);
         return {
           ...response,
           originalDocument: doc,
@@ -128,14 +117,13 @@ export const organizeFilesAnalysis = async (
         console.error('Error analyzing document:', error);
         return {
           mainTopic: doc.mainTopic,
-          categories: [],
+          category: 'Uncategorized',
           originalDocument: doc,
           error: true,
         };
       }
     }),
   );
-
   return categorizations;
 };
 
