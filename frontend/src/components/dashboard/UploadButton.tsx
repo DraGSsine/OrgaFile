@@ -25,7 +25,7 @@ const UploadButton = ({
         className={className}
         radius={radius}
       >
-        <span className=" font-medium text-white texet-[1.1rem] ">Upload</span>
+        <span className=" font-medium text-white texet-[1.1rem] ">Upload here</span>
         <CloudUpload size={24} className="flex-shrink-0 stroke-white " />
       </Button>
       <ModalComponent />

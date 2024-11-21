@@ -53,10 +53,10 @@ const FooterBar = () => {
                   About
                 </Link>
                 <Link
-                  href="/contact"
+                  href="/legal"
                   className="py-2 text-sm text-slate-600 hover:text-indigo-600"
                 >
-                  Contact
+                  legal
                 </Link>
               </div>
             </div>

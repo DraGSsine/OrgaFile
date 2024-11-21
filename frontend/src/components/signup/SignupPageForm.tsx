@@ -8,7 +8,11 @@ import { userInfoType } from "@/types/types";
 import { ZodIssue, z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { SignInAction, SignUpAction, resetAuthState } from "@/redux/slices/authSlice";
+import {
+  SignInAction,
+  SignUpAction,
+  resetAuthState,
+} from "@/redux/slices/authSlice";
 import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 
 const SignupPageForm = () => {
@@ -46,13 +50,14 @@ const SignupPageForm = () => {
       setErrorState(null);
       dispatch(SignUpAction(userCredential)).then((action: any) => {
         if (SignUpAction.fulfilled.match(action)) {
-          dispatch(createCheckoutSession()).then((action:any) => {
-            toast.success("Account created successfully");
-            console.log(action);
-            console.log(createCheckoutSession)
+          dispatch(createCheckoutSession()).then((action: any) => {
             if (createCheckoutSession.fulfilled.match(action)) {
+              toast.success("Account created successfully");
               router.push(action.payload.url);
-            }
+            } else
+              toast.error(
+                (action.payload.message as string) || "An error occurred"
+              );
           });
         } else {
           toast.error(

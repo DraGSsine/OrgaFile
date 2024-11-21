@@ -90,13 +90,13 @@ const NavBar = () => {
             </Button>
           </Link>
 
-          <Link href="/contact">
+          <Link href="/legal">
             <Button
               variant="flat"
               radius="full"
               className="bg-white-500 text-primary-500"
             >
-              Contact
+              Legal
             </Button>
           </Link>
 
