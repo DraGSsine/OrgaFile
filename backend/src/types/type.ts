@@ -23,7 +23,6 @@ export interface FileInfo {
 export interface AiRespone {
   mainTopic: string;
   category: string;
-  originalDocument: DocumentAiInfo;
 }
 
 export interface DocumentAiInfo {

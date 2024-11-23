@@ -89,7 +89,7 @@ export const organizeFilesAnalysis = async (
       
       Respond in this JSON format:
       {{
-        "mainTopic": "mainTopic",
+        "mainTopic": "${doc.mainTopic}",
         "category": "categoryName"
       }}
     `;
@@ -107,7 +107,6 @@ export const organizeFilesAnalysis = async (
 
         const chain = prompt.pipe(model).pipe(parser);
         const response = await chain.invoke({});
-
         existingCategories.push(response.category);
         return {
           ...response,
