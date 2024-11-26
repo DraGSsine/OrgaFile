@@ -11,14 +11,21 @@ import {
   Get,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { PaymentService } from './payments.service';
 import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('api/payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
-
+  private resHeaders: CookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: 'orgafile.com',
+    path: '/',
+  };
   @Post('create-checkout-session')
   @UseGuards(AuthGuard)
   async createSession(
@@ -44,11 +51,7 @@ export class PaymentController {
     const { newToken } = await this.paymentService.checkSubscription(
       request.user.userId,
     );
-    res.cookie('token', newToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-    });
+    res.cookie('token', newToken, this.resHeaders);
     res.send({
       message: 'Subscription checked',
     });
