@@ -25,7 +25,7 @@ export class UploadController {
   @UseInterceptors(
     FilesInterceptor('files', null, {
       limits: {
-        fileSize: 50 * 1024 * 1024, // 20 MB
+        fileSize: 50 * 1024 * 1024, // 50 MB
       },
       fileFilter: (req, file, callback) => {
         const allowedMimeTypes = [
@@ -59,7 +59,7 @@ export class UploadController {
         error instanceof multer.MulterError &&
         error.code === 'LIMIT_FILE_SIZE'
       ) {
-        throw new BadRequestException('File size exceeds the limit of 20 MB');
+        throw new BadRequestException('File size exceeds the limit of 50 MB');
       }
       throw new BadRequestException('An error occurred during file upload');
     }

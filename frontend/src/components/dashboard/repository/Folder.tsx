@@ -5,7 +5,7 @@ import Link from "next/link";
 import FolderDownlaodButton from "./FolderDownlaodButton";
 import { bytesToMegaBytes } from "@/helpers/helpers";
 const FolderComponent = ({ folder }: { folder: FolderType }) => {
-  const filesSize = folder.files.reduce((acc, file) => acc + file.size, 0);
+  const filesSize = folder?.files?.reduce((acc, file) => acc + file.size, 0);
 
   return (
     <div className=" w-64 justify-between flex  flex-col bg-blue-50 p-6 rounded-2xl">
@@ -15,8 +15,8 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
       </div>
 
       <div>
-        <p className=" font-medium text-[1.1rem] mb-1 ">{folder.name}</p>
-        <p className=" text-zinc-500 text-sm">{folder.files.length} files</p>
+        <p className=" font-medium text-[1.1rem] mb-1 ">{folder?.name}</p>
+        <p className=" text-zinc-500 text-sm">{folder?.files?.length} files</p>
       </div>
       <div
         className="
@@ -26,10 +26,10 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
         <span className=" text-primary-500 pl-4 font-medium text-sm ">
           {bytesToMegaBytes(filesSize)}
         </span>
-        <Link href={`/dashboard/repository/${folder.folderId}`}>
-          <Button className=" bg-blue-500 font-medium text-white max-h-8 rounded-full">
+        <Link href={`repository/${folder?.folderId}`}>
+          <div className=" px-2 py-1 bg-blue-500 font-medium text-white max-h-8 rounded-full">
             Open
-          </Button>
+          </div>
         </Link>
       </div>
     </div>

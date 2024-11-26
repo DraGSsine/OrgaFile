@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { signInDto, signUpDto } from './dto/auth.dto';
-import { resHeaders } from 'src/helpers/constant';
+import { resHeaders } from '../../src/helpers/constant';
 
 @Controller('api/auth')
 export class AuthController {

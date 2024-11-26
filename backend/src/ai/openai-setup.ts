@@ -11,12 +11,43 @@ export interface AIAnalyzeDocumnetResponse {
   keyEntities: string[];
   summary: string;
 }
+
+// Configuration for Mistral AI model
+const createMistralClient = () =>
+  new ChatMistralAI({
+    apiKey: process.env.MISTRAL_API_KEY,
+    model: 'ministral-8b-latest',
+  });
+const predefinedCategories = [
+  'Technology',
+  'Health',
+  'Education',
+  'Entertainment',
+  'Finance',
+  'Sports',
+  'Science',
+  'Art',
+  'Travel',
+  'Business',
+  'Politics',
+  'Environment',
+  'Culture',
+  'Lifestyle',
+  'History',
+  'Music',
+  'Food',
+  'Fashion',
+  'Religion',
+  'Philosophy',
+];
+
 // Analyze the document and return the main topic, document type, key entities, and summary
 export const analyzeDocument = async (
   file: Express.Multer.File,
 ): Promise<AIAnalyzeDocumnetResponse> => {
   try {
     const parser = new JsonOutputParser<AIAnalyzeDocumnetResponse>();
+    const mistralClient = createMistralClient();
 
     const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
@@ -43,18 +74,13 @@ export const analyzeDocument = async (
 
     Respond in JSON format`;
 
-    const model = new ChatMistralAI({
-      apiKey: process.env.MISTRAL_API_KEY,
-      model: 'open-mistral-7b',
-    });
-
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', 'You are a helpful assistant.'],
       ['user', promptContent],
       ['user', contextText],
     ]);
 
-    const chain = prompt.pipe(model).pipe(parser);
+    const chain = prompt.pipe(mistralClient).pipe(parser);
     const response = await chain.invoke({});
     return response;
   } catch (error) {
@@ -63,41 +89,35 @@ export const analyzeDocument = async (
   }
 };
 
-// add the files to the the perfect folder
-
-export const organizeFilesAnalysis = async (
+// Add the files to the perfect folder
+export const categorizeDocuments = async (
   documents: DocumentAiInfo[],
   existingCategories: string[],
 ): Promise<AiRespone[]> => {
   const categorizations = await Promise.all(
     documents.map(async (doc: DocumentAiInfo) => {
-      const parser = new JsonOutputParser<AiRespone>();
       const categorizePromptContent = `
-      Your task is to categorize a single document into existing categories.
-      
-      Existing Categories: ${existingCategories.join(', ')}
+      Your task is to choose the best category name for this document.
       
       Document Details:
       - Main Topic: ${doc.mainTopic}
       - Document Type: ${doc.documentType}
-      - Key Entities: ${doc.keyEntities.join(', ')}
+      - File Summary: ${doc.summary}
       
-      Rules:
-      1. Prioritize matching to existing categories
-      2. Use the main topic, document type, and key entities for matching
-      3. If no existing category matches well, suggest the most appropriate category
+      Existing Categories: ${!existingCategories.length ? 'None' : existingCategories.join(', ')}
       
-      Respond in this JSON format:
-      {{
-        "mainTopic": "${doc.mainTopic}",
-        "category": "categoryName"
-      }}
-    `;
+      Here are some examples of categories: ${predefinedCategories.join(', ')}
+      Categorization Guidelines:
+      1. Be a broad, overarching category that encompasses the main topic.
+      2. Prioritize matching to existing categories.
+      3. If no existing category matches well, suggest the most appropriate general category.
+      4. Be concise and meaningful.
+      5. Your response length should be less than 10 characters.
+      
+      Respond ONLY with the generated category name.
+      `;
 
-      const model = new ChatMistralAI({
-        apiKey: process.env.MISTRAL_API_KEY,
-        model: 'open-mistral-7b',
-      });
+      const mistralClient = createMistralClient();
 
       try {
         const prompt = ChatPromptTemplate.fromMessages([
@@ -105,11 +125,11 @@ export const organizeFilesAnalysis = async (
           ['user', categorizePromptContent],
         ]);
 
-        const chain = prompt.pipe(model).pipe(parser);
-        const response = await chain.invoke({});
-        existingCategories.push(response.category);
+        const chain = prompt.pipe(mistralClient);
+        const response = (await chain.invoke({})).content as string;
+        existingCategories.push(response);
         return {
-          ...response,
+          category: response,
           originalDocument: doc,
         };
       } catch (error) {
@@ -142,22 +162,19 @@ export const generateFileName = async (documentInfo: {
   0. your response length should be less than 15 characters
   1. Be concise and meaningful
   2. Include the document type
-  3. not include any special characters
-  4. not include file extension
+  3. do not include any special characters
+  4. do not include file extension
 
   Respond with only the generated filename.`;
 
-  const model = new ChatMistralAI({
-    apiKey: process.env.MISTRAL_API_KEY,
-    model: 'open-mistral-7b',
-  });
+  const mistralClient = createMistralClient();
 
   const prompt = ChatPromptTemplate.fromMessages([
     ['system', 'You are a helpful assistant.'],
     ['user', promptContent],
   ]);
 
-  const chain = prompt.pipe(model);
+  const chain = prompt.pipe(mistralClient);
   const response = await chain.invoke({});
   return response.content as string;
 };

@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 import {
   analyzeDocument,
   generateFileName,
-  organizeFilesAnalysis,
+  categorizeDocuments,
 } from '../ai/openai-setup';
 import AWS from 'aws-sdk';
 import { FileDocument, FileInfo } from '../schemas/files.schema';
@@ -80,11 +80,12 @@ export const uploadFiles = async (
       { upsert: true },
     );
     // Organize files into folders based on enhanced categorization
-    const categorizationResult: AiRespone[] = await organizeFilesAnalysis(
+    const categorizationResult: AiRespone[] = await categorizeDocuments(
       fileData.map((file) => ({
         mainTopic: file.topic,
         documentType: file.documentType,
         keyEntities: file.keyEntities,
+        summary: file.summary,
       })),
       getAllCategories,
     );
@@ -94,7 +95,7 @@ export const uploadFiles = async (
     // Process the categorization result
     const folderData: FolderInfoType[] = categorizationResult.map((cat) => {
       const filesInCategory = fileData.filter(
-        (file) => file.topic === cat.mainTopic,
+        (file) => file.topic === cat.originalDocument.mainTopic,
       );
       return {
         folderId: new Types.ObjectId(),

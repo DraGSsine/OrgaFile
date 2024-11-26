@@ -9,12 +9,15 @@ import { Folder, FolderOpen } from "lucide-react";
 
 const LoadFolders = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { isFileUploaded } = useSelector(
+    (state: RootState) => state.files.uploadFileState
+  );
   const { folders, isLoading } = useSelector(
     (state: RootState) => state.folders.loadFolders
   );
   useEffect(() => {
     dispatch(loadFolders());
-  }, [dispatch]);
+  }, [dispatch, isFileUploaded]);
   if (isLoading) {
     return (
       <div className="flex flex-wrap gap-6">
@@ -28,7 +31,10 @@ const LoadFolders = () => {
       <div className=" h-full w-full flex items-center justify-center ">
         <div className="grid h-60 gap-4 w-60">
           <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
-            <FolderOpen size={50} className="fill-white stroke-blue-500 stroke-1 " />
+            <FolderOpen
+              size={50}
+              className="fill-white stroke-blue-500 stroke-1 "
+            />
           </div>
           <div>
             <h2 className="text-center text-black text-base font-semibold leading-relaxed pb-1">
@@ -44,7 +50,7 @@ const LoadFolders = () => {
   }
   return (
     <div className="flex flex-wrap gap-6">
-      {folders.map((folder: FolderType,index) => (
+      {folders.map((folder: FolderType, index) => (
         <FolderComponent key={index} folder={folder} />
       ))}
     </div>
