@@ -6,14 +6,15 @@ import { signInDto, signUpDto } from './dto/auth.dto';
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
   private resHeaders: CookieOptions = {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: undefined,
     path: '/',
   };
+
   @Post('signin')
   async signIn(@Body() signInDto: signInDto, @Res() res: Response) {
     const { accessToken, refreshToken, user } =
@@ -44,7 +45,7 @@ export class AuthController {
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      this.resHeaders,
+      { ...this.resHeaders, httpOnly: false },
     );
     return res.send({
       message: 'User created successfully',
