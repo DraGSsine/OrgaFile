@@ -8,9 +8,11 @@ export class AuthController {
   constructor(private authService: AuthService) {}
   private resHeaders: CookieOptions = {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: 'orgafile.com',
+    path: '/',
   };
   @Post('signin')
   async signIn(@Body() signInDto: signInDto, @Res() res: Response) {

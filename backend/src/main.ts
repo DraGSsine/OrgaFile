@@ -5,7 +5,7 @@ import cookieParser = require('cookie-parser');
 
 async function bootstrap() {
   const corsOptions = {
-    origin: 'https://orgafile.com',
+    origin: 'http://localhost:4000',
     credentials: true,
   };
 
