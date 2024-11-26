@@ -51,7 +51,7 @@ type FilesState = {
 const initialState: FilesState = {
   toggleFile: {
     isOpen: false,
-    url: "" || null,
+    url: null,
     isSupported: false,
   },
   loadFilesState: {
