@@ -19,7 +19,12 @@ export const SignUpAction = createAsyncThunk(
         {
           ...data,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       const responseData = await response.data;
       return responseData;
@@ -38,7 +43,12 @@ export const SignInAction = createAsyncThunk(
         {
           ...data,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       const responseData = await response.data;
@@ -51,9 +61,12 @@ export const SignInAction = createAsyncThunk(
 
 export const SignOutAction = createAsyncThunk("auth/signout", async () => {
   try {
-    await axios.get(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signout`, {
-      withCredentials: true,
-    });
+    await axios.get(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signout`,
+      {
+        withCredentials: true,
+      }
+    );
   } catch (error) {
     console.log(error);
   }

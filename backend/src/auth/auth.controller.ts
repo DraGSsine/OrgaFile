@@ -10,8 +10,8 @@ export class AuthController {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    domain: 'orgafile.com',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    domain: undefined,
     path: '/',
   };
   @Post('signin')
@@ -24,7 +24,7 @@ export class AuthController {
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
-      this.resHeaders,
+      { ...this.resHeaders, httpOnly: false },
     );
     return res.send({
       userInfo: {
