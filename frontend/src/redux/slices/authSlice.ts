@@ -35,20 +35,30 @@ export const SignInAction = createAsyncThunk(
   "auth/signin",
   async (data: userInfoType, { rejectWithValue }) => {
     try {
+      console.log(
+        "Request URL:",
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signin`
+      );
+      console.log("Request Data:", data);
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signin`,
-        {
-          ...data,
-        },
+        { ...data },
         {
           withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Credentials": "true",
+          },
         }
       );
 
-      const responseData = await response.data;
-      return responseData;
+      console.log("Response Headers:", response.headers);
+      console.log("Set-Cookie Header:", response.headers["set-cookie"]);
+
+      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      console.error("Signin Error:", error.response?.data);
+      return rejectWithValue(error.response?.data);
     }
   }
 );
