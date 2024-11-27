@@ -21,9 +21,6 @@ export const SignUpAction = createAsyncThunk(
         },
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
       const responseData = await response.data;
@@ -45,9 +42,6 @@ export const SignInAction = createAsyncThunk(
         },
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 

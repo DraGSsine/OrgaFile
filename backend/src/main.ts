@@ -9,6 +9,12 @@ async function bootstrap() {
     origin: 'https://orgafile.com',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Access-Control-Allow-Origin',
+      'Set-Cookie',
+    ],
   };
 
   app.enableCors(corsOptions);

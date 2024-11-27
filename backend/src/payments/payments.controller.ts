@@ -22,8 +22,7 @@ export class PaymentController {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    domain: 'orgafile.com',
+    domain: '.orgafile.com',
     path: '/',
   };
   @Post('create-checkout-session')
