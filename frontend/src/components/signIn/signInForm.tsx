@@ -35,6 +35,7 @@ export const SignInForm = () => {
     } else {
       setErrorState(null);
       dispatch(SignInAction(userInfo)).then((res: any) => {
+        console.log(res);
         if (res.payload.error) {
           toast.error(res.payload.message);
         } else {

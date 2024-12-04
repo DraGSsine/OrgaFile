@@ -35,12 +35,6 @@ export const SignInAction = createAsyncThunk(
   "auth/signin",
   async (data: userInfoType, { rejectWithValue }) => {
     try {
-      console.log(
-        "Request URL:",
-        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signin`
-      );
-      console.log("Request Data:", data);
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signin`,
         { ...data },
@@ -58,8 +52,8 @@ export const SignInAction = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      console.error("Signin Error:", error.response?.data);
-      return rejectWithValue(error.response?.data);
+      console.error("Signin Error:", error);
+      return rejectWithValue(error);
     }
   }
 );

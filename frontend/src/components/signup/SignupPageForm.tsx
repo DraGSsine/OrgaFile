@@ -55,11 +55,13 @@ const SignupPageForm = () => {
               toast.success("Account created successfully");
               router.push(action.payload.url);
             } else
+            console.log(action.payload);
               toast.error(
                 (action.payload.message as string) || "An error occurred"
               );
           });
         } else {
+          console.log(action.payload);
           toast.error(
             (action.payload.message as string) || "An error occurred"
           );
@@ -72,7 +74,8 @@ const SignupPageForm = () => {
     <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
       <Input
         variant="bordered"
-        placeholder="Full Name"
+        name="fullname"
+        label="Full Name"
         onChange={(e) =>
           setUserInfo({ ...userCredential, fullName: e.target.value })
         }

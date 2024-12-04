@@ -9,9 +9,9 @@ export class AuthController {
 
   private resHeaders: CookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: 'none',
-    domain: 'orgafile.com',
+    domain: 'localhost',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
   };
