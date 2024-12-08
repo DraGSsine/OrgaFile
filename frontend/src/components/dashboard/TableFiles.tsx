@@ -66,7 +66,7 @@ export default function TableFiles({
     dispatch(setConfirmFileRemoveModal(true));
     setSelectedKeys(new Set([]));
   };
-
+ 
   return (
     <Table
       className="border-collapse flex-grow fade-in "
@@ -204,7 +204,7 @@ const TableWraper = forwardRef<HTMLDivElement, { children: ReactNode }>(
     return (
       <div
         ref={ref}
-        className="h-full bg-white relative rounded-t-2xl p-10 shadow-small"
+        className="h-full bg-white relative rounded-t-lg p-10 shadow-small"
       >
         {children}
       </div>

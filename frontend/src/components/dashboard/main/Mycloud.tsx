@@ -3,6 +3,7 @@ import { getFileImage } from "@/helpers/helpers";
 import { loadClouInfo } from "@/redux/slices/dashboardSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Card, CardBody, Progress } from "@nextui-org/react";
+import { File } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,11 +91,11 @@ const Cloud = ({
   icon: string;
 }) => {
   return (
-    <Card className="rounded-2xl w-full h-48 flex flex-col bg-gray-50 transition-all select-none ">
+    <Card className="rounded-lg w-full h-48 flex flex-col bg-gray-50 transition-all select-none ">
       <CardBody className="p-6 flex flex-col justify-between">
         <div className="flex items-center">
           <div
-            className={`${backGroundColor} w-fit p-3 rounded-2xl flex items-center justify-center`}
+            className={`${backGroundColor} w-fit p-3 rounded-lg flex items-center justify-center`}
           >
             <Image src={icon} width={40} height={40} alt={name} />
           </div>
@@ -111,8 +112,8 @@ const Cloud = ({
             color="default"
             classNames={{
               base: "max-w-md",
-              track: `${backGroundColor} rounded-2xl`,
-              indicator: `${barColor} rounded-2xl`,
+              track: `${backGroundColor} rounded-lg`,
+              indicator: `${barColor} rounded-lg`,
             }}
             size="sm"
             value={used}
@@ -135,19 +136,14 @@ const CoudSkeleton = () => {
         {[1, 2, 3, 4].map((item) => (
           <Card
             key={item}
-            className="rounded-2xl w-full h-48 flex flex-col bg-gray-50 transition-all select-none "
+            className="rounded-lg w-full h-48 flex flex-col bg-gray-50 transition-all select-none "
           >
             <CardBody className="p-6 flex flex-col justify-between">
               <div className="flex items-center">
                 <div
-                  className={`bg-gray-200 w-fit p-3 rounded-2xl flex items-center justify-center`}
+                  className={`bg-gray-200 w-fit p-3 rounded-lg flex items-center justify-center`}
                 >
-                  <Image
-                    src="/images/icons/pdf.svg"
-                    width={40}
-                    height={40}
-                    alt="pdf"
-                  />
+                  <File/>
                 </div>
                 <div className="flex-grow pl-7">
                   <h1 className=" text-lg">PDF</h1>
@@ -160,8 +156,8 @@ const CoudSkeleton = () => {
                   color="default"
                   classNames={{
                     base: "max-w-md",
-                    track: `bg-gray-200 rounded-2xl`,
-                    indicator: `bg-red-400 rounded-2xl`,
+                    track: `bg-gray-200 rounded-lg`,
+                    indicator: `bg-red-400 rounded-lg`,
                   }}
                   size="sm"
                   value={10}

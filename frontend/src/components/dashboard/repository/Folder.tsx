@@ -13,7 +13,7 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
   }, [folder]);
 
   return (
-    <div className=" fade-in w-64 justify-between flex  flex-col bg-blue-50 p-6 rounded-2xl">
+    <div className=" fade-in justify-between flex  flex-col bg-blue-50 p-6 rounded-lg">
       <div className="flex justify-between items-center mb-5">
         <Folder size={60} className="fill-blue-500 stroke-blue-500" />
         <FolderDownlaodButton folder={folder} />

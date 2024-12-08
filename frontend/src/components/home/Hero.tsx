@@ -55,7 +55,7 @@ const Hero = () => {
           />
         </div>
 
-        <div className=" rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl p-4">
+        <div className=" rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:rounded-lg p-4">
           <Image
             src="/images/dashboard.png"
             alt="product preview"

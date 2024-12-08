@@ -11,9 +11,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className=" mx-auto flex">
+    <div className="mx-auto grid grid-cols-12">
       <SideBar />
-      <div className="flex flex-grow h-screen flex-col">
+      <div className=" col-start-3 col-end-11 flex flex-grow h-screen flex-col">
         <NavBar />
         <main className=" flex-grow scrollbar-webkit scrollbar-thin bg-gray-50 px-10 pt-10 max-h-screen overflow-y-scroll  ">
           {children}

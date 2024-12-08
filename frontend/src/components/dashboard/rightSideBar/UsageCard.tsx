@@ -54,7 +54,7 @@ function StorageProgress({
   );
 }
 
-// Storage Card Component
+
 interface StorageCardProps {
   isLoading: boolean;
   storageLimit: number;
@@ -66,12 +66,12 @@ export function StorageCard({ isLoading, storageLimit, storageUsed }: StorageCar
     <Card 
       className="w-full h-52"
       classNames={{
-        base: "bg-gradient-to-br from-white to-default-100 dark:from-default-50 dark:to-default-100/50 hover:scale-[1.02] transition-transform",
+        base: "bg-gradient-to-br rounded-lg  transition-transform",
       }}
     >
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
-          <div className="bg-primary-100/50 dark:bg-primary-900/20 w-fit p-3 rounded-2xl">
+          <div className="bg-primary-100/50 dark:bg-primary-900/20 w-fit p-3 rounded-lg">
             <Cloud className="w-7 h-7 text-primary-500" />
           </div>
           <h2 className="font-semibold text-xl mt-4">Cloud Storage</h2>
@@ -100,12 +100,12 @@ export function UsageCard({ isLoading, requestLimit, requestUsed }: UsageCardPro
     <Card 
       className="w-full h-52"
       classNames={{
-        base: "bg-gradient-to-br from-white to-success-100 dark:from-success-50 dark:to-success-100/50 hover:scale-[1.02] transition-transform",
+        base: "bg-gradient-to-br rounded-lg  transition-transform",
       }}
     >
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
-          <div className="bg-success-100/50 dark:bg-success-900/20 w-fit p-3 rounded-2xl">
+          <div className="bg-success-100/50 dark:bg-success-900/20 w-fit p-3 rounded-lg">
             <Server className="w-7 h-7 text-success-500" />
           </div>
           <h2 className="font-semibold text-xl mt-4">Monthly Usage</h2>

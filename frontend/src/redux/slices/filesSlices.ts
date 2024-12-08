@@ -324,6 +324,7 @@ export const filesSlice = createSlice({
       state.removeFileState.isPermanently = action.payload.isPermanently;
     },
     setConfirmFileRemoveModal: (state, action) => {
+      console.log("action.payload", action.payload);
       state.removeFileState.confirmRemoveModal = action.payload;
     },
     setUploadModal: (state, action) => {

@@ -18,11 +18,9 @@ export class AuthController {
 
   @Post('signin')
   async signIn(@Body() signInDto: signInDto, @Res() res: Response) {
-    const { accessToken, refreshToken, user } =
-      await this.authService.signIn(signInDto);
+    const { token, user } = await this.authService.signIn(signInDto);
 
-    res.cookie('token', accessToken, this.resHeaders);
-    res.cookie('refreshToken', refreshToken, this.resHeaders);
+    res.cookie('token', token, this.resHeaders);
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
@@ -38,11 +36,9 @@ export class AuthController {
 
   @Post('signup')
   async signUp(@Body() signUpDto: signUpDto, @Res() res: Response) {
-    const { accessToken, refreshToken, user } =
-      await this.authService.signUp(signUpDto);
+    const { token, user } = await this.authService.signUp(signUpDto);
 
-    res.cookie('token', accessToken, this.resHeaders);
-    res.cookie('refreshToken', refreshToken, this.resHeaders);
+    res.cookie('token', token, this.resHeaders);
     res.cookie(
       'userInfo',
       JSON.stringify({ email: user.email, fullName: user.fullName }),
@@ -57,23 +53,9 @@ export class AuthController {
     });
   }
 
-  @Post('refresh-token')
-  async refreshToken(
-    @Res() res: Response,
-    @Body('refreshToken') refreshToken: string,
-  ) {
-    const { accessToken } = await this.authService.refreshToken(refreshToken);
-
-    res.cookie('token', accessToken, this.resHeaders);
-
-    return res.send({
-      message: 'Token refreshed successfully',
-    });
-  }
   @Get('signout')
   signOut(@Res() res: Response) {
     res.clearCookie('token');
-    res.clearCookie('refreshToken');
     res.clearCookie('userInfo');
     return res.send({ message: 'Signed out successfully' });
   }

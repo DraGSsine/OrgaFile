@@ -2,11 +2,7 @@ import { signInDto, signUpDto } from './dto/auth.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from '../schemas/auth.schema';
-import {
-  Injectable,
-  UnprocessableEntityException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { subscriptionDocument } from '../schemas/subscriptions.schema';
@@ -34,9 +30,9 @@ export class AuthService {
     const isSubscribed = await this.subscriptionModel.findOne({
       userId: user._id,
     });
-    const tokens = await this.generateTokens(user._id, !!isSubscribed);
+    const token = await this.generateTokens(user._id, !!isSubscribed);
     return {
-      ...tokens,
+      token,
       user: {
         email: user.email,
         fullName: user.fullName,
@@ -55,49 +51,19 @@ export class AuthService {
       ...signUpDto,
       password: encryptedPassword,
     });
-    const tokens = await this.generateTokens(newUser._id, false);
+    const token = await this.generateTokens(newUser._id, false);
     return {
-      ...tokens,
+      token,
       user: { email: newUser.email, fullName: newUser.fullName },
     };
   }
 
-  async refreshToken(refreshToken: string) {
-    try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET_KEY,
-      });
-      const user = await this.userModel.findById(payload.userId);
-      if (!user) {
-        throw new UnprocessableEntityException('User not found');
-      }
-      const isSubscribed = await this.subscriptionModel.findOne({
-        userId: user._id,
-      });
-      const tokens = await this.generateTokens(user._id, !!isSubscribed);
-      return {
-        ...tokens,
-        user: {
-          email: user.email,
-          fullName: user.fullName,
-        },
-      };
-    } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-  }
-
   private async generateTokens(userId: string, isSubscribed: boolean) {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        { userId, isSubscribed },
-        { expiresIn: '15m', secret: process.env.JWT_SECRET_KEY },
-      ),
-      this.jwtService.signAsync(
-        { userId },
-        { expiresIn: '7d', secret: process.env.JWT_REFRESH_SECRET_KEY },
-      ),
-    ]);
-    return { accessToken, refreshToken };
+    const accessToken = await this.jwtService.signAsync(
+      { userId, isSubscribed },
+      { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },
+    );
+
+    return accessToken;
   }
 }

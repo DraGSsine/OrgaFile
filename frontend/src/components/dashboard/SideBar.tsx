@@ -44,7 +44,7 @@ const SideBar = () => {
   }, [router]);
 
   return (
-    <div className=" w-[15vw] bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
+    <div className=" col-start-1 col-end-3 bg-white border-e border-gray-200 px-6 pt-7 pb-10 flex-col flex justify-between ">
       <div>
         <div className=" px-3 ">
           <Link

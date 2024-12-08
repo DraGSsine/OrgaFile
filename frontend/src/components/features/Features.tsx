@@ -18,7 +18,7 @@ const Features = () => {
       </div>
       <div className=" w-full">
         <div className="grid md:grid-cols-2 lg:grid-cols-5 mt-16 gap-10">
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-3">
+          <div className="rounded-lg p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-3">
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
@@ -48,7 +48,7 @@ const Features = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-2xl relative p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-2">
+          <div className="rounded-lg relative p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg lg:col-span-2">
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
@@ -78,7 +78,7 @@ const Features = () => {
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 mt-10 gap-10 ">
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 relative ring-gray-200/50 shadow hover:shadow-lg">
+          <div className="rounded-lg p-8 bg-gray-50 transition-all ring-1 relative ring-gray-200/50 shadow hover:shadow-lg">
             <span className="bg-green-100 border-green-200 absolute z-10 -top-3 -translate-x-[50%]  left-[50%] border text-green-600 rounded-full text-xs font-medium px-3 py-1">
               Coming soon
             </span>
@@ -109,7 +109,7 @@ const Features = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg">
+          <div className="rounded-lg p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg">
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-60">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
@@ -139,7 +139,7 @@ const Features = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-2xl p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg">
+          <div className="rounded-lg p-8 bg-gray-50 transition-all ring-1 ring-gray-200/50 shadow hover:shadow-lg">
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-60">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image

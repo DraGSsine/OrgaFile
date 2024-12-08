@@ -12,7 +12,7 @@ import { AppDispatch } from "@/redux/store";
 import {
   ArchiveRestore,
   ArrowDownToLineIcon,
-  Clipboard,
+
   EllipsisVertical,
   Trash2,
 } from "lucide-react";
@@ -24,6 +24,7 @@ import {
   downloadFile,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
+
 
 const FilesSettings = ({
   fileId,
@@ -38,6 +39,7 @@ const FilesSettings = ({
 
   function handleAction({ key }: { key: string | number }) {
     if (key === "delete") {
+      console.log("delete");
       dispatch(setConfirmFileRemoveModal(true));
       dispatch(
         setRemoveFiles({

@@ -1,12 +1,12 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { FolderType } from '@/types/types';
-import { AppDispatch, RootState } from '@/redux/store';
-import { loadFolders } from '@/redux/slices/foldersSlice';
-import FolderComponent from './Folder';
-import { Folder, FolderOpen } from 'lucide-react';
+import { FolderType } from "@/types/types";
+import { AppDispatch, RootState } from "@/redux/store";
+import { loadFolders } from "@/redux/slices/foldersSlice";
+import FolderComponent from "./Folder";
+import { Folder, FolderOpen } from "lucide-react";
 
 const LoadFolders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +36,7 @@ const LoadFolders = () => {
 
   if (showSkeleton) {
     return (
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {Array.from({ length: 10 }).map((_, i) => (
           <FolderLoadSkeleton key={i} />
         ))}
@@ -44,12 +44,12 @@ const LoadFolders = () => {
     );
   } else if (folders.length === 0) {
     return (
-      <div className=" h-full w-full flex items-center justify-center ">
+      <div className="h-full w-full flex items-center justify-center">
         <div className="grid h-60 gap-4 w-60">
           <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
             <FolderOpen
               size={50}
-              className="fill-white stroke-blue-500 stroke-1 "
+              className="fill-white stroke-blue-500 stroke-1"
             />
           </div>
           <div>
@@ -65,8 +65,8 @@ const LoadFolders = () => {
     );
   }
   return (
-    <div className="flex flex-wrap gap-6">
-      {folders.map((folder: FolderType, index:number) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+      {folders.map((folder: FolderType, index: number) => (
         <FolderComponent key={index} folder={folder} />
       ))}
     </div>
@@ -76,7 +76,7 @@ const LoadFolders = () => {
 export default LoadFolders;
 const FolderLoadSkeleton = () => {
   return (
-    <div className=" w-64 h-[230px] justify-between flex  flex-col bg-blue-50 p-6 rounded-2xl animate-pulse">
+    <div className=" h-[230px] justify-between flex  flex-col bg-blue-50 p-6 rounded-lg animate-pulse">
       <div className="flex justify-between items-center mb-5">
         <Folder size={60} className="fill-blue-500 stroke-blue-500" />
         <div className="bg-white rounded-full h-8 w-8"></div>

@@ -142,18 +142,17 @@ export class UploadService {
 
   async remove(req: any, fileId: string, isPermanently: boolean) {
     try {
+      const user = await this.userModel.findById(req.user.userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
       // Find the user by ID
       const userFiles = await this.removedFilesModel.findOne({
         userId: req.user.userId,
         'files.fileId': fileId,
       });
-      const user = await this.userModel.findById(req.user.userId);
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
+      // Remove the file from removedFilesModel
       if (isPermanently) {
-        // Remove the file from removedFilesModel
-
         const removeResult = await this.removedFilesModel.updateOne(
           { userId: req.user.userId },
           { $pull: { files: { fileId } } },
@@ -176,6 +175,21 @@ export class UploadService {
           (file) => file.fileId === fileId,
         ).size;
         user.storageUsed -= size / 1000000000;
+        // Remove the file from the folder and identify the folder
+        const folderUpdateResult = await this.folderModel.updateOne(
+          { userId: req.user.userId, 'folders.files.fileId': fileId },
+          { $pull: { 'folders.$.files': { fileId } } },
+        );
+
+        if (folderUpdateResult.modifiedCount > 0) {
+          // Check if the folder has 0 files and remove it if true
+          await this.folderModel.updateOne(
+            { userId: req.user.userId },
+            { $pull: { folders: { files: { $size: 0 } } } },
+          );
+        }
+
+        await user.save();
         await user.save();
         return 'File deleted permanently';
       } else {
