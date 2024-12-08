@@ -249,22 +249,34 @@ export const restoreFile = createAsyncThunk(
 );
 
 export const downloadFile = createAsyncThunk(
-  "files/download",
-  async ({ fileId }: { fileId: string }, { rejectWithValue }) => {
+  "files/downloadFile",
+  async (
+    { fileId, fileName }: { fileId: string; fileName: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/download/${fileId}`,
         {
           withCredentials: true,
+          responseType: "blob",
         }
       );
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        return rejectWithValue(error.response.data);
-      } else {
-        return rejectWithValue("Failed to download file");
-      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      return { fileId, fileName };
+    } catch (error) {
+      console.error("File download error:", error);
+      return rejectWithValue(error);
     }
   }
 );

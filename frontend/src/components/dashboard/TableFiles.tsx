@@ -1,4 +1,4 @@
-import React, { ReactNode, use, useState } from "react";
+import React, { ReactNode, forwardRef, use, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -53,7 +53,7 @@ export default function TableFiles({
     const end = start + rowsPerPage;
 
     return files?.slice(start, end);
-  }, [page, files,rowsPerPage]);
+  }, [page, files, rowsPerPage]);
 
   const removeSelectedKeys = () => {
     dispatch(
@@ -69,7 +69,7 @@ export default function TableFiles({
 
   return (
     <Table
-      className="border-collapse flex-grow  "
+      className="border-collapse flex-grow fade-in "
       aria-label="Example static collection table"
       BaseComponent={TableWraper}
       selectionMode="multiple"
@@ -129,7 +129,7 @@ export default function TableFiles({
         <TableColumn className=" text-center w-[15%]" key="status">
           Type
         </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="status">
+        <TableColumn className=" text-center w-[15%]" key="topic">
           TOPIC
         </TableColumn>
         <TableColumn className=" w-[15%] text-center" key="settings">
@@ -186,7 +186,11 @@ export default function TableFiles({
               </Chip>
             </TableCell>
             <TableCell className="text-center">
-              <FilesSettings fileId={item.fileId} routeName={routeName} />
+              <FilesSettings
+                fileId={item.fileId}
+                routeName={routeName}
+                fileName={`${item.name}.${item.format}`}
+              />
             </TableCell>
           </TableRow>
         )}
@@ -195,16 +199,18 @@ export default function TableFiles({
   );
 }
 
-const TableWraper = ({ children }: { children: ReactNode }) => {
-
-  return (
-    <div
-      className=" h-full bg-white relative rounded-t-2xl p-10  shadow-small"
-    >
-      {children}
-    </div>
-  );
-};
+const TableWraper = forwardRef<HTMLDivElement, { children: ReactNode }>(
+  function TableWraper({ children }, ref) {
+    return (
+      <div
+        ref={ref}
+        className="h-full bg-white relative rounded-t-2xl p-10 shadow-small"
+      >
+        {children}
+      </div>
+    );
+  }
+);
 
 const FilesLoadingSkeleton = () => {
   return (

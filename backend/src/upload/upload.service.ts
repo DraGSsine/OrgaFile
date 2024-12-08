@@ -14,6 +14,7 @@ import { FileDocument } from '../schemas/files.schema';
 import { UserDocument } from '../schemas/auth.schema';
 import { RemovedFilesDocument } from '../schemas/removedFiles.schema';
 import { FolderDocument } from '../schemas/folders.schema';
+import { Readable } from 'stream';
 @Injectable()
 export class UploadService {
   constructor(
@@ -282,8 +283,10 @@ export class UploadService {
     }
   }
 
-  async downloadFile(req: any, fileId: string) {
-    console.log('Downloading file:', fileId);
+  async downloadFile(
+    req: any,
+    fileId: string,
+  ): Promise<{ fileStream: Readable; fileName: string; fileSize: number }> {
     try {
       const file = await this.fileModel.findOne({
         userId: req.user.userId,
@@ -301,12 +304,19 @@ export class UploadService {
         Bucket: this.configService.get('S3_BUCKET_NAME'),
         Key: fileKey,
       };
+
+      // Get the file metadata to retrieve the file size
+      const headResult = await this.s3Client
+        .headObject(downloadParams)
+        .promise();
+      const fileSize = headResult.ContentLength;
+
       const fileStream = this.s3Client
         .getObject(downloadParams)
         .createReadStream();
-      return { fileStream, fileName: name };
+
+      return { fileStream, fileName: name, fileSize };
     } catch (error) {
-      console.error('Error downloading file:', error);
       throw new InternalServerErrorException('Failed to download file');
     }
   }

@@ -61,7 +61,6 @@ const SignoutModal = () => {
               </ModalHeader>
               <ModalFooter>
                 <Button
-                  color="primary"
                   variant="light"
                   onPress={() => dispatch(closeSignoutModal())}
                 >

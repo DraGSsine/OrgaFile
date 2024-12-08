@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
-import { CloudStorage, UserLimitCard } from "./UsageCard";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { loadUserLimits } from "@/redux/slices/dashboardSlice";
+import { StorageCard, UsageCard } from "./UsageCard";
 
 const Usage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,12 +27,12 @@ const Usage = () => {
 
   return (
     <>
-      <CloudStorage
+      <StorageCard
         isLoading={loading}
         storageLimit={storageLimit}
         storageUsed={storageUsed}
       />
-      <UserLimitCard
+      <UsageCard
         isLoading={loading}
         requestUsed={requestUsed}
         requestLimit={requestLimit}

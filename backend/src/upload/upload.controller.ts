@@ -10,6 +10,7 @@ import {
   UploadedFiles,
   BadRequestException,
   Param,
+  Res,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -103,8 +104,30 @@ export class UploadController {
     return this.uploadService.removeMany(req, files, isPermanently);
   }
   @Get('download/:fileId')
-  downloadFile(@Param() params: any, @Req() req: any) {
-    const { fileId } = params;
-    return this.uploadService.downloadFile(req, fileId);
+  async downloadFile(
+    @Param('fileId') fileId: string,
+    @Req() req: any,
+    @Res() res: any,
+  ) {
+    try {
+      const { fileStream, fileName, fileSize } =
+        await this.uploadService.downloadFile(req, fileId);
+
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Length': fileSize,
+      });
+
+      fileStream.on('error', (error) => {
+        console.error('File stream error:', error);
+        res.status(500).send('Failed to download file');
+      });
+
+      fileStream.pipe(res);
+    } catch (error) {
+      console.error('Download file error:', error);
+      throw new BadRequestException('Failed to download file');
+    }
   }
 }

@@ -2,7 +2,6 @@ import { FolderType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 type initialStateType = {
   downloadFolder: {
     downloadingFolderId: string[];
@@ -45,9 +44,12 @@ export const loadOneFolder = createAsyncThunk(
   "folders/loadOneFolder",
   async (folderId: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/load/${folderId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/load/${folderId}`,
+        {
+          withCredentials: true,
+        }
+      );
       if (res.status !== 200) {
         return rejectWithValue("Failed to fetch folders");
       }
@@ -63,9 +65,12 @@ export const loadFolders = createAsyncThunk(
   "folders/loadFolders",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/load`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/load`,
+        {
+          withCredentials: true,
+        }
+      );
       if (res.status !== 200) {
         return rejectWithValue("Failed to fetch folders");
       }
@@ -79,30 +84,53 @@ export const loadFolders = createAsyncThunk(
 
 export const downloadFolder = createAsyncThunk(
   "folders/downloadFolder",
-  async ({folderId,folderName}:{folderId:string,folderName:string}, { rejectWithValue, dispatch }) => {
+  async (
+    { folderId, folderName }: { folderId: string; folderName: string },
+    { rejectWithValue, dispatch }
+  ) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/download/${folderId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/download/${folderId}`,
+        {
+          withCredentials: true,
+          responseType: "text",
+        }
+      );
+
       if (res.status !== 200) {
-        return rejectWithValue("Failed to fetch folders");
+        return rejectWithValue("Failed to fetch folder");
       }
-      const data = await res.data.blob();
-      const url = window.URL.createObjectURL(data);
+
+      // Convert Base64 to Blob
+      const base64Response = res.data;
+      const binaryString = window.atob(base64Response);
+      const bytes = new Uint8Array(binaryString.length);
+
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      const blob = new Blob([bytes], { type: "application/zip" });
+      const url = window.URL.createObjectURL(blob);
+
+      // Create download link
       const a = document.createElement("a");
       a.href = url;
       a.download = `${folderName}.zip`;
       document.body.appendChild(a);
       a.click();
+
+      // Clean up
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      return {data, folderId};
+
+      return folderId;
     } catch (error) {
+      console.error("Download error:", error);
       return rejectWithValue(error);
     }
   }
 );
-
 
 export const foldersSlice = createSlice({
   name: "folders",
@@ -128,8 +156,8 @@ export const foldersSlice = createSlice({
     },
     // set downloading foldre
     setDownloadingFolder: (state, action) => {
-      state.downloadFolder.downloadingFolderId.push(action.payload)
-    }
+      state.downloadFolder.downloadingFolderId.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadOneFolder.pending, (state) => {
@@ -160,9 +188,11 @@ export const foldersSlice = createSlice({
       state.downloadFolder.isLoading = true;
     });
     builder.addCase(downloadFolder.fulfilled, (state, action) => {
-      state.downloadFolder.archive = JSON.stringify(action.payload.data);
+      state.downloadFolder.archive = "Downloaded";
       state.downloadFolder.isLoading = false;
-      state.downloadFolder.downloadingFolderId.filter((id) => id !== action.payload.folderId)
+      state.downloadFolder.downloadingFolderId = state.downloadFolder.downloadingFolderId.filter(
+        (id) => id !== action.payload
+      );
     });
     builder.addCase(downloadFolder.rejected, (state) => {
       state.downloadFolder.error = true;
@@ -171,4 +201,4 @@ export const foldersSlice = createSlice({
   },
 });
 
-export const { resetFolderState , setDownloadingFolder } = foldersSlice.actions;
+export const { resetFolderState, setDownloadingFolder } = foldersSlice.actions;

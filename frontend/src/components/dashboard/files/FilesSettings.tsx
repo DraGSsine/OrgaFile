@@ -23,13 +23,16 @@ import {
   restoreFile,
   downloadFile,
 } from "@/redux/slices/filesSlices";
+import { toast } from "sonner";
 
 const FilesSettings = ({
   fileId,
   routeName,
+  fileName,
 }: {
   fileId: string;
   routeName: RouteNameType;
+  fileName: string;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -48,7 +51,11 @@ const FilesSettings = ({
       dispatch(restoreFile({fileId}));
     }
     else if (key === "downloadFile") {
-      dispatch(downloadFile({fileId}));
+      toast.promise(dispatch(downloadFile({fileId,fileName})), {
+        loading: "Downloading...",
+        success: "Downloaded successfully",
+        error: "Failed to download",
+      });
     }
   }
   return (

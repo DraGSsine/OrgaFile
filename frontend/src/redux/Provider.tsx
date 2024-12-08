@@ -11,7 +11,7 @@ function Providers({ children }: { children: ReactNode }) {
     <Provider store={store}>
       <RenderDocs />
       <ConfirmDelete />
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right"/>
       {children}
     </Provider>
   );

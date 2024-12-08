@@ -45,9 +45,10 @@ export const uploadFiles = async (
       const newFileName = await generateFileName(documentInfo);
 
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${newFileName}`;
+      const fileExtension = file.originalname.split('.').pop();
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
-        Key: `${userId}/${nameKey}`,
+        Key: `${userId}/${nameKey}.${fileExtension}`,
         Body: file.buffer,
         ContentType: file.mimetype,
       };

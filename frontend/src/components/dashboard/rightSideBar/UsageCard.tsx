@@ -1,100 +1,123 @@
-import React from "react";
-import { Card, CardBody, Progress } from "@nextui-org/react";
-import { Cloudy, Server } from "lucide-react";
-export const CloudStorage = ({
-  isLoading,
-  storageLimit,
-  storageUsed,
-}: {
+import { Card, CardBody, Progress, Skeleton, NextUIProvider } from "@nextui-org/react";
+import { Cloud, Server } from "lucide-react";
+
+// Progress Skeleton Component
+function ProgressSkeleton() {
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between">
+        <Skeleton className="h-4 w-24 rounded-lg" />
+        <Skeleton className="h-4 w-10 rounded-lg" />
+      </div>
+      <Skeleton className="h-2 w-full rounded-lg" />
+    </div>
+  );
+}
+
+// Storage Progress Component
+interface StorageProgressProps {
+  isLoading: boolean;
+  value: number;
+  max: number;
+  label: string;
+  color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+  className?: string;
+}
+
+function StorageProgress({ 
+  isLoading, 
+  value, 
+  max, 
+  label, 
+  color = "primary",
+  className 
+}: StorageProgressProps) {
+  if (isLoading) {
+    return <ProgressSkeleton />;
+  }
+
+  const percentage = Math.round((value / max) * 100);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between text-sm text-default-500">
+        <span>{label}</span>
+        <span>{percentage}%</span>
+      </div>
+      <Progress
+        value={percentage}
+        color={color}
+        className={className}
+        aria-label="Storage progress"
+      />
+    </div>
+  );
+}
+
+// Storage Card Component
+interface StorageCardProps {
   isLoading: boolean;
   storageLimit: number;
   storageUsed: number;
-}) => {
+}
+
+export function StorageCard({ isLoading, storageLimit, storageUsed }: StorageCardProps) {
   return (
-    <Card className="rounded-2xl w-full h-52 flex flex-col bg-gray-50 transition-all">
+    <Card 
+      className="w-full h-52"
+      classNames={{
+        base: "bg-gradient-to-br from-white to-default-100 dark:from-default-50 dark:to-default-100/50 hover:scale-[1.02] transition-transform",
+      }}
+    >
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
-          <div className="bg-primary-100 w-fit p-3 rounded-2xl">
-            <Cloudy color="#0070F0" size={30} />
+          <div className="bg-primary-100/50 dark:bg-primary-900/20 w-fit p-3 rounded-2xl">
+            <Cloud className="w-7 h-7 text-primary-500" />
           </div>
-          <h2 className="font-medium py-4 text-xl">Cloud Storage</h2>
+          <h2 className="font-semibold text-xl mt-4">Cloud Storage</h2>
         </div>
-        {
-          isLoading ? (
-            <ProgressSkeleton />
-          ) : (
-            <Progress
-              showValueLabel={true}
-              value={storageUsed}
-              label={`${
-                storageUsed.toString().split(".")[0]
-              }Gb of ${storageLimit}Gb`}
-              maxValue={storageLimit}
-              size="md"
-              classNames={{
-                base: "max-w-md",
-                track: "bg-primary-200",
-                indicator: "bg-gradient-to-r from-primary-600 to-primary-400",
-                label: "tracking-wider font-medium text-default-600",
-                value: "text-foreground/60",
-              }}
-            />
-          )
-        }
+        <StorageProgress
+          isLoading={isLoading}
+          value={storageUsed}
+          max={storageLimit}
+          label={`${storageUsed.toString().split(".")[0]}GB of ${storageLimit}GB`}
+          color="primary"
+        />
       </CardBody>
     </Card>
   );
-};
-export const UserLimitCard = ({
-  isLoading,
-  requestUsed,
-  requestLimit,
-}: {
+}
+
+// Usage Card Component
+interface UsageCardProps {
   isLoading: boolean;
-  requestUsed: number;
   requestLimit: number;
-}) => {
+  requestUsed: number;
+}
+
+export function UsageCard({ isLoading, requestLimit, requestUsed }: UsageCardProps) {
   return (
-    <Card className="rounded-2xl w-full h-52 flex flex-col bg-gray-50 transition-all">
+    <Card 
+      className="w-full h-52"
+      classNames={{
+        base: "bg-gradient-to-br from-white to-success-100 dark:from-success-50 dark:to-success-100/50 hover:scale-[1.02] transition-transform",
+      }}
+    >
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
-          <div className="bg-green-100 w-fit p-3 rounded-2xl">
-            <Server color="#18C964" size={30} />
+          <div className="bg-success-100/50 dark:bg-success-900/20 w-fit p-3 rounded-2xl">
+            <Server className="w-7 h-7 text-success-500" />
           </div>
-          <h2 className=" font-medium py-4 text-md 2xl:text-xl">Monthly Usage</h2>
+          <h2 className="font-semibold text-xl mt-4">Monthly Usage</h2>
         </div>
-        {isLoading ? (
-        <ProgressSkeleton />
-        ) : (
-          <Progress
-            showValueLabel={true}
-            value={requestUsed}
-            label={`${requestUsed} of ${requestLimit}`}
-            maxValue={requestLimit}
-            size="md"
-            classNames={{
-              base: "max-w-md",
-              track: "bg-green-200",
-              indicator: "bg-gradient-to-r from-green-600 to-green-400",
-              label: "tracking-wider font-medium text-default-600",
-              value: "text-foreground/60",
-            }}
-          />
-        )}
+        <StorageProgress
+          isLoading={isLoading}
+          value={requestUsed}
+          max={requestLimit}
+          label={`${requestUsed} of ${requestLimit} requests`}
+          color="success"
+        />
       </CardBody>
     </Card>
-  );
-};
-
-
-const ProgressSkeleton = () => {
-  return (
-    <div className="animate-pulse space-y-2 ">
-      <div className=" w-full flex justify-between" >
-        <span className=" rounded-full inline-block w-24 h-4 bg-gray-200 " ></span>
-        <span className=" rounded-full inline-block w-10 h-4 bg-gray-200 " ></span>
-      </div>
-      <div className="w-full h-4 bg-gray-200 rounded-2xl"></div>
-    </div>
   );
 }

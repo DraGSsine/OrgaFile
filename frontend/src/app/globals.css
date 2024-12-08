@@ -15,7 +15,7 @@
     "doc-color":"var(--doc-color)", */
   --primary-color: #4b81f7;
   --secondary-color: #4bf76e;
-  --third-color: #332F89;
+  --third-color: #332f89;
   --dark-primary-color: #514bf7;
   --primary-text-color: #8a8a8a;
   --image-color: #6dff5a7e;
@@ -35,12 +35,12 @@
 } */
 
 @layer components {
-  .pretty-text-small{
+  .pretty-text-small {
     @apply text-lg mt-4 text-slate-600;
   }
 }
 /*Hide the scroll bar*/
-html{
+html {
   scrollbar-width: none;
 }
 
@@ -49,28 +49,40 @@ tbody tr {
 }
 
 .boujee-text {
-    --bg-size: 400%;
-    --color-one: #4F46E5;
-    --color-two: #4bf76e;
-    background: linear-gradient(
-        90deg,
-        var(--color-one),
-        var(--color-two),
-        var(--color-one)
-      )
-      0 0 / var(--bg-size) 100%;
-    color: transparent;
-    background-clip: text;
+  --bg-size: 400%;
+  --color-one: #4f46e5;
+  --color-two: #4bf76e;
+  background: linear-gradient(
+      90deg,
+      var(--color-one),
+      var(--color-two),
+      var(--color-one)
+    )
+    0 0 / var(--bg-size) 100%;
+  color: transparent;
+  background-clip: text;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .boujee-text {
+    animation: move-bg 8s linear infinite;
   }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .boujee-text {
-      animation: move-bg 8s linear infinite;
-    }
-    @keyframes move-bg {
-      to {
-        background-position: var(--bg-size) 0;
-      }
+  @keyframes move-bg {
+    to {
+      background-position: var(--bg-size) 0;
     }
   }
-  
+}
+
+.fade-in {
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

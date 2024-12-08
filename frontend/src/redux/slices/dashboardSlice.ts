@@ -110,7 +110,7 @@ export const dashboardSlice = createSlice({
     });
     builder.addCase(loadUserLimits.rejected, (state, { payload }) => {
       state.userLimits.loading = false;
-      state.userLimits.error = payload;
+      state.userLimits.error = "Failed to fetch user limits";
     });
 
     builder.addCase(loadClouInfo.pending, (state) => {
@@ -123,7 +123,7 @@ export const dashboardSlice = createSlice({
 
     builder.addCase(loadClouInfo.rejected, (state, { payload }) => {
       state.cloudInfo.loading = false;
-      state.cloudInfo.error = payload;
+      state.cloudInfo.error = "Failed to fetch cloud info";
     });
   },
 });

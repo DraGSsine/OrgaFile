@@ -1,4 +1,3 @@
-"use client";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Features from "@/components/features/Features";
 import FooterBar from "@/components/footerBar/FooterBar";

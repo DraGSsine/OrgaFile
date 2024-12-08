@@ -9,6 +9,7 @@ import { Spinner } from "@nextui-org/react";
 import { CloudDownload, Download, Link } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 import { set, string } from "zod";
 
 const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
@@ -21,14 +22,26 @@ const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
     return <Spinner size="sm" />;
   }
 
+  // downlaod fucntin
+
+  async function HandleDownloadFolder() {
+    dispatch(setDownloadingFolder(folder.folderId));
+
+    toast.promise(
+      dispatch(
+        downloadFolder({ folderId: folder.folderId, folderName: folder.name })
+      ),
+      {
+        loading: "Downloading...",
+        success: "Downloaded successfully",
+        error: "Failed to download",
+      }
+    );
+  }
+
   return (
     <Button
-      onClick={() => {
-        dispatch(setDownloadingFolder(folder.folderId));
-        dispatch(
-          downloadFolder({ folderId: folder.folderId, folderName: folder.name })
-        );
-      }}
+      onClick={() => HandleDownloadFolder()}
       isIconOnly
       disableRipple
       className="bg-transparent hover:bg-transparent"

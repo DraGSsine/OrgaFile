@@ -1,11 +1,12 @@
-"use client";
-import { loadFolders } from "@/redux/slices/foldersSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import { FolderType } from "@/types/types";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import FolderComponent from "./Folder";
-import { Folder, FolderOpen } from "lucide-react";
+"use client"
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { FolderType } from '@/types/types';
+import { AppDispatch, RootState } from '@/redux/store';
+import { loadFolders } from '@/redux/slices/foldersSlice';
+import FolderComponent from './Folder';
+import { Folder, FolderOpen } from 'lucide-react';
 
 const LoadFolders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,10 +16,25 @@ const LoadFolders = () => {
   const { folders, isLoading } = useSelector(
     (state: RootState) => state.folders.loadFolders
   );
+
+  const [showSkeleton, setShowSkeleton] = useState(true);
+
   useEffect(() => {
     dispatch(loadFolders());
   }, [dispatch, isFileUploaded]);
-  if (isLoading) {
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setShowSkeleton(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowSkeleton(true);
+    }
+  }, [isLoading]);
+
+  if (showSkeleton) {
     return (
       <div className="flex flex-wrap gap-6">
         {Array.from({ length: 10 }).map((_, i) => (
@@ -50,7 +66,7 @@ const LoadFolders = () => {
   }
   return (
     <div className="flex flex-wrap gap-6">
-      {folders.map((folder: FolderType, index) => (
+      {folders.map((folder: FolderType, index:number) => (
         <FolderComponent key={index} folder={folder} />
       ))}
     </div>
@@ -58,7 +74,6 @@ const LoadFolders = () => {
 };
 
 export default LoadFolders;
-
 const FolderLoadSkeleton = () => {
   return (
     <div className=" w-64 h-[230px] justify-between flex  flex-col bg-blue-50 p-6 rounded-2xl animate-pulse">
