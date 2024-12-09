@@ -120,13 +120,15 @@ export const SearchInput = () => {
       variant="bordered"
       placeholder="Search for files"
       className=" w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
+      onSelectionChange={(key:number = 0) => {
+        console.log("Selected key:", files[key]);
+      }}
       startContent={
         <SearchIcon className="text-gray-600" width="25" height="25" />
       }
     >
       {files.map((file,index) => (
         <AutocompleteItem
-          onClick={() => dispatch(ToggleFile({ isOpen: true, url: file.url }))}
           textValue={file.name}
           key={index}
         >

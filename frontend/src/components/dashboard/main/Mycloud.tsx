@@ -52,7 +52,7 @@ const Mycloud = () => {
       {loading ? (
         <CoudSkeleton />
       ) : (
-        <div className="grid grid-cols-2  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
+        <div className="grid grid-cols-2 fade-in  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
           {filesFormatInfo.map((item) => (
             <Cloud
               key={item.name}
