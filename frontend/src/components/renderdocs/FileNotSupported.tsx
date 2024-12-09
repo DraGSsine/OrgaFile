@@ -2,7 +2,8 @@ import { DOMAttributes } from "@nextui-org/react";
 import { FileWarning } from "lucide-react";
 import { Dispatch } from "react";
 
-export const FileNotSupported = ({ onClose }:{onClose:Dispatch<DOMAttributes<HTMLButtonElement>>}) => {
+export const FileNotSupported = ({ onClose }:{onClose:any}) => {
+  const supportedFormats = ["pdf", "doc", "docx", "txt"];
     return (
       <section className="bg-white h-full dark:bg-gray-900">
         <div className="container flex items-center min-h-full px-6 py-12 mx-auto">
@@ -14,7 +15,9 @@ export const FileNotSupported = ({ onClose }:{onClose:Dispatch<DOMAttributes<HTM
               File not supported
             </h1>
             <p className="mt-4 text-gray-500 dark:text-gray-400">
-              The viewer only supports <span className="font-medium text-orange-400">PDF</span> files for now. Please try another file.
+              The viewer only supports <span className="font-medium text-orange-400">{
+                supportedFormats.join(", ")
+              }</span> files for now. Please try another file.
             </p>
   
             <div className="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">

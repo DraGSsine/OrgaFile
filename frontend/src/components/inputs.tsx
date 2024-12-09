@@ -105,7 +105,10 @@ export const EmailInput = ({
 };
 
 export const SearchInput = () => {
-  const {files} = useSelector((state: RootState) => state.files.loadFilesState);
+  const supportedFormats = ["pdf", "doc", "docx", "txt"];
+  const { files } = useSelector(
+    (state: RootState) => state.files.loadFilesState
+  );
   const dispatch = useDispatch<AppDispatch>();
   type FileSearch = {
     name: string;
@@ -120,18 +123,18 @@ export const SearchInput = () => {
       variant="bordered"
       placeholder="Search for files"
       className=" w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
-      onSelectionChange={(key:number = 0) => {
-        console.log("Selected key:", files[key]);
+      onSelectionChange={(key: any) => {
+        if (!key) return;
+        const url = files[key].url;
+        const isSupported = supportedFormats.includes(files[key].format);
+        dispatch(ToggleFile({ isOpen: true, url, isSupported }));
       }}
       startContent={
         <SearchIcon className="text-gray-600" width="25" height="25" />
       }
     >
-      {files.map((file,index) => (
-        <AutocompleteItem
-          textValue={file.name}
-          key={index}
-        >
+      {files.map((file, index) => (
+        <AutocompleteItem textValue={file.name} key={index}>
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center px-2">
               <Image

@@ -46,9 +46,10 @@ export const uploadFiles = async (
 
       const nameKey = `${crypto.randomBytes(16).toString('hex')}-${newFileName}`;
       const fileExtension = file.originalname.split('.').pop();
+      const urlend = `${userId}/${nameKey}.${fileExtension}`;
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
-        Key: `${userId}/${nameKey}.${fileExtension}`,
+        Key: urlend,
         Body: file.buffer,
         ContentType: file.mimetype,
       };
@@ -60,7 +61,7 @@ export const uploadFiles = async (
       const data: FileInfo = {
         fileId: nameKey,
         topic: documentInfo.mainTopic,
-        url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${userId}/${nameKey}`,
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${urlend}`,
         format: file.originalname.split('.').pop(),
         name: newFileName,
         size: file.size,
