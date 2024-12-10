@@ -390,6 +390,7 @@ export const filesSlice = createSlice({
       state.loadRemovedFilesState.files = action.payload;
       state.loadRemovedFilesState.isLoading = false;
       state.loadRemovedFilesState.error = null;
+      state.removeFileState.isFileDeleted = false;
     });
     builder.addCase(loadRemovedFiles.rejected, (state, action: any) => {
       state.loadRemovedFilesState.isLoading = false;

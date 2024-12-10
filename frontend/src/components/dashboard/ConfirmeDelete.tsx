@@ -39,24 +39,32 @@ export default function ConfirmDelete() {
       if (removeFileState.isPermanently) {
         dispatch(
           removeManyFiles({ files: removeFileState.files, isPermanently: true })
-        );
+        ).then(() => {
+          dispatch(setConfirmFileRemoveModal(false));
+        });
       } else {
         dispatch(
           removeManyFiles({
             files: removeFileState.files,
             isPermanently: false,
           })
-        );
+        ).then(() => {
+          dispatch(setConfirmFileRemoveModal(false));
+        });
       }
     } else {
       if (removeFileState.isPermanently) {
         dispatch(
           removeFile({ fileId: removeFileState.files[0], isPermanently: true })
-        );
+        ).then(() => {
+          dispatch(setConfirmFileRemoveModal(false));
+        });
       } else {
         dispatch(
           removeFile({ fileId: removeFileState.files[0], isPermanently: false })
-        );
+        ).then(() => {
+          dispatch(setConfirmFileRemoveModal(false));
+        });
       }
     }
   };
@@ -76,8 +84,16 @@ export default function ConfirmDelete() {
         <ModalContent>
           <ModalBody>
             <div className="flex items-center justify-center gap-4">
-              <div className={` ${removeFileState.isPermanently ? "bg-[#F31260]/15":"bg-[#FFA500]/15"} flex items-center justify-center min-w-14 min-h-14 rounded-full `}>
-                <Alert02Icon color={ removeFileState.isPermanently ? "#F31260" : "#FFA500"} />
+              <div
+                className={` ${
+                  removeFileState.isPermanently
+                    ? "bg-[#F31260]/15"
+                    : "bg-[#FFA500]/15"
+                } flex items-center justify-center min-w-14 min-h-14 rounded-full `}
+              >
+                <Alert02Icon
+                  color={removeFileState.isPermanently ? "#F31260" : "#FFA500"}
+                />
               </div>
               <div className=" space-y-3">
                 <p className=" font-semibold">{Message}</p>
@@ -101,7 +117,9 @@ export default function ConfirmDelete() {
               variant="solid"
               onPress={handleDelete}
             >
-              {removeFileState.isPermanently ? "Permanently Delete" : "Move to Trash"}
+              {removeFileState.isPermanently
+                ? "Permanently Delete"
+                : "Move to Trash"}
             </Button>
           </ModalFooter>
         </ModalContent>

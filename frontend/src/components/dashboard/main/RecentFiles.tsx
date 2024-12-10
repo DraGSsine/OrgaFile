@@ -1,6 +1,6 @@
 "use client";
 import RecentFilesTable from "@/components/dashboard/TableFiles";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 const RecentUploadsPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(true);
   const { recentFilesState, removeFileState, uploadFileState } = useSelector(
     (state: RootState) => state.files
   );
@@ -32,7 +33,7 @@ const RecentUploadsPage = () => {
           break;
         case uploadFileState.error:
           toast.error("Failed to upload files");
-          console.error(uploadFileState.error); 
+          console.error(uploadFileState.error);
           break;
       }
     };
@@ -49,16 +50,19 @@ const RecentUploadsPage = () => {
     LoadRecentFiles();
     handleFileStates();
     dispatch(resetFilesState());
+    const timer = setInterval(() => {
+     setIsLoading(false);
+    }, 1000);
+    return () => clearInterval(timer);
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
-
   return (
-    <div className=" flex flex-col h-full " >
+    <div className=" flex flex-col h-full ">
       <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploads </h1>
       <RecentFilesTable
         maxRows={9}
         files={recentFilesState.files}
-        isLoading={recentFilesState.isLoading}
+        isLoading={isLoading}
         routeName="allFiles"
       />
     </div>

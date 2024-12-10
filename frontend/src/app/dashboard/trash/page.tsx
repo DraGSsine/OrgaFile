@@ -12,30 +12,37 @@ import React from "react";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = React.useState(true);
   const { loadRemovedFilesState, removeFileState, restoreFileState,uploadFileState } =
     useSelector((state: RootState) => state.files);
   useEffect(() => {
     dispatch(loadRemovedFiles());
     if (loadRemovedFilesState.error) {
       toast.error("Failed to load files");
+      setIsLoading(false);
     }
     switch (true) {
       case removeFileState.isFileDeleted && removeFileState.files.length <= 1:
         toast.success("File deleted successfully");
-        dispatch(setConfirmFileRemoveModal(false));
+        setIsLoading(false);
         break;
       case removeFileState.isMany:
         toast.success("Files deleted successfully");
+        setIsLoading(false);
         break;
     }
-  }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    } , 500);
+    return () => clearTimeout(timer);
+  }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted, restoreFileState.fileRestored]);
   return (
     <div className=" flex flex-col h-full ">
       <h1 className="font-medium text-2xl pl-2 pb-6">My Trash</h1>
       <TableFiles
         maxRows={12}
         files={loadRemovedFilesState.files}
-        isLoading={loadRemovedFilesState.isLoading}
+        isLoading={isLoading}
         routeName="removedFiles"
       />
     </div>

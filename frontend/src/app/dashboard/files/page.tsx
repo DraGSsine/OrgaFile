@@ -1,6 +1,6 @@
 "use client";
 import TableFiles from "@/components/dashboard/TableFiles";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,15 +12,13 @@ import { toast } from "sonner";
 
 const AllFilesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    loadFilesState,
-    removeFileState,
-    uploadFileState,
-  } = useSelector((state: RootState) => state.files);
+  const [isLoading, setIsLoading] = useState(true);
+  const { loadFilesState, removeFileState, uploadFileState } = useSelector(
+    (state: RootState) => state.files
+  );
 
   const LoadAllFiles = useCallback(() => {
     dispatch(loadAllFiles());
-
     if (loadFilesState.error) {
       toast.error("Failed to load files");
       console.error(loadFilesState.error); // Logging the error
@@ -47,19 +45,22 @@ const AllFilesPage = () => {
           break;
       }
     };
-
     LoadAllFiles();
     handleFileStates();
     dispatch(resetFilesState());
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    } , 500);
+    return () => clearTimeout(timer);
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
   return (
-    <div className=" h-full flex flex-col " >
+    <div className=" h-full flex flex-col ">
       <h1 className=" font-medium text-2xl pl-2 pb-6 "> All Files </h1>
       <TableFiles
         maxRows={12}
         files={loadFilesState.files}
-        isLoading={loadFilesState.isLoading}
+        isLoading={isLoading}
         routeName="allFiles"
       />
     </div>
