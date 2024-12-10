@@ -1,10 +1,11 @@
 import { FolderType } from "@/types/types";
 import { Button } from "@nextui-org/button";
-import { Folder } from "lucide-react";
 import Link from "next/link";
 import FolderDownlaodButton from "./FolderDownlaodButton";
 import { bytesToMegaBytes } from "@/helpers/helpers";
 import { useMemo } from "react";
+import { Folder01Icon } from "hugeicons-react";
+import { Tooltip } from "@nextui-org/react";
 const FolderComponent = ({ folder }: { folder: FolderType }) => {
   const { filesSize } = useMemo(() => {
     return {
@@ -15,8 +16,10 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
   return (
     <div className=" fade-in justify-between flex  flex-col bg-blue-50 p-6 rounded-lg">
       <div className="flex justify-between items-center mb-5">
-        <Folder size={60} className="fill-blue-500 stroke-blue-500" />
-        <FolderDownlaodButton folder={folder} />
+        <Folder01Icon size={60} className="fill-blue-500 text-blue-500" />
+        <Tooltip content={`Downalod`}>
+          <FolderDownlaodButton folder={folder} />
+        </Tooltip>
       </div>
 
       <div>

@@ -7,7 +7,8 @@ import ModalComponent from "../signup/Modal";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal } from "@/redux/slices/filesSlices";
-import { CloudUpload } from "lucide-react";
+import { CloudUploadIcon } from "hugeicons-react";
+
 
 const UploadButton = ({
   radius,
@@ -26,7 +27,7 @@ const UploadButton = ({
         radius={radius}
       >
         <span className=" font-medium text-white texet-[1.1rem] ">Upload here</span>
-        <CloudUpload size={24} className="flex-shrink-0 stroke-white " />
+        <CloudUploadIcon size={24} className="flex-shrink-0 text-white " />
       </Button>
       <ModalComponent />
     </>

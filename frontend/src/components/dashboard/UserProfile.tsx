@@ -33,12 +33,11 @@ const UserProfile = ({ email }: { email: string }) => {
         variant="flat"
       >
         <DropdownItem key="profile" className="h-14 gap-2">
-          <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">{email}</p>
+          <p className=" font-medium">Signed in as <span className=" text-primary-color font-semibold">{email.split("@")[0]}</span></p>
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>
         <DropdownItem key="help">Help</DropdownItem>
-        <DropdownItem key="signout" color="danger">
+        <DropdownItem key="signout" color="danger" className=" text-danger-500">
           Log Out
         </DropdownItem>
       </DropdownMenu>

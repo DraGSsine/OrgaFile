@@ -1,6 +1,6 @@
-import { Mail, Shield } from "lucide-react";
+import { Mail01Icon, Shield01Icon } from "hugeicons-react";
 import React from "react";
-
+import Link from "next/link";
 const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br py-12">
@@ -8,9 +8,9 @@ const Page = () => {
         <div className="bg-white rounded-lg shadow-lg p-8">
           {/* Header */}
           <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">OrgaFile</h1>
+            <Link className="text-4xl font-bold text-gray-900 mb-2" href="/">OrgaFile</Link>
             <div className="flex items-center justify-center space-x-2 mb-2">
-              <Shield className="w-5 h-5 text-indigo-600" />
+              <Shield01Icon className="w-5 h-5 text-indigo-600" />
               <h2 className="text-xl text-gray-600">
                 Privacy Policy & Terms of Service
               </h2>
@@ -174,7 +174,7 @@ const Page = () => {
           <footer className="mt-12 pt-8 border-t border-gray-200">
 
             <div className="flex items-center justify-center mt-4 text-gray-600">
-              <Mail className="w-5 h-5 mr-2" />
+              <Mail01Icon className="w-5 h-5 mr-2" />
               <a
                 href="mailto:support@orgafile.com"
                 className="hover:text-indigo-600"

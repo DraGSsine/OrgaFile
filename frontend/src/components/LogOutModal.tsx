@@ -14,7 +14,9 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { closeSignoutModal } from "@/redux/slices/dashboardSlice";
 import { SignOutAction } from "@/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, AlertTriangleIcon } from "lucide-react";
+import { Alert02Icon } from "hugeicons-react";
+import Link from "next/link";
+
 
 const SignoutModal = () => {
   const router = useRouter();
@@ -47,13 +49,13 @@ const SignoutModal = () => {
               <ModalHeader className="flex flex-col gap-1">
                 <div className="flex items-center justify-center gap-4">
                   <div className="bg-red-100 flex items-center justify-center min-w-14 min-h-14 rounded-full ">
-                    <AlertTriangleIcon className=" stroke-red-500" />
+                    <Alert02Icon className=" text-red-500" />
                   </div>
                   <div className=" space-y-3">
                     <p className=" font-semibold"> Sign Out </p>
                     <p className=" font-normal text-sm text-zinc-500">
                       {" "}
-                      Are you sure you would like to sign out of your Orgafile
+                      Are you sure you would like to sign out of your <Link href="/">OrgaFile</Link>
                       account?{" "}
                     </p>
                   </div>

@@ -51,12 +51,7 @@ const AllFilesPage = () => {
     LoadAllFiles();
     handleFileStates();
     dispatch(resetFilesState());
-  }, [
-    removeFileState.isFileDeleted,
-    removeFileState.isMany,
-    uploadFileState.isFileUploaded,
-    uploadFileState.error,
-  ]);
+  }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
   return (
     <div className=" h-full flex flex-col " >

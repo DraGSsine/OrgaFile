@@ -9,13 +9,6 @@ import {
 } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import {
-  ArchiveRestore,
-  ArrowDownToLineIcon,
-
-  EllipsisVertical,
-  Trash2,
-} from "lucide-react";
 import { RouteNameType } from "@/types/types";
 import {
   setConfirmFileRemoveModal,
@@ -24,6 +17,7 @@ import {
   downloadFile,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
+import { ArrowDown03Icon, Delete02Icon, DeletePutBackIcon, MoreVerticalCircle01Icon } from "hugeicons-react";
 
 
 const FilesSettings = ({
@@ -71,7 +65,7 @@ const FilesSettings = ({
             className=" bg-zinc-100 "
             size="sm"
           >
-            <EllipsisVertical size={18} />
+            <MoreVerticalCircle01Icon size={18} />
           </Button>
         </DropdownTrigger>
         <DropdownMenu
@@ -79,18 +73,18 @@ const FilesSettings = ({
           onAction={(key) => handleAction({ key })}
         >
           <DropdownItem
-            startContent={<ArrowDownToLineIcon size={20} />}
+            startContent={<ArrowDown03Icon size={20} />}
             key="downloadFile"
           >
             Download file
           </DropdownItem>
           {routeName === "removedFiles" ? (
-            <DropdownItem startContent={<ArchiveRestore size={20} />} key="restore">
+            <DropdownItem startContent={<DeletePutBackIcon size={20} />} key="restore">
               Restore file
             </DropdownItem>
           ) : null as any}
           <DropdownItem
-            startContent={<Trash2 size={20} />}
+            startContent={<Delete02Icon size={20} />}
             key="delete"
             className="text-danger"
             color="danger"

@@ -1,6 +1,4 @@
-import { DOMAttributes } from "@nextui-org/react";
-import { FileWarning } from "lucide-react";
-import { Dispatch } from "react";
+import { FileRemoveIcon } from "hugeicons-react";
 
 export const FileNotSupported = ({ onClose }:{onClose:any}) => {
   const supportedFormats = ["pdf", "doc", "docx", "txt"];
@@ -9,7 +7,7 @@ export const FileNotSupported = ({ onClose }:{onClose:any}) => {
         <div className="container flex items-center min-h-full px-6 py-12 mx-auto">
           <div className="flex flex-col items-center max-w-sm mx-auto text-center">
             <p className="p-4 text-sm font-medium text-orange-400 rounded-full bg-orange-50 dark:bg-gray-800">
-              <FileWarning size={40} />
+              <FileRemoveIcon size={40} />
             </p>
             <h1 className="mt-3 text-2xl font-semibold text-gray-800 dark:text-white md:text-3xl">
               File not supported

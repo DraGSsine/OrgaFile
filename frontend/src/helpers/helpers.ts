@@ -1,13 +1,11 @@
 export function bytesToMegaBytes(bytes: number) {
   let size = bytes / 1024 / 1024;
-  
+
   if (size < 1) {
     return size.toFixed(2) + " KB";
-  }
-  else if (size < 1024) {
+  } else if (size < 1024) {
     return size.toFixed(2) + " MB";
-  }
-  else {
+  } else {
     return (size / 1024).toFixed(2) + " GB";
   }
 }
@@ -16,7 +14,7 @@ export function FormatTheDate(date: Date) {
   const d = new Date(date);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - d.getTime());
-  
+
   const diffSeconds = Math.floor(diffTime / 1000);
   const diffMinutes = Math.floor(diffTime / (1000 * 60));
   const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
@@ -42,14 +40,118 @@ export function FormatTheDate(date: Date) {
   }
 }
 
-
-
-export function getFileImage(format: string) : string
-{
-  const excelFormats = ["xls", "xlsx", "xlsm", "xlsb", "xltx", "xltm", "xlam", "xll", "xlw", "xlr", "ods", "fods", "uos", "sxc", "dif", "dbf", "slk", "pxl", "wb2", "123", "wq1", "wks", "wk1", "wk3", "wk4"];
-  const wordFormats = ["doc", "docx", "docm", "dot", "dotx", "dotm", "docb", "odt", "fodt", "ott", "uot", "txt", "wps", "wpt", "wpd", "sxw", "stw", "sxg", "sgl", "vor", "uof", "uot", "xml", "xps", "epub", "mobi", "fb2", "lit", "lrf", "azw", "azw3", "azw4", "prc", "pdb", "oxps", "pml", "snb", "tcr", "rb", "ps", "djvu", "djv", "indd", "p65", "pmd", "pmdx", "pm6", "pm5", "pm4", "pm3", "pm2", "pmt", "pmt5", "pmt6", "p65", "pp65", "ppf", "pp4", "pp3", "pp2", "pp"];
+export function getFileImage(format: string): string {
+  const excelFormats = [
+    "xls",
+    "xlsx",
+    "xlsm",
+    "xlsb",
+    "xltx",
+    "xltm",
+    "xlam",
+    "xll",
+    "xlw",
+    "xlr",
+    "ods",
+    "fods",
+    "uos",
+    "sxc",
+    "dif",
+    "dbf",
+    "slk",
+    "pxl",
+    "wb2",
+    "123",
+    "wq1",
+    "wks",
+    "wk1",
+    "wk3",
+    "wk4",
+  ];
+  const wordFormats = [
+    "doc",
+    "docx",
+    "docm",
+    "dot",
+    "dotx",
+    "dotm",
+    "docb",
+    "odt",
+    "fodt",
+    "ott",
+    "uot",
+    "txt",
+    "wps",
+    "wpt",
+    "wpd",
+    "sxw",
+    "stw",
+    "sxg",
+    "sgl",
+    "vor",
+    "uof",
+    "uot",
+    "xml",
+    "xps",
+    "epub",
+    "mobi",
+    "fb2",
+    "lit",
+    "lrf",
+    "azw",
+    "azw3",
+    "azw4",
+    "prc",
+    "pdb",
+    "oxps",
+    "pml",
+    "snb",
+    "tcr",
+    "rb",
+    "ps",
+    "djvu",
+    "djv",
+    "indd",
+    "p65",
+    "pmd",
+    "pmdx",
+    "pm6",
+    "pm5",
+    "pm4",
+    "pm3",
+    "pm2",
+    "pmt",
+    "pmt5",
+    "pmt6",
+    "p65",
+    "pp65",
+    "ppf",
+    "pp4",
+    "pp3",
+    "pp2",
+    "pp",
+  ];
   const pdfFormats = ["pdf"];
-  const powerpointFormats = ["ppt", "pptx", "pptm", "pot", "potx", "potm", "pps", "ppsx", "ppsm", "ppa", "ppam", "ppj", "key", "odp", "fodp", "otp", "sxi", "sti"];
+  const powerpointFormats = [
+    "ppt",
+    "pptx",
+    "pptm",
+    "pot",
+    "potx",
+    "potm",
+    "pps",
+    "ppsx",
+    "ppsm",
+    "ppa",
+    "ppam",
+    "ppj",
+    "key",
+    "odp",
+    "fodp",
+    "otp",
+    "sxi",
+    "sti",
+  ];
   const textFormats = ["txt", "text", "md"];
 
   switch (true) {
@@ -66,4 +168,11 @@ export function getFileImage(format: string) : string
     default:
       return "/formatImages/file.png";
   }
+}
+
+export function truncateString(str: string, num: number) {
+  if (str.length <= num) {
+    return str;
+  }
+  return str.slice(0, num) + "...";
 }

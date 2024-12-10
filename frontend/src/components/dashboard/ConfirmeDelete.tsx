@@ -15,7 +15,7 @@ import {
   setConfirmFileRemoveModal,
   resetConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
-import { AlertTriangleIcon } from "lucide-react";
+import { Alert02Icon } from "hugeicons-react";
 
 export default function ConfirmDelete() {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,7 +77,7 @@ export default function ConfirmDelete() {
           <ModalBody>
             <div className="flex items-center justify-center gap-4">
               <div className={` ${removeFileState.isPermanently ? "bg-[#F31260]/15":"bg-[#FFA500]/15"} flex items-center justify-center min-w-14 min-h-14 rounded-full `}>
-                <AlertTriangleIcon color={ removeFileState.isPermanently ? "#F31260" : "#FFA500"} />
+                <Alert02Icon color={ removeFileState.isPermanently ? "#F31260" : "#FFA500"} />
               </div>
               <div className=" space-y-3">
                 <p className=" font-semibold">{Message}</p>

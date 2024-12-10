@@ -1,5 +1,6 @@
 import { Card, CardBody, Progress, Skeleton, NextUIProvider } from "@nextui-org/react";
-import { Cloud, Server } from "lucide-react";
+import { CloudIcon, LimitationIcon } from "hugeicons-react";
+
 
 // Progress Skeleton Component
 function ProgressSkeleton() {
@@ -72,9 +73,9 @@ export function StorageCard({ isLoading, storageLimit, storageUsed }: StorageCar
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
           <div className="bg-primary-100/50 dark:bg-primary-900/20 w-fit p-3 rounded-lg">
-            <Cloud className="w-7 h-7 text-primary-500" />
+            <CloudIcon className="w-7 h-7 text-primary-500" />
           </div>
-          <h2 className="font-semibold text-xl mt-4">Cloud Storage</h2>
+          <h2 className="font-semibold text-sm 2xl:text-xl mt-4">Cloud Storage</h2>
         </div>
         <StorageProgress
           isLoading={isLoading}
@@ -106,9 +107,9 @@ export function UsageCard({ isLoading, requestLimit, requestUsed }: UsageCardPro
       <CardBody className="p-6 flex flex-col justify-between">
         <div>
           <div className="bg-success-100/50 dark:bg-success-900/20 w-fit p-3 rounded-lg">
-            <Server className="w-7 h-7 text-success-500" />
+            <LimitationIcon className="w-7 h-7 text-success-500" />
           </div>
-          <h2 className="font-semibold text-xl mt-4">Monthly Usage</h2>
+          <h2 className="font-semibold text-sm 2xl:text-xl mt-4">Monthly Usage</h2>
         </div>
         <StorageProgress
           isLoading={isLoading}

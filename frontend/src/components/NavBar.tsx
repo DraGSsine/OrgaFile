@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { ChevronRight } from "lucide-react";
 import NavBarLinks from "./NavBarLinks";
 import {
   Navbar,
@@ -11,6 +10,7 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
+import { ArrowRight01Icon } from "hugeicons-react";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,7 +53,7 @@ const NavBar = () => {
           </Link>
           <Link href="/auth/signup">
             <Button
-              endContent={<ChevronRight size={20} />}
+              endContent={<ArrowRight01Icon size={20} />}
               variant="flat"
               radius="full"
               className="bg-primary-500 text-zinc-50"
@@ -99,7 +99,7 @@ const NavBar = () => {
         <div className=" flex space-y-3 flex-col">
           <Link href="/auth/signin">
             <Button
-              endContent={<ChevronRight size={20} />}
+              endContent={<ArrowRight01Icon size={20} />}
               variant="flat"
               radius="full"
               className="bg-zinc-200 text-primary-500"
@@ -109,7 +109,7 @@ const NavBar = () => {
           </Link>
           <Link href="/auth/signup">
             <Button
-              endContent={<ChevronRight size={20} />}
+              endContent={<ArrowRight01Icon size={20} />}
               variant="flat"
               radius="full"
               className="bg-primary-500 text-zinc-50"

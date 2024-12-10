@@ -1,18 +1,5 @@
-import React, { ReactNode, forwardRef, use, useState } from "react";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Pagination,
-  Chip,
-  Spinner,
-  Tooltip,
-  Skeleton,
-} from "@nextui-org/react";
-import FilesSettings from "./files/FilesSettings";
+import React, { useState, useMemo } from "react";
+import { Button, Checkbox, Chip, Pagination, Tooltip } from "@nextui-org/react";
 import Image from "next/image";
 import {
   FormatTheDate,
@@ -21,15 +8,21 @@ import {
 } from "@/helpers/helpers";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
-import { Trash2 } from "lucide-react";
-import { RouteNameType, filesType } from "@/types/types";
-import { usePathname } from "next/navigation";
 import {
   setConfirmFileRemoveModal,
   setRemoveFiles,
 } from "@/redux/slices/filesSlices";
+import { RouteNameType, filesType } from "@/types/types";
+import FilesSettings from "./files/FilesSettings";
+import { div } from "framer-motion/client";
+import {
+  Delete02Icon,
+  File01Icon,
+  File02Icon,
+  Files01Icon,
+} from "hugeicons-react";
 
-export default function TableFiles({
+export default function ResponsiveFilesList({
   files,
   isLoading,
   maxRows,
@@ -41,20 +34,19 @@ export default function TableFiles({
   routeName: RouteNameType;
 }) {
   const dispatch = useDispatch<AppDispatch>();
-
-  const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
-  const [page, setPage] = React.useState(1);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
   const rowsPerPage = maxRows;
 
+  // Pagination calculations
   const pages = Math.ceil(files?.length / rowsPerPage);
-
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
-    return files?.slice(start, end);
+    return files?.slice(start, end) || [];
   }, [page, files, rowsPerPage]);
 
+  // Remove selected files
   const removeSelectedKeys = () => {
     dispatch(
       setRemoveFiles({
@@ -64,162 +56,170 @@ export default function TableFiles({
       })
     );
     dispatch(setConfirmFileRemoveModal(true));
-    setSelectedKeys(new Set([]));
+    setSelectedKeys(new Set());
   };
- 
+
+  // Toggle selection of a single file
+  const toggleFileSelection = (fileId: string) => {
+    const newSelectedKeys = new Set(selectedKeys);
+    if (newSelectedKeys.has(fileId)) {
+      newSelectedKeys.delete(fileId);
+    } else {
+      newSelectedKeys.add(fileId);
+    }
+    setSelectedKeys(newSelectedKeys);
+  };
+
+  // Toggle all files selection
+  const toggleAllSelection = () => {
+    if (selectedKeys.size === items.length) {
+      // If all are selected, deselect all
+      setSelectedKeys(new Set());
+    } else {
+      // Select all files on the current page
+      const allFileIds = new Set(items.map((file) => file.fileId));
+      setSelectedKeys(allFileIds);
+    }
+  };
+
+  // Check if all items are selected
+  const isAllSelected = items.length > 0 && selectedKeys.size === items.length;
+
   return (
-    <Table
-      className="border-collapse flex-grow fade-in "
-      aria-label="Example static collection table"
-      BaseComponent={TableWraper}
-      selectionMode="multiple"
-      selectedKeys={selectedKeys}
-      onSelectionChange={(keys) => {
-        let allKeys = new Set<string>([]);
-        if (keys == "all") {
-          files?.map((file: any) => {
-            allKeys.add(file.fileId);
-            setSelectedKeys(allKeys);
-          });
-        } else {
-          setSelectedKeys(keys);
-        }
-      }}
-      topContent={
-        selectedKeys.size > 0 && (
-          <div className="flex left-[11px] top-[50px] absolute items-center justify-between">
-            <div>
-              <Tooltip content="Delete All">
-                <Trash2
-                  size={20}
-                  className="cursor-pointer text-red-500"
-                  onClick={() => removeSelectedKeys()}
-                />
-              </Tooltip>
-            </div>
+    <div className="relative h-full">
+      {/* Bulk Delete Action */}
+        {/* Header Row - Mimicking Table Header */}
+        <div className="grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 border-b py-3 font-semibold t rounded-lg pl-6 bg-black text-white">
+          <div className="col-span-2 pl-4 2xl:pl-4 flex items-center">
+            <Checkbox
+              isSelected={isAllSelected}
+              onChange={toggleAllSelection}
+              color="primary"
+            />
+            <span className="pl-5">FILE</span>
           </div>
-        )
-      }
-      bottomContent={
-        <div className="flex w-full justify-center absolute bottom-5  ">
-          <Pagination
-            initialPage={1}
-            showControls
-            showShadow
-            boundaries={2}
-            total={pages || 1}
-            page={page || 1}
-            onChange={(Page) => setPage(Page)}
-            color="primary"
-            variant="flat"
-          />
+          <div className="text-center hidden xl:inline-block ">SIZE</div>
+          <div className="text-center hidden 2xl:inline-block">CREATED AT</div>
+          <div className="text-center">TYPE</div>
+          <div className="text-center">TOPIC</div>
+          <div className="text-center">SETTINGS</div>
         </div>
-      }
-    >
-      <TableHeader>
-        <TableColumn className=" w-[40%] " key="name">
-          FILE
-        </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="size">
-          SIZE
-        </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="createdAt">
-          CREATED AT
-        </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="status">
-          Type
-        </TableColumn>
-        <TableColumn className=" text-center w-[15%]" key="topic">
-          TOPIC
-        </TableColumn>
-        <TableColumn className=" w-[15%] text-center" key="settings">
-          SETTINGS
-        </TableColumn>
-      </TableHeader>
-      <TableBody
-        emptyContent={!isLoading && "No files found"}
-        isLoading={isLoading}
-        loadingContent={<FilesLoadingSkeleton />}
-        items={items}
-      >
-        {(item: filesType) => (
-          <TableRow
-            key={item.fileId}
-            className=" cursor-pointer text-xl bg-transparent "
-          >
-            <TableCell>
-              <div className="flex items-center space-x-4">
+
+        {/* File List */}
+        <div className="">
+          {items.map((file) => (
+            <div
+              key={file.fileId}
+              className={`2xl:pl-6 grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-gray-50 transition-colors ${
+                selectedKeys.has(file.fileId) ? " bg-gray-50" : ""
+              }`}
+            >
+              {/* File Name & Icon */}
+              <div className="col-span-2 flex items-center space-x-4 pl-4">
+                <Checkbox
+                  isSelected={selectedKeys.has(file.fileId)}
+                  onChange={() => toggleFileSelection(file.fileId)}
+                  color="primary"
+                />
                 <Image
-                  src={getFileImage(item.format)}
+                  src={getFileImage(file.format)}
                   alt="file"
                   width={40}
                   height={40}
-                  className="rounded-md -ml-2 "
+                  className="rounded-md"
                 />
-                <span>{item.name}</span>
+                <span>{file.name}</span>
               </div>
-            </TableCell>
-            <TableCell className="text-center">
-              {bytesToMegaBytes(item.size)}
-            </TableCell>
-            <TableCell className="text-center">
-              {FormatTheDate(item.createdAt)}
-            </TableCell>
-            <TableCell className="text-center">
-              <Chip
-                size="sm"
-                color="warning"
-                variant="dot"
-                style={{ borderColor: "orange", borderWidth: 1 }}
-              >
-                {item.documentType}
-              </Chip>
-            </TableCell>
-            <TableCell className="text-center">
-              <Chip
-                size="sm"
-                color="warning"
-                variant="dot"
-                style={{ borderColor: "orange", borderWidth: 1 }}
-              >
-                {item.topic}
-              </Chip>
-            </TableCell>
-            <TableCell className="text-center">
-              <FilesSettings
-                fileId={item.fileId}
-                routeName={routeName}
-                fileName={`${item.name}.${item.format}`}
-              />
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-  );
-}
 
-const TableWraper = forwardRef<HTMLDivElement, { children: ReactNode }>(
-  function TableWraper({ children }, ref) {
-    return (
+              {/* Size */}
+              <div className="text-center hidden xl:inline-block">{bytesToMegaBytes(file.size)}</div>
+
+              {/* Created At */}
+              <div className="text-center hidden 2xl:inline-block ">{FormatTheDate(file.createdAt)}</div>
+
+              {/* Type */}
+              <div className="text-center">
+                <Chip
+                  size="sm"
+                  color="warning"
+                  variant="dot"
+                  style={{ borderColor: "orange", borderWidth: 1 }}
+                >
+                  {file.documentType}
+                </Chip>
+              </div>
+              <div className="text-center">
+                <Chip
+                  size="sm"
+                  color="warning"
+                  variant="dot"
+                  style={{ borderColor: "orange", borderWidth: 1 }}
+                >
+                  {file.topic}
+                </Chip>
+              </div>
+
+              {/* Settings */}
+              <div className="text-center">
+                <FilesSettings
+                  fileId={file.fileId}
+                  routeName={routeName}
+                  fileName={`${file.name}.${file.format}`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="flex w-full justify-center absolute bottom-5">
+          <Pagination
+            total={pages || 1}
+            page={page}
+            onChange={setPage}
+            color="primary"
+            variant="flat"
+            showControls
+          />
+        </div>
       <div
-        ref={ref}
-        className="h-full bg-white relative rounded-t-lg p-10 shadow-small"
+        className={` ${
+          selectedKeys.size <= 0 ? " opacity-0" : "opacity-100"
+        } absolute right-0 -top-10 `}
       >
-        {children}
+        <Tooltip content={`Delete ${selectedKeys.size} Selected Files`}>
+          <Button
+            color="danger"
+            variant="light"
+            size="sm"
+            startContent={<Delete02Icon size={16} />}
+            onClick={removeSelectedKeys}
+          >
+            Delete ({selectedKeys.size})
+          </Button>
+        </Tooltip>
       </div>
-    );
-  }
-);
 
-const FilesLoadingSkeleton = () => {
-  return (
-    <div className="w-full h-full space-y-4 px-10">
-      {Array.from({ length: 3 }, (_, i) => (
-        <Skeleton key={i} className="rounded-lg h-14 w-full top-24 opacity-35 ">
-          <div className="h-24 rounded-lg bg-default-300"></div>
-        </Skeleton>
-      ))}
+      <div className="bg-white rounded-t-lg shadow-small relative h-full">
+        {/* Loading and Empty States */}
+        {isLoading && (
+          <div className="space-y-4 px-10">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="h-14 w-full bg-gray-200 rounded-lg animate-pulse"
+              />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && (!files || files.length === 0) && (
+          <div className="text-center h-full text-gray-500 py-10 flex items-center justify-center flex-col gap-5">
+            <Files01Icon size={100} stroke="1" />
+            <h1 className=" text-2xl capitalize">No files found</h1>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
+}

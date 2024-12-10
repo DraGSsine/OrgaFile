@@ -3,7 +3,7 @@ import { getFileImage } from "@/helpers/helpers";
 import { loadClouInfo } from "@/redux/slices/dashboardSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Card, CardBody, Progress } from "@nextui-org/react";
-import { File } from "lucide-react";
+import { File02Icon } from "hugeicons-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -91,7 +91,7 @@ const Cloud = ({
   icon: string;
 }) => {
   return (
-    <Card className="rounded-lg w-full h-48 flex flex-col bg-gray-50 transition-all select-none ">
+    <Card className="rounded-lg w-full h-48 flex flex-col bg-white transition-all select-none ">
       <CardBody className="p-6 flex flex-col justify-between">
         <div className="flex items-center">
           <div
@@ -143,7 +143,7 @@ const CoudSkeleton = () => {
                 <div
                   className={`bg-gray-200 w-fit p-3 rounded-lg flex items-center justify-center`}
                 >
-                  <File/>
+                  <File02Icon/>
                 </div>
                 <div className="flex-grow pl-7">
                   <h1 className=" text-lg">PDF</h1>

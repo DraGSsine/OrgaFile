@@ -1,27 +1,27 @@
 import React from "react";
 import MaxWidthWrapper from "../MaxWidthWrapper";
-import { Cloudy, Download, WandSparkles } from "lucide-react";
 import HowItWorkCard from "./HowItWorkCard";
 import Slider from "./Slider";
+import { CloudDownloadIcon, CloudIcon, MagicWand01Icon } from "hugeicons-react";
 
 const HowItWorks = () => {
   const features = [
     {
-      icon: <Cloudy size={24} stroke="#4b81f7" />,
+      icon: <CloudIcon size={24} stroke="#4b81f7" />,
       step: "Step 1",
       feature: "Upload Your Files",
       description:
         "Easily upload files of any format or size. Our intuitive interface is designed to provide a hassle-free uploading experience.",
     },
     {
-      icon: <WandSparkles size={24} stroke="#4b81f7" />,
+      icon: <MagicWand01Icon size={24} stroke="#4b81f7" />,
       step: "Step 2",
       feature: "OrgaFile Analysis",
       description:
         "Sit back and let OrgaFile work its magic. Our AI-driven document management system will analyze and organize your uploads for optimal efficiency.",
     },
     {
-      icon: <Download size={24} stroke="#4b81f7" />,
+      icon: <CloudDownloadIcon size={24} stroke="#4b81f7" />,
       step: "Step 3",
       feature: "Download Files",
       description:

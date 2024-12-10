@@ -3,12 +3,12 @@
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import Dropzone from "react-dropzone";
-import { Cloud, File, FileWarning, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ProgressBar from "./Progress";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
+import { CloudIcon, File01Icon, File02Icon, FileBlockIcon, Loading03Icon } from "hugeicons-react";
 
 export const UploadDropzone = () => {
   const router = useRouter();
@@ -76,7 +76,7 @@ export const UploadDropzone = () => {
               className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
+                <CloudIcon className="h-6 w-6 text-zinc-500 mb-2" />
                 <p className="mb-2 text-sm text-zinc-700">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
@@ -87,7 +87,7 @@ export const UploadDropzone = () => {
               {acceptedFiles && acceptedFiles[0] && (
                 <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
                   <div className="px-3 py-2 h-full grid place-items-center">
-                    <File className="h-4 w-4 text-blue-500" />
+                    <File02Icon className="h-4 w-4 text-blue-500" />
                   </div>
                   <div className="px-3 py-2 h-full text-sm truncate">
                     {acceptedFiles[0].name}
@@ -105,7 +105,7 @@ export const UploadDropzone = () => {
                   />
                   {uploadProgress === 100 && (
                     <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
-                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <Loading03Icon className="h-3 w-3 animate-spin" />
                       Redirecting...
                     </div>
                   )}
@@ -117,7 +117,7 @@ export const UploadDropzone = () => {
                   <p className="text-danger-500 text-medium">
                     Failed to Upload files
                   </p>
-                  <FileWarning size={20} className="stroke-danger-500" />
+                  <FileBlockIcon size={20} className="text-danger-500" />
                 </div>
               )}
 

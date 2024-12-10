@@ -1,4 +1,4 @@
-import { Mail, MailIcon } from "lucide-react";
+import { Mail01Icon } from "hugeicons-react";
 import Image from "next/image";
 import React from "react";
 
@@ -21,7 +21,7 @@ const NewsLetter = () => {
                 <form action="" className="mt-12">
                   <div className="relative flex items-center rounded-full border border-primary/20 bg-white p-1 px-2 shadow-md dark:border-white/10 dark:bg-dark md:p-2 lg:pr-3">
                     <div className="py-3 pl-4 lg:pl-5">
-                      <MailIcon size={30} stroke="white" fill="gray" />
+                      <Mail01Icon size={30} stroke="white" />
                     </div>
                     <input
                       autoComplete="email"

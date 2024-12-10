@@ -8,7 +8,6 @@ import {
 import {
   Autocomplete,
   AutocompleteItem,
-  AutocompleteSection,
   Input,
 } from "@nextui-org/react";
 import { ZodIssue } from "zod";
@@ -105,17 +104,12 @@ export const EmailInput = ({
 };
 
 export const SearchInput = () => {
-  const supportedFormats = ["pdf", "doc", "docx", "txt"];
+
   const { files } = useSelector(
     (state: RootState) => state.files.loadFilesState
   );
   const dispatch = useDispatch<AppDispatch>();
-  type FileSearch = {
-    name: string;
-    format: string;
-    size: string;
-    url?: string;
-  };
+
 
   return (
     <Autocomplete
@@ -126,8 +120,7 @@ export const SearchInput = () => {
       onSelectionChange={(key: any) => {
         if (!key) return;
         const url = files[key].url;
-        const isSupported = supportedFormats.includes(files[key].format);
-        dispatch(ToggleFile({ isOpen: true, url, isSupported }));
+        dispatch(ToggleFile({ isOpen: true, url}));
       }}
       startContent={
         <SearchIcon className="text-gray-600" width="25" height="25" />

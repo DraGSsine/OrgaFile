@@ -1,6 +1,6 @@
-import { Instagram, Linkedin, Twitter } from "lucide-react";
 import React from "react";
 import Link from "next/link";
+import { InstagramIcon, Linkedin01Icon, TwitterIcon } from "hugeicons-react";
 const FooterBar = () => {
   return (
     <footer className="py-14 border-t border-slate-100">
@@ -19,7 +19,7 @@ const FooterBar = () => {
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"
               >
-                <Twitter size={16} />
+                <TwitterIcon size={16} />
                 <span className="sr-only">Twitter or X</span>
               </Link>
               <Link
@@ -28,7 +28,7 @@ const FooterBar = () => {
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"
               >
-                <Instagram size={16} />
+                <InstagramIcon size={16} />
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
@@ -37,7 +37,7 @@ const FooterBar = () => {
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"
               >
-                <Linkedin size={16} />
+                <Linkedin01Icon size={16} />
                 <span className="sr-only">Linkedin</span>
               </Link>
             </div>

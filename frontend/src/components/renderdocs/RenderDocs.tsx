@@ -9,24 +9,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import {
-  Button,
   Modal,
-  ModalBody,
   ModalContent,
-  ModalHeader,
-  Spinner,
-  Input,
 } from "@nextui-org/react";
 import { ToggleFile } from "@/redux/slices/filesSlices";
 import { useState } from "react";
-import { FileWarning } from "lucide-react";
 import { FileNotSupported } from "./FileNotSupported";
 
 const RenderDocs = () => {
+  const supportedFormats = ["pdf", "doc", "docx", "txt"];
   const [loading, setLoading] = useState(true);
-  const { isOpen, url, isSupported } = useSelector(
+  const { isOpen, url } = useSelector(
     (state: RootState) => state.files.toggleFile
   );
+  const isSupported = supportedFormats.some((format) => url?.includes(format));
   const dispatch = useDispatch();
 
   const handleClose = () => {

@@ -1,8 +1,5 @@
-import { Button } from "@nextui-org/button";
-import { PlusIcon, UploadDocumentIcon } from "../../../public/icons";
 import { SearchInput } from "../inputs";
 import UploadButton from "./UploadButton";
-import { PlusCircle } from "lucide-react";
 
 export default function NavBar() {
   return (
