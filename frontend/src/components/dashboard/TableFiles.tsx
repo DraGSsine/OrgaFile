@@ -6,6 +6,7 @@ import {
   Checkbox,
   Chip,
   Pagination,
+  Skeleton,
   Tooltip,
 } from "@nextui-org/react";
 import Image from "next/image";
@@ -22,8 +23,9 @@ import {
 } from "@/redux/slices/filesSlices";
 import { RouteNameType, filesType } from "@/types/types";
 import FilesSettings from "./files/FilesSettings";
-import { Delete02Icon, FileNotFoundIcon, Files01Icon } from "hugeicons-react";
+import { CloudUploadIcon, Delete02Icon, FileNotFoundIcon, FileSearchIcon, Files01Icon } from "hugeicons-react";
 import { motion } from "framer-motion";
+import { NoFilesToDisplay } from "./EmptyState/NoFilesToDisplay";
 
 export default function ResponsiveFilesList({
   files,
@@ -110,9 +112,9 @@ export default function ResponsiveFilesList({
         </Tooltip>
       </div>
 
-      <div className="bg-white rounded-t-lg shadow-small relative h-full">
+      <div className="p-5 rounded-t-lg shadow-small relative h-full flex flex-col space-y-5">
         {/* Header Row - Mimicking Table Header */}
-        <div className="grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 border-b py-3 font-semibold rounded-lg pl-6 bg-black text-white">
+        <div className="grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-3 font-semibold rounded-lg pl-6 bg-[#e7e8e9] text-gray-500">
           <div className="col-span-2 pl-4 2xl:pl-4 flex items-center">
             <Checkbox
               isSelected={isAllSelected}
@@ -135,8 +137,8 @@ export default function ResponsiveFilesList({
             {items.map((file) => (
               <div
                 key={file.fileId}
-                className={`2xl:pl-6 grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-gray-50 transition-colors fade-in ${
-                  selectedKeys.has(file.fileId) ? " bg-gray-50" : ""
+                className={`2xl:pl-6 rounded-lg grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${
+                  selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
                 }`}
               >
                 <div className="col-span-2 flex items-center space-x-4 pl-4">
@@ -221,86 +223,40 @@ function SkeletonLoader({ maxRows }: { maxRows: number }) {
       {[...Array(rows)].map((_, i) => (
         <div
           key={i}
-          className=" fade-in animate-pulse 2xl:pl-6 grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center bg-gray-50 transition-colors"
+          className=" rounded-lg fade-in  2xl:pl-6 grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center bg-gray-50 transition-colors"
         >
           {/* File Name & Icon */}
           <div className="col-span-2 flex items-center space-x-4 pl-4">
-            <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
-            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            <Skeleton className="w-10 h-10 bg-gray-200 rounded-md"></Skeleton>
+            <Skeleton className="h-4 bg-gray-200 rounded w-3/4"></Skeleton>
           </div>
 
           {/* Size */}
           <div className="text-center hidden xl:inline-block">
-            <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <Skeleton className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 
           {/* Created At */}
           <div className="text-center hidden 2xl:inline-block">
-            <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <Skeleton className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 
           {/* Type */}
           <div className="text-center">
-            <div className="h-6 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <Skeleton className="h-6 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 
           {/* Topic */}
           <div className="text-center">
-            <div className="h-6 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <Skeleton className="h-6 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 
           {/* Settings */}
           <div className="text-center">
-            <div className="h-6 bg-gray-300 rounded w-4 mx-auto"></div>
+            <Skeleton className="h-6 bg-gray-200 rounded w-4 mx-auto"></Skeleton>
           </div>
         </div>
       ))}
     </div>
-  );
-}
-
-function NoFilesToDisplay() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-col justify-center items-center text-center space-y-6 p-4 h-[80%]"
-    >
-      <motion.div
-        initial={{ rotate: -10 }}
-        animate={{
-          rotate: [0, 10, -10, 0],
-          transition: {
-            repeat: Infinity,
-            duration: 2,
-            ease: "easeInOut",
-          },
-        }}
-      >
-        <FileNotFoundIcon
-          size={120}
-          className="text-gray-400 mb-6 opacity-70"
-        />
-      </motion.div>
-      <div>
-        <motion.h2
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-2xl font-bold text-gray-800 mb-2"
-        >
-          No files to display
-        </motion.h2>
-        <motion.p
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-gray-500 mb-6"
-        >
-          Upload files to get started
-        </motion.p>
-      </div>
-    </motion.div>
   );
 }

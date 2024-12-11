@@ -10,7 +10,7 @@ export class AuthController {
   private resHeaders: CookieOptions = {
     httpOnly: true,
     secure: false,
-    sameSite: 'none',
+    sameSite: 'lax',
     domain: 'localhost',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',

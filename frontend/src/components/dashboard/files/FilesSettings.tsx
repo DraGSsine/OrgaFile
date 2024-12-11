@@ -15,10 +15,16 @@ import {
   setRemoveFiles,
   restoreFile,
   downloadFile,
+  resetFilesState,
+  resetFileResotreState,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
-import { ArrowDown03Icon, Delete02Icon, DeletePutBackIcon, MoreVerticalCircle01Icon } from "hugeicons-react";
-
+import {
+  ArrowDown03Icon,
+  Delete02Icon,
+  DeletePutBackIcon,
+  MoreVerticalCircle01Icon,
+} from "hugeicons-react";
 
 const FilesSettings = ({
   fileId,
@@ -33,7 +39,6 @@ const FilesSettings = ({
 
   function handleAction({ key }: { key: string | number }) {
     if (key === "delete") {
-      console.log("delete");
       dispatch(setConfirmFileRemoveModal(true));
       dispatch(
         setRemoveFiles({
@@ -42,12 +47,13 @@ const FilesSettings = ({
           isMany: false,
         })
       );
-    }
-    else if (key === "restore") {
-      dispatch(restoreFile({fileId}));
-    }
-    else if (key === "downloadFile") {
-      toast.promise(dispatch(downloadFile({fileId,fileName})), {
+    } else if (key === "restore") {
+      dispatch(restoreFile({ fileId })).then(() => {
+        dispatch(resetFileResotreState());
+        toast.success("File restored successfully");
+      });
+    } else if (key === "downloadFile") {
+      toast.promise(dispatch(downloadFile({ fileId, fileName })), {
         loading: "Downloading...",
         success: "Downloaded successfully",
         error: "Failed to download",
@@ -79,10 +85,15 @@ const FilesSettings = ({
             Download file
           </DropdownItem>
           {routeName === "removedFiles" ? (
-            <DropdownItem startContent={<DeletePutBackIcon size={20} />} key="restore">
+            <DropdownItem
+              startContent={<DeletePutBackIcon size={20} />}
+              key="restore"
+            >
               Restore file
             </DropdownItem>
-          ) : null as any}
+          ) : (
+            (null as any)
+          )}
           <DropdownItem
             startContent={<Delete02Icon size={20} />}
             key="delete"

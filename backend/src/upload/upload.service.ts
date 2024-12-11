@@ -15,6 +15,7 @@ import { UserDocument } from '../schemas/auth.schema';
 import { RemovedFilesDocument } from '../schemas/removedFiles.schema';
 import { FolderDocument } from '../schemas/folders.schema';
 import { Readable } from 'stream';
+import { convertToGb } from 'src/helpers/sizeConverter';
 @Injectable()
 export class UploadService {
   constructor(
@@ -39,8 +40,9 @@ export class UploadService {
       throw new NotFoundException('User not found');
     }
     try {
+      console.log('uploadFiles', files);
       const fileSize = files.reduce((acc, file) => acc + file.size, 0);
-      const fileSizeInGB = fileSize / 1000000000;
+      const fileSizeInGB = convertToGb(fileSize);
       if (user.storageUsed + fileSizeInGB > user.storage) {
         throw new BadRequestException('Storage limit exceeded');
       } else if (user.requestUsed + files.length > user.requestLimit) {
@@ -174,7 +176,7 @@ export class UploadService {
         const size = userFiles.files.find(
           (file) => file.fileId === fileId,
         ).size;
-        user.storageUsed -= size / 1000000000;
+        user.storageUsed -= size;
         // Remove the file from the folder and identify the folder
         const folderUpdateResult = await this.folderModel.updateOne(
           { userId: req.user.userId, 'folders.files.fileId': fileId },
@@ -233,20 +235,43 @@ export class UploadService {
           throw new NotFoundException('Files not found in removed files');
         }
 
-        const removedFilesSize = files.files.reduce((totalSize, file) => {
-          if (fileIds.includes(file.fileId)) {
-            return totalSize + file.size;
-          }
-          return totalSize;
-        }, 0);
+        // calculate the size of the files to be removed exmaples of size 0.004 g
+
+        const removedFilesSize = files.files
+          .filter((file) => {
+            const isIncluded = fileIds.includes(file.fileId);
+            return isIncluded;
+          })
+          .reduce((acc, file) => {
+            return acc + file.size;
+          }, 0);
 
         const removeResult = await this.removedFilesModel.updateOne(
           { userId: req.user.userId },
           { $pull: { files: { fileId: { $in: fileIds } } } },
         );
 
+
         if (removeResult.modifiedCount === 0) {
           throw new NotFoundException('Files not found in removed files');
+        }
+
+        // remove files from folder
+
+        const folderUpdateResult = await this.folderModel.updateOne(
+          { userId: req.user.userId },
+          {
+            $pull: {
+              folders: { files: { $elemMatch: { fileId: { $in: fileIds } } } },
+            },
+          },
+        );
+
+        if (folderUpdateResult.modifiedCount > 0) {
+          await this.folderModel.updateOne(
+            { userId: req.user.userId },
+            { $pull: { folders: { files: { $size: 0 } } } },
+          );
         }
 
         const deleteParams = {
@@ -259,7 +284,12 @@ export class UploadService {
         };
 
         const user = await this.userModel.findById(req.user.userId);
-        user.storageUsed -= removedFilesSize / 1000000000;
+        const updatedStorage = user.storageUsed - removedFilesSize;
+        if (updatedStorage < 0) {
+          user.storageUsed = 0;
+        } else {
+          user.storageUsed = updatedStorage;
+        }
         await user.save();
         await this.s3Client.deleteObjects(deleteParams).promise();
 

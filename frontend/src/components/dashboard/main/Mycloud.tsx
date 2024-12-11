@@ -2,10 +2,10 @@
 import { getFileImage } from "@/helpers/helpers";
 import { loadClouInfo } from "@/redux/slices/dashboardSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { Card, CardBody, Progress } from "@nextui-org/react";
+import { Card, CardBody, Progress, Skeleton } from "@nextui-org/react";
 import { File02Icon } from "hugeicons-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const getColorBaseOnFormat = (format: string) => {
@@ -38,27 +38,33 @@ const getColorBaseOnFormat = (format: string) => {
   }
 };
 const Mycloud = () => {
-  const { data, loading, error } = useSelector(
+  const { data, error } = useSelector(
     (state: RootState) => state.dashboard.cloudInfo
   );
   const { filesFormatInfo, storage, storageUsed } = data;
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     dispatch(loadClouInfo());
-  }, [dispatch]);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div>
       <h1 className=" font-medium text-2xl pb-6 ">My Cloud</h1>
       {loading ? (
         <CoudSkeleton />
       ) : (
-        <div className="grid grid-cols-2 fade-in  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
+        <div className="grid grid-cols-2 fade-in  2xl:grid-cols-4 min-h-[14.1vh] gap-8 fade-in">
           {filesFormatInfo.map((item) => (
             <Cloud
               key={item.name}
               name={item.name}
               filesNum={item.numberOfFiles}
-              used={+(item.size / 1024 / 1024 / 1024).toString().slice(0, 3)}
+              used={item.size}
               backGroundColor={getColorBaseOnFormat(item.name).backGroundColor}
               barColor={getColorBaseOnFormat(item.name).barColor}
               maxStorage={storage}
@@ -91,7 +97,7 @@ const Cloud = ({
   icon: string;
 }) => {
   return (
-    <Card className="rounded-lg w-full h-48 flex flex-col bg-white transition-all select-none ">
+    <Card className="rounded-lg w-full h-48 flex flex-col transition-all select-none ">
       <CardBody className="p-6 flex flex-col justify-between">
         <div className="flex items-center">
           <div
@@ -131,47 +137,33 @@ const Cloud = ({
 
 const CoudSkeleton = () => {
   return (
-    <div>
-      <div className="grid grid-cols-2  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
-        {[1, 2, 3, 4].map((item) => (
-          <Card
-            key={item}
-            className="rounded-lg w-full h-48 flex flex-col bg-gray-50 transition-all select-none "
-          >
-            <CardBody className="p-6 flex flex-col justify-between">
-              <div className="flex items-center">
-                <div
-                  className={`bg-gray-200 w-fit p-3 rounded-lg flex items-center justify-center`}
-                >
-                  <File02Icon/>
-                </div>
-                <div className="flex-grow pl-7">
-                  <h1 className=" text-lg">PDF</h1>
-                  <p className="text-gray-400 font-light text-sm ">10 Files</p>
-                </div>
+    <div className="grid grid-cols-2 fade-in  2xl:grid-cols-4 min-h-[14.1vh] gap-8">
+      {[1, 2, 3, 4].map((item) => (
+        <Card
+          key={item}
+          className="rounded-lg w-full h-48 flex flex-col bg-gray-50 transition-all select-none "
+        >
+          <CardBody className="p-6 flex flex-col justify-between">
+            <div className="flex items-center">
+              <div
+                className={`bg-gray-200 p-3 rounded-lg flex items-center justify-center w-[64px] h-[64px]`}
+              ></div>
+              <div className="flex-grow pl-7 space-y-4">
+                <Skeleton className="h-3 w-10 rounded-lg"></Skeleton>
+                <Skeleton className="h-3 rounded-lg w-10 "></Skeleton>
               </div>
+            </div>
 
-              <div className=" space-y-5">
-                <Progress
-                  color="default"
-                  classNames={{
-                    base: "max-w-md",
-                    track: `bg-gray-200 rounded-lg`,
-                    indicator: `bg-red-400 rounded-lg`,
-                  }}
-                  size="sm"
-                  value={10}
-                  maxValue={100}
-                />
-                <div className=" flex justify-between font-medium text-gray-600 ">
-                  <span>10Gb</span>
-                  <span>100Gb</span>
-                </div>
+            <div className=" space-y-5">
+              <Skeleton className=" h-8 w-full rounded-lg "></Skeleton>
+              <div className=" flex justify-between font-medium text-gray-600 ">
+                <Skeleton className=" w-20 h-5  inline-block rounded-lg "></Skeleton>
+                <Skeleton className=" w-20 h-5  inline-block rounded-lg "></Skeleton>
               </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </CardBody>
+        </Card>
+      ))}
     </div>
   );
 };

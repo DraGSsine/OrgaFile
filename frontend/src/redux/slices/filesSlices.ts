@@ -21,6 +21,7 @@ type FilesState = {
     error: any;
   };
   removeFileState: {
+    filesRemovedPermanently: boolean;
     isMany: boolean;
     confirmRemoveModal: boolean;
     files: string[];
@@ -65,6 +66,7 @@ const initialState: FilesState = {
     error: null,
   },
   removeFileState: {
+    filesRemovedPermanently: false,
     isMany: false,
     confirmRemoveModal: false,
     files: [],
@@ -148,7 +150,7 @@ export const removeFile = createAsyncThunk(
           withCredentials: true,
         }
       );
-      return response.data;
+      return isPermanently;
     } catch (error: any) {
       if (error.response) {
         return rejectWithValue(error.response.data);
@@ -173,7 +175,7 @@ export const removeManyFiles = createAsyncThunk(
           withCredentials: true,
         }
       );
-      return response.data;
+      return isPermanently;
     } catch (error: any) {
       if (error.response) {
         return rejectWithValue(error.response.data);
@@ -293,6 +295,10 @@ export const filesSlice = createSlice({
     resetConfirmFileRemoveModal: (state) => {
       state.removeFileState.confirmRemoveModal = false;
     },
+    resetFilesPermanentlyDeleted: (state) => {
+      state.removeFileState.filesRemovedPermanently = false;
+    },
+
     resetFilesState: (state) => {
       state.loadFilesState.files = [];
       state.loadFilesState.isLoading = false;
@@ -324,11 +330,21 @@ export const filesSlice = createSlice({
       state.removeFileState.isPermanently = action.payload.isPermanently;
     },
     setConfirmFileRemoveModal: (state, action) => {
-      console.log("action.payload", action.payload);
       state.removeFileState.confirmRemoveModal = action.payload;
     },
     setUploadModal: (state, action) => {
       state.uploadFileState.openUploadModal = action.payload;
+      if (action.payload == false) {
+        // reset the upload file state
+        state.uploadFileState.isFileUploaded = false;
+        state.uploadFileState.isLoading = false;
+        state.uploadFileState.error = null;
+      }
+    },
+    resetFileResotreState: (state) => {
+      state.restoreFileState.fileRestored = false;
+      state.restoreFileState.isLoading = false;
+      state.restoreFileState.error = null;
     },
   },
   extraReducers(builder) {
@@ -403,10 +419,11 @@ export const filesSlice = createSlice({
       state.removeFileState.isLoading = true;
       state.removeFileState.error = null;
     });
-    builder.addCase(removeFile.fulfilled, (state) => {
+    builder.addCase(removeFile.fulfilled, (state, action: any) => {
       state.removeFileState.isLoading = false;
       state.removeFileState.isFileDeleted = true;
       state.removeFileState.error = null;
+      state.removeFileState.filesRemovedPermanently = action.payload;
     });
     builder.addCase(removeFile.rejected, (state, action: any) => {
       state.removeFileState.isLoading = false;
@@ -419,10 +436,11 @@ export const filesSlice = createSlice({
       state.removeFileState.isLoading = true;
       state.removeFileState.error = null;
     });
-    builder.addCase(removeManyFiles.fulfilled, (state) => {
+    builder.addCase(removeManyFiles.fulfilled, (state, action: any) => {
       state.removeFileState.isLoading = false;
       state.removeFileState.isFileDeleted = true;
       state.removeFileState.error = null;
+      state.removeFileState.filesRemovedPermanently = action.payload;
     });
     builder.addCase(removeManyFiles.rejected, (state, action: any) => {
       state.removeFileState.isLoading = false;
@@ -454,4 +472,6 @@ export const {
   setUploadModal,
   resetConfirmFileRemoveModal,
   ToggleFile,
+  resetFileResotreState,
+  resetFilesPermanentlyDeleted,
 } = filesSlice.actions;

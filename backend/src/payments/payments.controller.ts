@@ -21,8 +21,8 @@ export class PaymentController {
   private resHeaders: CookieOptions = {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
-    domain: 'orgafile.com',
+    sameSite: 'lax',
+    domain: 'localhost',
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
   };

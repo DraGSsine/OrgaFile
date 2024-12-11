@@ -71,3 +71,19 @@ export interface userCookieInfoType {
   email: string | null;
   plan: string | null;
 }
+
+
+export interface StorageProgressProps {
+  isLoading: boolean;
+  value: number;
+  max: number;
+  label: string;
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "danger";
+  className?: string;
+}

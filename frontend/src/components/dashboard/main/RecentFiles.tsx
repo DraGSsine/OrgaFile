@@ -50,9 +50,9 @@ const RecentUploadsPage = () => {
     LoadRecentFiles();
     handleFileStates();
     dispatch(resetFilesState());
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
      setIsLoading(false);
-    }, 1000);
+    }, 500);
     return () => clearInterval(timer);
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 

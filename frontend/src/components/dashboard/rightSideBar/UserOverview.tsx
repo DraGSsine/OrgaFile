@@ -1,13 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import UserProfile from "../UserProfile";
 import { useRouter } from "next/navigation";
 import { userCookieInfoType } from "@/types/types";
-import { AppDispatch } from "@/redux/store";
-import { useDispatch } from "react-redux";
-import { SignOutAction, signOut } from "@/redux/slices/authSlice";
 
 const UserOverview = () => {
   const [userInfo, setUserInfo] = useState<userCookieInfoType | null>(null);

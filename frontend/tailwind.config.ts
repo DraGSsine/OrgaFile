@@ -40,6 +40,26 @@ const config: Config = {
         "primary-color": "var(--primary-color)",
         "dark-primary-color": "var(--dark-primary-color)",
       },
+      gridTemplateColumns: {
+        16: "repeat(16, minmax(0, 1fr))",
+      },
+      gridTemplateRows: {
+        16: "repeat(16, minmax(0, 1fr))",
+      },
+      gridColumnStart: {
+        13: "13",
+        14: "14",
+        15: "15",
+        16: "16",
+        17: "17",
+      },
+      gridColumnEnd: {
+        13: "13",
+        14: "14",
+        15: "15",
+        16: "16",
+        17: "17",
+      },
     },
   },
   darkMode: "class",
