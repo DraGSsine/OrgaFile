@@ -72,18 +72,38 @@ export interface userCookieInfoType {
   plan: string | null;
 }
 
+type Color = "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+export interface StorageProgressProps {
+  isLoading: boolean;
+  value: number;
+  max: number;
+  label: string;
+  color?: Color;
+  className?: string;
+}
+
 
 export interface StorageProgressProps {
   isLoading: boolean;
   value: number;
   max: number;
   label: string;
-  color?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "danger";
+  color?: Color;
   className?: string;
+}
+
+export interface UsageCardProps {
+  title: string;
+  icon: React.ReactNode;
+  iconColor: string;
+  iconBgColor: string;
+  value: number;
+  max: number;
+  label: string;
+  progressColor: Color;
+  isLoading: boolean;
+}
+
+export interface UserOverviewProps {
+  isMobile?: boolean;
 }

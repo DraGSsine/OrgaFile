@@ -1,48 +1,42 @@
 "use client";
-import { loadUserLimits } from "@/redux/slices/dashboardSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import { Card, CardBody, Progress, Skeleton } from "@nextui-org/react";
-import { CloudIcon, LimitationIcon } from "hugeicons-react";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { StorageProgress } from "./StorageProgress";
+import { AppDispatch, RootState } from "@/redux/store";
+import { loadUserLimits } from "@/redux/slices/dashboardSlice";
+import { Activity01Icon } from "hugeicons-react";
+import { UsageCard } from "./UsageCard";
+
 
 export function RequestUsage() {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
+  
   const { requestUsed, requestLimit } = useSelector(
     (state: RootState) => state.dashboard.userLimits
   );
+  
   const { isFileUploaded } = useSelector(
     (state: RootState) => state.files.uploadFileState
   );
+
   useEffect(() => {
-    dispatch(loadUserLimits()).then((res) => {
+    dispatch(loadUserLimits()).then(() => {
       setLoading(false);
     });
-  }, [isFileUploaded]);
+  }, [isFileUploaded, dispatch]);
 
   return (
-    <Card
-      className="w-full h-52"
-    >
-      <CardBody className="p-6 flex flex-col justify-between">
-        <div>
-          <div className="bg-success-100/50 dark:bg-success-900/20 w-fit p-3 rounded-lg">
-            <LimitationIcon className="w-7 h-7 text-success-500" />
-          </div>
-          <h2 className="font-semibold text-sm 2xl:text-xl mt-4">
-            Monthly Usage
-          </h2>
-        </div>
-        <StorageProgress
-          isLoading={loading}
-          value={requestUsed}
-          max={requestLimit}
-          label={`${requestUsed} of ${requestLimit} requests`}
-          color="success"
-        />
-      </CardBody>
-    </Card>
+    <UsageCard
+      title="Monthly Usage"
+      icon={<Activity01Icon />}
+      iconColor="text-success-500"
+      iconBgColor="bg-success-100/50 dark:bg-success-900/20"
+      value={requestUsed}
+      max={requestLimit}
+      label={`${requestUsed} of ${requestLimit} requests`}
+      progressColor="success"
+      isLoading={loading}
+    />
   );
 }
