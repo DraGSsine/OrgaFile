@@ -65,6 +65,10 @@ export type FolderType = {
 
 export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folder";
 
+export type showUsageModalType = {
+  open: boolean;
+  modal: "storage" | "request";
+};
 
 export interface userCookieInfoType {
   fullName?: string | null;

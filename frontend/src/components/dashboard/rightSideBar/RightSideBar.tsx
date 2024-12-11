@@ -4,7 +4,7 @@ import UserOverview from "./UserOverview";
 
 export const RightSideBar = () => {
   return (
-    <div className=" col-start-15 col-end-17 border-l">
+    <div className=" hidden xl:inline-block col-start-15 col-end-17 border-l">
       <div className=" px-8 items-center flex h-[8vh] border-b justify-between ">
         <UserOverview />
       </div>

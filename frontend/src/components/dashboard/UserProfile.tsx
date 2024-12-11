@@ -7,7 +7,6 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import React from "react";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";

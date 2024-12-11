@@ -6,12 +6,20 @@ import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
 import { SidebarContent } from "./sidebar-content";
 import { MobileTrigger } from "./mobile-trigger";
 import { cn } from "@nextui-org/react";
+import { showUsageModalType } from "@/types/types";
+import { StorageUsage } from "../rightSideBar/StorageUsage";
 
+import { RequestUsage } from "../rightSideBar/ReqesutUsage";
+import { CancelCircleIcon, XingIcon } from "hugeicons-react";
+import { AnimatePresence, motion } from "framer-motion";
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [showUsageModal, setShowUsageModal] = useState<showUsageModalType>({
+    open: false,
+    modal: "storage" || "request",
+  });
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -25,21 +33,32 @@ export default function Sidebar() {
 
   if (isMobile) {
     return (
-      <div className="absolute top-6 left-4">
-        <MobileTrigger onOpen={onOpen} />
-        <Modal
-          isOpen={isOpen}
-          onClose={onClose}
-          placement="auto"
-          classNames={{
-            wrapper: "!items-start",
-            base: "!m-0 h-full !rounded-none",
-          }}
-        >
-          <ModalContent className="h-full w-72 p-0">
-            <SidebarContent isCollapsed={false} isMobile />
-          </ModalContent>
-        </Modal>
+      <div>
+        <MobileTrigger isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ width: 0, x: "-100%" }}
+              animate={{
+                width: "50%",
+                x: 0,
+              }}
+              exit={{
+                width: 0,
+                x: "-100%",
+              }}
+              transition={{
+                type: "tween",
+                ease: "easeInOut",
+                duration: 0.3,
+              }}
+              className="z-40 bg-white absolute left-0 top-0 h-screen border overflow-hidden"
+            >
+              <SidebarContent isCollapsed={false} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
@@ -53,8 +72,22 @@ export default function Sidebar() {
     >
       <SidebarContent
         isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+        setShowUsageModal={setShowUsageModal}
+        ShowUsageModal={showUsageModal}
       />
+      <Modal
+        isOpen={showUsageModal.open}
+        onClose={() =>
+          setShowUsageModal({ open: false, modal: showUsageModal.modal })
+        }
+      >
+        <ModalContent>
+          <div className="flex items-center justify-center h-full">
+            {showUsageModal.modal === "storage" && <StorageUsage />}
+            {showUsageModal.modal === "request" && <RequestUsage />}
+          </div>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

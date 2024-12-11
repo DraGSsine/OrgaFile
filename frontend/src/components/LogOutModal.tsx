@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import { Alert02Icon } from "hugeicons-react";
 import Link from "next/link";
 
-
 const SignoutModal = () => {
   const router = useRouter();
   const { SignoutModal } = useSelector((state: RootState) => state.dashboard);
@@ -26,11 +25,13 @@ const SignoutModal = () => {
   const handleSignOut = () => {
     console.log("signing out");
     setLoading(true);
-    dispatch(SignOutAction()).then(() => {
-      dispatch(closeSignoutModal());
-      router.push("/auth/signin");
-      setLoading(false);
-    });
+    setTimeout(() => {
+      dispatch(SignOutAction()).then(() => {
+        dispatch(closeSignoutModal());
+        router.push("/auth/signin");
+        setLoading(false);
+      });
+    }, 1000);
   };
   return (
     <div className=" -z-50 absolute inset-0">
@@ -54,9 +55,9 @@ const SignoutModal = () => {
                   <div className=" space-y-3">
                     <p className=" font-semibold"> Sign Out </p>
                     <p className=" font-normal text-sm text-zinc-500">
-                      {" "}
-                      Are you sure you would like to sign out of your <Link href="/">OrgaFile</Link>
-                      account?{" "}
+                      Are you sure you would like to sign out of your{" "}
+                      <Link href="/">OrgaFile</Link>
+                      account?
                     </p>
                   </div>
                 </div>
