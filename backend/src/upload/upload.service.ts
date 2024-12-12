@@ -15,7 +15,7 @@ import { UserDocument } from '../schemas/auth.schema';
 import { RemovedFilesDocument } from '../schemas/removedFiles.schema';
 import { FolderDocument } from '../schemas/folders.schema';
 import { Readable } from 'stream';
-import { convertToGb } from 'src/helpers/sizeConverter';
+
 @Injectable()
 export class UploadService {
   constructor(
@@ -40,10 +40,9 @@ export class UploadService {
       throw new NotFoundException('User not found');
     }
     try {
-      console.log('uploadFiles', files);
       const fileSize = files.reduce((acc, file) => acc + file.size, 0);
-      const fileSizeInGB = convertToGb(fileSize);
-      if (user.storageUsed + fileSizeInGB > user.storage) {
+      const fileInGb = (fileSize + user.storageUsed) / 1024 / 1024 / 1024;
+      if (fileInGb > user.storage) {
         throw new BadRequestException('Storage limit exceeded');
       } else if (user.requestUsed + files.length > user.requestLimit) {
         throw new BadRequestException('Request limit exceeded');
@@ -55,7 +54,7 @@ export class UploadService {
         this.folderModel,
         this.s3Client,
       );
-      user.storageUsed += fileSizeInGB;
+      user.storageUsed += fileSize;
       user.requestUsed += files.length;
       await user.save();
       return fileDocuments;
@@ -250,7 +249,6 @@ export class UploadService {
           { userId: req.user.userId },
           { $pull: { files: { fileId: { $in: fileIds } } } },
         );
-
 
         if (removeResult.modifiedCount === 0) {
           throw new NotFoundException('Files not found in removed files');

@@ -7,6 +7,7 @@ import { loadUserLimits } from "@/redux/slices/dashboardSlice";
 import { resetFilesPermanentlyDeleted } from "@/redux/slices/filesSlices";
 import { UsageCard } from "./UsageCard";
 import { CloudIcon } from "hugeicons-react";
+import { formatFileSize } from "@/helpers/helpers";
 
 export function StorageUsage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,9 +38,9 @@ export function StorageUsage() {
       icon={<CloudIcon />}
       iconColor="text-primary-500"
       iconBgColor="bg-primary-100/50 dark:bg-primary-900/20"
-      value={storageUsed}
+      value={storageUsed /100000000 } // bytes Convert to GB
       max={storageLimit}
-      label={`${storageUsed.toPrecision(1)} GB of ${storageLimit} GB`}
+      label={`${formatFileSize(storageUsed)} of ${storageLimit} GB`}
       progressColor="primary"
       isLoading={loading}
     />

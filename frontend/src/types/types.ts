@@ -32,6 +32,23 @@ export type initialStateType = {
   isLoading: boolean;
 };
 
+export interface FileFormat {
+  name: string;
+  numberOfFiles: number;
+  size: number;
+}
+
+export interface CloudInfo {
+  filesFormatInfo: FileFormat[];
+  storage: number;
+  storageUsed: number;
+}
+
+export interface ColorScheme {
+  barColor: string;
+  backGroundColor: string;
+}
+
 export type filesType = {
   fileId: string;
   name: string;
@@ -110,4 +127,11 @@ export interface UsageCardProps {
 
 export interface UserOverviewProps {
   isMobile?: boolean;
+}
+
+export interface RecentUploadsProps {
+  files: any[];
+  isLoading: boolean;
+  maxRows?: number;
+  routeName?: RouteNameType
 }

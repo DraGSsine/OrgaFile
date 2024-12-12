@@ -9,6 +9,8 @@ import {
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
+import { HeaderPage } from "@/components/dashboard/HeaderPage";
+import { File01Icon, Files02Icon } from "hugeicons-react";
 
 const AllFilesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,10 +57,10 @@ const AllFilesPage = () => {
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
   return (
-    <div className=" h-full flex flex-col ">
-      <h1 className=" font-medium text-2xl pl-2 pb-6 "> All Files </h1>
+    <div className=" h-full flex flex-col pt-5 ">
+      <HeaderPage icon={<File01Icon className=" h-8 w-8 text-primary-500 " />} title="All Files" description="Discover All Your upladed files " />
       <TableFiles
-        maxRows={12}
+        maxRows={11}
         files={loadFilesState.files}
         isLoading={isLoading}
         routeName="allFiles"

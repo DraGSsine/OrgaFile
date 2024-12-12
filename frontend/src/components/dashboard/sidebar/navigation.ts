@@ -1,4 +1,4 @@
-import {DashboardSquare01Icon, Files01Icon,Folder01Icon, Delete01Icon, Settings01Icon} from "hugeicons-react"
+import {DashboardSquare01Icon, File01Icon,Folder01Icon, Delete02Icon, Settings01Icon} from "hugeicons-react"
 
 export const navigation = [
   {
@@ -9,7 +9,7 @@ export const navigation = [
   {
     name: "Files",
     href: "/dashboard/files",
-    icon: Files01Icon,
+    icon: File01Icon,
   },
   {
     name: "Repository",
@@ -19,7 +19,7 @@ export const navigation = [
   {
     name: "Trash",
     href: "/dashboard/trash",
-    icon: Delete01Icon,
+    icon: Delete02Icon,
   },
   {
     name: "Settings",

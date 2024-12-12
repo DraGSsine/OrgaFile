@@ -10,7 +10,6 @@ import AWS from 'aws-sdk';
 import { FileDocument, FileInfo } from '../schemas/files.schema';
 import { FolderDocument } from '../schemas/folders.schema';
 import { AiRespone, FolderInfoType } from 'src/types/type';
-import { convertToGb } from './sizeConverter';
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];
@@ -64,7 +63,7 @@ export const uploadFiles = async (
         url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${urlend}`,
         format: file.originalname.split('.').pop(),
         name: newFileName,
-        size: convertToGb(file.size),
+        size: file.size,
         createdAt: new Date(),
         documentType: documentInfo.documentType,
         keyEntities: documentInfo.keyEntities,

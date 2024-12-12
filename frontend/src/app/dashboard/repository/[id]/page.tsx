@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import React from "react";
 import { loadOneFolder, resetFolderState } from "@/redux/slices/foldersSlice";
 import { useParams } from "next/navigation";
+import { HeaderPage } from "@/components/dashboard/HeaderPage";
+import { Folder02Icon } from "hugeicons-react";
 
 const Page = () => {
   const { id } = useParams();
@@ -39,8 +41,8 @@ const Page = () => {
     dispatch,
   ]);
   return (
-    <div className=" h-full flex flex-col ">
-      <h1 className=" font-medium text-2xl pl-2 pb-6 "> {folder?.name} Files </h1>
+    <div className=" pt-5 h-full flex flex-col ">
+      <HeaderPage icon={<Folder02Icon className=" h-8 w-8 text-primary-500"/>} title={folder?.name!} description="your organized files" />
       <TableFiles
         maxRows={9}
         files={folder?.files ?? []}

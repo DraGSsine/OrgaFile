@@ -1,3 +1,5 @@
+import { ColorScheme } from "@/types/types";
+
 export function bytesToMegaBytes(bytes: number) {
   let size = bytes / 1024 / 1024;
 
@@ -9,6 +11,46 @@ export function bytesToMegaBytes(bytes: number) {
     return (size / 1024).toFixed(2) + " GB";
   }
 }
+
+export function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let size = bytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(1)} ${units[unitIndex]}`;
+}
+
+export const getColorBaseOnFormat = (format: string): ColorScheme => {
+  const colors: Record<string, ColorScheme> = {
+    pdf: {
+      barColor: "bg-danger-500",
+      backGroundColor: "bg-danger-50",
+    },
+    docx: {
+      barColor: "bg-primary-500",
+      backGroundColor: "bg-primary-50",
+    },
+    txt: {
+      barColor: "bg-default-500",
+      backGroundColor: "bg-default-100",
+    },
+    xlsx: {
+      barColor: "bg-success-500",
+      backGroundColor: "bg-success-50",
+    },
+    default: {
+      barColor: "bg-default-500",
+      backGroundColor: "bg-default-100",
+    },
+  };
+
+  return colors[format.toLowerCase()] || colors.default;
+};
 
 export function FormatTheDate(date: Date) {
   const d = new Date(date);

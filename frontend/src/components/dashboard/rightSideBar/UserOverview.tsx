@@ -22,8 +22,8 @@ const UserOverview = () => {
     <>
       {userInfo ? (
         <div className="flex flex-col">
-          <span className="font-semibold">{userInfo.email}</span>
-          <span className="text-primary">{userInfo.plan}</span>
+          <span className="font-semibold text-lg capitalize">{userInfo.fullName}</span>
+          <span className="text-primary font-bold">{userInfo.plan || "Basic"}</span>
         </div>
       ) : (
         <InfoSkeleton />

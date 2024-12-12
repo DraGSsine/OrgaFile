@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/modal";
 
-import { SidebarContent } from "./sidebar-content";
-import { MobileTrigger } from "./mobile-trigger";
+import { SidebarContent } from "./sidebarContent";
+import { MobileTrigger } from "./mobileTrigger";
 import { cn } from "@nextui-org/react";
 import { showUsageModalType } from "@/types/types";
 import { StorageUsage } from "../rightSideBar/StorageUsage";

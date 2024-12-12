@@ -13,6 +13,7 @@ import Image from "next/image";
 import {
   FormatTheDate,
   bytesToMegaBytes,
+  formatFileSize,
   getFileImage,
 } from "@/helpers/helpers";
 import { AppDispatch } from "@/redux/store";
@@ -23,11 +24,20 @@ import {
 } from "@/redux/slices/filesSlices";
 import { RouteNameType, filesType } from "@/types/types";
 import FilesSettings from "./files/FilesSettings";
-import { CloudUploadIcon, Delete02Icon, FileNotFoundIcon, FileSearchIcon, Files01Icon } from "hugeicons-react";
+import {
+  CloudUploadIcon,
+  Delete02Icon,
+  FileNotFoundIcon,
+  FileSearchIcon,
+  Files01Icon,
+  HelpCircleIcon,
+  QuestionIcon,
+  QuotesIcon,
+} from "hugeicons-react";
 import { motion } from "framer-motion";
 import { NoFilesToDisplay } from "./EmptyState/NoFilesToDisplay";
 
-export default function ResponsiveFilesList({
+export default function TableFiles({
   files,
   isLoading,
   maxRows,
@@ -96,7 +106,7 @@ export default function ResponsiveFilesList({
 
       <div
         className={` ${
-          selectedKeys.size <= 0 ? " opacity-0" : "opacity-100"
+          selectedKeys.size <= 0 ? " hidden" : " inline-block "
         } absolute right-0 -top-10 `}
       >
         <Tooltip content={`Delete ${selectedKeys.size} Selected Files`}>
@@ -112,10 +122,10 @@ export default function ResponsiveFilesList({
         </Tooltip>
       </div>
 
-      <div className="p-5 rounded-t-lg shadow-small relative h-full flex flex-col space-y-5">
+      <div className=" p-1 xl:p-5 rounded-t-lg shadow-small relative h-full flex flex-col space-y-5">
         {/* Header Row - Mimicking Table Header */}
-        <div className="grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-3 font-semibold rounded-lg pl-6 bg-[#e7e8e9] text-gray-500">
-          <div className="col-span-2 pl-4 2xl:pl-4 flex items-center">
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-3 font-semibold rounded-lg xl:p-6 bg-[#e7e8e9] text-gray-500">
+          <div className="col-span-2 pl-4 flex items-center">
             <Checkbox
               isSelected={isAllSelected}
               onChange={toggleAllSelection}
@@ -125,19 +135,19 @@ export default function ResponsiveFilesList({
           </div>
           <div className="text-center hidden xl:inline-block ">SIZE</div>
           <div className="text-center hidden 2xl:inline-block">CREATED AT</div>
-          <div className="text-center">TYPE</div>
-          <div className="text-center">TOPIC</div>
+          <div className="text-center hidden lg:inline-block ">TYPE</div>
+          <div className="text-center hidden sm:inline-block ">TOPIC</div>
           <div className="text-center">SETTINGS</div>
         </div>
 
         {isLoading ? (
           <SkeletonLoader maxRows={maxRows} />
         ) : (
-          <div className="">
+          <div className=" space-y-2">
             {items.map((file) => (
               <div
                 key={file.fileId}
-                className={`2xl:pl-6 rounded-lg grid grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${
+                className={`2xl:pl-6 rounded-lg grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5  xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${
                   selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
                 }`}
               >
@@ -158,15 +168,16 @@ export default function ResponsiveFilesList({
                 </div>
 
                 <div className="text-center hidden xl:inline-block">
-                  {bytesToMegaBytes(file.size)}
+                  {formatFileSize(file.size)}
                 </div>
 
                 <div className="text-center hidden 2xl:inline-block ">
                   {FormatTheDate(file.createdAt)}
                 </div>
 
-                <div className="text-center">
+                <div className="text-center  hidden lg:inline-block">
                   <Chip
+                    className="hidden md:inline-block"
                     size="sm"
                     color="warning"
                     variant="dot"
@@ -174,9 +185,25 @@ export default function ResponsiveFilesList({
                   >
                     {file.documentType}
                   </Chip>
+
+                  <Tooltip
+                    content={file.format}
+                    >
+                    <Button
+                    className="md:hidden"
+                      color="primary"
+                      variant="light"
+                      size="sm"
+                    >
+                      <FileSearchIcon size={24} />
+                    </Button>
+                  </Tooltip>
+
+
                 </div>
-                <div className="text-center">
+                <div className="text-center hidden sm:inline-block ">
                   <Chip
+                    className="hidden md:inline-block"
                     size="sm"
                     color="warning"
                     variant="dot"
@@ -184,6 +211,18 @@ export default function ResponsiveFilesList({
                   >
                     {file.topic}
                   </Chip>
+                  <Tooltip
+                    content={file.topic}
+                    >
+                    <Button
+                    className="md:hidden"
+                      color="primary"
+                      variant="light"
+                      size="sm"
+                    >
+                      <HelpCircleIcon size={24} />
+                    </Button>
+                  </Tooltip>
                 </div>
 
                 <div className="text-center">
@@ -197,7 +236,7 @@ export default function ResponsiveFilesList({
             ))}
           </div>
         )}
-        <div className="flex w-full justify-center absolute bottom-5">
+        <div className="flex w-full justify-center">
           <Pagination
             total={pages || 1}
             page={page}
@@ -217,7 +256,7 @@ export default function ResponsiveFilesList({
 }
 
 function SkeletonLoader({ maxRows }: { maxRows: number }) {
-  const rows = maxRows == 9 ? 5 : 10;
+  const rows = maxRows == 7 ? 5 : 10;
   return (
     <div className="space-y-4">
       {[...Array(rows)].map((_, i) => (

@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { navigation } from "./navigation";
 import { Logo } from "./logo";
-import { NavItem } from "./nav-item";
+import { NavItem } from "./navItem";
 import {
   Activity01Icon,
   CloudIcon,
@@ -52,17 +52,24 @@ export function SidebarContent({
         <Logo isCollapsed={isCollapsed} />
       </div>
       <nav className="flex-1 space-y-2 px-2 flex justify-between flex-col">
-        <div>
-          {navigation.map((item) => (
-            <NavItem
-              key={item.name}
-              href={item.href}
-              name={item.name}
-              icon={item.icon}
-              isActive={pathname === item.href}
-              isCollapsed={isCollapsed}
-            />
-          ))}
+        <div className=" space-y-2">
+          {navigation.map((item) => {
+            let isActive = false;
+            if (item.href == "/dashboard")
+              isActive = pathname === item.href;
+            else
+              isActive = pathname.includes(item.href);
+            return (
+              <NavItem
+                key={item.name}
+                href={item.href}
+                name={item.name}
+                icon={item.icon}
+                isActive={isActive}
+                isCollapsed={isCollapsed}
+              />
+            );
+          })}
         </div>
         <div className=" py-5 space-y-20 min-w-[220px] md:min-w-full">
           <div>

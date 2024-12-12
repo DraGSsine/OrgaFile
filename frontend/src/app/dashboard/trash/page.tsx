@@ -9,12 +9,18 @@ import {
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import React from "react";
+import { HeaderPage } from "@/components/dashboard/HeaderPage";
+import { Delete02Icon } from "hugeicons-react";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = React.useState(true);
-  const { loadRemovedFilesState, removeFileState, restoreFileState,uploadFileState } =
-    useSelector((state: RootState) => state.files);
+  const {
+    loadRemovedFilesState,
+    removeFileState,
+    restoreFileState,
+    uploadFileState,
+  } = useSelector((state: RootState) => state.files);
   useEffect(() => {
     dispatch(loadRemovedFiles());
     if (loadRemovedFilesState.error) {
@@ -33,14 +39,22 @@ const Page = () => {
     }
     const timer = setTimeout(() => {
       setIsLoading(false);
-    } , 500);
+    }, 500);
     return () => clearTimeout(timer);
-  }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted, restoreFileState.fileRestored]);
+  }, [
+    uploadFileState.isFileUploaded,
+    removeFileState.isFileDeleted,
+    restoreFileState.fileRestored,
+  ]);
   return (
-    <div className=" flex flex-col h-full ">
-      <h1 className="font-medium text-2xl pl-2 pb-6">My Trash</h1>
+    <div className=" flex flex-col h-full pt-5 ">
+      <HeaderPage
+        icon={<Delete02Icon className=" h-8 w-8 text-primary-500 " />}
+        title="Deleted Files"
+        description="Restore Your Deleted Files"
+      />
       <TableFiles
-        maxRows={12}
+        maxRows={11}
         files={loadRemovedFilesState.files}
         isLoading={isLoading}
         routeName="removedFiles"

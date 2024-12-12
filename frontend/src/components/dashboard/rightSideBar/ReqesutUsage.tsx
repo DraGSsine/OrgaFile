@@ -28,7 +28,7 @@ export function RequestUsage() {
 
   return (
     <UsageCard
-      title="Monthly Usage"
+      title="Request Usage"
       icon={<Activity01Icon />}
       iconColor="text-success-500"
       iconBgColor="bg-success-100/50 dark:bg-success-900/20"

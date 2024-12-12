@@ -10,6 +10,7 @@ import {
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
+import { RecentUploadsContainer } from "../recentUpload/recentFilesConatainer";
 
 const RecentUploadsPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -51,18 +52,17 @@ const RecentUploadsPage = () => {
     handleFileStates();
     dispatch(resetFilesState());
     const timer = setTimeout(() => {
-     setIsLoading(false);
+      setIsLoading(false);
     }, 500);
     return () => clearInterval(timer);
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
   return (
-    <div className=" flex flex-col h-full ">
-      <h1 className=" font-medium text-2xl pl-2 pb-6 "> Recent Uploads </h1>
-      <RecentFilesTable
-        maxRows={9}
+    <div className=" h-full w-full">
+      <RecentUploadsContainer
         files={recentFilesState.files}
         isLoading={isLoading}
+        maxRows={7}
         routeName="allFiles"
       />
     </div>
