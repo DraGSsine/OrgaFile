@@ -8,9 +8,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   private resHeaders: CookieOptions = {
-    sameSite: 'none', // Cross-site
-    secure: true,     // HTTPS required
-    httpOnly: true    // Prevents client-side access
+    sameSite: 'lax',
+    secure: false,
+    httpOnly: true
   };
 
   @Post('signin')

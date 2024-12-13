@@ -6,7 +6,7 @@ import cookieParser = require('cookie-parser');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   const corsOptions = {
-    origin: 'https://orgafile.com',
+    origin: 'http://localhost:3000',
     credentials: true,
   };
 
