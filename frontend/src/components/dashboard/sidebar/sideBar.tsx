@@ -12,13 +12,14 @@ import { StorageUsage } from "../rightSideBar/StorageUsage";
 import { RequestUsage } from "../rightSideBar/ReqesutUsage";
 import { CancelCircleIcon, XingIcon } from "hugeicons-react";
 import { AnimatePresence, motion } from "framer-motion";
+
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [showUsageModal, setShowUsageModal] = useState<showUsageModalType>({
     open: false,
-    modal: "storage" || "request",
+    modal: "storage",
   });
   useEffect(() => {
     const checkScreenSize = () => {
