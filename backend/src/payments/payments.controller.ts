@@ -19,12 +19,9 @@ import { AuthGuard } from '../guards/auth.guard';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
   private resHeaders: CookieOptions = {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    domain: 'localhost',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: '/',
+    sameSite: 'none', // Cross-site
+    secure: true,     // HTTPS required
+    httpOnly: true    // Prevents client-side access
   };
   @Post('create-checkout-session')
   @UseGuards(AuthGuard)

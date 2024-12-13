@@ -4,8 +4,6 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
 import { AiRespone, DocumentAiInfo } from 'src/types/type';
-import { z } from 'zod';
-import { StructuredOutputParser } from 'langchain/output_parsers';
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
@@ -97,7 +95,7 @@ export const analyzeDocument = async (
     }
 
     const promptContent = `Analyze the following document context and provide:
-    1. mainTopic: A concise phrase of less than 2 words describing the most specific and distinctive main topic.
+    1. mainTopic: A concise phrase of less than 3 words describing the most specific and distinctive main topic.
     2. documentType: Identify the type of document (e.g., report, article, code, etc.).
     3. keyEntities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
     4. summary: A brief 2-3 sentence summary of the main points.
@@ -125,10 +123,6 @@ export const categorizeDocuments = async (
   documents: DocumentAiInfo[],
   existingCategories: string[],
 ): Promise<AiRespone[]> => {
-  const CategorySchema = z.string();
-
-  const parser = StructuredOutputParser.fromZodSchema(CategorySchema);
-
   const categorizations = await Promise.all(
     documents.map(async (doc: DocumentAiInfo) => {
       const categorizePromptContent = `
@@ -136,7 +130,7 @@ export const categorizeDocuments = async (
       - Return ONLY a single category name
       - predefined categories: ${predefinedCategories.join(', ')}
       - Choose the most specific category that matches the document
-      - Respond in this EXACTformat: "Category Name"
+      - Respond in this EXACT format: Category Name
 
       Document Details:
       - Main Topic: ${doc.mainTopic}
@@ -152,10 +146,10 @@ export const categorizeDocuments = async (
           ['user', categorizePromptContent],
         ]);
 
-        const chain = prompt.pipe(mistralClient).pipe(parser);
+        const chain = prompt.pipe(mistralClient);
         const response = await chain.invoke({});
 
-        const cleanCategory = response;
+        const cleanCategory = response.content as string;
         existingCategories.push(cleanCategory);
 
         return {
@@ -183,9 +177,6 @@ export const generateFileName = async (documentInfo: {
   summary: string;
 }) => {
   // Create a Zod schema for the filename
-  const FileNameSchema = z.string();
-
-  const parser = StructuredOutputParser.fromZodSchema(FileNameSchema);
 
   const promptContent = `Generate a descriptive filename based on the following document information:
   Main Topic: ${documentInfo.mainTopic}
@@ -198,7 +189,7 @@ export const generateFileName = async (documentInfo: {
   - Do NOT include file extension
   - Focus on the most distinctive aspect of the document
   
-  Respond in this EXACT format:"generated-filename"`;
+  Respond in this EXACT format:generated-filename`;
 
   const mistralClient = createMistralClient();
 
@@ -210,15 +201,14 @@ export const generateFileName = async (documentInfo: {
     ['user', promptContent],
   ]);
 
-  const chain = prompt.pipe(mistralClient).pipe(parser);
+  const chain = prompt.pipe(mistralClient);
 
   try {
     const response = await chain.invoke({});
     console.log('Generated filename:', response);
-    return response;
+    return response.content as string;
   } catch (error) {
     console.error('Error generating filename:', error);
-    // Fallback to a generic filename if generation fails
     return 'document';
   }
 };
