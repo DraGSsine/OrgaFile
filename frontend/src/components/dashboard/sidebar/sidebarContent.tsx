@@ -22,13 +22,11 @@ import { useDispatch } from "react-redux";
 import { SignOutAction } from "@/redux/slices/authSlice";
 
 interface SidebarContentProps {
-  isCollapsed: boolean;
   setShowUsageModal?: Dispatch<SetStateAction<showUsageModalType>>;
   ShowUsageModal?: showUsageModalType;
 }
 
 export function SidebarContent({
-  isCollapsed,
   setShowUsageModal,
   ShowUsageModal,
 }: SidebarContentProps) {
@@ -49,7 +47,7 @@ export function SidebarContent({
   return (
     <div className="flex h-full flex-col gap-4">
       <div className="flex h-[8vh] items-center justify-center xl:justify-start xl:px-4 gap-2">
-        <Logo isCollapsed={isCollapsed} />
+        <Logo />
       </div>
       <nav className="flex-1 space-y-2 px-2 flex justify-between flex-col">
         <div className=" space-y-2">
@@ -66,7 +64,6 @@ export function SidebarContent({
                 name={item.name}
                 icon={item.icon}
                 isActive={isActive}
-                isCollapsed={isCollapsed}
               />
             );
           })}

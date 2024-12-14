@@ -8,7 +8,7 @@ export function NoFilesToDisplay() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative flex-grow w-full flex flex-col justify-center items-center p-8"
+      className="relative h-[95%] w-full flex flex-col justify-center items-center p-8"
     >
       <BackgroundGradient />
       <FloatingIcon />

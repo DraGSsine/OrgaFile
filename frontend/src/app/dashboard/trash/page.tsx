@@ -5,7 +5,6 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loadRemovedFiles,
-  setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import React from "react";
@@ -47,7 +46,7 @@ const Page = () => {
     restoreFileState.fileRestored,
   ]);
   return (
-    <div className=" flex flex-col h-full pt-5 ">
+    <div className=" h-full pt-5 grid grid-rows-12 ">
       <HeaderPage
         icon={<Delete02Icon className=" h-8 w-8 text-primary-500 " />}
         title="Deleted Files"

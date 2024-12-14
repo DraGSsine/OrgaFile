@@ -11,10 +11,8 @@ interface MobileTriggerProps {
 
 export function MobileTrigger({ isOpen, onOpen, onClose }: MobileTriggerProps) {
   return (
-    <Button
-      isIconOnly
-      variant="light"
-      className="md:hidden absolute top-[2.4%] left-4 z-50"
+    <button
+      className="md:hidden absolute top-[3%] left-4 z-50"
      
     >
       {!isOpen ? (
@@ -22,6 +20,6 @@ export function MobileTrigger({ isOpen, onOpen, onClose }: MobileTriggerProps) {
       ) : (
         <Cancel01Icon onClick={onClose} className="h-6 w-6" />
       )}
-    </Button>
+    </button>
   );
 }

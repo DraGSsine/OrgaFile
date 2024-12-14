@@ -41,10 +41,10 @@ const Page = () => {
     dispatch,
   ]);
   return (
-    <div className=" pt-5 h-full flex flex-col ">
+    <div className=" h-full pt-5 grid grid-rows-12 ">
       <HeaderPage icon={<Folder02Icon className=" h-8 w-8 text-primary-500"/>} title={folder?.name!} description="your organized files" />
       <TableFiles
-        maxRows={9}
+        maxRows={7}
         files={folder?.files ?? []}
         isLoading={!folder?.files && true}
         routeName="recentFiles"

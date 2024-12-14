@@ -32,63 +32,58 @@ export default function Sidebar() {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  if (isMobile) {
-    return (
-      <div>
-        <MobileTrigger isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
-
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ width: 0, x: "-100%" }}
-              animate={{
-                width: "50%",
-                x: 0,
-              }}
-              exit={{
-                width: 0,
-                x: "-100%",
-              }}
-              transition={{
-                type: "tween",
-                ease: "easeInOut",
-                duration: 0.3,
-              }}
-              className="z-40 bg-white absolute left-0 top-0 h-screen border overflow-hidden"
-            >
-              <SidebarContent isCollapsed={false} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  }
 
   return (
-    <div
-      className={cn(
-        "flex h-screen flex-col border-r bg-background transition-all duration-300",
-        isCollapsed ? " col-start-1 col-end-2 " : " col-start-1 col-end-3 "
-      )}
-    >
-      <SidebarContent
-        isCollapsed={isCollapsed}
-        setShowUsageModal={setShowUsageModal}
-        ShowUsageModal={showUsageModal}
-      />
-      <Modal
-        isOpen={showUsageModal.open}
-        onClose={() =>
-          setShowUsageModal({ open: false, modal: showUsageModal.modal })
-        }
+    <>
+      <MobileTrigger isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ width: 0, x: "-100%" }}
+            animate={{
+              width:'fit-content',
+              x: 0,
+            }}
+            exit={{
+              width: 0,
+              x: "-100%",
+            }}
+            transition={{
+              type: "tween",
+              ease: "easeInOut",
+              duration: 0.3,
+            }}
+            className="z-40 bg-white absolute left-0 top-0 h-screen border overflow-hidden md:hidden"
+          >
+            <SidebarContent />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div
+        className=
+        "h-screen flex-col border-r bg-background transition-all duration-300 hidden md:flex col-start-1 col-end-2 xl:col-end-3 "
+
+
       >
-        <ModalContent>
-          <div className="flex items-center justify-center h-full">
-            {showUsageModal.modal === "storage" && <StorageUsage />}
-            {showUsageModal.modal === "request" && <RequestUsage />}
-          </div>
-        </ModalContent>
-      </Modal>
-    </div>
+        <SidebarContent
+          setShowUsageModal={setShowUsageModal}
+          ShowUsageModal={showUsageModal}
+        />
+        <Modal
+          isOpen={showUsageModal.open}
+          onClose={() =>
+            setShowUsageModal({ open: false, modal: showUsageModal.modal })
+          }
+        >
+          <ModalContent>
+            <div className="flex items-center justify-center h-full">
+              {showUsageModal.modal === "storage" && <StorageUsage />}
+              {showUsageModal.modal === "request" && <RequestUsage />}
+            </div>
+          </ModalContent>
+        </Modal>
+      </div>
+    </>
   );
 }

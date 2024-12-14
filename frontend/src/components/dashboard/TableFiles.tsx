@@ -34,7 +34,7 @@ import {
   QuestionIcon,
   QuotesIcon,
 } from "hugeicons-react";
-import { motion } from "framer-motion";
+
 import { NoFilesToDisplay } from "./EmptyState/NoFilesToDisplay";
 
 export default function TableFiles({
@@ -101,13 +101,12 @@ export default function TableFiles({
   const isAllSelected = items.length > 0 && selectedKeys.size === items.length;
 
   return (
-    <div className="relative h-full">
+    <div className="relative row-start-2 row-end-17  ">
       {/* Bulk Delete Action */}
 
       <div
-        className={` ${
-          selectedKeys.size <= 0 ? " hidden" : " inline-block "
-        } absolute right-0 -top-10 `}
+        className={` ${selectedKeys.size <= 0 ? " hidden" : " inline-block "
+          } absolute right-0 -top-10 `}
       >
         <Tooltip content={`Delete ${selectedKeys.size} Selected Files`}>
           <Button
@@ -122,11 +121,11 @@ export default function TableFiles({
         </Tooltip>
       </div>
 
-      <div className=" p-1 xl:p-5 rounded-t-lg shadow-small relative h-full flex flex-col justify-between ">
+      <div className="rounded-t-lg h-full shadow-small grid grid-rows-16 grid-cols-16 p-4 ">
         {/* Header Row - Mimicking Table Header */}
-        <div className=" space-y-5" >
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 py-3 font-semibold rounded-lg xl:p-6 bg-[#e7e8e9] text-gray-500">
-            <div className="col-span-2 pl-4 flex items-center">
+        <div className="row-start-1 row-end-16 col-start-1 col-end-17 " >
+          <div className=" h-[5%] grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7  font-semibold rounded-lg  bg-[#e7e8e9] text-gray-500">
+            <div className="col-span-2 pl-4 flex items-center ">
               <Checkbox
                 isSelected={isAllSelected}
                 onChange={toggleAllSelection}
@@ -134,120 +133,124 @@ export default function TableFiles({
               />
               <span className="pl-5">FILE</span>
             </div>
-            <div className="text-center hidden xl:inline-block ">SIZE</div>
-            <div className="text-center hidden 2xl:inline-block">
+            <div className=" justify-center hidden xl:flex items-center ">SIZE</div>
+            <div className=" justify-center hidden 2xl:flex items-center">
               CREATED AT
             </div>
-            <div className="text-center hidden lg:inline-block ">TYPE</div>
-            <div className="text-center hidden sm:inline-block ">TOPIC</div>
-            <div className="text-center">SETTINGS</div>
+            <div className="justify-center hidden lg:flex items-center ">TYPE</div>
+            <div className="justify-center hidden sm:flex items-center">TOPIC</div>
+            <div className="justify-center flex items-center">SETTINGS</div>
           </div>
 
           {isLoading ? (
             <SkeletonLoader maxRows={maxRows} />
           ) : (
-            <div className=" space-y-2">
-              {items.map((file) => (
-                <div
-                  key={file.fileId}
-                  className={`2xl:pl-6 rounded-lg grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5  xl:grid-cols-6 2xl:grid-cols-7 py-4 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${
-                    selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
-                  }`}
-                >
-                  <div className="col-span-2 flex items-center space-x-4 pl-4">
-                    <Checkbox
-                      isSelected={selectedKeys.has(file.fileId)}
-                      onChange={() => toggleFileSelection(file.fileId)}
-                      color="primary"
-                    />
-                    <Image
-                      src={getFileImage(file.format)}
-                      alt="file"
-                      width={40}
-                      height={40}
-                      className="rounded-md"
-                    />
-                    <span>{file.name}</span>
-                  </div>
-
-                  <div className="text-center hidden xl:inline-block">
-                    {formatFileSize(file.size)}
-                  </div>
-
-                  <div className="text-center hidden 2xl:inline-block ">
-                    {FormatTheDate(file.createdAt)}
-                  </div>
-
-                  <div className="text-center  hidden lg:inline-block">
-                    <Chip
-                      className="hidden md:inline-block"
-                      size="sm"
-                      color="warning"
-                      variant="dot"
-                      style={{ borderColor: "orange", borderWidth: 1 }}
+            <div className="space-y-3 pt-4 h-[95%] overflow-y-scroll" >
+              {
+                items.length === 0 ? <NoFilesToDisplay /> :
+                  items.map((file) => (
+                    <div
+                      key={file.fileId}
+                      className={`2xl:pl-6 rounded-lg grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5  xl:grid-cols-6 2xl:grid-cols-7 py-3 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
+                        }`}
                     >
-                      {file.documentType}
-                    </Chip>
+                      <div className="col-span-2 flex items-center space-x-4 pl-4">
+                        <Checkbox
+                          isSelected={selectedKeys.has(file.fileId)}
+                          onChange={() => toggleFileSelection(file.fileId)}
+                          color="primary"
+                        />
+                        <Image
+                          src={getFileImage(file.format)}
+                          alt="file"
+                          width={40}
+                          height={40}
+                          className="rounded-md"
+                        />
+                        <span>{file.name}</span>
+                      </div>
 
-                    <Tooltip content={file.format}>
-                      <Button
-                        className="md:hidden"
-                        color="primary"
-                        variant="light"
-                        size="sm"
-                      >
-                        <FileSearchIcon size={24} />
-                      </Button>
-                    </Tooltip>
-                  </div>
-                  <div className="text-center hidden sm:inline-block ">
-                    <Chip
-                      className="hidden md:inline-block"
-                      size="sm"
-                      color="warning"
-                      variant="dot"
-                      style={{ borderColor: "orange", borderWidth: 1 }}
-                    >
-                      {file.topic}
-                    </Chip>
-                    <Tooltip content={file.topic}>
-                      <Button
-                        className="md:hidden"
-                        color="primary"
-                        variant="light"
-                        size="sm"
-                      >
-                        <HelpCircleIcon size={24} />
-                      </Button>
-                    </Tooltip>
-                  </div>
+                      <div className="text-center hidden xl:inline-block">
+                        {formatFileSize(file.size)}
+                      </div>
 
-                  <div className="text-center">
-                    <FilesSettings
-                      fileId={file.fileId}
-                      routeName={routeName}
-                      fileName={`${file.name}.${file.format}`}
-                    />
-                  </div>
-                </div>
-              ))}
+                      <div className="text-center hidden 2xl:inline-block ">
+                        {FormatTheDate(file.createdAt)}
+                      </div>
+
+                      <div className="text-center  hidden lg:inline-block">
+                        <Chip
+                          className="hidden md:inline-block"
+                          size="sm"
+                          color="warning"
+                          variant="dot"
+                          style={{ borderColor: "orange", borderWidth: 1 }}
+                        >
+                          {file.documentType}
+                        </Chip>
+
+                        <Tooltip content={file.format}>
+                          <Button
+                            className="md:hidden"
+                            color="primary"
+                            variant="light"
+                            size="sm"
+                          >
+                            <FileSearchIcon size={24} />
+                          </Button>
+                        </Tooltip>
+                      </div>
+                      <div className="text-center hidden sm:inline-block overflow-x-scroll ">
+                        <Chip
+                          className="hidden md:inline-block"
+                          size="sm"
+                          color="warning"
+                          variant="dot"
+                          style={{ borderColor: "orange", borderWidth: 1 }}
+                        >
+                          {file.topic}
+                        </Chip>
+                        <Tooltip content={file.topic}>
+                          <Button
+                            className="md:hidden"
+                            color="primary"
+                            variant="light"
+                            size="sm"
+                          >
+                            <HelpCircleIcon size={24} />
+                          </Button>
+                        </Tooltip>
+                      </div>
+
+                      <div className="text-center">
+                        <FilesSettings
+                          fileId={file.fileId}
+                          routeName={routeName}
+                          fileName={`${file.name}.${file.format}`}
+                        />
+                      </div>
+                    </div>
+                  ))
+
+              }
             </div>
           )}
         </div>
-        <div className="flex w-full justify-center">
+
+        <div className="col-start-1 col-end-17 flex justify-center items-center">
           <Pagination
             total={pages || 1}
             page={page}
             onChange={setPage}
             color="primary"
             variant="flat"
-            hidden={pages <= 1}
             showControls
+            classNames={{
+              base: "py-0 m-0",
+            }}
           />
-        </div>
 
-        {/* Loading and Empty States */}
-        {!isLoading && files?.length == 0 && <NoFilesToDisplay />}
+        </div>
       </div>
     </div>
   );

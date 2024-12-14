@@ -24,7 +24,7 @@ export default function CloudCards() {
   }, [dispatch]);
 
   return (
-    <div className="h-[300px] py-5 ">
+    <div className=" row-start-1 row-end-5 py-5 ">
       <HeaderPage icon={<HardDriveIcon className="h-8 w-8 text-primary-500" />} title="Cloud Storage" description="View your cloud storage" />
       {loading ? (
         <CloudSkeleton />

@@ -116,7 +116,7 @@ export const SearchInput = () => {
       onFocus={() => dispatch(loadAllFiles())}
       variant="bordered"
       placeholder="Search for files"
-      className=" w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
+      className=" hidden md:flex w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
       onSelectionChange={(key: any) => {
         if (!key) return;
         const url = files[key].url;

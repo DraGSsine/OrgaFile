@@ -8,22 +8,19 @@ interface LogoProps {
   isCollapsed: boolean;
 }
 
-export function Logo({ isCollapsed }: LogoProps) {
+export function Logo() {
   return (
-    <Link 
-      href="/" 
-      className={cn(
-        "flex items-center gap-2 font-bold text-2xl transition-all duration-300",
-        isCollapsed && "justify-center"
-      )}
+    <Link
+      href="/"
+      className="flex items-center gap-2 font-bold text-2xl transition-all duration-300"
     >
       <Files01Icon className="h-8 w-8 text-primary" />
-      {!isCollapsed && (
-        <>
-          <span className="text-primary">Orga</span>
-          <span className="text-default-600">File</span>
-        </>
-      )}
+
+      <div>
+        <span className="text-primary hidden xl:flex">Orga</span>
+        <span className="text-default-600 hidden xl:flex ">File</span>
+      </div>
+
     </Link>
   );
 }

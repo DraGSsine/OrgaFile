@@ -13,16 +13,14 @@ export function RecentUploadsContainer({
   routeName = "allFiles"
 }: RecentUploadsProps) {
   return (
-    <div className="flex flex-col h-full">
+    <div className=" h-full grid grid-rows-12 ">
       <HeaderPage icon={<FolderUploadIcon className="w-8 h-8 text-primary-500" />} title="Recent Uploads" description={`view last ${maxRows} files`} />
-      <div className="flex-1 h-full">
         <TableFiles
           maxRows={maxRows}
           files={files}
           isLoading={isLoading}
           routeName={routeName}
         />
-      </div>
     </div>
   );
 }

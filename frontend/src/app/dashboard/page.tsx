@@ -3,7 +3,7 @@ import Mycloud from '@/components/dashboard/main/Mycloud'
 import RecentFiles from '@/components/dashboard/main/RecentFiles'
 const Dashboard = () => {
   return (
-    <div className='flex h-full flex-col'>
+    <div className='h-full grid grid-rows-16'>
       <CloudCards/>
       <RecentFiles/>
     </div>
