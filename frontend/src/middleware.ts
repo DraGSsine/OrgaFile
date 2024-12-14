@@ -1,9 +1,14 @@
 import { NextResponse, NextRequest } from "next/server";
+import { cookies } from 'next/headers'
 import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("token")?.value;
-  const plan = request.cookies.get("plan")?.value;
+  const cookie = await cookies();
+  console.log(cookie);
+  const accessToken = cookie.get("token")?.value;
+  console.log("accessToken=====>",accessToken);
+  const plan = cookie.get("plan")?.value;
+  console.log("plan=====>",plan);
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
