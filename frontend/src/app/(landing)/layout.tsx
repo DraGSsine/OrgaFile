@@ -18,7 +18,6 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <main className={inter.className}>
       <NavBar />
