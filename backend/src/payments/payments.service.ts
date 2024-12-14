@@ -59,6 +59,7 @@ export class PaymentService {
     createPaymentDto: CreatePaymentDto,
     userId: string,
   ): Promise<{ url: string }> {
+    const redirectUrl = process.env.PROD === 'true' ? process.env.NEXT_APP_URL_PROD : process.env.NEXT_APP_URL_DEV 
     try {
       // Check if the user is already subscribed
       const existingSubscription = await this.subscriptionModel.findOne({
@@ -66,7 +67,7 @@ export class PaymentService {
         subscriptionStatus: 'active',
       });
       if (existingSubscription && existingSubscription.customerId) {
-        return { url: process.env.NEXT_APP_URL! };
+        return { url: redirectUrl};
       }
       // Create a new Stripe customer
       const customer = await this.stripeClient.customers.create({
@@ -82,8 +83,8 @@ export class PaymentService {
         ],
         payment_method_types: ['card'],
         mode: 'subscription',
-        success_url: `${process.env.NEXT_APP_URL}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_APP_URL}`,
+        success_url: `${redirectUrl}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${redirectUrl}`,
         customer: customer.id,
         metadata: {
           userId: userId,
