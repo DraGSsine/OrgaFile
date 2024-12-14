@@ -4,16 +4,16 @@ import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
   const cookie = await cookies();
-  console.log(cookie);
+  console.log("cookies=========>", cookie);
   const accessToken = cookie.get("token")?.value;
-  console.log("accessToken=====>",accessToken);
+  console.log("accessToken=====>", accessToken);
   const plan = cookie.get("plan")?.value;
-  console.log("plan=====>",plan);
+  console.log("plan=====>", plan);
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
-  const { isTokenValid, isSubscribed } = await validateToken(accessToken);
   try {
+    const { isTokenValid, isSubscribed } = await validateToken(accessToken);
     if (!plan && request.nextUrl.pathname === "/auth/signup") {
       return NextResponse.redirect(
         new URL("/pricing", request.nextUrl.origin).href
