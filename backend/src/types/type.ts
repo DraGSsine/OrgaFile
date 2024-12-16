@@ -36,3 +36,9 @@ export interface FolderInfoType {
   name: string;
   files: FileInfo[];
 }
+
+export type SubscriptionHistory = {
+  plan: string;
+  currentPeriodStart: Date;
+  price: number;
+};

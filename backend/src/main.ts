@@ -5,12 +5,12 @@ import cookieParser = require('cookie-parser');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
-  const corsOptions = {
+  app.enableCors({
     origin: process.env.PROD === 'true' ? 'https://orgafile.com' : 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-  };
-
-  app.enableCors(corsOptions);
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
   await app.listen(9010);

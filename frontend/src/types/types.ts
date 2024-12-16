@@ -26,10 +26,12 @@ export type variantType =
   | undefined;
 export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
 export type initialStateType = {
-  userCreated: {message:string, isSubscribed:boolean } | null;
-  error: {message:string , error:string, statusCode:number} | null;
+  userCreated: { message: string, isSubscribed: boolean } | null;
+  error: { message: string, error: string, statusCode: number } | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  userInfoLoading: boolean;
+  userInformation: { subscriptionEnds:string, price:string,fullName: string, email: string, plan: any, subscriptionHistory: [] };
 };
 
 export interface FileFormat {
@@ -59,7 +61,7 @@ export type filesType = {
   topic: string;
   documentType: string;
 };
- 
+
 export type FilesState = {
   isFilesUploaded: boolean,
   confirmFileDelete: boolean,
@@ -71,7 +73,7 @@ export type FilesState = {
   files: filesType[];
   isLoading: boolean;
   fileDeletLoading: boolean;
-  error: {message:string , error:string, statusCode:number} | null;
+  error: { message: string, error: string, statusCode: number } | null;
 };
 
 export type FolderType = {
@@ -134,4 +136,15 @@ export interface RecentUploadsProps {
   isLoading: boolean;
   maxRows?: number;
   routeName?: RouteNameType
+}
+
+export interface Transaction {
+  createdAt: string;
+  price: number;
+  plan: string;
+}
+
+export interface PaymentHistoryProps {
+  transactions: Transaction[];
+  className?: string;
 }

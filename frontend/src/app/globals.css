@@ -77,7 +77,9 @@ tbody tr {
 .fade-in {
   animation: fadeIn 0.5s;
 }
-
+.text-responsive{ 
+  @apply text-sm md:text-base xl:text-lg 2xl:text-2xl;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -14,7 +14,7 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
   }, [folder]);
 
   return (
-    <div className=" h-[230px] justify-between flex  flex-col bg-blue-50 p-6 rounded-lg animate-pulse">
+    <div className=" h-[230px] justify-between flex  flex-col bg-blue-100 p-6 rounded-lg fade-in ">
       <div className="flex justify-between items-center mb-5">
         <Folder01Icon size={60} className="fill-blue-500 text-blue-500" />
         <Tooltip content={`Downalod`}>

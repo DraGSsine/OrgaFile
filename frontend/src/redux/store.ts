@@ -5,6 +5,7 @@ import { landingSlice } from "./slices/landingSlice";
 import { foldersSlice } from './slices/foldersSlice';
 import { dashboardSlice } from "./slices/dashboardSlice";
 import { paymentSlice } from "./slices/paymentSlice";
+import { settingsSlice } from "./slices/settingsSlice";
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         folders: foldersSlice.reducer,
         dashboard: dashboardSlice.reducer,
         payment: paymentSlice.reducer,
+        settings: settingsSlice.reducer,
     },
 });
 

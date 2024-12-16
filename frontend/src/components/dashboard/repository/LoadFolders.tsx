@@ -36,7 +36,7 @@ const LoadFolders = () => {
 
   if (showSkeleton) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 h-full overflow-y-scroll p-2">
+      <div className=" max-h-[100%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 overflow-y-scroll p-2">
         {Array.from({ length: 10 }).map((_, i) => (
           <FolderLoadSkeleton key={i} />
         ))}
@@ -65,7 +65,7 @@ const LoadFolders = () => {
     );
   }
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 h-full overflow-y-scroll p-2">
+    <div className="max-h-[100%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 overflow-y-scroll p-2">
       {folders.map((folder: FolderType, index: number) => (
         <FolderComponent key={index} folder={folder} />
       ))}
@@ -76,7 +76,7 @@ const LoadFolders = () => {
 export default LoadFolders;
 const FolderLoadSkeleton = () => {
   return (
-    <div className=" h-[230px] justify-between flex  flex-col bg-blue-50 p-6 rounded-lg animate-pulse">
+    <div className="  justify-between flex  flex-col bg-blue-100 p-6 animate-pulse rounded-lg fade-in">
       <div className="flex justify-between items-center mb-5">
         <Folder01Icon size={60} className="fill-blue-500 text-blue-500" />
         <div className="bg-white rounded-full h-8 w-8"></div>

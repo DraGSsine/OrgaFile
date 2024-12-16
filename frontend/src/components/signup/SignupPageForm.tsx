@@ -48,25 +48,26 @@ const SignupPageForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      dispatch(SignUpAction(userCredential)).then((action: any) => {
-        if (SignUpAction.fulfilled.match(action)) {
-          dispatch(createCheckoutSession()).then((action: any) => {
-            if (createCheckoutSession.fulfilled.match(action)) {
-              toast.success("Account created successfully");
-              router.push(action.payload.url);
-            } else
-            console.log(action.payload);
-              toast.error(
-                (action.payload.message as string) || "An error occurred"
-              );
-          });
+      try {
+        const resultAction = await dispatch(SignUpAction(userCredential));
+        if (SignUpAction.fulfilled.match(resultAction)) {
+          toast.success("Account created successfully");
+          const checkoutResultAction = await dispatch(createCheckoutSession());
+          if (createCheckoutSession.fulfilled.match(checkoutResultAction)) {
+            router.push(checkoutResultAction.payload.url);
+          } else {
+            toast.error("An error occurred during checkout session creation");
+          }
         } else {
-          console.log(action.payload);
-          toast.error(
-            (action.payload.message as string) || "An error occurred"
-          );
+          if (resultAction.payload) {
+            toast.error(resultAction.payload as string);
+          } else {
+            toast.error("Sign up failed");
+          }
         }
-      });
+      } catch (error) {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 

@@ -7,12 +7,13 @@ const initialState: initialStateType = {
   error: null,
   isLoading: false,
   userCreated: null,
+  userInfoLoading: true,
+  userInformation: { fullName: "", email: "", plan: "", subscriptionEnds:"", price:"" , subscriptionHistory: [] },
 };
 
 export const SignUpAction = createAsyncThunk(
   "auth/signup",
   async (data: userInfoType, { rejectWithValue }) => {
-    console.log(process.env.NEXT_PUBLIC_NEST_APP_URL);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signup`,
@@ -26,7 +27,8 @@ export const SignUpAction = createAsyncThunk(
       const responseData = await response.data;
       return responseData;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      console.log(error.response.data.message);
+      throw rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -44,8 +46,7 @@ export const SignInAction = createAsyncThunk(
       );
       return response.data;
     } catch (error: any) {
-      console.error(error);
-      return rejectWithValue(error);
+      throw rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -63,6 +64,21 @@ export const SignOutAction = createAsyncThunk("auth/signout", async () => {
   }
 });
 
+export const GetUserInfo = createAsyncThunk("auth/getUserInfo", async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/user`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+)
+
 export const AuthSlice = createSlice({
   name: "auth",
   initialState,
@@ -77,6 +93,9 @@ export const AuthSlice = createSlice({
       state.userCreated = null;
       state.error = null;
     },
+    updateUserInfo: (state, action) => {
+      state.userInformation = { ...state.userInformation, ...action.payload };
+    }
   },
   extraReducers(builder) {
     builder.addCase(SignUpAction.pending, (state) => {
@@ -119,9 +138,20 @@ export const AuthSlice = createSlice({
       localStorage.removeItem("userInfo");
     });
     builder.addCase(SignOutAction.rejected, (state) => {
-      state.isLoading = false;
+      state.userInfoLoading = false;
+    });
+    // Get user info
+    builder.addCase(GetUserInfo.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(GetUserInfo.fulfilled, (state, action: any) => {
+      state.userInfoLoading = false;
+      state.userInformation = action.payload;
+    });
+    builder.addCase(GetUserInfo.rejected, (state) => {
+      state.userInfoLoading = false
     });
   },
 });
 
-export const { signOut, resetAuthState } = AuthSlice.actions;
+export const { signOut, resetAuthState, updateUserInfo } = AuthSlice.actions;

@@ -34,22 +34,26 @@ export const SignInForm = () => {
       setErrorState(parsedUser.error.errors[0]);
     } else {
       setErrorState(null);
-      dispatch(SignInAction(userInfo)).then((res: any) => {
-        console.log(res);
-        if (res.payload.error) {
-          toast.error(res.payload.message);
+      try {
+        const resultAction = await dispatch(SignInAction(userInfo));
+        if (SignInAction.fulfilled.match(resultAction)) {
+          const checkoutResultAction = await dispatch(createCheckoutSession())
+          toast.success("Sign in successful");
+          if (createCheckoutSession.fulfilled.match(checkoutResultAction)) {
+            router.push(checkoutResultAction.payload.url)
+          } else {
+            toast.error("An error occurred");
+          }
         } else {
-          dispatch(createCheckoutSession()).then((res: any) => {
-            console.log(res);
-            if (res?.error) {
-              toast.error("An error occurred");
-            } else {
-              toast.success("Logged in successfully");
-              router.push(res.payload.url);
-            }
-          });
+          if (resultAction.payload) {
+            toast.error(resultAction.payload as string);
+          } else {
+            toast.error("Sign in failed");
+          }
         }
-      });
+      } catch (error) {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
   return (

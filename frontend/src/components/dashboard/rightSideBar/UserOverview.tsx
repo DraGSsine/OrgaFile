@@ -2,33 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 import UserProfile from "../UserProfile";
-import { useRouter } from "next/navigation";
-import { userCookieInfoType } from "@/types/types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const UserOverview = () => {
-  const [userInfo, setUserInfo] = useState<userCookieInfoType | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const userData = localStorage.getItem("userInfo");
-    if (userData) {
-      setUserInfo(JSON.parse(userData));
-    } else {
-      router.push("/auth/signin");
-    }
-  }, [router]);
-
+  const { userInfoLoading,userInformation } = useSelector((state: RootState) => state.auth);
+  const { fullName, email, plan } = userInformation;
   return (
     <>
-      {userInfo ? (
-        <div className="flex flex-col">
-          <span className="font-semibold text-lg capitalize">{userInfo.fullName}</span>
-          <span className="text-primary font-bold">{userInfo.plan || "Basic"}</span>
-        </div>
-      ) : (
+      { userInfoLoading ? (
         <InfoSkeleton />
+      ) : (
+        <div className="flex flex-col">
+          <span className="font-semibold text-lg capitalize">{fullName}</span>
+          <span className="text-primary font-bold">{plan}</span>
+        </div>
       )}
-      <UserProfile email={userInfo?.email || ""} />
+      <UserProfile email={email} />
     </>
   );
 };

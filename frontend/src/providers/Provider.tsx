@@ -1,7 +1,7 @@
 "use client";
 
 import { Provider } from "react-redux";
-import { store } from "./store";
+import { store } from "../redux/store";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 import ConfirmDelete from "@/components/dashboard/ConfirmeDelete";

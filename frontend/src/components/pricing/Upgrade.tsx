@@ -1,9 +1,10 @@
 "use client";
-import { Button } from "@nextui-org/button";
-import { redirect } from "next/dist/server/api-utils";
-import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import Cookies from "js-cookie";
+
+import { Button } from "@nextui-org/button";
+import { Loading03Icon } from "hugeicons-react";
+import { useRouter } from "next/navigation";
 
 const Upgrade = ({
   plan,
@@ -15,25 +16,24 @@ const Upgrade = ({
   productId: string;
 }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const upgradPlan = (plan: string) => {
-    return new Promise((resolve, reject) => {
+    setLoading(true);
+    setTimeout(() => {
       Cookies.set("plan", plan, {
         expires: 60,
       });
-  
+
       if (Cookies.get("plan") === plan) {
-        resolve(true);
+        router.push("/auth/signup");
       } else {
-        reject(new Error("Failed to set cookie"));
+        console.error("Failed to set cookie");
       }
-    })
-    .then(() => {
-      router.push("/auth/signup");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      setLoading(false);
+    }, 500);
   };
+
   return (
     <Button
       onClick={() => upgradPlan(plan)}
@@ -42,11 +42,16 @@ const Upgrade = ({
       data-plan={plan}
       className={` ${
         active
-          ? "block w-full border border-primary bg-primary  text-center text-base font-medium text-white transition hover:bg-opacity-90"
-          : "block w-full border border-stroke bg-transparent  text-center text-base font-medium text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3"
+          ? "flex justify-center w-full border border-primary bg-primary text-base font-medium text-white transition hover:bg-opacity-90"
+          : "flex justify-center text-center w-full border border-stroke bg-transparent text-base font-medium text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3"
       } `}
+      disabled={loading}
     >
-      Upgrade to {plan}
+      {loading ? (
+        <Loading03Icon className="animate-spin h-5 w-5" />
+      ) : (
+        "Upgrade Plan"
+      )}
     </Button>
   );
 };

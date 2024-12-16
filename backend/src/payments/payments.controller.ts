@@ -19,10 +19,9 @@ import { AuthGuard } from '../guards/auth.guard';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
   private resHeaders: CookieOptions = {
-    path: '/',
     domain: process.env.PROD === 'true' ? '.orgafile.com' : 'localhost',
     sameSite: process.env.PROD === 'true' ? 'none' : 'lax',
-    secure: process.env.PROD === 'true',
+    secure: process.env.PROD === 'true' ? true : false,
     httpOnly: true,
   };
   @Post('create-checkout-session')

@@ -4,11 +4,8 @@ import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
   const cookie = await cookies();
-  console.log("cookies=========>", cookie);
   const accessToken = cookie.get("token")?.value;
-  console.log("accessToken=====>", accessToken);
   const plan = cookie.get("plan")?.value;
-  console.log("plan=====>", plan);
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
