@@ -3,9 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDocument } from 'src/schemas/auth.schema';
+import { UserDocument } from '..//schemas/auth.schema';
 import * as bcrypt from 'bcrypt';
-import { SubscriptionHistory } from 'src/types/type';
+import { SubscriptionHistory } from '..//types/type';
 
 @Injectable()
 export class UserService {

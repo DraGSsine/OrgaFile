@@ -9,7 +9,7 @@ import {
 import AWS from 'aws-sdk';
 import { FileDocument, FileInfo } from '../schemas/files.schema';
 import { FolderDocument } from '../schemas/folders.schema';
-import { AiRespone, FolderInfoType } from 'src/types/type';
+import { AiRespone, FolderInfoType } from '..//types/type';
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];

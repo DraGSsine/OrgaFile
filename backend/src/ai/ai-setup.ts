@@ -3,7 +3,7 @@ import { ChatMistralAI } from '@langchain/mistralai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
-import { AiRespone, DocumentAiInfo } from 'src/types/type';
+import { AiRespone, DocumentAiInfo } from '..//types/type';
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;

@@ -5,10 +5,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { userSchema } from '../schemas/auth.schema';
 import { AuthGuard } from '../guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { folderSchema } from 'src/schemas/folders.schema';
-import { fileSchema } from 'src/schemas/files.schema';
-import { subscriptionSchema } from 'src/schemas/subscriptions.schema';
-import { removedFilesSchema } from 'src/schemas/removedFiles.schema';
+import { folderSchema } from '..//schemas/folders.schema';
+import { fileSchema } from '..//schemas/files.schema';
+import { subscriptionSchema } from '../schemas/subscriptions.schema';
+import { removedFilesSchema } from '../schemas/removedFiles.schema';
 
 @Module({
   imports: [
