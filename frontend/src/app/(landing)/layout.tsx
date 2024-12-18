@@ -1,3 +1,4 @@
+"use client"
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "@/components/NavBar";
@@ -8,13 +9,13 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "OrgaFile",
-    template: "OrgaFile | %s",
-  },
-  description: "OrgaFile is a file management system.",
-};
+// export const metadata: Metadata = {
+//   title: {
+//     default: "OrgaFile",
+//     template: "OrgaFile | %s",
+//   },
+//   description: "OrgaFile is a file management system.",
+// };
 
 export default function Layout({
   children,
