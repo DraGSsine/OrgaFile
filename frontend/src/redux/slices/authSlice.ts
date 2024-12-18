@@ -105,7 +105,6 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
-      localStorage.setItem("userInfo", JSON.stringify(action.payload.userInfo));
     });
     builder.addCase(SignUpAction.rejected, (state, action: any) => {
       state.isLoading = false;
@@ -120,7 +119,6 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.userCreated = action.payload;
-      localStorage.setItem("userInfo", JSON.stringify(action.payload.userInfo));
     });
     builder.addCase(SignInAction.rejected, (state, action: any) => {
       state.isLoading = false;
@@ -135,7 +133,6 @@ export const AuthSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = false;
       state.userCreated = null;
-      localStorage.removeItem("userInfo");
     });
     builder.addCase(SignOutAction.rejected, (state) => {
       state.userInfoLoading = false;

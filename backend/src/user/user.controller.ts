@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Get,
+  Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,7 +35,9 @@ export class UserController {
   }
 
   @Delete('delete')
-  remove(@Req() req: any) {
-    return this.userService.remove(req.user.userId);
+  async remove(@Req() req: any, @Res() res: any) {
+    await this.userService.remove(req.user.userId);
+    res.clearCookie('token');
+    return res.send({ message: 'user removed' });
   }
 }

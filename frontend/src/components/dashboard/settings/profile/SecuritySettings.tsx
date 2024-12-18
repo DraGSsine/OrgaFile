@@ -10,7 +10,6 @@ import { DeleteProfile, UpdateProfilePassword } from "@/redux/slices/settingsSli
 import { toast } from "sonner";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SignOutAction } from "@/redux/slices/authSlice";
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(6, "Password must be at least 8 characters").max(30),
@@ -138,10 +137,8 @@ export const ConfirmDeleteProfile = ({isModalOpen, setIsModalOpen}:{ isModalOpen
       setTimeout(() => {
         dispatch(DeleteProfile()).then((res) => {
           if (DeleteProfile.fulfilled.match(res)) {
-            dispatch(SignOutAction()).then(() => {
-              router.push("/auth/signin");
-            });
             setIsModalOpen(false);
+            router.push("/auth/login");
             return toast.success("Account deleted successfully");
           }
           if (DeleteProfile.rejected.match(res)) {
@@ -156,6 +153,7 @@ export const ConfirmDeleteProfile = ({isModalOpen, setIsModalOpen}:{ isModalOpen
       }, 1000);
     } else {
       toast.error("Please type 'delete' to confirm account deletion.");
+      setIsLoading(false);
     }
   }
   return (
