@@ -1,6 +1,13 @@
 import { Mail01Icon, Shield01Icon } from "hugeicons-react";
 import React from "react";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata:Metadata = {
+  title: 'Legal',
+  description: "Read our privacy policy and terms of service to understand how we handle your data and use our service.",
+}
+
 const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br py-12">

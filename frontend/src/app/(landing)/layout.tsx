@@ -9,7 +9,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "OrgaFile",
+  title: {
+    default: "OrgaFile",
+    template: "OrgaFile | %s",
+  },
   description: "OrgaFile is a file management system.",
 };
 

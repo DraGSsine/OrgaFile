@@ -1,6 +1,12 @@
 import {SignInPage} from '@/components/signIn/signInPage'
 import Discover from '@/components/signup/discover'
+import { Metadata } from 'next'
 import React from 'react'
+
+export const metadata:Metadata = {
+  title: 'Sign In',
+  description: "Sign in to your account and get started with OrgaFile.",
+}
 
 const Page = () => {
   return (

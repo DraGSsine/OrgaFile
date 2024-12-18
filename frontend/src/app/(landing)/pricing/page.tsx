@@ -1,11 +1,17 @@
 import React, { ReactNode } from "react";
 import PricingCard from "@/components/pricing/PricingCard";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: 'Pricing',
+  description: "Whether you're new to our service or looking to level up your experience, we've got solutions that fit just right.",
+
+}
 const Pricing = () => {
   const plans = [
     {
-      productId:"price_1Q3MfoHbzmnInIZ1CsBh5rGj",
+      productId: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
       type: "Basic",
       price: "$9",
       subscription: "month",
@@ -21,7 +27,7 @@ const Pricing = () => {
       ],
     },
     {
-      productId:"price_1Q3Mh3HbzmnInIZ1QvC4glTC",
+      productId: "price_1Q3Mh3HbzmnInIZ1QvC4glTC",
       type: "Standard",
       price: "$19",
       subscription: "year",
@@ -38,7 +44,7 @@ const Pricing = () => {
       ],
     },
     {
-      productId:"price_1Q3MiPHbzmnInIZ1kdQAFHqH",
+      productId: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
       type: "Premium",
       price: "$39",
       subscription: " month",
