@@ -45,13 +45,13 @@ const NewsLetter = () => {
               </div>
             </div>
             <div className="md:w-[42%] lg:w-1/2">
-              <Image
+              {/* <Image
                 src="/images/cta-cards.webp"
-                alt="OrgaFile stat cards components"
+                alt=""
                 loading="lazy"
                 width={1299}
                 height={678}
-              />
+              /> */}
             </div>
           </div>
         </div>

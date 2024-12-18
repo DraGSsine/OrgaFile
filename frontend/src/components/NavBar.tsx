@@ -7,9 +7,9 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarContent,
-  Link,
   Button,
 } from "@nextui-org/react";
+import Link from "next/link";
 import { ArrowRight01Icon } from "hugeicons-react";
 
 const NavBar = () => {
@@ -51,16 +51,12 @@ const NavBar = () => {
           >
             log in
           </Link>
-          <Link href="/auth/signup">
-            <Button
-              endContent={<ArrowRight01Icon size={20} />}
-              variant="flat"
-              radius="full"
-              className="bg-primary-500 text-zinc-50"
-            >
-              Get Started
-            </Button>
+
+          <Link href="/auth/signup" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+            Get Started
+            <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
+
         </div>
       </NavbarContent>
 
@@ -107,15 +103,9 @@ const NavBar = () => {
               Log in
             </Button>
           </Link>
-          <Link href="/auth/signup">
-            <Button
-              endContent={<ArrowRight01Icon size={20} />}
-              variant="flat"
-              radius="full"
-              className="bg-primary-500 text-zinc-50"
-            >
-              Get Started
-            </Button>
+          <Link href="/auth/signup" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+            Get Started
+            <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
         </div>
       </NavbarMenu>

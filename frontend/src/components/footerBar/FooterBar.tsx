@@ -47,16 +47,10 @@ const FooterBar = () => {
               <h3 className="font-medium text-sm text-slate-800">Company</h3>
               <div className="flex flex-col mt-3">
                 <Link
-                  href="/about"
+                  href="/pricing"
                   className="py-2 text-sm text-slate-600 hover:text-indigo-600"
                 >
-                  About
-                </Link>
-                <Link
-                  href="/legal"
-                  className="py-2 text-sm text-slate-600 hover:text-indigo-600"
-                >
-                  legal
+                  Pricing
                 </Link>
               </div>
             </div>
@@ -67,7 +61,7 @@ const FooterBar = () => {
                   href="/legal"
                   className="py-2 text-sm text-slate-600 hover:text-indigo-600"
                 >
-                  legal
+                  Privacy Policy
                 </Link>
               </div>
             </div>

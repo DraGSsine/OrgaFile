@@ -14,9 +14,9 @@ export function Logo() {
       href="/"
       className="flex items-center gap-2 font-bold text-2xl transition-all duration-300"
     >
-      <Files01Icon className="h-8 w-8 text-primary" />
+      {/* <Files01Icon className="h-8 w-8 text-primary" /> */}
 
-      <div>
+      <div className=" flex flex-col xl:flex-row gap-1" >
         <span className="text-primary hidden xl:flex">Orga</span>
         <span className="text-default-600 hidden xl:flex ">File</span>
       </div>

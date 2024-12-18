@@ -5,7 +5,7 @@ import {
   analyzeDocument,
   generateFileName,
   categorizeDocuments,
-} from '../ai/openai-setup';
+} from '../ai/ai-setup';
 import AWS from 'aws-sdk';
 import { FileDocument, FileInfo } from '../schemas/files.schema';
 import { FolderDocument } from '../schemas/folders.schema';

@@ -161,6 +161,7 @@ export class PaymentService {
         return;
       }
       const plan = setPlanByItsId(subscription.items.data[0].price.id);
+      const price = subscription.items.data[0].price.unit_amount / 100;
       await this.subscriptionModel.create({
         userId,
         plan,
@@ -168,7 +169,7 @@ export class PaymentService {
         subscriptionId: session.subscription?.toString(),
         customerId: subscription.customer as string,
         currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        price: subscription.items.data[0].price.unit_amount,
+        price,
       });
       const { storage, requestLimit } = this.setStorageBaseOnPlan(plan);
       await this.userModel.updateOne(
@@ -194,7 +195,7 @@ export class PaymentService {
           subscriptionStatus: 'active',
           subscriptionId: session.subscription?.toString(),
           currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          price: subscription.items.data[0].price.unit_amount,
+          price: subscription.items.data[0].price.unit_amount / 100,
         },
       );
     } catch (error) {

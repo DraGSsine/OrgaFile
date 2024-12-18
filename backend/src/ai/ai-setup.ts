@@ -130,7 +130,7 @@ export const categorizeDocuments = async (
       - Return ONLY a single category name
       - predefined categories: ${predefinedCategories.join(', ')}
       - Choose the most specific category that matches the document
-      - Respond in this EXACT format: Category Name
+      - Respond only with the category name
 
       Document Details:
       - Main Topic: ${doc.mainTopic}
@@ -188,7 +188,7 @@ export const generateFileName = async (documentInfo: {
   - Do NOT include file extension
   - Focus on the most distinctive aspect of the document
   
-  Respond in this EXACT format:generated-filename`;
+  respond only with the filename`;
 
   const mistralClient = createMistralClient();
 

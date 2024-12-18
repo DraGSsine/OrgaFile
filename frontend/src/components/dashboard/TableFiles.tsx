@@ -200,7 +200,7 @@ export default function TableFiles({
                           </Button>
                         </Tooltip>
                       </div>
-                      <div className="text-center hidden sm:inline-block overflow-x-scroll ">
+                      <div className="text-center hidden sm:inline-block">
                         <Chip
                           className="hidden md:inline-block"
                           size="sm"

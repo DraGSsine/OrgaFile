@@ -16,7 +16,7 @@ export class Subscription {
   subscriptionStatus: 'active' | 'inactive';
 
   @Prop()
-  price: boolean;
+  price: number;
 
   @Prop({ default: new Date() })
   currentPeriodStart: Date;

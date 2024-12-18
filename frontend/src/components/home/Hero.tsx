@@ -2,9 +2,14 @@ import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import React from "react";
 import { ArrowRight } from "../../../public/icons";
-import MaxWidthWrapper from "../MaxWidthWrapper";
 import Image from "next/image";
+import { Metadata } from "next";
+import { ArrowRight01Icon } from "hugeicons-react";
 
+export const metadata: Metadata = {
+  title: "OrgaFile",
+  description: "OrgaFile is a file management system powered by AI and designed to streamline file and folder organization.",
+};
 const Hero = () => {
   return (
     <section className=" flex flex-col items-center " >
@@ -20,27 +25,14 @@ const Hero = () => {
           Our sophisticated platform is designed to streamline file and folder
           organization, ensuring seamless efficiency and accessibility for you
         </p>
-        <div className=" space-x-8">
-          <Link href="/auth/signup">
-            <Button
-              endContent={<ArrowRight />}
-              variant="solid"
-              radius="full"
-              className="bg-primary-color text-zinc-50 w-36 text-medium"
-            >
-              Get Started
-            </Button>
+        <div className=" flex space-x-8">
+          <Link href="/auth/signup" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+            Get Started
+            <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
-          <Link href="/auth/signup">
-            <Button
-              endContent={<ArrowRight />}
-              variant="flat"
-              color="default"
-              radius="full"
-              className="text-zinc-800 w-36 text-medium"
-            >
-              Learn More
-            </Button>
+          <Link href="/legal" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 border text-primary-500 bg-white border-blue-500 ">
+            Learn More
+            <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
         </div>
       </div>
