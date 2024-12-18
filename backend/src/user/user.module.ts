@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { userSchema } from '../schemas/auth.schema';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { folderSchema } from 'src/schemas/folders.schema';
 import { fileSchema } from 'src/schemas/files.schema';
