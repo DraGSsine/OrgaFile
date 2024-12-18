@@ -1,6 +1,5 @@
 "use client";
 
-import { ProfileHeader } from "./ProfileHeader";
 import { ProfileForm } from "./ProfileForm";
 import { ProfileDelete, SecuritySettings } from "./SecuritySettings";
 

@@ -25,6 +25,7 @@ export type variantType =
   | "flat"
   | undefined;
 export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
+
 export type initialStateType = {
   userCreated: { message: string, isSubscribed: boolean } | null;
   error: { message: string, error: string, statusCode: number } | null;
@@ -147,4 +148,31 @@ export interface Transaction {
 export interface PaymentHistoryProps {
   transactions: Transaction[];
   className?: string;
+}
+
+export interface initialDashboardStateType {
+  userLimits: {
+    storageLimit: number;
+    storageUsed: number;
+    requestLimit: number;
+    requestUsed: number;
+    loading: boolean;
+    error: any;
+  };
+  cloudInfo: {
+    data: {
+      filesFormatInfo: {
+        name: string;
+        size: number;
+        numberOfFiles: number;
+      }[];
+      storageUsed: number;
+      storage: number;
+    };
+    loading: boolean;
+    error: any;
+  };
+  SignoutModal: {
+    isOpen: boolean;
+  };
 }

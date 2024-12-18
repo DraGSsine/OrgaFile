@@ -1,35 +1,8 @@
+import { initialDashboardStateType } from "@/types/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
-interface initialStateType {
-  userLimits: {
-    storageLimit: number;
-    storageUsed: number;
-    requestLimit: number;
-    requestUsed: number;
-    loading: boolean;
-    error: any;
-  };
-  cloudInfo: {
-    data: {
-      filesFormatInfo: {
-        name: string;
-        size: number;
-        numberOfFiles: number;
-      }[];
-      storageUsed: number;
-      storage: number;
-    };
-    loading: boolean;
-    error: any;
-  };
-  SignoutModal: {
-    isOpen: boolean;
-  };
-}
-
-const initialState: initialStateType = {
+const initialState: initialDashboardStateType = {
   userLimits: {
     storageLimit: 0,
     storageUsed: 0,

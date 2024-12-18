@@ -176,7 +176,6 @@ export const generateFileName = async (documentInfo: {
   keyEntities: string[];
   summary: string;
 }) => {
-  // Create a Zod schema for the filename
 
   const promptContent = `Generate a descriptive filename based on the following document information:
   Main Topic: ${documentInfo.mainTopic}
