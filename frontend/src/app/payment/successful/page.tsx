@@ -25,7 +25,7 @@ export default function Component() {
             <div className="space-y-2 text-center">
               <h1 className="text-2xl font-bold">Payment Failed</h1>
               <p className="text-gray-500 dark:text-gray-400">
-                we couldn't process your payment. Please try again.
+                we couldn&apos;t process your payment. Please try again.
               </p>
             </div>
           </>
