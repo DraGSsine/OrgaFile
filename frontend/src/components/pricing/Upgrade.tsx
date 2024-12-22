@@ -3,7 +3,6 @@ import { Button } from "@nextui-org/button";
 import { Loading03Icon } from "hugeicons-react";
 import { useRouter } from "next/navigation";
 import { useState } from 'react'; // Ensure useState is imported
-import Cookies from "js-cookie";
 import axios from "axios";
 
 const Upgrade = ({
@@ -18,20 +17,24 @@ const Upgrade = ({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const upgradePlan = async (plan: string) => {
+  const upgradePlan = (plan: string) => {
     setLoading(true);
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/upgrades`,
-      { plan },
-      {
-        withCredentials: true,
+    setTimeout(async () => {
+      try {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/upgrades`,
+          { plan },
+          {
+            withCredentials: true,
+          }
+        );
+        router.push("/auth/signup");
+        setLoading(false);
+      } catch (error) {
+        console.error("Error upgrading plan:", error);
+        setLoading(false);
       }
-    );
-    console.log(response.data);
-    setTimeout(() => {
-      router.push("/auth/signup");
-      setLoading(false);
-    }, 1000);
+    }, 500);
   };
 
   return (

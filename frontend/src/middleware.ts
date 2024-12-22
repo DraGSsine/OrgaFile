@@ -5,18 +5,11 @@ export async function middleware(request: NextRequest) {
   const cookie = request.cookies;
   const accessToken = cookie.get("token")?.value;
   const plan = cookie.get("plan")?.value;
-  console.error(plan)
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
   const { isTokenValid, isSubscribed } = await validateToken(accessToken);
   try {
-    if (!plan && request.nextUrl.pathname === "/auth/signup") {
-      return NextResponse.redirect(
-        new URL("/pricing", request.nextUrl.origin).href
-      );
-    }
-
     if (protectedRoutes.includes(request.nextUrl.pathname)) {
       if (!isTokenValid || !isSubscribed) {
         if (
@@ -30,6 +23,12 @@ export async function middleware(request: NextRequest) {
         );
       }
     } else if (publicRoutes.includes(request.nextUrl.pathname)) {
+      console.log(request.nextUrl.pathname);
+      if (request.nextUrl.pathname === "/auth/signup" && !plan) {
+        return NextResponse.redirect(
+          new URL("/pricing", request.nextUrl.origin).href
+        );
+      }
       if (isTokenValid && isSubscribed) {
         return NextResponse.redirect(
           new URL("/dashboard", request.nextUrl.origin).href
