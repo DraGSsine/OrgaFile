@@ -4,7 +4,6 @@ import { jwtVerify } from "jose/jwt/verify";
 export async function middleware(request: NextRequest) {
   const cookie = request.cookies;
   const accessToken = cookie.get("token")?.value;
-  const plan = cookie.get("plan")?.value;
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
@@ -23,12 +22,6 @@ export async function middleware(request: NextRequest) {
         );
       }
     } else if (publicRoutes.includes(request.nextUrl.pathname)) {
-      console.log(request.nextUrl.pathname);
-      if (request.nextUrl.pathname === "/auth/signup" && !plan) {
-        return NextResponse.redirect(
-          new URL("/pricing", request.nextUrl.origin).href
-        );
-      }
       if (isTokenValid && isSubscribed) {
         return NextResponse.redirect(
           new URL("/dashboard", request.nextUrl.origin).href

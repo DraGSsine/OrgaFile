@@ -33,7 +33,7 @@ const initialState: {
 export const createCheckoutSession = createAsyncThunk(
   "payment/createCheckoutSession",
   async (_, { rejectWithValue }) => {
-    const plan = cookies.get("plan") || "standard";
+    const plan = localStorage.getItem("plan") || "standard";
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/create-checkout-session`,

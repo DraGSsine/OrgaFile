@@ -43,6 +43,12 @@ const SignupPageForm = () => {
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!localStorage.getItem("plan")) {
+      toast.error("Please select a plan");
+      router.push("/pricing");
+      return;
+    }
+
     const parsedUser = User.safeParse(userCredential);
     if (!parsedUser.success) {
       setErrorState(parsedUser.error.errors[0]);
