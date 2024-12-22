@@ -19,7 +19,8 @@ const Upgrade = ({
 
   const upgradePlan = (plan: string) => {
     setLoading(true);
-    Cookies.set("plan", plan);
+    // add secure tru and http only
+    Cookies.set("plan", plan, { expires: 1, secure: true, httpOnly: true });
     setTimeout(() => {
       router.push("/auth/signup");
       setLoading(false);
