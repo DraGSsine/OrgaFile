@@ -40,7 +40,12 @@ export class PaymentService {
         userId,
         subscriptionStatus: 'active',
       });
-
+      if (!subscription) {
+        return {
+          isSubscribed: false,
+          newToken: null,
+        };
+      }
       const newToken = await this.jwtService.signAsync(
         { userId, isSubscribed: !!subscription },
         { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY },

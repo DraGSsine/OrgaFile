@@ -46,9 +46,15 @@ export class PaymentController {
   @Get('check-subscription')
   @UseGuards(AuthGuard)
   async checkSubscription(@Req() request: any, @Res() res: Response) {
-    const { newToken } = await this.paymentService.checkSubscription(
+    const { newToken,isSubscribed } = await this.paymentService.checkSubscription(
       request.user.userId,
     );
+    if (!isSubscribed){
+      res.clearCookie('token');
+      return res.status(400).send({
+        message: 'Subscription not found',
+      });
+    }
     res.cookie('token', newToken, this.resHeaders);
     res.send({
       message: 'Subscription checked',
