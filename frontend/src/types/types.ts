@@ -140,9 +140,14 @@ export interface RecentUploadsProps {
 }
 
 export interface Transaction {
-  createdAt: string;
-  price: number;
   plan: string;
+  price: number;
+  currency: string;
+  paymentMethod: string;
+  lastFourDigits: string;
+  status: "active" | "failed" | "inactive";
+  recipient?: string;
+  createdAt: string;
 }
 
 export interface PaymentHistoryProps {

@@ -219,11 +219,27 @@ export function truncateString(str: string, num: number) {
   return str.slice(0, num) + "...";
 }
 
+// export function formatDateForInvoice(date: string) {
+//   // merch 3 2022
+//   const d = new Date(date);
+//   const month = d.toLocaleString("default", { month: "short" });
+//   const day = d.getDate();
+//   const year = d.getFullYear();
+//   return `${month} ${day} ${year}`;
+// }
+
+
 export function formatDateForInvoice(date: string) {
-  // merch 3 2022
-  const d = new Date(date);
-  const month = d.toLocaleString("default", { month: "short" });
-  const day = d.getDate();
-  const year = d.getFullYear();
-  return `${month} ${day} ${year}`;
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+export function formatCurrency(amount: number, currency: string) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
 }

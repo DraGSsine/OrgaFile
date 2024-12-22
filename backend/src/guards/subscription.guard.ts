@@ -9,8 +9,7 @@ export class SubscriptionGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
-      const userId = request.userId;
-    
+      const userId = request.user.userId;
       const hasSubscription = await this.userService.hasSubscription(userId);
     
       if (!hasSubscription) {

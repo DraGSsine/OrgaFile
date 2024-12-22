@@ -83,16 +83,34 @@ export class UserService {
       const subscription = await this.subscriptionModel.findOne({ userId }).sort({ createdAt: -1 });
       // get all the subscription history
       const subscriptionHistory = await this.subscriptionModel.find({ userId });
+      /*
+        excpeted data in frontend
+          type: "sent" | "received" | "converted";
+          price: number;
+          currency: string;
+          convertedAmount?: string;
+          convertedCurrency?: string;
+          paymentMethod: string;
+          lastFourDigits: string;
+          status: "success" | "failed" | "incomplete";
+          description: string;
+          recipient?: string;
+          createdAt: string;
+      */
       const response = {
         plan: subscription.plan,
         fullName: user.fullName,
         email: user.email,
-        subscriptionEnds:subscription.currentPeriodEnd,
+        subscriptionEnds: subscription.currentPeriodEnd,
         price: subscription.price,
-        subscriptionHistory: subscriptionHistory.map((sub: SubscriptionHistory) => ({
+        subscriptionHistory: subscriptionHistory.map((sub):SubscriptionHistory => ({
           plan: sub.plan,
-          createdAt: sub.currentPeriodStart,
           price: sub.price,
+          currency: 'usd',
+          paymentMethod: sub.cardBrand,
+          lastFourDigits: sub.cardLast4,
+          status: sub.subscriptionStatus,
+          createdAt: sub.currentPeriodStart,
         })),
       };
 
@@ -104,7 +122,10 @@ export class UserService {
 
   async hasSubscription(userId: string) {
     const subscription = await this.subscriptionModel.findOne({ userId, subscriptionStatus: 'active' });
-    return !!subscription;
+    if (!subscription) {
+      return false;
+    }
+    return true;
   }
 
 }

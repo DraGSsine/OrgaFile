@@ -39,6 +39,11 @@ export interface FolderInfoType {
 
 export type SubscriptionHistory = {
   plan: string;
-  currentPeriodStart: Date;
   price: number;
+  currency: string;
+  paymentMethod: string;
+  lastFourDigits: string;
+  status: "success" | "failed" | "incomplete";
+  recipient?: string;
+  createdAt: string;
 };

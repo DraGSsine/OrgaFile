@@ -41,7 +41,7 @@ export class PaymentService {
       const subscription = await this.subscriptionModel.findOne({
         userId,
         subscriptionStatus: 'active',
-      });
+      }).sort({ currentPeriodEnd: -1 });
 
       if (!subscription || subscription.currentPeriodEnd < new Date()) {
         return { isSubscribed: false, newToken: null };
@@ -60,20 +60,11 @@ export class PaymentService {
   }
 
   async createCheckoutSession(createPaymentDto: CreatePaymentDto, userId: string) {
-    const redirectUrl = process.env.PROD === 'true' 
-      ? process.env.NEXT_APP_URL_PROD 
+    const redirectUrl = process.env.PROD === 'true'
+      ? process.env.NEXT_APP_URL_PROD
       : process.env.NEXT_APP_URL_DEV;
 
     try {
-      const existingSubscription = await this.subscriptionModel.findOne({
-        userId,
-        subscriptionStatus: 'active',
-      });
-
-      if (existingSubscription) {
-        return { url: redirectUrl };
-      }
-
       const customer = await this.stripeClient.customers.create({
         metadata: { userId },
       });
@@ -105,17 +96,17 @@ export class PaymentService {
       );
 
       switch (event.type) {
-        case 'checkout.session.completed':
-          await this.handleCheckoutSuccess(event.data.object as Stripe.Checkout.Session);
+        case 'customer.subscription.created':
+          await this.handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+          break;
+        case 'customer.subscription.updated':
+          await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+          break;
+        case 'customer.subscription.deleted':
+          await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
           break;
         case 'invoice.payment_failed':
           await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
-          break;
-        case 'customer.subscription.deleted':
-          await this.subscriptionModel.updateOne(
-            { subscriptionId: event.data.object.id },
-            { subscriptionStatus: 'inactive' }
-          );
           break;
       }
 
@@ -124,6 +115,112 @@ export class PaymentService {
       console.error('Webhook error:', error);
       response.status(400).send(`Webhook Error: ${error.message}`);
     }
+  }
+
+  private async handleSubscriptionCreated(subscription: Stripe.Subscription) {
+    try {
+      const customerId = subscription.customer as string;
+      const customerResponse = await this.stripeClient.customers.retrieve(customerId);
+
+      // Check if customer is deleted and properly access the customer object
+      if ('deleted' in customerResponse) {
+        return;
+      }
+
+      const userId = customerResponse.metadata.userId;
+      if (!userId) return;
+
+      await this.subscriptionModel.updateMany(
+        { userId, subscriptionStatus: 'active' },
+        { subscriptionStatus: 'inactive' }
+      );
+      await this.createNewSubscription(subscription, userId);
+    } catch (error) {
+      console.error('Handle subscription created error:', error);
+    }
+  }
+
+  private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+    try {
+      const customerId = subscription.customer as string;
+
+      const customerResponse = await this.stripeClient.customers.retrieve(customerId);
+      if ('deleted' in customerResponse) {
+        return;
+      }
+
+      const userId = customerResponse.metadata.userId;
+
+      if (!userId) return;
+
+      const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+
+      const existingSubscription = await this.subscriptionModel.findOne({
+        subscriptionId: subscription.id,
+        subscriptionStatus: 'active',
+      });
+
+      if (existingSubscription && existingSubscription.currentPeriodEnd.getTime() !== currentPeriodEnd.getTime()) {
+        await this.subscriptionModel.updateMany(
+          { userId, subscriptionStatus: 'active' },
+          { subscriptionStatus: 'inactive' }
+        );
+        await this.createNewSubscription(subscription, userId);
+      }
+    } catch (error) {
+      console.error('Handle subscription updated error:', error);
+    }
+  }
+
+  private async handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+    await this.subscriptionModel.updateOne(
+      { subscriptionId: subscription.id },
+      { subscriptionStatus: 'inactive' }
+    );
+  }
+
+  private async handlePaymentFailed(invoice: Stripe.Invoice) {
+    if (!invoice.subscription) return;
+
+    await this.subscriptionModel.updateOne(
+      { subscriptionId: invoice.subscription as string },
+      { subscriptionStatus: 'inactive' }
+    );
+  }
+
+  async createNewSubscription(subscription: Stripe.Subscription, userId: string) {
+    const planId = subscription.items.data[0].price.id;
+    const planName = Object.entries(SUBSCRIPTION_PLANS).find(
+      ([_, id]) => id === planId
+    )?.[0];
+
+    if (!planName) return;
+
+    // Get the payment method details
+    const userPaymentinfo = await this.stripeClient.customers.listSources(
+      subscription.customer as string,
+      { object: 'card' }
+    );
+
+    // Get the first card from the sources
+    const card = userPaymentinfo.data[0];
+
+    await this.subscriptionModel.create({
+      userId,
+      plan: planName,
+      cardBrand: 'Visa', // Get actual card brand
+      cardLast4: '3492', // Get actual last 4 digits
+      subscriptionStatus: 'active',
+      subscriptionId: subscription.id,
+      customerId: subscription.customer as string,
+      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      price: subscription.items.data[0].price.unit_amount! / 100,
+    });
+
+    await this.userModel.updateOne(
+      { _id: userId },
+      { ...PLAN_LIMITS[planName], requestUsed: 0 }
+    );
   }
 
   async cancelSubscription(userId: string) {
@@ -147,49 +244,5 @@ export class PaymentService {
       console.error('Cancel subscription error:', error);
       return { error: 'Could not cancel subscription' };
     }
-  }
-
-  private async handleCheckoutSuccess(session: Stripe.Checkout.Session) {
-    try {
-      const subscription = await this.stripeClient.subscriptions.retrieve(
-        session.subscription as string
-      );
-      const userId = session.metadata?.userId;
-      
-      if (!userId) return;
-
-      const planId = subscription.items.data[0].price.id;
-      const planName = Object.entries(SUBSCRIPTION_PLANS).find(
-        ([_, id]) => id === planId
-      )?.[0];
-
-      if (!planName) return;
-
-      await this.subscriptionModel.updateOne({
-        userId,
-        plan: planName,
-        subscriptionStatus: 'active',
-        subscriptionId: subscription.id,
-        customerId: subscription.customer as string,
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        price: subscription.items.data[0].price.unit_amount! / 100,
-      });
-
-      await this.userModel.updateOne(
-        { _id: userId },
-        { ...PLAN_LIMITS[planName] }
-      );
-    } catch (error) {
-      console.error('Handle checkout error:', error);
-    }
-  }
-
-  private async handlePaymentFailed(invoice: Stripe.Invoice) {
-    if (!invoice.subscription) return;
-
-    await this.subscriptionModel.updateOne(
-      { subscriptionId: invoice.subscription  as string },
-      { subscriptionStatus: 'inactive' }
-    );
   }
 }
