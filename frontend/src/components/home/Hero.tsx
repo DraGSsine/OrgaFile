@@ -26,7 +26,7 @@ const Hero = () => {
           organization, ensuring seamless efficiency and accessibility for you
         </p>
         <div className=" flex space-x-8">
-          <Link href="/auth/signup" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
             Get Started
             <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
