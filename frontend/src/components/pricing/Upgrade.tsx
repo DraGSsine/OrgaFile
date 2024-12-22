@@ -19,8 +19,13 @@ const Upgrade = ({
 
   const upgradePlan = (plan: string) => {
     setLoading(true);
-    // add secure tru and http only
-    Cookies.set("plan", plan, { expires: 1, secure: true, httpOnly: true });
+    Cookies.set("plan", plan, {
+      expires: 1,
+      domain: process.env.PROD === 'true' ? '.orgafile.com' : 'localhost',
+      sameSite: process.env.PROD === 'true' ? 'none' : 'lax',
+      secure: process.env.PROD === 'true' ? true : false,
+      httpOnly: true,
+    });
     setTimeout(() => {
       router.push("/auth/signup");
       setLoading(false);
@@ -33,11 +38,10 @@ const Upgrade = ({
       size="lg"
       radius="full"
       data-plan={plan}
-      className={` ${
-        active
-          ? "flex justify-center w-full border border-primary bg-primary text-base font-medium text-white transition hover:bg-opacity-90"
-          : "flex justify-center text-center w-full border border-stroke bg-transparent text-base font-medium text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3"
-      } `}
+      className={` ${active
+        ? "flex justify-center w-full border border-primary bg-primary text-base font-medium text-white transition hover:bg-opacity-90"
+        : "flex justify-center text-center w-full border border-stroke bg-transparent text-base font-medium text-primary transition hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3"
+        } `}
       disabled={loading}
     >
       {loading ? (
