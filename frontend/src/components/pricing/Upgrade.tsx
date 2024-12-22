@@ -20,18 +20,14 @@ const Upgrade = ({
 
   const upgradPlan = (plan: string) => {
     setLoading(true);
+    Cookies.set("plan", plan, {
+      expires: 60 * 60 * 24,
+    });
     setTimeout(() => {
-      Cookies.set("plan", plan, {
-        expires: 60 * 60 * 24,
-      });
-
-      if (Cookies.get("plan") === plan) {
-        router.push("/auth/signup");
-      } else {
-        console.error("Failed to set cookie");
-      }
+      router.push("/auth/signup")
       setLoading(false);
     }, 1000);
+
   };
 
   return (
