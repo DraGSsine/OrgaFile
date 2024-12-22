@@ -2,7 +2,6 @@
 import { Button } from "@nextui-org/button";
 import { Loading03Icon } from "hugeicons-react";
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie'; // Ensure Cookies is imported
 import { useState } from 'react'; // Ensure useState is imported
 
 const Upgrade = ({
@@ -19,12 +18,8 @@ const Upgrade = ({
 
   const upgradePlan = (plan: string) => {
     setLoading(true);
-    console.log("Setting plan cookie");
-    Cookies.set("plan", plan, {
-      expires: 60 * 60 * 24,
-    });
+    localStorage.setItem("plan", plan);
     setTimeout(() => {
-      console.log("Navigating to /auth/signup");
       router.push("/auth/signup");
       setLoading(false);
     }, 1000);

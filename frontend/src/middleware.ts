@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
-import { cookies } from 'next/headers'
 import { jwtVerify } from "jose/jwt/verify";
 
 export async function middleware(request: NextRequest) {
-  const cookie = await cookies();
+  const cookie = request.cookies;
   const accessToken = cookie.get("token")?.value;
   const plan = cookie.get("plan")?.value;
+  console.error(plan)
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
@@ -53,7 +53,7 @@ async function validateToken(token?: string) {
 
     return { isTokenValid: true, isSubscribed: payload.isSubscribed };
   } catch (error) {
-    console.error(error);
+    console.info(error);
     return { isTokenValid: false, isSubscribed: false };
   }
 }
