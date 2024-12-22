@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { folderSchema } from '../schemas/folders.schema';
 import { fileSchema } from '../schemas/files.schema';
 import { removedFilesSchema } from '../schemas/removedFiles.schema';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

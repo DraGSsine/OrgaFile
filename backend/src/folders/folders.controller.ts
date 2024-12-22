@@ -15,7 +15,7 @@ import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { ObjectId } from 'mongoose';
-import { SubscriptionGuard } from 'src/guards/subscription.guard';
+import { SubscriptionGuard } from '../guards/subscription.guard';
 
 @Controller('api/folders')
 @UseGuards(AuthGuard)

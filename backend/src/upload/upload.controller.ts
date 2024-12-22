@@ -16,7 +16,7 @@ import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../guards/auth.guard';
 import multer from 'multer';
-import { SubscriptionGuard } from 'src/guards/subscription.guard';
+import { SubscriptionGuard } from '../guards/subscription.guard';
 
 @Controller('api/files')
 @UseGuards(AuthGuard)
