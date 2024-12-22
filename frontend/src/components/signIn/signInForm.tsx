@@ -40,6 +40,7 @@ export const SignInForm = () => {
           const checkoutResultAction = await dispatch(createCheckoutSession())
           if (createCheckoutSession.fulfilled.match(checkoutResultAction)) {
             toast.success("Sign in successful");
+            console.log(checkoutResultAction.payload)
             router.push(checkoutResultAction.payload.url)
           } else {
             toast.error("An error occurred");

@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { userSchema } from '../schemas/auth.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { folderSchema } from '../schemas/folders.schema';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { folderSchema } from '../schemas/folders.schema';
       { name: 'user', schema: userSchema },
       { name: 'Folder', schema: folderSchema },
     ]),
+    UserModule,
   ],
   controllers: [FoldersController],
   providers: [FoldersService, JwtService],

@@ -15,6 +15,7 @@ import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { ObjectId } from 'mongoose';
+import { SubscriptionGuard } from 'src/guards/subscription.guard';
 
 @Controller('api/folders')
 @UseGuards(AuthGuard)
@@ -30,6 +31,7 @@ export class FoldersController {
     return this.foldersService.loadOneFolder(id, req.user.userId);
   }
   @Get('download/:id')
+  @UseGuards(SubscriptionGuard)
   async downloadFolder(
     @Param('id') id: ObjectId,
     @Req() req: any,

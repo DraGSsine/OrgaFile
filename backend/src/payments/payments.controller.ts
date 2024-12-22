@@ -1,5 +1,3 @@
-// src/payment/payment.controller.ts
-
 import {
   Controller,
   Post,
@@ -29,21 +27,37 @@ export class PaymentController {
   async createSession(
     @Body() createPaymentDto: CreatePaymentDto,
     @Req() request: any,
+    @Res() response: Response,
   ) {
-    const result = await this.paymentService.createCheckoutSession(
-      createPaymentDto,
-      request.user.userId,
-    );
-    return result;
+    try {
+      const result = await this.paymentService.createCheckoutSession(
+        createPaymentDto,
+        request.user.userId,
+      );
+      console.log('Checkout session result:', result); 
+      return response.send(result);
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      return response.status(500).send({ error: 'Internal Server Error' });
+    }
   }
   @Post('webhook')
   async webhook(
     @Req() request: RawBodyRequest<Request>,
     @Res() response: Response,
   ) {
-    console.log('----------------------------------------------->Webhook received');
     return this.paymentService.handleWebhook(request, response);
   }
+
+  @Post('manage-billing')
+  @UseGuards(AuthGuard)
+  async manageBilling(@Req() request: any, @Res() res: Response) {
+    const result = await this.paymentService.cancelSubscription(
+      request.user.userId,
+    );
+    return res.send(result);
+  }
+
   @Get('check-subscription')
   @UseGuards(AuthGuard)
   async checkSubscription(@Req() request: any, @Res() res: Response) {

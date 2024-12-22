@@ -37,7 +37,7 @@ export const createCheckoutSession = createAsyncThunk(
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/create-checkout-session`,
-        {plan},
+        { plan },
         {
           withCredentials: true,
         }
@@ -61,9 +61,27 @@ export const checkSubscription = createAsyncThunk(
       );
       return res.data;
     } catch (error: any) {
+      console.log(" error.response.data.message", error.response.data.message);
       return rejectWithValue(error.response.data.message);
     }
   }
+);
+
+export const manageBilling = createAsyncThunk("payment/manageBilling", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/manage-billing`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  }
+  catch (error: any) {
+    return rejectWithValue(error.response.data.message);
+  }
+}
 );
 
 export const paymentSlice = createSlice({
@@ -90,9 +108,9 @@ export const paymentSlice = createSlice({
         state.subscription.loading = false;
         state.subscription.isSubscribed = payload.isSubscribed;
       })
-      .addCase(checkSubscription.rejected, (state, { payload }) => {
+      .addCase(checkSubscription.rejected, (state) => {
         state.subscription.loading = false;
-        state.subscription.error = payload as string;
+        state.subscription.error = "Error Processing the Payment";
       });
   },
 });

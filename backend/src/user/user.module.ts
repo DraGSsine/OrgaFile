@@ -22,5 +22,6 @@ import { removedFilesSchema } from '../schemas/removedFiles.schema';
   ],
   controllers: [UserController],
   providers: [UserService, AuthGuard, JwtService],
+  exports: [UserService],
 })
 export class UserModule {}

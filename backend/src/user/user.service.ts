@@ -101,4 +101,10 @@ export class UserService {
       throw error;
     }
   }
+
+  async hasSubscription(userId: string) {
+    const subscription = await this.subscriptionModel.findOne({ userId, subscriptionStatus: 'active' });
+    return !!subscription;
+  }
+
 }

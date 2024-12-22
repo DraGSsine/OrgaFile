@@ -46,18 +46,29 @@ const FilesSettings = ({
           isPermanently: routeName === "removedFiles",
           isMany: false,
         })
-      );
+      )
     } else if (key === "restore") {
-      dispatch(restoreFile({ fileId })).then(() => {
+      dispatch(restoreFile({ fileId })).then((res) => {
         dispatch(resetFileResotreState());
         toast.success("File restored successfully");
+      }).catch((err) => {
+        toast.error(err?.message || "Failed to restore file");
       });
     } else if (key === "downloadFile") {
-      toast.promise(dispatch(downloadFile({ fileId, fileName })), {
-        loading: "Downloading...",
-        success: "Downloaded successfully",
-        error: "Failed to download",
-      });
+      toast.promise(
+        dispatch(downloadFile({ fileId, fileName }))
+          .then(() => {
+            dispatch(resetFilesState());
+          })
+          .catch((err) => {
+            toast.error(err?.message || "Failed to download file");
+          }),
+        {
+          loading: "Downloading...",
+          success: "Downloaded successfully",
+          error: "Failed to download",
+        }
+      );
     }
   }
   return (

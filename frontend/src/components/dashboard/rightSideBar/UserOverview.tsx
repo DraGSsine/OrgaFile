@@ -7,6 +7,7 @@ import { RootState } from "@/redux/store";
 
 const UserOverview = () => {
   const { userInfoLoading,userInformation } = useSelector((state: RootState) => state.auth);
+  if (!userInformation) return null;
   const { fullName, email, plan } = userInformation;
   return (
     <>

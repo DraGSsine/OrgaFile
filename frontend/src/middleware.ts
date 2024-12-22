@@ -4,7 +4,7 @@ import { jwtVerify } from "jose/jwt/verify";
 export async function middleware(request: NextRequest) {
   const cookie = request.cookies;
   const accessToken = cookie.get("token")?.value;
-  const protectedRoutes = ["/dashboard"];
+  const protectedRoutes = ["/dashboard","/dashboard/settings","/payment/successful"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
   const { isTokenValid, isSubscribed } = await validateToken(accessToken);

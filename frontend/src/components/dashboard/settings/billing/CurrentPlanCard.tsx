@@ -1,13 +1,15 @@
 "use client";
 
 import { formatDateForInvoice } from "@/helpers/helpers";
-import { createCheckoutSession } from "@/redux/slices/paymentSlice";
+import { createCheckoutSession, manageBilling } from "@/redux/slices/paymentSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Card, CardBody, CardHeader, Button, cn } from "@nextui-org/react";
 import axios from "axios";
 import { CreditCardIcon } from "hugeicons-react";
-import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 interface SubscriptionCardProps {
   price: string;
@@ -19,15 +21,20 @@ interface SubscriptionCardProps {
 }
 
 export function CurrentPlanCard() {
-  const { checkoutSession } = useSelector((state: RootState) => state.payment.session);
   const {plan,subscriptionEnds,price} = useSelector((state: RootState) => state.auth.userInformation);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-
+  const router = useRouter();
   const onManageBilling = () => {
-    dispatch(createCheckoutSession()).then((action) => {
-      if (createCheckoutSession.fulfilled.match(action)) {
-        window.location.href = checkoutSession.url;
+    setLoading(true);
+    dispatch(manageBilling()).then((action) => {
+      if (manageBilling.fulfilled.match(action)) {
+        setLoading(false);
+        router.push(action.payload.url);
+      } else {
+        toast.error("An error occurred");
       }
+      setLoading(false);
     }
     );
   };
@@ -68,6 +75,7 @@ export function CurrentPlanCard() {
           color="primary"
           className="w-full transition-all duration-300 hover:scale-[1.02]"
           onClick={onManageBilling}
+          isLoading={loading}
         >
           Manage Subscription
         </Button>

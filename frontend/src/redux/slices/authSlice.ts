@@ -8,7 +8,7 @@ const initialState: initialStateType = {
   isLoading: false,
   userCreated: null,
   userInfoLoading: true,
-  userInformation: { fullName: "", email: "", plan: "", subscriptionEnds:"", price:"" , subscriptionHistory: [] },
+  userInformation: { fullName: "", email: "", plan: "", subscriptionEnds: "", price: "", subscriptionHistory: [] },
 };
 
 export const SignUpAction = createAsyncThunk(
@@ -75,6 +75,12 @@ export const GetUserInfo = createAsyncThunk("auth/getUserInfo", async () => {
     return response.data;
   } catch (error) {
     console.log(error);
+    await axios.get(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signout`,
+      {
+        withCredentials: true,
+      }
+    )
   }
 }
 )

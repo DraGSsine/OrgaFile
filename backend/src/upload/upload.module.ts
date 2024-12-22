@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { folderSchema } from '../schemas/folders.schema';
 import { fileSchema } from '../schemas/files.schema';
 import { removedFilesSchema } from '../schemas/removedFiles.schema';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { removedFilesSchema } from '../schemas/removedFiles.schema';
       { name: 'Folder', schema: folderSchema },
       { name: 'RemovedFile', schema: removedFilesSchema },
     ]),
+    UserModule,
   ],
   controllers: [UploadController],
   providers: [UploadService, JwtService],

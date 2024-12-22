@@ -16,6 +16,7 @@ import { UploadService } from './upload.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../guards/auth.guard';
 import multer from 'multer';
+import { SubscriptionGuard } from 'src/guards/subscription.guard';
 
 @Controller('api/files')
 @UseGuards(AuthGuard)
@@ -23,6 +24,7 @@ export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('upload')
+  @UseGuards(SubscriptionGuard)
   @UseInterceptors(
     FilesInterceptor('files', null, {
       limits: {
@@ -67,6 +69,7 @@ export class UploadController {
   }
 
   @Post('restore')
+  @UseGuards(SubscriptionGuard)
   async restoreFile(@Body() requestBody: { fileId: string }, @Req() req: any) {
     const { fileId } = requestBody;
     return this.uploadService.restoreFile(req, fileId);
@@ -87,6 +90,7 @@ export class UploadController {
   }
 
   @Delete('remove')
+  @UseGuards(SubscriptionGuard)
   remove(
     @Req() req: any,
     @Body() requestBody: { fileId: string; isPermanently: boolean },
@@ -96,6 +100,7 @@ export class UploadController {
   }
 
   @Delete('removemany')
+  @UseGuards(SubscriptionGuard)
   removeMany(
     @Req() req: any,
     @Body() requestBody: { files: string[]; isPermanently: boolean },
@@ -104,6 +109,7 @@ export class UploadController {
     return this.uploadService.removeMany(req, files, isPermanently);
   }
   @Get('download/:fileId')
+  @UseGuards(SubscriptionGuard)
   async downloadFile(
     @Param('fileId') fileId: string,
     @Req() req: any,
