@@ -24,7 +24,7 @@ const Upgrade = ({
       domain: process.env.PROD === 'true' ? '.orgafile.com' : 'localhost',
       sameSite: process.env.PROD === 'true' ? 'none' : 'lax',
       secure: process.env.PROD === 'true' ? true : false,
-      httpOnly: true,
+      httpOnly: process.env.PROD === 'true' ? true : false,
     });
     setTimeout(() => {
       router.push("/auth/signup");
