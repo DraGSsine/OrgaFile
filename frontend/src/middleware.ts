@@ -9,8 +9,8 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes = ["/dashboard"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
+  const { isTokenValid, isSubscribed } = await validateToken(accessToken);
   try {
-    const { isTokenValid, isSubscribed } = await validateToken(accessToken);
     if (!plan && request.nextUrl.pathname === "/auth/signup") {
       return NextResponse.redirect(
         new URL("/pricing", request.nextUrl.origin).href

@@ -4,6 +4,7 @@ import { Loading03Icon } from "hugeicons-react";
 import { useRouter } from "next/navigation";
 import { useState } from 'react'; // Ensure useState is imported
 import Cookies from "js-cookie";
+import axios from "axios";
 
 const Upgrade = ({
   plan,
@@ -17,15 +18,16 @@ const Upgrade = ({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const upgradePlan = (plan: string) => {
+  const upgradePlan = async (plan: string) => {
     setLoading(true);
-    Cookies.set("plan", plan, {
-      expires: 1,
-      domain: process.env.PROD === 'true' ? '.orgafile.com' : 'localhost',
-      sameSite: process.env.PROD === 'true' ? 'none' : 'lax',
-      secure: process.env.PROD === 'true' ? true : false,
-      httpOnly: process.env.PROD === 'true' ? true : false,
-    });
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/upgrades`,
+      { plan },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
     setTimeout(() => {
       router.push("/auth/signup");
       setLoading(false);
