@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardBody, CardHeader, Button } from "@nextui-org/react";
 import { PackageIcon } from "hugeicons-react";
 

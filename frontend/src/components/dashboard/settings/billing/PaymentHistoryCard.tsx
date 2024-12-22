@@ -31,10 +31,9 @@ const statusConfig = {
 export function PaymentHistoryCard() {
   const transactions: Transaction[] = useSelector((state: RootState) => state.auth.userInformation.subscriptionHistory);
   return (
-    <Card className="w-full flex-grow rounded-lg bg-card">
-      <div className="rounded-lg">
+    <div className="w-full flex-grow overflow-hidden rounded-xl border  transition-all bg-gray-50 ">
         {/* Table Header */}
-        <div className="grid grid-cols-6 gap-4 px-6 py-4 bg-muted/50 bg-gray-300 overflow-hidden">
+        <div className="grid grid-cols-6 gap-4 px-6 py-4 bg-muted/50 bg-[#e7e8e9] text-gray-500 overflow-hidden">
           <div className="text-sm font-medium text-muted-foreground pl-10 col-span-2">Transaction</div>
           <div className="text-sm font-medium text-muted-foreground text-center">Date</div>
           <div className="text-sm font-medium text-muted-foreground text-center">Payment Method</div>
@@ -55,7 +54,7 @@ export function PaymentHistoryCard() {
                 {/* Transaction Info */}
                 <div className="col-span-2 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <CreditCardIcon className="h-5 w-5 text-primary" />
+                    <Invoice01Icon className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">{transaction.plan}</p>
@@ -96,7 +95,6 @@ export function PaymentHistoryCard() {
             );
           })}
         </div>
-      </div>
-    </Card>
+    </div>
   );
 }

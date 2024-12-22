@@ -1,9 +1,9 @@
-"use client";
-
 import { Settings02Icon } from "hugeicons-react";
 import { HeaderPage } from "@/components/dashboard/HeaderPage";
-import { SettingsTabs } from "@/components/dashboard/settings/SettingsTabs";
-
+import { CurrentPlanCard } from "@/components/dashboard/settings/billing/CurrentPlanCard";
+import { PaymentHistoryCard } from "@/components/dashboard/settings/billing/PaymentHistoryCard";
+import { SecuritySettings } from "@/components/dashboard/settings/profile/SecuritySettings";
+import { ProfileDelete } from "@/components/dashboard/settings/profile/ProfileDelete";
 
 
 export default function SettingsPage() {
@@ -15,8 +15,13 @@ export default function SettingsPage() {
         title="Settings"
         description="Manage your account settings and preferences"
       />
-      <div className="row-start-2 row-end-17 flex-grow relative rounded-t-lg shadow-small">
-        <SettingsTabs />
+      <div className="row-start-2 row-end-17 flex-grow relative rounded-t-lg shadow-small p-6 flex gap-5 flex-col h-full">
+        <div className=" justify-between flex gap-4" >
+          <CurrentPlanCard />
+          <SecuritySettings />
+          <ProfileDelete />
+        </div>
+        <PaymentHistoryCard />
       </div>
     </div>
   );
