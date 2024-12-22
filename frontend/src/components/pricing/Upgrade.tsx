@@ -17,24 +17,22 @@ const Upgrade = ({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const upgradePlan = (plan: string) => {
+  const upgradePlan = async (plan: string) => {
     setLoading(true);
-    setTimeout(async () => {
-      try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/upgrades`,
-          { plan },
-          {
-            withCredentials: true,
-          }
-        );
-        router.push("/auth/signup");
-        setLoading(false);
-      } catch (error) {
-        console.error("Error upgrading plan:", error);
-        setLoading(false);
-      }
-    }, 500);
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/upgrades`,
+        { plan },
+        {
+          withCredentials: true,
+        }
+      );
+      router.push("/auth/signup");
+      setLoading(false);
+    } catch (error) {
+      console.error("Error upgrading plan:", error);
+      setLoading(false);
+    }
   };
 
   return (

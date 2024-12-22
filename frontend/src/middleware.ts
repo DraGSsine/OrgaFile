@@ -52,7 +52,7 @@ async function validateToken(token?: string) {
 
     return { isTokenValid: true, isSubscribed: payload.isSubscribed };
   } catch (error) {
-    console.info(error);
+    console.log("Error validating token:", error);
     return { isTokenValid: false, isSubscribed: false };
   }
 }
