@@ -22,7 +22,7 @@ const Upgrade = ({
     setLoading(true);
     setTimeout(() => {
       Cookies.set("plan", plan, {
-        expires: 60,
+        expires: 60 * 60 * 24,
       });
 
       if (Cookies.get("plan") === plan) {
@@ -31,7 +31,7 @@ const Upgrade = ({
         console.error("Failed to set cookie");
       }
       setLoading(false);
-    }, 500);
+    }, 1000);
   };
 
   return (
