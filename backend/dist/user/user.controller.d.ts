@@ -6,11 +6,15 @@ export declare class UserController {
     constructor(userService: UserService);
     getUserInfo(req: any): Promise<{
         plan: any;
-        fullName: string;
-        email: string;
-        subscriptionEnds: any;
-        price: any;
-        subscriptionHistory: import("../types/type").SubscriptionHistory[];
+        fullName: any;
+        email: any;
+        subscriptionEnds: Date;
+        price: number;
+        status: any;
+        currency: any;
+        lastFourDigits: any;
+        cardBrand: any;
+        subscriptionHistory: any;
     }>;
     create(createUserDto: CreateUserDto, req: any): Promise<any>;
     updatePassword(updatePassowrdDto: UpdatePasswordDto, req: any): Promise<string>;

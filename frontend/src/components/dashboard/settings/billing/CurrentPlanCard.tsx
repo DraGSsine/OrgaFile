@@ -11,6 +11,7 @@ import { CreditCardIcon } from "hugeicons-react";
 import { formatDateForInvoice } from "@/helpers/helpers";
 import { Button } from "@nextui-org/button";
 import { updateUserInfo } from "@/redux/slices/authSlice";
+import { subscribeStatus } from "@/types/types";
 
 interface BillingInfoProps {
   nextBillingDate: string;
@@ -20,7 +21,7 @@ export function CurrentPlanCard() {
   const {isLoading,userInformation}  = useSelector(
     (state: RootState) => state.auth
   );
-  const { status ,plan, subscriptionEnds, price } = userInformation;
+  const { status ,plan, subscriptionEnds, price,currency,cardBrand,lastFourDigits } = userInformation;
   const [renewLoading, setRenewLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [billingLoading, setBillingLoading] = useState(false);
@@ -90,13 +91,13 @@ export function CurrentPlanCard() {
 
         <div className="mt-4">
           <div className="flex items-baseline">
-            <span className="text-3xl font-bold text-blue-600">${price}</span>
+            <span className="text-3xl font-bold text-blue-600">{price}</span>
             <span className="ml-1 text-gray-500">/month</span>
           </div>
 
           <BillingInfo
             nextBillingDate={formatDateForInvoice(subscriptionEnds)}
-            lastFour={'1234'}
+            lastFour={lastFourDigits}
           />
         </div>
       </div>
@@ -135,17 +136,19 @@ export function CurrentPlanCard() {
   );
 }
 
-export function StatusBadge({ status }: { status: 'active' | 'canceled' | 'inactive' }) {
+export function StatusBadge({ status }: { status: subscribeStatus }) {
   const styles = {
     active: 'bg-green-100 text-green-800',
-    canceled: 'bg-yellow-100 text-yellow-800',
-    inactive: 'bg-red-100 text-red-800',
+    canceled: 'bg-red-100 text-red-800',
+    inactive: 'bg-gray-100 text-gray-800',
+    ended: 'bg-gray-100 text-gray-800',
   };
 
   const labels = {
     active: 'Active',
     canceled: 'Canceled',
     inactive: 'Inactive',
+    ended: 'Ended',
   };
 
   return (

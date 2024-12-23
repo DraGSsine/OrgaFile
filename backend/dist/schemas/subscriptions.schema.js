@@ -24,9 +24,12 @@ __decorate([
     __metadata("design:type", String)
 ], Subscription.prototype, "plan", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ default: 'inactive', enum: ['active', 'inactive'] }),
+    (0, mongoose_1.Prop)({
+        default: 'inactive',
+        enum: ['active', 'inactive', 'canceled', 'ended']
+    }),
     __metadata("design:type", String)
-], Subscription.prototype, "subscriptionStatus", void 0);
+], Subscription.prototype, "status", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)

@@ -12,9 +12,12 @@ export class Subscription {
   @Prop({ enum: ['Basic', 'Standard', 'Premium'] })
   plan: 'Basic' | 'Standard' | 'Premium';
 
-  @Prop({ default: 'inactive', enum: ['active', 'inactive'] })
-  subscriptionStatus: 'active' | 'inactive';
-
+  @Prop({ 
+    default: 'inactive', 
+    enum: ['active', 'inactive', 'canceled', 'ended'] 
+  })
+  status: 'active' | 'inactive' | 'canceled' | 'ended';
+  
   @Prop()
   price: number;
 

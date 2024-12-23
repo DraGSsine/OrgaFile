@@ -29,7 +29,7 @@ let PaymentController = class PaymentController {
     }
     async createSession(createPaymentDto, request, response) {
         try {
-            const result = await this.paymentService.createCheckoutSession(createPaymentDto, request.user.userId);
+            const result = await this.paymentService.createChekoutSession(createPaymentDto.plan, request.user.userId);
             console.log('Checkout session result:', result);
             return response.send(result);
         }
@@ -43,6 +43,14 @@ let PaymentController = class PaymentController {
     }
     async manageBilling(request, res) {
         const result = await this.paymentService.cancelSubscription(request.user.userId);
+        return res.send(result);
+    }
+    async cancelSubscription(request, res) {
+        const result = await this.paymentService.cancelSubscription(request.user.userId);
+        return res.send(result);
+    }
+    async renewSubscription(request, res) {
+        const result = await this.paymentService.renewSubscription(request.user.userId);
         return res.send(result);
     }
     async checkSubscription(request, res) {
@@ -87,6 +95,24 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "manageBilling", null);
+__decorate([
+    (0, common_1.Post)('cancel-subscription'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PaymentController.prototype, "cancelSubscription", null);
+__decorate([
+    (0, common_1.Post)('renew-subscription'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PaymentController.prototype, "renewSubscription", null);
 __decorate([
     (0, common_1.Get)('check-subscription'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

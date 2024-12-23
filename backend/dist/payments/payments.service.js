@@ -33,194 +33,172 @@ let PaymentService = class PaymentService {
         this.subscriptionModel = subscriptionModel;
         this.userModel = userModel;
         this.jwtService = jwtService;
-        this.stripeClient = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
-            apiVersion: '2024-04-10',
+        this.stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
+            apiVersion: "2024-04-10",
         });
+        this.redirectUrl =
+            process.env.PROD === "true"
+                ? process.env.NEXT_APP_URL_PROD
+                : process.env.NEXT_APP_URL_DEV;
     }
-    async checkSubscription(userId) {
+    async handleWebhook(request, response) {
         try {
-            const subscription = await this.subscriptionModel.findOne({
-                userId,
-                subscriptionStatus: 'active',
-            }).sort({ currentPeriodEnd: -1 });
-            if (!subscription || subscription.currentPeriodEnd < new Date()) {
-                return { isSubscribed: false, newToken: null };
+            const event = this.stripe.webhooks.constructEvent(request.rawBody, request.headers["stripe-signature"], process.env.STRIPE_WEBHOOK_SECRET);
+            switch (event.type) {
+                case "invoice.payment_succeeded":
+                    await this.handlePaymentSucceeded(event.data.object);
+                    break;
+                case "invoice.payment_failed":
+                    await this.handlePaymentFailed(event.data.object);
+                    break;
+                case "customer.subscription.deleted":
+                    await this.handleSubscriptionEnded(event.data.object);
+                    break;
+                default:
+                    console.log("Unhandled event type:", event.type);
             }
-            const newToken = await this.jwtService.signAsync({ userId, isSubscribed: true }, { expiresIn: '7d', secret: process.env.JWT_SECRET_KEY });
-            return { isSubscribed: true, newToken };
+            response.status(common_1.HttpStatus.OK).send();
         }
         catch (error) {
-            console.error('Error checking subscription:', error);
-            return { isSubscribed: false, newToken: null };
+            console.error("Webhook error:", error);
+            response.status(400).send(`Webhook Error: ${error.message}`);
         }
     }
-    async findOrCreateCustomer(userId) {
-        const existingSubscription = await this.subscriptionModel.findOne({ userId });
-        if (existingSubscription?.customerId) {
-            return existingSubscription.customerId;
-        }
-        const customer = await this.stripeClient.customers.create({
-            metadata: { userId },
-        });
-        return customer.id;
+    async handlePaymentSucceeded(invoice) {
+        if (!invoice.subscription)
+            return;
+        const customer = await this.stripe.customers.retrieve(invoice.customer);
+        if ("deleted" in customer)
+            return;
+        const userId = customer.metadata.userId;
+        if (!userId)
+            return;
+        await this.subscriptionModel.findOneAndUpdate({ userId }, { status: "active" });
     }
-    async createCheckoutSession(createPaymentDto, userId) {
-        const redirectUrl = process.env.PROD === 'true'
-            ? process.env.NEXT_APP_URL_PROD
-            : process.env.NEXT_APP_URL_DEV;
+    async handlePaymentFailed(invoice) {
+        if (!invoice.subscription)
+            return;
+        await this.subscriptionModel.updateOne({ subscriptionId: invoice.subscription }, { status: "inactive" });
+    }
+    async handleSubscriptionEnded(subscription) {
+        const customer = await this.stripe.customers.retrieve(subscription.customer);
+        if ("deleted" in customer)
+            return;
+        const userId = customer.metadata.userId;
+        if (!userId)
+            return;
+        await this.subscriptionModel.findOneAndUpdate({ subscriptionId: subscription.id }, {
+            $set: {
+                status: "ended",
+                currentPeriodEnd: new Date(),
+                price: 0,
+            },
+        }, { new: true });
+    }
+    async createChekoutSession(plan, userId) {
         try {
             const customerId = await this.findOrCreateCustomer(userId);
-            const activeSubscription = await this.subscriptionModel.findOne({
-                userId,
-                subscriptionStatus: 'active',
-            });
-            if (activeSubscription) {
-                return { error: 'User already has an active subscription' };
+            const subscription = await this.subscriptionModel.findOne({ userId });
+            if (subscription && subscription.status !== "ended") {
+                return { url: `${this.redirectUrl}` };
             }
-            const session = await this.stripeClient.checkout.sessions.create({
-                line_items: [{ price: SUBSCRIPTION_PLANS[createPaymentDto.plan], quantity: 1 }],
-                mode: 'subscription',
-                success_url: `${redirectUrl}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: `${redirectUrl}`,
+            const session = await this.stripe.checkout.sessions.create({
+                line_items: [{ price: SUBSCRIPTION_PLANS[plan], quantity: 1 }],
+                mode: "subscription",
+                success_url: `${this.redirectUrl}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: this.redirectUrl,
                 customer: customerId,
                 metadata: { userId },
             });
             return { url: session.url };
         }
         catch (error) {
-            console.error('Checkout session error:', error);
-            return { error: 'Failed to create checkout session' };
+            console.error("Checkout session error:", error);
+            return { error: "Failed to create checkout session" };
         }
     }
-    async handleWebhook(request, response) {
-        const sig = request.headers['stripe-signature'];
-        try {
-            const event = this.stripeClient.webhooks.constructEvent(request.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
-            switch (event.type) {
-                case 'customer.subscription.created':
-                    await this.handleSubscriptionCreated(event.data.object);
-                    break;
-                case 'customer.subscription.updated':
-                    await this.handleSubscriptionUpdated(event.data.object);
-                    break;
-                case 'customer.subscription.deleted':
-                    await this.handleSubscriptionDeleted(event.data.object);
-                    break;
-                case 'invoice.payment_failed':
-                    await this.handlePaymentFailed(event.data.object);
-                    break;
-            }
-            response.status(common_1.HttpStatus.OK).send();
+    async checkSubscription(userId) {
+        const subscription = await this.subscriptionModel.findOne({ userId });
+        if (!subscription)
+            return { isSubscribed: false, newToken: "" };
+        if (subscription.status === "ended") {
+            return { isSubscribed: false, newToken: "" };
         }
-        catch (error) {
-            console.error('Webhook error:', error);
-            response.status(400).send(`Webhook Error: ${error.message}`);
-        }
-    }
-    async handleSubscriptionCreated(subscription) {
-        try {
-            const customerId = subscription.customer;
-            const customerResponse = await this.stripeClient.customers.retrieve(customerId);
-            if ('deleted' in customerResponse) {
-                return;
-            }
-            const userId = customerResponse.metadata.userId;
-            if (!userId)
-                return;
-            await this.subscriptionModel.updateMany({ userId }, { subscriptionStatus: 'inactive' });
-            await this.createNewSubscription(subscription, userId);
-        }
-        catch (error) {
-            console.error('Handle subscription created error:', error);
-        }
-    }
-    async handleSubscriptionUpdated(subscription) {
-        try {
-            const customerId = subscription.customer;
-            const customerResponse = await this.stripeClient.customers.retrieve(customerId);
-            if ('deleted' in customerResponse) {
-                return;
-            }
-            const userId = customerResponse.metadata.userId;
-            if (!userId)
-                return;
-            const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
-            const existingSubscription = await this.subscriptionModel.findOne({
-                subscriptionId: subscription.id,
-            });
-            if (existingSubscription) {
-                await this.subscriptionModel.updateOne({ subscriptionId: subscription.id }, {
-                    currentPeriodEnd,
-                    subscriptionStatus: subscription.status === 'active' ? 'active' : 'inactive'
-                });
-            }
-        }
-        catch (error) {
-            console.error('Handle subscription updated error:', error);
-        }
-    }
-    async handleSubscriptionDeleted(subscription) {
-        await this.subscriptionModel.updateOne({ subscriptionId: subscription.id }, { subscriptionStatus: 'inactive' });
-    }
-    async handlePaymentFailed(invoice) {
-        if (!invoice.subscription)
-            return;
-        await this.subscriptionModel.updateOne({ subscriptionId: invoice.subscription }, { subscriptionStatus: 'inactive' });
-    }
-    async createNewSubscription(subscription, userId) {
-        const planId = subscription.items.data[0].price.id;
-        const planName = Object.entries(SUBSCRIPTION_PLANS).find(([_, id]) => id === planId)?.[0];
-        if (!planName)
-            return;
-        try {
-            const paymentMethod = await this.stripeClient.paymentMethods.list({
-                customer: subscription.customer,
-                type: 'card',
-            });
-            const card = paymentMethod.data[0]?.card;
-            await this.subscriptionModel.create({
-                userId,
-                plan: planName,
-                cardBrand: card?.brand || 'Unknown',
-                cardLast4: card?.last4 || '0000',
-                subscriptionStatus: subscription.status === 'active' ? 'active' : 'inactive',
-                subscriptionId: subscription.id,
-                customerId: subscription.customer,
-                currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-                price: subscription.items.data[0].price.unit_amount / 100,
-            });
-            await this.userModel.updateOne({ _id: userId }, { ...PLAN_LIMITS[planName], requestUsed: 0 });
-        }
-        catch (error) {
-            console.error('Create new subscription error:', error);
+        else {
+            return {
+                isSubscribed: true,
+                newToken: await this.generateSubscriptionToken(userId),
+            };
         }
     }
     async cancelSubscription(userId) {
+        const subscription = await this.subscriptionModel.findOne({
+            userId,
+            status: "active",
+        });
+        if (!subscription)
+            return { error: "No active subscription found" };
+        await this.stripe.subscriptions.update(subscription.subscriptionId, {
+            cancel_at_period_end: true,
+        });
+        await subscription.updateOne({ plan: "Basic", status: "canceled" });
+        return { message: "Subscription cancelled successfully" };
+    }
+    async renewSubscription(userId) {
         try {
-            const subscription = await this.subscriptionModel.findOne({
-                userId,
-                subscriptionStatus: 'active',
+            const subscription = await this.getCanceledSubscription(userId);
+            if (!subscription)
+                return;
+            await this.stripe.subscriptions.update(subscription.subscriptionId, {
+                cancel_at_period_end: false,
             });
-            if (!subscription) {
-                return { error: 'Subscription not found' };
-            }
-            const portalSession = await this.stripeClient.billingPortal.sessions.create({
-                customer: subscription.customerId,
-                return_url: process.env.NEXT_APP_URL_PROD,
-            });
-            return { url: portalSession.url };
+            await this.subscriptionModel.updateOne({ userId, status: "canceled" }, { status: "active" });
         }
         catch (error) {
-            console.error('Cancel subscription error:', error);
-            return { error: 'Could not cancel subscription' };
+            console.error("Renew subscription error:", error);
         }
+    }
+    async findOrCreateCustomer(userId) {
+        const existingSubscription = await this.subscriptionModel.findOne({
+            userId,
+        });
+        if (existingSubscription?.customerId)
+            return existingSubscription.customerId;
+        const customer = await this.stripe.customers.create({
+            metadata: { userId },
+        });
+        return customer.id;
+    }
+    async hasActiveSubscription(userId) {
+        const subscription = await this.subscriptionModel.findOne({
+            userId,
+            status: "active",
+        });
+        return !!subscription;
+    }
+    async getActiveSubscription(userId) {
+        return this.subscriptionModel
+            .findOne({ userId, status: "active" })
+            .sort({ currentPeriodEnd: -1 });
+    }
+    async getCanceledSubscription(userId) {
+        return this.subscriptionModel.findOne({
+            userId,
+            status: "canceled",
+        });
+    }
+    isSubscriptionExpired(subscription) {
+        return subscription.currentPeriodEnd < new Date();
+    }
+    async generateSubscriptionToken(userId) {
+        return this.jwtService.signAsync({ userId, isSubscribed: true }, { expiresIn: "7d", secret: process.env.JWT_SECRET_KEY });
     }
 };
 exports.PaymentService = PaymentService;
 exports.PaymentService = PaymentService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)('Subscription')),
-    __param(1, (0, mongoose_1.InjectModel)('User')),
+    __param(0, (0, mongoose_1.InjectModel)("Subscription")),
+    __param(1, (0, mongoose_1.InjectModel)("User")),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model,
         jwt_1.JwtService])

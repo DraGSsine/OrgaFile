@@ -9,5 +9,7 @@ export declare class PaymentController {
     createSession(createPaymentDto: CreatePaymentDto, request: any, response: Response): Promise<Response<any, Record<string, any>>>;
     webhook(request: RawBodyRequest<Request>, response: Response): Promise<void>;
     manageBilling(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
+    cancelSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
+    renewSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
     checkSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
 }

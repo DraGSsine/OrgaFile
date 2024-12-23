@@ -3,7 +3,7 @@ export type subscriptionDocument = Subscription & Document;
 export declare class Subscription {
     userId: string;
     plan: 'Basic' | 'Standard' | 'Premium';
-    subscriptionStatus: 'active' | 'inactive';
+    status: 'active' | 'inactive' | 'canceled' | 'ended';
     price: number;
     currentPeriodStart: Date;
     cardBrand: string;

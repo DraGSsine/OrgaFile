@@ -1,3 +1,3 @@
 export declare class CreatePaymentDto {
-    plan: string;
+    plan: "Basic" | "Standard" | "Premium";
 }

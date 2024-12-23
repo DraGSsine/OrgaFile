@@ -9,10 +9,10 @@ import { CheckmarkCircle01Icon, CancelCircleIcon, Alert01Icon } from "hugeicons-
 
 
 const statusConfig = {
-  active: {
+  paid: {
     icon: CheckmarkCircle01Icon,
     className: "text-green-500 bg-green-50 dark:bg-green-950/50",
-    label: "Successful",
+    label: "Paid",
   },
   canceled: {
     icon: Alert01Icon,

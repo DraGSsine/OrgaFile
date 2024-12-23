@@ -30,8 +30,8 @@ export class PaymentController {
     @Res() response: Response,
   ) {
     try {
-      const result = await this.paymentService.createCheckoutSession(
-        createPaymentDto,
+      const result = await this.paymentService.createChekoutSession(
+        createPaymentDto.plan,
         request.user.userId,
       );
       console.log('Checkout session result:', result); 
@@ -53,6 +53,24 @@ export class PaymentController {
   @UseGuards(AuthGuard)
   async manageBilling(@Req() request: any, @Res() res: Response) {
     const result = await this.paymentService.cancelSubscription(
+      request.user.userId,
+    );
+    return res.send(result);
+  }
+
+  @Post('cancel-subscription')
+  @UseGuards(AuthGuard)
+  async cancelSubscription(@Req() request: any, @Res() res: Response) {
+    const result = await this.paymentService.cancelSubscription(
+      request.user.userId,
+    );
+    return res.send(result);
+  }
+
+  @Post('renew-subscription')
+  @UseGuards(AuthGuard)
+  async renewSubscription(@Req() request: any, @Res() res: Response) {
+    const result = await this.paymentService.renewSubscription(
       request.user.userId,
     );
     return res.send(result);

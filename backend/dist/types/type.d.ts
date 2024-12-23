@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import Stripe from 'stripe';
 export interface AIAnalyzeDocumentResponse {
     mainTopic: string;
     documentType: string;
@@ -36,9 +37,9 @@ export type SubscriptionHistory = {
     plan: string;
     price: number;
     currency: string;
-    paymentMethod: string;
+    paymentMethod: string | Stripe.PaymentMethod;
     lastFourDigits: string;
-    status: "success" | "failed" | "incomplete";
-    recipient?: string;
-    createdAt: string;
+    status: Stripe.Subscription.Status;
+    startDate: number;
+    endDate: number;
 };

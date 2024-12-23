@@ -27,12 +27,23 @@ export type variantType =
 export type raduisType = "none" | "sm" | "md" | "lg" | "full" | undefined;
 
 export type initialStateType = {
-  userCreated: { message: string, isSubscribed: boolean } | null;
-  error: { message: string, error: string, statusCode: number } | null;
+  userCreated: { message: string; isSubscribed: boolean } | null;
+  error: { message: string; error: string; statusCode: number } | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   userInfoLoading: boolean;
-  userInformation: { status: 'active' | 'canceled' | 'inactive', subscriptionEnds: string, price: string, fullName: string, email: string, plan: any, subscriptionHistory: [] };
+  userInformation: {
+    status: subscribeStatus;
+    subscriptionEnds: string;
+    price: string;
+    fullName: string;
+    currency: string;
+    lastFourDigits: string;
+    cardBrand: string;
+    email: string;
+    plan: any;
+    subscriptionHistory: [];
+  };
 };
 
 export interface FileFormat {
@@ -64,17 +75,17 @@ export type filesType = {
 };
 
 export type FilesState = {
-  isFilesUploaded: boolean,
-  confirmFileDelete: boolean,
-  isManyFileDeleted: boolean,
-  deleteFileId: string,
-  isFileDeleted: boolean,
-  uploadFilesStatus: boolean,
-  isFilesLoaded: boolean,
+  isFilesUploaded: boolean;
+  confirmFileDelete: boolean;
+  isManyFileDeleted: boolean;
+  deleteFileId: string;
+  isFileDeleted: boolean;
+  uploadFilesStatus: boolean;
+  isFilesLoaded: boolean;
   files: filesType[];
   isLoading: boolean;
   fileDeletLoading: boolean;
-  error: { message: string, error: string, statusCode: number } | null;
+  error: { message: string; error: string; statusCode: number } | null;
 };
 
 export type FolderType = {
@@ -83,7 +94,11 @@ export type FolderType = {
   files: filesType[];
 };
 
-export type RouteNameType = "allFiles" | "recentFiles" | "removedFiles" | "folder";
+export type RouteNameType =
+  | "allFiles"
+  | "recentFiles"
+  | "removedFiles"
+  | "folder";
 
 export type showUsageModalType = {
   open: boolean;
@@ -96,7 +111,13 @@ export interface userCookieInfoType {
   plan: string | null;
 }
 
-type Color = "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+type Color =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger";
 export interface StorageProgressProps {
   isLoading: boolean;
   value: number;
@@ -105,7 +126,6 @@ export interface StorageProgressProps {
   color?: Color;
   className?: string;
 }
-
 
 export interface StorageProgressProps {
   isLoading: boolean;
@@ -136,8 +156,10 @@ export interface RecentUploadsProps {
   files: any[];
   isLoading: boolean;
   maxRows?: number;
-  routeName?: RouteNameType
+  routeName?: RouteNameType;
 }
+
+export type subscribeStatus = "active" | "inactive" | "canceled" | "ended";
 
 export interface Transaction {
   plan: string;
@@ -145,7 +167,7 @@ export interface Transaction {
   currency: string;
   paymentMethod: string;
   lastFourDigits: string;
-  status: "active" | "canceled" | "inactive";
+  status: "paid" | "canceled" | "inactive";
   recipient?: string;
   createdAt: string;
 }

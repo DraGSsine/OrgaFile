@@ -8,7 +8,18 @@ const initialState: initialStateType = {
   isLoading: false,
   userCreated: null,
   userInfoLoading: true,
-  userInformation: {status:'active', fullName: "", email: "", plan: "", subscriptionEnds: "", price: "", subscriptionHistory: [] },
+  userInformation: {
+    plan: "active",
+    fullName: "",
+    email: "",
+    subscriptionEnds: "",
+    price: "",
+    status: "active",
+    currency: "",
+    lastFourDigits: "",
+    cardBrand: "",
+    subscriptionHistory: [],
+  },
 };
 
 export const SignUpAction = createAsyncThunk(
@@ -75,15 +86,8 @@ export const GetUserInfo = createAsyncThunk("auth/getUserInfo", async () => {
     return response.data;
   } catch (error) {
     console.log(error);
-    await axios.get(
-      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/signout`,
-      {
-        withCredentials: true,
-      }
-    )
   }
-}
-)
+});
 
 export const AuthSlice = createSlice({
   name: "auth",
@@ -101,7 +105,7 @@ export const AuthSlice = createSlice({
     },
     updateUserInfo: (state, action) => {
       state.userInformation = { ...state.userInformation, ...action.payload };
-    }
+    },
   },
   extraReducers(builder) {
     builder.addCase(SignUpAction.pending, (state) => {
@@ -152,7 +156,7 @@ export const AuthSlice = createSlice({
       state.userInformation = action.payload;
     });
     builder.addCase(GetUserInfo.rejected, (state) => {
-      state.userInfoLoading = false
+      state.userInfoLoading = false;
     });
   },
 });
