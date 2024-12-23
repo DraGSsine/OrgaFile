@@ -21,7 +21,6 @@ export function CurrentPlanCard() {
   const {isLoading,userInformation}  = useSelector(
     (state: RootState) => state.auth
   );
-  if (!userInformation) return null;
   const { status ,plan, subscriptionEnds, price,currency,cardBrand,lastFourDigits } = userInformation;
   const [renewLoading, setRenewLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
@@ -75,7 +74,7 @@ export function CurrentPlanCard() {
   }
 
   return (
-    <div className="overflow-hidden col-start-1 col-end-5 rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
+    <div className="overflow-hidden col-start-1 col-end-5 rounded-xl bg-white shadow-sm ring-1 ring-gray-200 flex flex-col justify-between ">
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className=" gap-3 flex items-center">
@@ -103,11 +102,12 @@ export function CurrentPlanCard() {
         </div>
       </div>
 
-      <div className="bg-gray-50 px-6 py-4">
+      <div className="px-6 py-6">
         <div className="flex justify-between gap-4">
           {status === 'active' && (
             <>
               <Button
+                isLoading={billingLoading}
                 onClick={onManageBilling}
                 className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
