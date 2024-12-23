@@ -6,6 +6,7 @@ import { cn } from "@nextui-org/react";
 import { Invoice01Icon} from "hugeicons-react";
 import { useSelector } from "react-redux";
 import { CheckmarkCircle01Icon, CancelCircleIcon, Alert01Icon } from "hugeicons-react";
+import Image from "next/image";
 
 
 const statusConfig = {
@@ -48,7 +49,7 @@ export function PaymentHistoryCard() {
 
             return (
               <div
-                key={`${transaction.createdAt}-${index}`}
+                key={`${transaction.startDate}-${index}`}
                 className="grid grid-cols-6 gap-4 px-6 py-4 hover:bg-muted/50 transition-colors"
               >
                 {/* Transaction Info */}
@@ -66,12 +67,12 @@ export function PaymentHistoryCard() {
 
                 {/* Date */}
                 <div className="self-center text-sm text-muted-foreground  text-center">
-                  {formatDateForInvoice(transaction.createdAt)}
+                  {formatDateForInvoice(transaction.startDate)}
                 </div>
 
                 {/* Payment Method */}
-                <div className="self-center text-sm text-muted-foreground  text-center">
-                  {transaction.paymentMethod}
+                <div className="self-center text-sm text-muted-foreground flex justify-center items-center">
+                  <Image src={`/${transaction.cardBrand}.svg`} alt={transaction.cardBrand} width={30} height={30} />
                 </div>
 
                 {/* Amount */}

@@ -219,21 +219,13 @@ export function truncateString(str: string, num: number) {
   return str.slice(0, num) + "...";
 }
 
-// export function formatDateForInvoice(date: string) {
-//   // merch 3 2022
-//   const d = new Date(date);
-//   const month = d.toLocaleString("default", { month: "short" });
-//   const day = d.getDate();
-//   const year = d.getFullYear();
-//   return `${month} ${day} ${year}`;
-// }
-
 
 export function formatDateForInvoice(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  const TheDate = new Date(date)
+  return TheDate.toLocaleDateString('en-US', {
+    year: 'numeric',
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
   });
 }
 

@@ -168,8 +168,8 @@ export interface Transaction {
   paymentMethod: string;
   lastFourDigits: string;
   status: "paid" | "canceled" | "inactive";
-  recipient?: string;
-  createdAt: string;
+  startDate: string;
+  cardBrand: string;
 }
 
 export interface PaymentHistoryProps {

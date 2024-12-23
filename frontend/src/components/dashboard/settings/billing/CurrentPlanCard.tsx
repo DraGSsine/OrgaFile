@@ -21,6 +21,7 @@ export function CurrentPlanCard() {
   const {isLoading,userInformation}  = useSelector(
     (state: RootState) => state.auth
   );
+  if (!userInformation) return null;
   const { status ,plan, subscriptionEnds, price,currency,cardBrand,lastFourDigits } = userInformation;
   const [renewLoading, setRenewLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
