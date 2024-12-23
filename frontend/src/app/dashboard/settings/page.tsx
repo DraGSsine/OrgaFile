@@ -16,7 +16,7 @@ export default function SettingsPage() {
         description="Manage your account settings and preferences"
       />
       <div className="row-start-2 row-end-17 flex-grow relative rounded-t-lg shadow-small p-6 flex gap-5 flex-col h-full">
-        <div className=" justify-between flex gap-4" >
+        <div className=" grid grid-cols-10 gap-5 " >
           <CurrentPlanCard />
           <SecuritySettings />
           <ProfileDelete />

@@ -13,7 +13,7 @@ export const ProfileDelete = () => {
   return (
     <>
       <ConfirmDeleteProfile isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      <div className="rounded-xl border bg-gray-50 w-3/12 p-6 ">
+      <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200 col-start-8 col-end-11 p-6 ">
         <div className="flex gap-3">
           <Shield01Icon className="h-5 w-5 text-danger" />
           <div className="flex flex-col">

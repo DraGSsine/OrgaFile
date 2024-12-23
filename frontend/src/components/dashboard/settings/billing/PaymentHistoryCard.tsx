@@ -2,10 +2,10 @@
 import { formatCurrency, formatDateForInvoice } from "@/helpers/helpers";
 import { RootState } from "@/redux/store";
 import { Transaction } from "@/types/types";
-import { Card, CardBody, CardHeader, Button, cn } from "@nextui-org/react";
-import { Invoice01Icon, Invoice02Icon } from "hugeicons-react";
+import { cn } from "@nextui-org/react";
+import { Invoice01Icon} from "hugeicons-react";
 import { useSelector } from "react-redux";
-import { CreditCardIcon, CheckmarkCircle01Icon, CancelCircleIcon, Alert01Icon } from "hugeicons-react";
+import { CheckmarkCircle01Icon, CancelCircleIcon, Alert01Icon } from "hugeicons-react";
 
 
 const statusConfig = {
@@ -14,15 +14,15 @@ const statusConfig = {
     className: "text-green-500 bg-green-50 dark:bg-green-950/50",
     label: "Successful",
   },
-  failed: {
-    icon: CancelCircleIcon,
-    className: "text-red-500 bg-red-50 dark:bg-red-950/50",
-    label: "Failed",
-  },
-  inactive: {
+  canceled: {
     icon: Alert01Icon,
     className: "text-yellow-500 bg-yellow-50 dark:bg-yellow-950/50",
-    label: "Pending",
+    label: "Canceled",
+  },
+  inactive: {
+    icon: CancelCircleIcon,
+    className: "text-red-500 bg-red-50 dark:bg-red-950/50",
+    label: "Inactive",
   },
 };
 
@@ -31,7 +31,7 @@ const statusConfig = {
 export function PaymentHistoryCard() {
   const transactions: Transaction[] = useSelector((state: RootState) => state.auth.userInformation.subscriptionHistory);
   return (
-    <div className="w-full flex-grow overflow-hidden rounded-xl border  transition-all bg-gray-50 ">
+    <div className="w-full flex-grow overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
         {/* Table Header */}
         <div className="grid grid-cols-6 gap-4 px-6 py-4 bg-muted/50 bg-[#e7e8e9] text-gray-500 overflow-hidden">
           <div className="text-sm font-medium text-muted-foreground pl-10 col-span-2">Transaction</div>

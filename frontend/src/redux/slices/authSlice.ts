@@ -8,7 +8,7 @@ const initialState: initialStateType = {
   isLoading: false,
   userCreated: null,
   userInfoLoading: true,
-  userInformation: { fullName: "", email: "", plan: "", subscriptionEnds: "", price: "", subscriptionHistory: [] },
+  userInformation: {status:'active', fullName: "", email: "", plan: "", subscriptionEnds: "", price: "", subscriptionHistory: [] },
 };
 
 export const SignUpAction = createAsyncThunk(

@@ -16,6 +16,7 @@ import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
+import { ViewIcon, ViewOffIcon } from "hugeicons-react";
 
 export const PasswordInput = ({
   errorState,
@@ -48,14 +49,14 @@ export const PasswordInput = ({
           type="button"
           onClick={toggleVisibility}
         >
-          {isVisible ? (
-            <EyeSlashFilledIcon
+          {!isVisible ? (
+            <ViewOffIcon
               width="25"
               height="35"
               className="text-2xl text-default-400 pointer-events-none"
             />
           ) : (
-            <EyeFilledIcon
+            < ViewIcon
               width="25"
               height="35"
               className="text-2xl text-default-400 pointer-events-none"

@@ -32,7 +32,7 @@ export type initialStateType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   userInfoLoading: boolean;
-  userInformation: { subscriptionEnds:string, price:string,fullName: string, email: string, plan: any, subscriptionHistory: [] };
+  userInformation: { status: 'active' | 'canceled' | 'inactive', subscriptionEnds: string, price: string, fullName: string, email: string, plan: any, subscriptionHistory: [] };
 };
 
 export interface FileFormat {
@@ -145,7 +145,7 @@ export interface Transaction {
   currency: string;
   paymentMethod: string;
   lastFourDigits: string;
-  status: "active" | "failed" | "inactive";
+  status: "active" | "canceled" | "inactive";
   recipient?: string;
   createdAt: string;
 }

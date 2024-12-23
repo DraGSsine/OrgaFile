@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import cookies from "js-cookie";
 
 export interface CheckoutSessionType {
   checkoutSession: any;
@@ -49,6 +48,24 @@ export const createCheckoutSession = createAsyncThunk(
   }
 );
 
+export const renewSubscription = createAsyncThunk(
+  "payment/renewSubscription",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/renew-subscription`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const checkSubscription = createAsyncThunk(
   "payment/checkSubscription",
   async (_, { rejectWithValue }) => {
@@ -67,11 +84,27 @@ export const checkSubscription = createAsyncThunk(
   }
 );
 
-export const manageBilling = createAsyncThunk("payment/manageBilling", async (_, { rejectWithValue }) => {
+export const cancelSubscription = createAsyncThunk("payment/cancelSubscription", async (_, { rejectWithValue }) => {
   try {
     const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/manage-billing`,
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/cancel-subscription`,
       {},
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  }
+  catch (error: any) {
+    return rejectWithValue(error.response.data.message);
+  }
+}
+);
+
+export const mangeBilling = createAsyncThunk("payment/manageBilling", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/manage-billing`,
       {
         withCredentials: true,
       }
@@ -109,6 +142,38 @@ export const paymentSlice = createSlice({
         state.subscription.isSubscribed = payload.isSubscribed;
       })
       .addCase(checkSubscription.rejected, (state) => {
+        state.subscription.loading = false;
+        state.subscription.error = "Error Processing the Payment";
+      })
+      .addCase(cancelSubscription.pending, (state) => {
+        state.subscription.loading = true;
+      })
+      .addCase(cancelSubscription.fulfilled, (state) => {
+        state.subscription.loading = false;
+        state.subscription.isSubscribed = false;
+      })
+      .addCase(cancelSubscription.rejected, (state) => {
+        state.subscription.loading = false;
+        state.subscription.error = "Error Processing the Payment";
+      })
+      .addCase(renewSubscription.pending, (state) => {
+        state.subscription.loading = true;
+      })
+      .addCase(renewSubscription.fulfilled, (state) => {
+        state.subscription.loading = false;
+        state.subscription.isSubscribed = true;
+      })
+      .addCase(renewSubscription.rejected, (state) => {
+        state.subscription.loading = false;
+        state.subscription.error = "Error Processing the Payment";
+      })
+      .addCase(mangeBilling.pending, (state) => {
+        state.subscription.loading = true;
+      })
+      .addCase(mangeBilling.fulfilled, (state) => {
+        state.subscription.loading = false;
+      })
+      .addCase(mangeBilling.rejected, (state) => {
         state.subscription.loading = false;
         state.subscription.error = "Error Processing the Payment";
       });

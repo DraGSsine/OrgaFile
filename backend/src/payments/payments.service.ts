@@ -59,29 +59,52 @@ export class PaymentService {
     }
   }
 
+  private async findOrCreateCustomer(userId: string): Promise<string> {
+    // First check if user already has a subscription with customer ID
+    const existingSubscription = await this.subscriptionModel.findOne({ userId });
+    if (existingSubscription?.customerId) {
+      return existingSubscription.customerId;
+    }
+
+    // If no existing customer, create new one
+    const customer = await this.stripeClient.customers.create({
+      metadata: { userId },
+    });
+    return customer.id;
+  }
+
   async createCheckoutSession(createPaymentDto: CreatePaymentDto, userId: string) {
     const redirectUrl = process.env.PROD === 'true'
       ? process.env.NEXT_APP_URL_PROD
       : process.env.NEXT_APP_URL_DEV;
 
     try {
-      const customer = await this.stripeClient.customers.create({
-        metadata: { userId },
+      // Get existing customer or create new one
+      const customerId = await this.findOrCreateCustomer(userId);
+
+      // Check for active subscription
+      const activeSubscription = await this.subscriptionModel.findOne({
+        userId,
+        subscriptionStatus: 'active',
       });
+
+      if (activeSubscription) {
+        return { error: 'User already has an active subscription' };
+      }
 
       const session = await this.stripeClient.checkout.sessions.create({
         line_items: [{ price: SUBSCRIPTION_PLANS[createPaymentDto.plan], quantity: 1 }],
         mode: 'subscription',
         success_url: `${redirectUrl}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${redirectUrl}`,
-        customer: customer.id,
+        customer: customerId,
         metadata: { userId },
       });
 
       return { url: session.url! };
     } catch (error) {
       console.error('Checkout session error:', error);
-      return { url: redirectUrl };
+      return { error: 'Failed to create checkout session' };
     }
   }
 
@@ -122,7 +145,6 @@ export class PaymentService {
       const customerId = subscription.customer as string;
       const customerResponse = await this.stripeClient.customers.retrieve(customerId);
 
-      // Check if customer is deleted and properly access the customer object
       if ('deleted' in customerResponse) {
         return;
       }
@@ -130,10 +152,12 @@ export class PaymentService {
       const userId = customerResponse.metadata.userId;
       if (!userId) return;
 
+      // Deactivate any existing subscriptions first
       await this.subscriptionModel.updateMany(
-        { userId, subscriptionStatus: 'active' },
+        { userId },
         { subscriptionStatus: 'inactive' }
       );
+
       await this.createNewSubscription(subscription, userId);
     } catch (error) {
       console.error('Handle subscription created error:', error);
@@ -143,29 +167,28 @@ export class PaymentService {
   private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     try {
       const customerId = subscription.customer as string;
-
       const customerResponse = await this.stripeClient.customers.retrieve(customerId);
+      
       if ('deleted' in customerResponse) {
         return;
       }
 
       const userId = customerResponse.metadata.userId;
-
       if (!userId) return;
 
       const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
-
       const existingSubscription = await this.subscriptionModel.findOne({
         subscriptionId: subscription.id,
-        subscriptionStatus: 'active',
       });
 
-      if (existingSubscription && existingSubscription.currentPeriodEnd.getTime() !== currentPeriodEnd.getTime()) {
-        await this.subscriptionModel.updateMany(
-          { userId, subscriptionStatus: 'active' },
-          { subscriptionStatus: 'inactive' }
+      if (existingSubscription) {
+        await this.subscriptionModel.updateOne(
+          { subscriptionId: subscription.id },
+          {
+            currentPeriodEnd,
+            subscriptionStatus: subscription.status === 'active' ? 'active' : 'inactive'
+          }
         );
-        await this.createNewSubscription(subscription, userId);
       }
     } catch (error) {
       console.error('Handle subscription updated error:', error);
@@ -196,31 +219,33 @@ export class PaymentService {
 
     if (!planName) return;
 
-    // Get the payment method details
-    const userPaymentinfo = await this.stripeClient.customers.listSources(
-      subscription.customer as string,
-      { object: 'card' }
-    );
+    try {
+      const paymentMethod = await this.stripeClient.paymentMethods.list({
+        customer: subscription.customer as string,
+        type: 'card',
+      });
 
-    // Get the first card from the sources
-    const card = userPaymentinfo.data[0];
+      const card = paymentMethod.data[0]?.card;
 
-    await this.subscriptionModel.create({
-      userId,
-      plan: planName,
-      cardBrand: 'Visa', // Get actual card brand
-      cardLast4: '3492', // Get actual last 4 digits
-      subscriptionStatus: 'active',
-      subscriptionId: subscription.id,
-      customerId: subscription.customer as string,
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      price: subscription.items.data[0].price.unit_amount! / 100,
-    });
+      await this.subscriptionModel.create({
+        userId,
+        plan: planName,
+        cardBrand: card?.brand || 'Unknown',
+        cardLast4: card?.last4 || '0000',
+        subscriptionStatus: subscription.status === 'active' ? 'active' : 'inactive',
+        subscriptionId: subscription.id,
+        customerId: subscription.customer as string,
+        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        price: subscription.items.data[0].price.unit_amount! / 100,
+      });
 
-    await this.userModel.updateOne(
-      { _id: userId },
-      { ...PLAN_LIMITS[planName], requestUsed: 0 }
-    );
+      await this.userModel.updateOne(
+        { _id: userId },
+        { ...PLAN_LIMITS[planName], requestUsed: 0 }
+      );
+    } catch (error) {
+      console.error('Create new subscription error:', error);
+    }
   }
 
   async cancelSubscription(userId: string) {

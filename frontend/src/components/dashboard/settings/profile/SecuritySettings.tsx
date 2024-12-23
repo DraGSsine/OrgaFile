@@ -1,22 +1,19 @@
 "use client";
 import { Card, CardHeader, CardBody, Input, Button, Modal, ModalContent, ModalFooter, ModalBody } from "@nextui-org/react";
-import { Alert02Icon, LockIcon, Shield01Icon } from "hugeicons-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Alert02Icon, CirclePasswordIcon, LockIcon, Shield01Icon, ViewIcon, ViewOffIcon } from "hugeicons-react";
+import { FieldError, useForm } from "react-hook-form";
+import { ZodIssue, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import {  UpdateProfilePassword } from "@/redux/slices/settingsSlice";
+import { UpdateProfilePassword } from "@/redux/slices/settingsSlice";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(6, "Password must be at least 8 characters").max(30),
   newPassword: z.string().min(6, "Password must be at least 8 characters").max(30),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+})
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
@@ -48,9 +45,11 @@ export function SecuritySettings() {
   };
 
   return (
-    <div className="rounded-xl border bg-gray-50 w-4/12 p-6" >
+    <div className="rounded-xl space-y-5 bg-white shadow-sm ring-1 ring-gray-200 col-start-5 col-end-8 p-6" >
       <div className="flex gap-3">
-        <div className="h-5 w-5 text-primary" />
+        <div className="rounded-full bg-primary/10 p-3">
+          <CirclePasswordIcon className="h-5 w-5 text-primary" />
+        </div>
         <div className="flex flex-col">
           <p className="text-md font-semibold">Change Password</p>
           <p className="text-small text-default-500">Update your account password</p>
@@ -58,35 +57,53 @@ export function SecuritySettings() {
       </div>
       <div>
         <form onSubmit={handleSubmit(onPasswordChange)} className="space-y-4">
-          <Input
-            type="password"
-            label="Current Password"
-            variant="bordered"
-            {...register("currentPassword")}
-            isInvalid={!!errors.currentPassword}
-            errorMessage={errors.currentPassword?.message}
-          />
-          <Input
-            type="password"
-            label="New Password"
-            variant="bordered"
-            {...register("newPassword")}
-            isInvalid={!!errors.newPassword}
-            errorMessage={errors.newPassword?.message}
-          />
-          <Input
-            type="password"
-            label="Confirm New Password"
-            variant="bordered"
-            {...register("confirmPassword")}
-            isInvalid={!!errors.confirmPassword}
-            errorMessage={errors.confirmPassword?.message}
-          />
-          <Button color="primary" type="submit" className="w-full sm:w-auto">
+          <PasswordInput errorState={errors.currentPassword} register={register} errors={errors} label="Current Password" />
+          <PasswordInput errorState={errors.newPassword} register={register} errors={errors} label="New Password" />
+          <Button color="primary" type="submit" className="w-full">
             Update Password
           </Button>
         </form>
       </div>
     </div>
+  );
+}
+
+function PasswordInput({ errorState, register, errors,label }: { errorState: FieldError | undefined, register: any, errors: any,label:string }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [error, setError] = useState(errorState);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+  return (
+    <Input
+      size="sm"
+      endContent={
+        <button
+          className="focus:outline-none flex items-center justify-center"
+          type="button"
+          onClick={toggleVisibility}
+        >
+          {!isVisible ? (
+            <ViewOffIcon
+              width="25"
+              height="35"
+              className="text-2xl text-default-400 pointer-events-none"
+            />
+          ) : (
+            < ViewIcon
+              width="25"
+              height="35"
+              className="text-2xl text-default-400 pointer-events-none"
+            />
+          )}
+        </button>
+      }
+      isRequired
+      label={label}
+      type={isVisible ? "text" : "password"}
+      {...register("newPassword")}
+      isInvalid={!!errors.newPassword}
+      errorMessage={errors.newPassword?.message}
+
+    />
   );
 }
