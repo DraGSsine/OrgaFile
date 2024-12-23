@@ -13,29 +13,29 @@ export declare class UserService {
     updateProfile(createUserDto: CreateUserDto, userId: string): Promise<any>;
     updatePassword(updatePassowrdDto: UpdatePasswordDto, userId: string): Promise<string>;
     remove(userId: string): Promise<any>;
-    formatPaymentHistory(payments: any, invoices: any, subscriptiondb: any, user: any, paymentMethod: any): {
+    formatPaymentHistory(payments: any, invoices: any, subscriptiondb: any, user: any, stripeSubscription: any): Promise<{
         plan: any;
         fullName: any;
         email: any;
-        subscriptionEnds: Date;
+        subscriptionEnds: string;
         price: number;
         status: any;
         currency: any;
         lastFourDigits: any;
         cardBrand: any;
-        subscriptionHistory: any;
-    };
-    getUserInfo(userId: string): Promise<{
+        subscriptionHistory: any[];
+    }>;
+    getUserInfo(userId: any): Promise<{
         plan: any;
         fullName: any;
         email: any;
-        subscriptionEnds: Date;
+        subscriptionEnds: string;
         price: number;
         status: any;
         currency: any;
         lastFourDigits: any;
         cardBrand: any;
-        subscriptionHistory: any;
+        subscriptionHistory: any[];
     }>;
     hasSubscription(userId: string): Promise<boolean>;
 }

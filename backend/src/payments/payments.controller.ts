@@ -49,10 +49,10 @@ export class PaymentController {
     return this.paymentService.handleWebhook(request, response);
   }
 
-  @Post('manage-billing')
+  @Get('manage-billing')
   @UseGuards(AuthGuard)
   async manageBilling(@Req() request: any, @Res() res: Response) {
-    const result = await this.paymentService.cancelSubscription(
+    const result = await this.paymentService.mangeStripePortal(
       request.user.userId,
     );
     return res.send(result);

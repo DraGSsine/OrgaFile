@@ -8,13 +8,13 @@ export declare class UserController {
         plan: any;
         fullName: any;
         email: any;
-        subscriptionEnds: Date;
+        subscriptionEnds: string;
         price: number;
         status: any;
         currency: any;
         lastFourDigits: any;
         cardBrand: any;
-        subscriptionHistory: any;
+        subscriptionHistory: any[];
     }>;
     create(createUserDto: CreateUserDto, req: any): Promise<any>;
     updatePassword(updatePassowrdDto: UpdatePasswordDto, req: any): Promise<string>;

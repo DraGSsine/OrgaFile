@@ -38,12 +38,18 @@ export declare class PaymentService {
         message: string;
         error?: undefined;
     }>;
-    renewSubscription(userId: string): Promise<void>;
+    renewSubscription(userId: string): Promise<{
+        message: string;
+    }>;
+    mangeStripePortal(userId: string): Promise<{
+        error: string;
+        url?: undefined;
+    } | {
+        url: string;
+        error?: undefined;
+    }>;
     private findOrCreateCustomer;
-    private hasActiveSubscription;
-    private getActiveSubscription;
     private getCanceledSubscription;
-    private isSubscriptionExpired;
     private generateSubscriptionToken;
 }
 export {};

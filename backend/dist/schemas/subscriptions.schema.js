@@ -40,14 +40,6 @@ __decorate([
 ], Subscription.prototype, "currentPeriodStart", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], Subscription.prototype, "cardBrand", void 0);
-__decorate([
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], Subscription.prototype, "cardLast4", void 0);
-__decorate([
-    (0, mongoose_1.Prop)(),
     __metadata("design:type", Date)
 ], Subscription.prototype, "currentPeriodEnd", void 0);
 __decorate([

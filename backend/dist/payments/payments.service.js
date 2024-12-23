@@ -73,7 +73,13 @@ let PaymentService = class PaymentService {
         const userId = customer.metadata.userId;
         if (!userId)
             return;
-        await this.subscriptionModel.findOneAndUpdate({ userId }, { status: "active" });
+        await this.subscriptionModel.findOneAndUpdate({ userId }, {
+            status: "active",
+            subscriptionId: invoice.subscription,
+            currentPeriodEnd: new Date(invoice.period_end * 1000),
+            price: invoice.total / 100,
+            customerId: invoice.customer,
+        }, { upsert: true, new: true });
     }
     async handlePaymentFailed(invoice) {
         if (!invoice.subscription)
@@ -87,13 +93,7 @@ let PaymentService = class PaymentService {
         const userId = customer.metadata.userId;
         if (!userId)
             return;
-        await this.subscriptionModel.findOneAndUpdate({ subscriptionId: subscription.id }, {
-            $set: {
-                status: "ended",
-                currentPeriodEnd: new Date(),
-                price: 0,
-            },
-        }, { new: true });
+        await this.subscriptionModel.updateOne({ userId }, { status: "ended" });
     }
     async createChekoutSession(plan, userId) {
         try {
@@ -153,9 +153,26 @@ let PaymentService = class PaymentService {
                 cancel_at_period_end: false,
             });
             await this.subscriptionModel.updateOne({ userId, status: "canceled" }, { status: "active" });
+            return { message: "Subscription renewed successfully" };
         }
         catch (error) {
             console.error("Renew subscription error:", error);
+        }
+    }
+    async mangeStripePortal(userId) {
+        try {
+            const subscription = await this.subscriptionModel.findOne({ userId });
+            if (!subscription)
+                return { error: "Subscription not found" };
+            const session = await this.stripe.billingPortal.sessions.create({
+                customer: subscription.customerId,
+                return_url: this.redirectUrl,
+            });
+            return { url: session.url };
+        }
+        catch (error) {
+            console.error("Manage billing error:", error);
+            return { error: "Failed to manage billing" };
         }
     }
     async findOrCreateCustomer(userId) {
@@ -169,26 +186,11 @@ let PaymentService = class PaymentService {
         });
         return customer.id;
     }
-    async hasActiveSubscription(userId) {
-        const subscription = await this.subscriptionModel.findOne({
-            userId,
-            status: "active",
-        });
-        return !!subscription;
-    }
-    async getActiveSubscription(userId) {
-        return this.subscriptionModel
-            .findOne({ userId, status: "active" })
-            .sort({ currentPeriodEnd: -1 });
-    }
     async getCanceledSubscription(userId) {
         return this.subscriptionModel.findOne({
             userId,
             status: "canceled",
         });
-    }
-    isSubscriptionExpired(subscription) {
-        return subscription.currentPeriodEnd < new Date();
     }
     async generateSubscriptionToken(userId) {
         return this.jwtService.signAsync({ userId, isSubscribed: true }, { expiresIn: "7d", secret: process.env.JWT_SECRET_KEY });

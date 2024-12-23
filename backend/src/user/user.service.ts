@@ -82,69 +82,120 @@ export class UserService {
     }
   }
 
-  formatPaymentHistory(payments, invoices,subscriptiondb, user ,paymentMethod) {
-    const latestInvoice = invoices.data[0];
-    const subscription = latestInvoice.lines.data[0];
-    const lastFourDigits = paymentMethod.data[0].card.last4;
-    const cardBrand = paymentMethod.data[0].card.brand;
-    return {
-      plan: subscriptiondb.plan,
-      fullName: user.fullName,
-      email: user.email,
-      subscriptionEnds: new Date(latestInvoice.lines.data[0].period.end * 1000),
-      price: subscription.plan.amount / 100,
-      status: subscriptiondb.status,
-      currency: latestInvoice.currency,
-      lastFourDigits: lastFourDigits,
-      cardBrand: cardBrand,
-      subscriptionHistory: invoices.data.map((invoice) => ({
-        plan: invoice.lines.data[0].description
-          .split("×")[1]
-          .trim()
-          .split("(")[0]
-          .trim(),
-        price: invoice.amount_due / 100,
-        currency: invoice.currency,
-        paymentMethod: payments.data[0].payment_method_types[0],
-        lastFourDigits: lastFourDigits,
-        status: invoice.status,
-        startDate: new Date(invoice.lines.data[0].period.start * 1000),
-        endDate: new Date(invoice.lines.data[0].period.end * 1000),
-      })),
-    };
-  }
 
-  async getUserInfo(userId: string) {
-    try {
-      const user = await this.userModel.findOne({ _id: userId });
-      // get the latest subscription
-      const subscription = await this.subscriptionModel
-        .findOne({ userId })
-        .sort({ createdAt: -1 });
-      const customerId = subscription.customerId;
-      /////////////////////////////
+    /*
 
-      // Get all payments
-      const payments = await this.stripeClient.paymentIntents.list({
-        customer: customerId,
-        limit: 100,
-      });
 
-      // Get subscription invoices
-      const invoices = await this.stripeClient.invoices.list({
-        customer: customerId,
-        limit: 100,
-      });
-      // return customerId
-      const paymentMethod = await this.stripeClient.customers.listPaymentMethods(
-        customerId
-      );
-      return this.formatPaymentHistory( payments, invoices,subscription , user ,paymentMethod );
-      ////////////////////////////
-    } catch (error) {
-      throw new UnprocessableEntityException(["User not found"]);
+    */
+    async formatPaymentHistory(payments, invoices, subscriptiondb, user, stripeSubscription) {
+      const latestInvoice = invoices.data[0];
+      const subscription = latestInvoice.lines.data[0];
+  
+      // Get the current payment method from the subscription's default_payment_method
+      const currentPaymentMethod = stripeSubscription.default_payment_method;
+  
+      return {
+        plan: subscriptiondb.plan,
+        fullName: user.fullName,
+        email: user.email,
+        subscriptionEnds: new Date(subscription.period.end * 1000).toISOString(),
+        price: subscription.plan.amount / 100,
+        status: subscriptiondb.status,
+        currency: latestInvoice.currency,
+        lastFourDigits: currentPaymentMethod?.card?.last4 || '',
+        cardBrand: currentPaymentMethod?.card?.brand || '',
+        subscriptionHistory: await Promise.all(invoices.data.map(async (invoice) => {
+          // Fetch the payment intent with expanded payment method for each invoice
+          let paymentMethodDetails = null;
+          if (invoice.payment_intent) {
+            try {
+              const paymentIntent = await this.stripeClient.paymentIntents.retrieve(
+                typeof invoice.payment_intent === 'string' ? invoice.payment_intent : invoice.payment_intent.id,
+                {
+                  expand: ['payment_method']
+                }
+              );
+              paymentMethodDetails = paymentIntent.payment_method;
+            } catch (error) {
+              console.error(`Error fetching payment intent details: ${error.message}`);
+            }
+          }
+  
+          return {
+            plan: invoice.lines.data[0].description
+              .split("×")[1]
+              ?.trim()
+              ?.split("(")[0]
+              ?.trim(),
+            price: invoice.amount_due / 100,
+            currency: invoice.currency,
+            paymentMethod: paymentMethodDetails?.type || '',
+            lastFourDigits: paymentMethodDetails?.card?.last4 || '',
+            cardBrand: paymentMethodDetails?.card?.brand || '',
+            status: invoice.status,
+            startDate: new Date(invoice.lines.data[0].period.start * 1000).toISOString(),
+            endDate: new Date(invoice.lines.data[0].period.end * 1000).toISOString(),
+          };
+        })),
+      };
     }
-  }
+  
+    async getUserInfo(userId) {
+      try {
+        // Get user and latest subscription
+        const user = await this.userModel.findOne({ _id: userId });
+        if (!user) {
+          throw new UnprocessableEntityException(["User not found"]);
+        }
+  
+        const subscription = await this.subscriptionModel
+          .findOne({ userId })
+          .sort({ createdAt: -1 });
+        
+        if (!subscription) {
+          throw new UnprocessableEntityException(["No subscription found"]);
+        }
+  
+        const customerId = subscription.customerId;
+  
+        // Fetch all required data in parallel
+        const [payments, invoices, stripeSubscription] = await Promise.all([
+          this.stripeClient.paymentIntents.list({
+            customer: customerId,
+            limit: 100,
+            expand: ['data.payment_method']
+          }),
+          this.stripeClient.invoices.list({
+            customer: customerId,
+            limit: 100,
+            expand: ['data.payment_intent']
+          }),
+          this.stripeClient.subscriptions.retrieve(subscription.subscriptionId, {
+            expand: [
+              'customer',
+              'default_payment_method',
+              'latest_invoice',
+              'latest_invoice.payment_intent',
+              'plan'
+            ]
+          })
+        ]);
+  
+        // Format and return the payment history
+        return await this.formatPaymentHistory(
+          payments,
+          invoices,
+          subscription,
+          user,
+          stripeSubscription
+        );
+  
+      } catch (error) {
+        console.error('Error in getUserInfo:', error);
+        throw new UnprocessableEntityException(["User not found"]);
+      }
+    }
+  
 
   async hasSubscription(userId: string) {
     const subscription = await this.subscriptionModel.findOne({

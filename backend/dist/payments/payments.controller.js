@@ -42,7 +42,7 @@ let PaymentController = class PaymentController {
         return this.paymentService.handleWebhook(request, response);
     }
     async manageBilling(request, res) {
-        const result = await this.paymentService.cancelSubscription(request.user.userId);
+        const result = await this.paymentService.mangeStripePortal(request.user.userId);
         return res.send(result);
     }
     async cancelSubscription(request, res) {
@@ -87,7 +87,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "webhook", null);
 __decorate([
-    (0, common_1.Post)('manage-billing'),
+    (0, common_1.Get)('manage-billing'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),

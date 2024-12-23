@@ -24,10 +24,6 @@ export class Subscription {
   @Prop({ default: new Date() })
   currentPeriodStart: Date;
   @Prop()
-  cardBrand: string;
-  @Prop()
-  cardLast4: string;
-  @Prop()
   currentPeriodEnd: Date;
 
   @Prop()

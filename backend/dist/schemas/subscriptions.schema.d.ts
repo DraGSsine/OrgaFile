@@ -6,8 +6,6 @@ export declare class Subscription {
     status: 'active' | 'inactive' | 'canceled' | 'ended';
     price: number;
     currentPeriodStart: Date;
-    cardBrand: string;
-    cardLast4: string;
     currentPeriodEnd: Date;
     subscriptionId: string;
     customerId: string;
