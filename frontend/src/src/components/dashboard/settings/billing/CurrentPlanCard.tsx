@@ -1,0 +1,169 @@
+
+"use client"
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { cancelSubscription, mangeBilling, renewSubscription } from "@/redux/slices/paymentSlice";
+import type { AppDispatch, RootState } from "@/redux/store";
+import { CreditCardIcon } from "hugeicons-react";
+import { formatDateForInvoice } from "@/helpers/helpers";
+import { Button } from "@nextui-org/button";
+import { updateUserInfo } from "@/redux/slices/authSlice";
+
+interface BillingInfoProps {
+  nextBillingDate: string;
+  lastFour: string;
+}
+export function CurrentPlanCard() {
+  const {isLoading,userInformation}  = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { status ,plan, subscriptionEnds, price } = userInformation;
+  const [renewLoading, setRenewLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const cancelSubs = async () => {
+    try {
+      setCancelLoading(true);
+      const action = await dispatch(cancelSubscription());
+      if (cancelSubscription.fulfilled.match(action)) {
+        toast.success(action.payload.message);
+        dispatch(updateUserInfo({status:"canceled", isSubscribed: false }));
+      }
+    } catch (error) {
+      toast.error("An error occurred while managing your subscription");
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  const renewSubs = async () => {
+    try {
+      setRenewLoading(true);
+      const action = await dispatch(renewSubscription());
+      if (renewSubscription.fulfilled.match(action)) {
+        toast.success(action.payload.message);
+        dispatch(updateUserInfo({ status:"active", isSubscribed: true }));
+
+      }
+    } catch (error) {
+      toast.error("An error occurred while managing your subscription");
+    } finally {
+      setRenewLoading(false);
+    }
+  }
+
+  const onManageBilling = async () => {
+    setBillingLoading(true);
+    try {
+       const action = await dispatch(mangeBilling());
+      if (mangeBilling.fulfilled.match(action)) {
+        router.push(action.payload.url);
+        toast.success(action.payload.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while managing your subscription");
+    } finally {
+      setBillingLoading(false);
+    }
+  }
+
+  return (
+    <div className="overflow-hidden col-start-1 col-end-5 rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <div className=" gap-3 flex items-center">
+            <div className="rounded-full bg-primary/10 p-3">
+              <CreditCardIcon className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Current Plan</h3>
+              <p className="mt-1 text-sm text-gray-500">You are currently on the {plan} plan</p>
+            </div>
+          </div>
+          <StatusBadge status={status} />
+        </div>
+
+        <div className="mt-4">
+          <div className="flex items-baseline">
+            <span className="text-3xl font-bold text-blue-600">${price}</span>
+            <span className="ml-1 text-gray-500">/month</span>
+          </div>
+
+          <BillingInfo
+            nextBillingDate={formatDateForInvoice(subscriptionEnds)}
+            lastFour={'1234'}
+          />
+        </div>
+      </div>
+
+      <div className="bg-gray-50 px-6 py-4">
+        <div className="flex justify-between gap-4">
+          {status === 'active' && (
+            <>
+              <Button
+                onClick={onManageBilling}
+                className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Stripe Portal
+              </Button>
+              <Button
+                isLoading={cancelLoading}
+                onClick={cancelSubs}
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Cancel Plan
+              </Button>
+            </>
+          )}
+          {status === 'canceled' && (
+            <Button
+              isLoading={renewLoading}
+              onClick={renewSubs}
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Reactivate Subscription
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function StatusBadge({ status }: { status: 'active' | 'canceled' | 'inactive' }) {
+  const styles = {
+    active: 'bg-green-100 text-green-800',
+    canceled: 'bg-yellow-100 text-yellow-800',
+    inactive: 'bg-red-100 text-red-800',
+  };
+
+  const labels = {
+    active: 'Active',
+    canceled: 'Canceled',
+    inactive: 'Inactive',
+  };
+
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ${styles[status]}`}>
+      {labels[status]}
+    </span>
+  );
+}
+
+export function BillingInfo({ nextBillingDate, lastFour }: BillingInfoProps) {
+  return (
+    <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
+      <div className="flex items-center gap-1.5">
+        <CreditCardIcon className="h-4 w-4" />
+        <span>•••• {lastFour}</span>
+      </div>
+      <div className="h-1 w-1 rounded-full bg-gray-300" />
+      <span>Next billing date: {nextBillingDate}</span>
+    </div>
+  );
+}
