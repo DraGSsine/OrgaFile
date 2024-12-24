@@ -2,20 +2,20 @@ import { UploadService } from './upload.service';
 export declare class UploadController {
     private readonly uploadService;
     constructor(uploadService: UploadService);
-    uploadFile(files: Array<Express.Multer.File>, req: any): Promise<void>;
+    uploadFile(files: Array<Express.Multer.File>, req: any): unknown;
     restoreFile(requestBody: {
         fileId: string;
-    }, req: any): Promise<import("../schemas/removedFiles.schema").FileInfo>;
-    loadAllFiles(req: any): Promise<import("../schemas/files.schema").FileInfo[]>;
-    findRecentFiles(req: any): Promise<import("../schemas/files.schema").FileInfo[]>;
-    findRemovedFiles(req: any): Promise<import("../schemas/removedFiles.schema").FileInfo[]>;
+    }, req: any): unknown;
+    loadAllFiles(req: any): unknown;
+    findRecentFiles(req: any): unknown;
+    findRemovedFiles(req: any): unknown;
     remove(req: any, requestBody: {
         fileId: string;
         isPermanently: boolean;
-    }): Promise<import("../schemas/files.schema").FileInfo | "File deleted permanently">;
+    }): unknown;
     removeMany(req: any, requestBody: {
         files: string[];
         isPermanently: boolean;
-    }): Promise<import("../schemas/files.schema").FileInfo[] | "Files deleted permanently">;
-    downloadFile(fileId: string, req: any, res: any): Promise<void>;
+    }): unknown;
+    downloadFile(fileId: string, req: any, res: any): any;
 }

@@ -8,19 +8,7 @@ export declare class AuthService {
     private readonly userModel;
     private readonly subscriptionModel;
     constructor(jwtService: JwtService, userModel: Model<UserDocument>, subscriptionModel: Model<subscriptionDocument>);
-    signIn(signInDto: signInDto): Promise<{
-        token: string;
-        user: {
-            email: string;
-            fullName: string;
-        };
-    }>;
-    signUp(signUpDto: signUpDto): Promise<{
-        token: string;
-        user: {
-            email: string;
-            fullName: string;
-        };
-    }>;
+    signIn(signInDto: signInDto): unknown;
+    signUp(signUpDto: signUpDto): unknown;
     private generateTokens;
 }

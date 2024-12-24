@@ -1,1 +1,1 @@
-export declare function parseFile(file: any): Promise<string>;
+export declare function parseFile(file: any): unknown;

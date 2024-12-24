@@ -13,13 +13,13 @@ export declare class UploadService {
     private readonly folderModel;
     constructor(configService: ConfigService, removedFilesModel: Model<RemovedFilesDocument>, fileModel: Model<FileDocument>, userModel: Model<UserDocument>, folderModel: Model<FolderDocument>);
     private readonly s3Client;
-    uploadFiles(files: Array<Express.Multer.File>, userId: ObjectId): Promise<void>;
-    restoreFile(req: any, fileId: string): Promise<import("../schemas/removedFiles.schema").FileInfo>;
-    loadFiles(userId: ObjectId): Promise<import("../schemas/files.schema").FileInfo[]>;
-    loadRecentFiles(userId: ObjectId): Promise<import("../schemas/files.schema").FileInfo[]>;
-    loadRemovedFiles(userId: ObjectId): Promise<import("../schemas/removedFiles.schema").FileInfo[]>;
-    remove(req: any, fileId: string, isPermanently: boolean): Promise<import("../schemas/files.schema").FileInfo | "File deleted permanently">;
-    removeMany(req: any, fileIds: string[], isPermanently: boolean): Promise<import("../schemas/files.schema").FileInfo[] | "Files deleted permanently">;
+    uploadFiles(files: Array<Express.Multer.File>, userId: ObjectId): unknown;
+    restoreFile(req: any, fileId: string): unknown;
+    loadFiles(userId: ObjectId): unknown;
+    loadRecentFiles(userId: ObjectId): unknown;
+    loadRemovedFiles(userId: ObjectId): unknown;
+    remove(req: any, fileId: string, isPermanently: boolean): unknown;
+    removeMany(req: any, fileIds: string[], isPermanently: boolean): unknown;
     downloadFile(req: any, fileId: string): Promise<{
         fileStream: Readable;
         fileName: string;

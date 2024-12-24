@@ -5,7 +5,7 @@ export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
     private resHeaders;
-    signIn(signInDto: signInDto, res: Response): Promise<Response<any, Record<string, any>>>;
-    signUp(signUpDto: signUpDto, res: Response): Promise<Response<any, Record<string, any>>>;
-    signOut(res: Response): Response<any, Record<string, any>>;
+    signIn(signInDto: signInDto, res: Response): unknown;
+    signUp(signUpDto: signUpDto, res: Response): unknown;
+    signOut(res: Response): any;
 }

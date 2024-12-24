@@ -16,41 +16,16 @@ export declare class PaymentService {
     private stripe;
     private redirectUrl;
     constructor(subscriptionModel: Model<subscriptionDocument>, userModel: Model<UserDocument>, jwtService: JwtService);
-    handleWebhook(request: RawBodyRequest<Request>, response: Response): Promise<void>;
+    handleWebhook(request: RawBodyRequest<Request>, response: Response): any;
     private handlePaymentSucceeded;
     private handlePaymentFailed;
     private handleSubscriptionEnded;
     private handleSubscriptionUpdated;
-    createChekoutSession(plan: keyof typeof SUBSCRIPTION_PLANS, userId: string): Promise<{
-        url: string;
-        error?: undefined;
-    } | {
-        error: string;
-        url?: undefined;
-    }>;
-    checkSubscription(userId: string): Promise<{
-        isSubscribed: boolean;
-        newToken: string;
-    }>;
-    cancelSubscription(userId: string): Promise<{
-        error: string;
-        message?: undefined;
-    } | {
-        message: string;
-        error?: undefined;
-    }>;
-    renewSubscription(userId: string): Promise<{
-        message: string;
-    }>;
-    mangeStripePortal(userId: string): Promise<{
-        error: string;
-        url?: undefined;
-        message?: undefined;
-    } | {
-        url: string;
-        message: string;
-        error?: undefined;
-    }>;
+    createChekoutSession(plan: keyof typeof SUBSCRIPTION_PLANS, userId: string): unknown;
+    checkSubscription(userId: string): unknown;
+    cancelSubscription(userId: string): unknown;
+    renewSubscription(userId: string): unknown;
+    mangeStripePortal(userId: string): unknown;
     private findOrCreateCustomer;
     private getCanceledSubscription;
     private generateSubscriptionToken;

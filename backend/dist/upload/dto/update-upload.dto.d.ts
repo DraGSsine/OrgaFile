@@ -1,5 +1,4 @@
-import { CreateUploadDto } from './create-upload.dto';
-declare const UpdateUploadDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateUploadDto>>;
+declare const UpdateUploadDto_base: any;
 export declare class UpdateUploadDto extends UpdateUploadDto_base {
 }
 export {};

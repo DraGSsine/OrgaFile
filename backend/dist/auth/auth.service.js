@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const mongoose_1 = require("mongoose");
@@ -73,8 +74,6 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, mongoose_2.InjectModel)('user')),
     __param(2, (0, mongoose_2.InjectModel)('Subscription')),
-    __metadata("design:paramtypes", [jwt_1.JwtService,
-        mongoose_1.Model,
-        mongoose_1.Model])
+    __metadata("design:paramtypes", [typeof (_a = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _a : Object, typeof (_b = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _b : Object, typeof (_c = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _c : Object])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

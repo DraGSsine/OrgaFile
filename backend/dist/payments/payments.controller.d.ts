@@ -6,10 +6,10 @@ export declare class PaymentController {
     private readonly paymentService;
     constructor(paymentService: PaymentService);
     private resHeaders;
-    createSession(createPaymentDto: CreatePaymentDto, request: any, response: Response): Promise<Response<any, Record<string, any>>>;
-    webhook(request: RawBodyRequest<Request>, response: Response): Promise<void>;
-    manageBilling(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
-    cancelSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
-    renewSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
-    checkSubscription(request: any, res: Response): Promise<Response<any, Record<string, any>>>;
+    createSession(createPaymentDto: CreatePaymentDto, request: any, response: Response): unknown;
+    webhook(request: RawBodyRequest<Request>, response: Response): unknown;
+    manageBilling(request: any, res: Response): unknown;
+    cancelSubscription(request: any, res: Response): unknown;
+    renewSubscription(request: any, res: Response): unknown;
+    checkSubscription(request: any, res: Response): unknown;
 }
