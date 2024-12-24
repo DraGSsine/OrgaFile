@@ -20,17 +20,18 @@ const createaiClient = () =>
   new ChatGoogleGenerativeAI({
     apiKey: process.env.GEMINI_API_KEY,
     model: "gemini-pro",})
+
   // new ChatMistralAI({
   //   apiKey: process.env.MISTRAL_API_KEY,
-  //   model: "mistral-embed",
-  // });
-  // });
+  //   model: "mistral-large-latest",
+  // }) as any
 
 
-  // return new ChatOpenAI({
+
+  // new ChatOpenAI({
   //   apiKey: process.env.OPENAI_API_KEY,
   //   model: "gpt-3.5-turbo",
-  // });
+  // }) as any
 ;
 
 const predefinedCategories = [
@@ -177,7 +178,7 @@ export const categorizeDocuments = async (
         const chain = prompt.pipe(aiClient);
         const response = await chain.invoke({});
 
-        const cleanCategory = response.content as string;
+        const cleanCategory = (response as { content: string }).content;
         existingCategories.push(cleanCategory);
 
         return {
@@ -231,8 +232,7 @@ export const generateFileName = async (documentInfo: {
 
   try {
     const response = await chain.invoke({});
-    console.log("Generated filename:", response);
-    return response.content as string;
+    return (response as { content: string }).content;
   } catch (error) {
     console.error("Error generating filename:", error);
     return "document";
