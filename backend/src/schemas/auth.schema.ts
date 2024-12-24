@@ -19,13 +19,13 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
+  @Prop({default: 0})
   storage: number;
 
   @Prop({ default: 0 })
   storageUsed: number;
 
-  @Prop()
+  @Prop({default: 0})
   requestLimit: number;
 
   @Prop({ default: 0 })

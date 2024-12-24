@@ -5,7 +5,4 @@ export class UpdatePasswordDto {
     @MinLength(6)
     @MaxLength(30)
     newPassword: string;
-    @MinLength(6)
-    @MaxLength(30)
-    confirmPassword: string;
 }

@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateFileName = exports.categorizeDocuments = exports.analyzeDocument = void 0;
 const text_splitter_1 = require("langchain/text_splitter");
-const mistralai_1 = require("@langchain/mistralai");
+const google_genai_1 = require("@langchain/google-genai");
 const prompts_1 = require("@langchain/core/prompts");
 const prase_files_1 = require("./prase-files");
 const output_parsers_1 = require("@langchain/core/output_parsers");
-const createMistralClient = () => new mistralai_1.ChatMistralAI({
-    apiKey: process.env.MISTRAL_API_KEY,
-    model: 'ministral-8b-2410',
+const createMistralClient = () => new google_genai_1.ChatGoogleGenerativeAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: 'gemini-pro',
 });
 const predefinedCategories = [
     'Technology',

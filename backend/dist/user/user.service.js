@@ -18,13 +18,23 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const bcrypt = require("bcrypt");
 const stripe_1 = require("stripe");
+const config_1 = require("@nestjs/config");
+const AWS = require("aws-sdk");
 let UserService = class UserService {
-    constructor(userModel, folderModel, fileModel, subscriptionModel, removedFileModel) {
+    constructor(configService, userModel, folderModel, fileModel, subscriptionModel, removedFileModel) {
+        this.configService = configService;
         this.userModel = userModel;
         this.folderModel = folderModel;
         this.fileModel = fileModel;
         this.subscriptionModel = subscriptionModel;
         this.removedFileModel = removedFileModel;
+        this.s3Client = new AWS.S3({
+            credentials: {
+                accessKeyId: this.configService.get("S3_ACCESS_KEY_ID"),
+                secretAccessKey: this.configService.get("S3_SECRET_ACCESS_KEY"),
+            },
+            region: this.configService.get("S3_REGION"),
+        });
         this.stripeClient = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
             apiVersion: "2024-04-10",
         });
@@ -43,10 +53,7 @@ let UserService = class UserService {
         return { fullName };
     }
     async updatePassword(updatePassowrdDto, userId) {
-        const { currentPassword, newPassword, confirmPassword } = updatePassowrdDto;
-        if (newPassword !== confirmPassword) {
-            throw new common_1.UnprocessableEntityException(["Password does not match"]);
-        }
+        const { currentPassword, newPassword } = updatePassowrdDto;
         const user = await this.userModel.findOne({ _id: userId });
         if (!user) {
             throw new common_1.UnprocessableEntityException(["User not found"]);
@@ -56,7 +63,7 @@ let UserService = class UserService {
             throw new common_1.UnprocessableEntityException(["current password is incorrect"]);
         }
         try {
-            const encryptedPassword = await bcrypt.hash(confirmPassword, 10);
+            const encryptedPassword = await bcrypt.hash(newPassword, 10);
             await this.userModel.findOneAndUpdate({
                 _id: userId,
             }, { password: encryptedPassword });
@@ -68,6 +75,20 @@ let UserService = class UserService {
     }
     async remove(userId) {
         try {
+            const user = await this.fileModel.findOne({ userId });
+            if (!user) {
+                throw new common_1.UnprocessableEntityException(["User not found"]);
+            }
+            const fileIds = user.files.map((file) => file.fileId);
+            const deleteParams = {
+                Bucket: this.configService.get("S3_BUCKET_NAME"),
+                Delete: {
+                    Objects: fileIds.map((fileId) => ({
+                        Key: `${userId}/${fileId}`,
+                    })),
+                },
+            };
+            await this.s3Client.deleteObjects(deleteParams).promise();
             await this.userModel.findOneAndDelete({ _id: userId });
             await this.folderModel.deleteMany({ userId });
             await this.fileModel.deleteMany({ userId });
@@ -76,7 +97,8 @@ let UserService = class UserService {
             return "User account deleted successfully";
         }
         catch (error) {
-            return error;
+            console.error("Error deleting user:", error);
+            throw error;
         }
     }
     async formatPaymentHistory(payments, invoices, subscriptiondb, user, stripeSubscription) {
@@ -91,14 +113,16 @@ let UserService = class UserService {
             price: subscription.plan.amount / 100,
             status: subscriptiondb.status,
             currency: latestInvoice.currency,
-            lastFourDigits: currentPaymentMethod?.card?.last4 || '',
-            cardBrand: currentPaymentMethod?.card?.brand || '',
+            lastFourDigits: currentPaymentMethod?.card?.last4 || "",
+            cardBrand: currentPaymentMethod?.card?.brand || "",
             subscriptionHistory: await Promise.all(invoices.data.map(async (invoice) => {
                 let paymentMethodDetails = null;
                 if (invoice.payment_intent) {
                     try {
-                        const paymentIntent = await this.stripeClient.paymentIntents.retrieve(typeof invoice.payment_intent === 'string' ? invoice.payment_intent : invoice.payment_intent.id, {
-                            expand: ['payment_method']
+                        const paymentIntent = await this.stripeClient.paymentIntents.retrieve(typeof invoice.payment_intent === "string"
+                            ? invoice.payment_intent
+                            : invoice.payment_intent.id, {
+                            expand: ["payment_method"],
                         });
                         paymentMethodDetails = paymentIntent.payment_method;
                     }
@@ -114,9 +138,9 @@ let UserService = class UserService {
                         ?.trim(),
                     price: invoice.amount_due / 100,
                     currency: invoice.currency,
-                    paymentMethod: paymentMethodDetails?.type || '',
-                    lastFourDigits: paymentMethodDetails?.card?.last4 || '',
-                    cardBrand: paymentMethodDetails?.card?.brand || '',
+                    paymentMethod: paymentMethodDetails?.type || "",
+                    lastFourDigits: paymentMethodDetails?.card?.last4 || "",
+                    cardBrand: paymentMethodDetails?.card?.brand || "",
                     status: invoice.status,
                     startDate: new Date(invoice.lines.data[0].period.start * 1000).toISOString(),
                     endDate: new Date(invoice.lines.data[0].period.end * 1000).toISOString(),
@@ -141,34 +165,34 @@ let UserService = class UserService {
                 this.stripeClient.paymentIntents.list({
                     customer: customerId,
                     limit: 100,
-                    expand: ['data.payment_method']
+                    expand: ["data.payment_method"],
                 }),
                 this.stripeClient.invoices.list({
                     customer: customerId,
                     limit: 100,
-                    expand: ['data.payment_intent']
+                    expand: ["data.payment_intent"],
                 }),
                 this.stripeClient.subscriptions.retrieve(subscription.subscriptionId, {
                     expand: [
-                        'customer',
-                        'default_payment_method',
-                        'latest_invoice',
-                        'latest_invoice.payment_intent',
-                        'plan'
-                    ]
-                })
+                        "customer",
+                        "default_payment_method",
+                        "latest_invoice",
+                        "latest_invoice.payment_intent",
+                        "plan",
+                    ],
+                }),
             ]);
             return await this.formatPaymentHistory(payments, invoices, subscription, user, stripeSubscription);
         }
         catch (error) {
-            console.error('Error in getUserInfo:', error);
+            console.error("Error in getUserInfo:", error);
             throw new common_1.UnprocessableEntityException(["User not found"]);
         }
     }
     async hasSubscription(userId) {
         const subscription = await this.subscriptionModel.findOne({
             userId,
-            status: "active",
+            status: { $in: ["active", "canceled"] },
         });
         if (!subscription) {
             return false;
@@ -179,12 +203,13 @@ let UserService = class UserService {
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)("user")),
-    __param(1, (0, mongoose_1.InjectModel)("folder")),
-    __param(2, (0, mongoose_1.InjectModel)("file")),
-    __param(3, (0, mongoose_1.InjectModel)("subscription")),
-    __param(4, (0, mongoose_1.InjectModel)("removedFile")),
-    __metadata("design:paramtypes", [mongoose_2.Model,
+    __param(1, (0, mongoose_1.InjectModel)("user")),
+    __param(2, (0, mongoose_1.InjectModel)("folder")),
+    __param(3, (0, mongoose_1.InjectModel)("file")),
+    __param(4, (0, mongoose_1.InjectModel)("subscription")),
+    __param(5, (0, mongoose_1.InjectModel)("removedFile")),
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,
         mongoose_2.Model,

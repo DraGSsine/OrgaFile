@@ -3,9 +3,6 @@ import { DeleteProfile } from "@/redux/slices/settingsSlice";
 import { AppDispatch } from "@/redux/store";
 import {
   Button,
-  Card,
-  CardBody,
-  CardHeader,
   Input,
   Modal,
   ModalBody,
@@ -22,36 +19,47 @@ export const ProfileDelete = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <ConfirmDeleteProfile
+      <ConfirmDeleteModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
-      <div className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200 col-start-8 col-end-11 p-6 ">
-        <div className="flex gap-3">
-          <div className="rounded-full bg-red-500/10 p-3">
-            <Shield01Icon className="h-5 w-5 text-danger" />
-          </div>
-          <div className="flex flex-col">
-            <p className="text-md font-semibold">Account Deletion</p>
-            <p className="text-small text-default-500">
-              Permanently delete your account
-            </p>
-          </div>
-        </div>
-        <div>
-          <div className="space-y-4">
-            <p className="text-sm text-default-500">
-              Once you delete your account, there is no going back. Please be
-              certain.
-            </p>
-            <Button
-              color="danger"
-              variant="flat"
-              className="w-full sm:w-auto"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Delete Account
-            </Button>
+
+      <div className=" col-start-8 col-end-12 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <div className="mb-6 flex items-center gap-5 ">
+                <div className="rounded-full bg-red-50 p-3">
+                  <Shield01Icon className="h-6 w-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="mb-1 text-lg font-semibold text-gray-900">
+                    Account Deletion
+                  </h3>
+                  <p className="text-sm text-gray-500 hidden 2xl:block">
+                    Permanently delete your data
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="rounded-lg bg-gray-50 p-4">
+                  <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-gray-500">
+                    <li>Permanently deletes all your data</li>
+                    <li>Removes access to all services</li>
+                    <li>Cancels any active subscriptions</li>
+                  </ul>
+                </div>
+
+                <Button
+                  color="danger"
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full rounded-lg  px-4 py-2.5 text-sm font-medium   focus:outline-none focus:ring-2  focus:ring-offset-2 sm:w-auto"
+                >
+                  Delete Account
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -59,7 +67,7 @@ export const ProfileDelete = () => {
   );
 };
 
-const ConfirmDeleteProfile = ({
+const ConfirmDeleteModal = ({
   isModalOpen,
   setIsModalOpen,
 }: {
@@ -78,7 +86,7 @@ const ConfirmDeleteProfile = ({
           .then((res) => {
             if (DeleteProfile.fulfilled.match(res)) {
               setIsModalOpen(false);
-              router.push("/auth/login");
+              router.push("/auth/signin");
               return toast.success("Account deleted successfully");
             }
             if (DeleteProfile.rejected.match(res)) {

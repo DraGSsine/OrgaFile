@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { cancelSubscription, mangeBilling, renewSubscription } from "@/redux/slices/paymentSlice";
+import { cancelSubscription, createCheckoutSession, mangeBilling, renewSubscription } from "@/redux/slices/paymentSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { CreditCardIcon } from "hugeicons-react";
 import { formatDateForInvoice } from "@/helpers/helpers";
@@ -25,6 +25,7 @@ export function CurrentPlanCard() {
   const [renewLoading, setRenewLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [billingLoading, setBillingLoading] = useState(false);
+  const [upgradePlanLoading, setUpgradePlanLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const cancelSubs = async () => {
@@ -73,6 +74,21 @@ export function CurrentPlanCard() {
     }
   }
 
+  const upgradePlan = async () => {
+    setUpgradePlanLoading(true);
+    try {
+     const actoin = await dispatch(createCheckoutSession());
+      if (createCheckoutSession.fulfilled.match(actoin)) {
+        router.push(actoin.payload.url);
+        toast.success('Redirecting to stripe portal');
+      }
+    } catch (error) {
+      toast.error("An error occurred while managing your subscription");
+    } finally {
+      setUpgradePlanLoading(false);
+    }
+  }
+
   return (
     <div className="overflow-hidden col-start-1 col-end-5 rounded-xl bg-white shadow-sm ring-1 ring-gray-200 flex flex-col justify-between ">
       <div className="p-6">
@@ -83,7 +99,7 @@ export function CurrentPlanCard() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Current Plan</h3>
-              <p className="mt-1 text-sm text-gray-500">You are currently on the {plan} plan</p>
+              <p className="mt-1 text-sm text-gray-500 hidden 2xl:block ">You are currently on the {plan} plan</p>
             </div>
           </div>
           <StatusBadge status={status} />
@@ -131,6 +147,16 @@ export function CurrentPlanCard() {
               Reactivate Subscription
             </Button>
           )}
+
+          {status === 'inactive' || status == 'ended' && (
+            <Button
+              isLoading={upgradePlanLoading}
+              onClick={upgradePlan}
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Upgrade Plan
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -140,9 +166,9 @@ export function CurrentPlanCard() {
 export function StatusBadge({ status }: { status: subscribeStatus }) {
   const styles = {
     active: 'bg-green-100 text-green-800',
-    canceled: 'bg-red-100 text-red-800',
-    inactive: 'bg-gray-100 text-gray-800',
-    ended: 'bg-gray-100 text-gray-800',
+    canceled: 'bg-gray-100 text-gray-800',
+    inactive: 'bg-yellow-100 text-yellow-800',
+    ended: 'bg-red-100 text-red-800',
   };
 
   const labels = {

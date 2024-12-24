@@ -25,14 +25,9 @@ import {
 import { RouteNameType, filesType } from "@/types/types";
 import FilesSettings from "./files/FilesSettings";
 import {
-  CloudUploadIcon,
   Delete02Icon,
-  FileNotFoundIcon,
   FileSearchIcon,
-  Files01Icon,
   HelpCircleIcon,
-  QuestionIcon,
-  QuotesIcon,
 } from "hugeicons-react";
 
 import { NoFilesToDisplay } from "./EmptyState/NoFilesToDisplay";
@@ -105,7 +100,7 @@ export default function TableFiles({
       {/* Bulk Delete Action */}
 
       <div
-        className={` ${selectedKeys.size <= 0 ? " hidden" : " inline-block "
+        className={` ${selectedKeys.size <= 0 ? " hidden" : " flex justify-center "
           } absolute right-0 -top-10 `}
       >
         <Tooltip content={`Delete ${selectedKeys.size} Selected Files`}>
@@ -170,26 +165,26 @@ export default function TableFiles({
                         <span>{file.name}</span>
                       </div>
 
-                      <div className="text-center hidden xl:inline-block">
+                      <div className="text-center hidden xl:flex justify-center">
                         {formatFileSize(file.size)}
                       </div>
 
-                      <div className="text-center hidden 2xl:inline-block ">
+                      <div className="text-center hidden 2xl:flex justify-center">
                         {FormatTheDate(file.createdAt)}
                       </div>
 
-                      <div className="text-center  hidden lg:inline-block">
+                      <div className="text-center hidden lg:flex justify-center">
                         <Chip
-                          className="hidden md:inline-block"
+                          className="hidden md:flex truncate"
                           size="sm"
                           color="warning"
                           variant="dot"
-                          style={{ borderColor: "orange", borderWidth: 1 }}
+                          style={{ borderColor: "orange", borderWidth: 1}}
                         >
                           {file.documentType}
                         </Chip>
 
-                        <Tooltip content={file.format}>
+                        {/* <Tooltip content={file.format}>
                           <Button
                             className="md:hidden"
                             color="primary"
@@ -198,11 +193,11 @@ export default function TableFiles({
                           >
                             <FileSearchIcon size={24} />
                           </Button>
-                        </Tooltip>
+                        </Tooltip> */}
                       </div>
-                      <div className="text-center hidden sm:inline-block">
+                      <div className="text-center hidden sm:flex justify-center">
                         <Chip
-                          className="hidden md:inline-block"
+                       className="hidden md:flex truncate"
                           size="sm"
                           color="warning"
                           variant="dot"
@@ -272,12 +267,12 @@ function SkeletonLoader({ maxRows }: { maxRows: number }) {
           </div>
 
           {/* Size */}
-          <div className="text-center hidden xl:inline-block">
+          <div className="text-center hidden xl:flex justify-center">
             <Skeleton className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 
           {/* Created At */}
-          <div className="text-center hidden 2xl:inline-block">
+          <div className="text-center hidden 2xl:flex justify-center">
             <Skeleton className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></Skeleton>
           </div>
 

@@ -1,5 +1,6 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { ChatMistralAI } from '@langchain/mistralai';
+import { ChatMistralAI,  } from '@langchain/mistralai';
+import { ChatGoogleGenerativeAI} from '@langchain/google-genai';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { parseFile } from './prase-files';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
@@ -14,9 +15,9 @@ export interface AIAnalyzeDocumnetResponse {
 
 // Configuration for Mistral AI model
 const createMistralClient = () =>
-  new ChatMistralAI({
-    apiKey: process.env.MISTRAL_API_KEY,
-    model: 'ministral-8b-2410',
+  new ChatGoogleGenerativeAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: 'gemini-pro',
   });
 const predefinedCategories = [
   'Technology',

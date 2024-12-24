@@ -69,7 +69,11 @@ export class PaymentService {
             event.data.object as Stripe.Subscription
           );
           break;
-
+        case "customer.subscription.updated":
+          await this.handleSubscriptionUpdated(
+            event.data.object as Stripe.Subscription
+          );
+          break;
         default:
           console.log("Unhandled event type:", event.type);
       }
@@ -90,9 +94,19 @@ export class PaymentService {
     if ("deleted" in customer) return;
     const userId = customer.metadata.userId;
     if (!userId) return;
+    const planId = invoice.lines.data[0].plan.id;
+    const planName = Object.entries(SUBSCRIPTION_PLANS).find(
+      ([_, id]) => id === planId
+    )?.[0];
+
+    if (!planName) {
+      console.log("Unknown plan ID", { planId });
+      return;
+    }
     await this.subscriptionModel.findOneAndUpdate(
       { userId },
       {
+        plan: planName,
         status: "active",
         subscriptionId: invoice.subscription,
         currentPeriodEnd: new Date(invoice.period_end * 1000),
@@ -100,6 +114,11 @@ export class PaymentService {
         customerId: invoice.customer,
       },
       { upsert: true, new: true }
+    );
+
+    await this.userModel.updateOne(
+      { _id: userId },
+      { ...PLAN_LIMITS[planName], requestUsed: 0 }
     );
   }
 
@@ -118,10 +137,25 @@ export class PaymentService {
     if ("deleted" in customer) return;
     const userId = customer.metadata.userId;
     if (!userId) return;
-    await this.subscriptionModel.updateOne(
-      { userId },
-      { status: "ended" }
+    await this.subscriptionModel.updateOne({ userId }, { status: "ended" });
+  }
+  // handle the cancel and renew subscription from the stripe portal
+  private async handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+    const customer = await this.stripe.customers.retrieve(
+      subscription.customer as string
     );
+
+    if ("deleted" in customer) return;
+    const userId = customer.metadata.userId;
+    if (!userId) return;
+    if (subscription.cancel_at_period_end) {
+      await this.subscriptionModel.updateOne(
+        { userId },
+        { status: "canceled" }
+      );
+    } else {
+      await this.subscriptionModel.updateOne({ userId }, { status: "active" });
+    }
   }
 
   ////////////////////
@@ -216,7 +250,7 @@ export class PaymentService {
         return_url: this.redirectUrl,
       });
 
-      return { url: session.url! };
+      return { url: session.url!, message: "Billing portal session created" };
     } catch (error) {
       console.error("Manage billing error:", error);
       return { error: "Failed to manage billing" };

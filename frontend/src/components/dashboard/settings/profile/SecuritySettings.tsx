@@ -1,80 +1,126 @@
 "use client";
-import { Card, CardHeader, CardBody, Input, Button, Modal, ModalContent, ModalFooter, ModalBody } from "@nextui-org/react";
-import { Alert02Icon, CirclePasswordIcon, LockIcon, Shield01Icon, ViewIcon, ViewOffIcon } from "hugeicons-react";
-import { FieldError, useForm } from "react-hook-form";
-import { ZodIssue, z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Input, Button } from "@nextui-org/react";
+import { CirclePasswordIcon, ViewIcon, ViewOffIcon } from "hugeicons-react";
+import { z } from "zod";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { UpdateProfilePassword } from "@/redux/slices/settingsSlice";
 import { toast } from "sonner";
 import { useState } from "react";
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(6, "Password must be at least 8 characters").max(30),
-  newPassword: z.string().min(6, "Password must be at least 8 characters").max(30),
-})
+const passwordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(8, "Current password must be at least 8 characters")
+      .max(30, "Current password must be at most 30 characters"),
+    newPassword: z
+      .string()
+      .min(8, "New assword must be at least 8 characters")
+      .max(30, "New password must be at most 30 characters"),
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: "New password must be different from the current password",
+  });
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export function SecuritySettings() {
   const dispatch = useDispatch<AppDispatch>();
-
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<PasswordFormData>({
-    resolver: zodResolver(passwordSchema),
+  const [formData, setFormData] = useState<PasswordFormData>({
+    currentPassword: "",
+    newPassword: "",
   });
 
-  const onPasswordChange = (data: PasswordFormData) => {
-    dispatch(UpdateProfilePassword(data)).then((res) => {
-      if (UpdateProfilePassword.fulfilled.match(res)) {
-        reset();
-        return toast.success("Password updated successfully");
-      }
+  const handleInputChange =
+    (name: keyof PasswordFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: e.target.value,
+      }));
+    };
 
-      // Handle rejection with a specific error message
-      if (UpdateProfilePassword.rejected.match(res)) {
-        console.error("Password update error:", res.payload);
-        const errorMessage = (res.payload as string[])[0] || "Failed to update password. Please try again.";
-        return toast.error(errorMessage);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form data:", formData);
+    try {
+      // Validate form data with Zod
+      const validatedData = passwordSchema.parse(formData);
+
+      const result = await dispatch(UpdateProfilePassword(validatedData));
+
+      if (UpdateProfilePassword.fulfilled.match(result)) {
+        // Reset form
+        setFormData({ currentPassword: "", newPassword: "" });
+        toast.success("Password updated successfully");
+      } else if (UpdateProfilePassword.rejected.match(result)) {
+        const errorMessage = Array.isArray(result.payload)
+          ? result.payload[0]
+          : "Failed to update password. Please try again.";
+        toast.error(errorMessage);
       }
-    }).catch((error) => {
-      // Catch any unexpected errors
-      console.error("Password update error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        console.error("Password update error:", error);
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   return (
-    <div className="rounded-xl space-y-5 bg-white shadow-sm ring-1 ring-gray-200 col-start-5 col-end-8 p-6" >
-      <div className="flex gap-3">
+    <div className="rounded-xl space-y-5 bg-white shadow-sm ring-1 ring-gray-200 p-6 flex flex-col col-start-5 col-end-8 ">
+      <div className="flex gap-3 items-center">
         <div className="rounded-full bg-primary/10 p-3">
           <CirclePasswordIcon className="h-5 w-5 text-primary" />
         </div>
         <div className="flex flex-col">
           <p className="text-md font-semibold">Change Password</p>
-          <p className="text-small text-default-500">Update your account password</p>
+          <p className="text-small text-default-500 hidden 2xl:block">
+            Update your account password
+          </p>
         </div>
       </div>
-      <div>
-        <form onSubmit={handleSubmit(onPasswordChange)} className="space-y-4">
-          <PasswordInput errorState={errors.currentPassword} register={register} errors={errors} label="Current Password" />
-          <PasswordInput errorState={errors.newPassword} register={register} errors={errors} label="New Password" />
-          <Button color="primary" type="submit" className="w-full">
+      <div className="flex-grow">
+        <div className="h-full flex flex-col gap-4">
+          <PasswordInput
+            name="currentPassword"
+            label="Current Password"
+            value={formData.currentPassword}
+            onChange={handleInputChange("currentPassword")}
+          />
+          <PasswordInput
+            name="newPassword"
+            label="New Password"
+            value={formData.newPassword}
+            onChange={handleInputChange("newPassword")}
+          />
+          <Button onClick={handleSubmit} color="primary" type="submit" className="w-full">
             Update Password
           </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
 }
 
-function PasswordInput({ errorState, register, errors,label }: { errorState: FieldError | undefined, register: any, errors: any,label:string }) {
+interface PasswordInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+function PasswordInput({ name, label, value, onChange }: PasswordInputProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [error, setError] = useState(errorState);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
+
   return (
     <Input
+      name={name}
       size="sm"
       endContent={
         <button
@@ -89,7 +135,7 @@ function PasswordInput({ errorState, register, errors,label }: { errorState: Fie
               className="text-2xl text-default-400 pointer-events-none"
             />
           ) : (
-            < ViewIcon
+            <ViewIcon
               width="25"
               height="35"
               className="text-2xl text-default-400 pointer-events-none"
@@ -100,10 +146,9 @@ function PasswordInput({ errorState, register, errors,label }: { errorState: Fie
       isRequired
       label={label}
       type={isVisible ? "text" : "password"}
-      {...register("newPassword")}
-      isInvalid={!!errors.newPassword}
-      errorMessage={errors.newPassword?.message}
-
+      value={value}
+      onChange={onChange}
+      errorMessage=""
     />
   );
 }

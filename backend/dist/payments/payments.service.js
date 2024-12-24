@@ -54,6 +54,9 @@ let PaymentService = class PaymentService {
                 case "customer.subscription.deleted":
                     await this.handleSubscriptionEnded(event.data.object);
                     break;
+                case "customer.subscription.updated":
+                    await this.handleSubscriptionUpdated(event.data.object);
+                    break;
                 default:
                     console.log("Unhandled event type:", event.type);
             }
@@ -73,13 +76,21 @@ let PaymentService = class PaymentService {
         const userId = customer.metadata.userId;
         if (!userId)
             return;
+        const planId = invoice.lines.data[0].plan.id;
+        const planName = Object.entries(SUBSCRIPTION_PLANS).find(([_, id]) => id === planId)?.[0];
+        if (!planName) {
+            console.log("Unknown plan ID", { planId });
+            return;
+        }
         await this.subscriptionModel.findOneAndUpdate({ userId }, {
+            plan: planName,
             status: "active",
             subscriptionId: invoice.subscription,
             currentPeriodEnd: new Date(invoice.period_end * 1000),
             price: invoice.total / 100,
             customerId: invoice.customer,
         }, { upsert: true, new: true });
+        await this.userModel.updateOne({ _id: userId }, { ...PLAN_LIMITS[planName], requestUsed: 0 });
     }
     async handlePaymentFailed(invoice) {
         if (!invoice.subscription)
@@ -94,6 +105,20 @@ let PaymentService = class PaymentService {
         if (!userId)
             return;
         await this.subscriptionModel.updateOne({ userId }, { status: "ended" });
+    }
+    async handleSubscriptionUpdated(subscription) {
+        const customer = await this.stripe.customers.retrieve(subscription.customer);
+        if ("deleted" in customer)
+            return;
+        const userId = customer.metadata.userId;
+        if (!userId)
+            return;
+        if (subscription.cancel_at_period_end) {
+            await this.subscriptionModel.updateOne({ userId }, { status: "canceled" });
+        }
+        else {
+            await this.subscriptionModel.updateOne({ userId }, { status: "active" });
+        }
     }
     async createChekoutSession(plan, userId) {
         try {
@@ -168,7 +193,7 @@ let PaymentService = class PaymentService {
                 customer: subscription.customerId,
                 return_url: this.redirectUrl,
             });
-            return { url: session.url };
+            return { url: session.url, message: "Billing portal session created" };
         }
         catch (error) {
             console.error("Manage billing error:", error);

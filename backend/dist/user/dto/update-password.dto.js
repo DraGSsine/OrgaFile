@@ -19,9 +19,4 @@ __decorate([
     (0, class_validator_1.MaxLength)(30),
     __metadata("design:type", String)
 ], UpdatePasswordDto.prototype, "newPassword", void 0);
-__decorate([
-    (0, class_validator_1.MinLength)(6),
-    (0, class_validator_1.MaxLength)(30),
-    __metadata("design:type", String)
-], UpdatePasswordDto.prototype, "confirmPassword", void 0);
 //# sourceMappingURL=update-password.dto.js.map

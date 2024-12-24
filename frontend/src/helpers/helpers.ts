@@ -230,9 +230,23 @@ export function formatDateForInvoice(date: string) {
 }
 
 export function formatCurrency(amount: number, currency: string) {
-  return amount
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
   }).format(amount);
+}
+
+export function getPaymentCardSvg(cardBrand: string) {
+  switch (cardBrand){
+    case "visa":
+      return "/visa.svg";
+    case "mastercard":
+      return "/mastercard.svg";
+    case "amex":
+      return "/amex.svg";
+    case "discover":
+      return "/discover.svg";
+    default:
+      return "/generic.svg";
+  }
 }

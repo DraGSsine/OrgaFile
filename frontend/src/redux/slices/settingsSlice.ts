@@ -63,7 +63,7 @@ export const UpdateProfilePassword = createAsyncThunk("settings/updateProfilePas
         const res = await axios.put(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/user/update-password`, data, {
             withCredentials: true,
         });
-        return res
+        return res.data
     } catch (error: any) {
         return rejectWithValue(error.response.data.message);
     }

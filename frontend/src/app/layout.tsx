@@ -24,12 +24,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>{children}</Providers>
         <SpeedInsights />
-        <script
-          defer
-          data-website-id="676a4cee05bd20b105796fbc"
-          data-domain="orgafile.com"
-          src="https://datafa.st/js/script.js"
-        ></script>
       </body>
     </html>
   );

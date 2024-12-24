@@ -20,6 +20,7 @@ export declare class PaymentService {
     private handlePaymentSucceeded;
     private handlePaymentFailed;
     private handleSubscriptionEnded;
+    private handleSubscriptionUpdated;
     createChekoutSession(plan: keyof typeof SUBSCRIPTION_PLANS, userId: string): Promise<{
         url: string;
         error?: undefined;
@@ -44,8 +45,10 @@ export declare class PaymentService {
     mangeStripePortal(userId: string): Promise<{
         error: string;
         url?: undefined;
+        message?: undefined;
     } | {
         url: string;
+        message: string;
         error?: undefined;
     }>;
     private findOrCreateCustomer;
