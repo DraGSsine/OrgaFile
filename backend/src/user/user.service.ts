@@ -77,25 +77,28 @@ export class UserService {
 
   async remove(userId: string) {
     try {
-      const user = await this.fileModel.findOne({ userId });
+      const user = await this.userModel.findOne({ _id: userId });
       if (!user) {
         throw new UnprocessableEntityException(["User not found"]);
       }
 
+      const userFiles = await this.fileModel.findOne({ userId });
+
       // Get all the file ids of the user
-      const fileIds = user.files.map((file) => file.fileId);
+      const fileIds = userFiles.files.map((file) => file.fileId);
 
-      // Remove the user objects from S3
-      const deleteParams = {
-        Bucket: this.configService.get("S3_BUCKET_NAME"),
-        Delete: {
-          Objects: fileIds.map((fileId) => ({
-            Key: `${userId}/${fileId}`,
-          })),
-        },
-      };
-      await this.s3Client.deleteObjects(deleteParams).promise();
-
+      if (fileIds.length > 0) {
+        // Remove the user objects from S3
+        const deleteParams = {
+          Bucket: this.configService.get("S3_BUCKET_NAME"),
+          Delete: {
+            Objects: fileIds.map((fileId) => ({
+              Key: `${userId}/${fileId}`,
+            })),
+          },
+        };
+        await this.s3Client.deleteObjects(deleteParams).promise();
+      }
       // Remove the user data from the database
       await this.userModel.findOneAndDelete({ _id: userId });
       await this.folderModel.deleteMany({ userId });

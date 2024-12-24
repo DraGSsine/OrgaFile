@@ -65,8 +65,8 @@ export default function TableFiles({
         isPermanently: routeName == "removedFiles",
       })
     );
-    dispatch(setConfirmFileRemoveModal(true));
-    setSelectedKeys(new Set());
+    dispatch(setConfirmFileRemoveModal(true))
+    // setSelectedKeys(new Set());
   };
 
   // Toggle selection of a single file
@@ -120,7 +120,7 @@ export default function TableFiles({
         {/* Header Row - Mimicking Table Header */}
         <div className="row-start-1 row-end-16 col-start-1 col-end-17 " >
           <div className=" h-[5%] grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7  font-semibold rounded-lg  bg-[#e7e8e9] text-gray-500">
-            <div className="col-span-2 pl-4 flex items-center ">
+            <div className="col-span-2 pl-2 xl:pl-4 flex items-center ">
               <Checkbox
                 isSelected={isAllSelected}
                 onChange={toggleAllSelection}
@@ -140,16 +140,16 @@ export default function TableFiles({
           {isLoading ? (
             <SkeletonLoader maxRows={maxRows} />
           ) : (
-            <div className="space-y-3 pt-4 h-[95%] overflow-y-scroll" >
+            <div className="space-y-3 pt-4 h-[95%] overflow-y-scroll scrollbar-webkit scrollbar-thin" >
               {
                 items.length === 0 ? <NoFilesToDisplay /> :
                   items.map((file) => (
                     <div
                       key={file.fileId}
-                      className={`2xl:pl-6 rounded-lg grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5  xl:grid-cols-6 2xl:grid-cols-7 py-3 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
+                      className={`2xl:pl-4 pl-2 rounded-lg grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5  xl:grid-cols-6 2xl:grid-cols-7 py-3 items-center hover:bg-[#e7e8e9] transition-colors fade-in ${selectedKeys.has(file.fileId) ? " bg-[#e7e8e9]" : ""
                         }`}
                     >
-                      <div className="col-span-2 flex items-center space-x-4 pl-4">
+                      <div className="col-span-2 flex items-center space-x-4">
                         <Checkbox
                           isSelected={selectedKeys.has(file.fileId)}
                           onChange={() => toggleFileSelection(file.fileId)}

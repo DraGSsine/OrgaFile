@@ -44,6 +44,12 @@ html {
   scrollbar-width: none;
 }
 
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+
+
+
 tbody tr {
   height: 70px !important;
 }

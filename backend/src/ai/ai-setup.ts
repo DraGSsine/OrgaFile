@@ -1,10 +1,11 @@
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { ChatMistralAI,  } from '@langchain/mistralai';
-import { ChatGoogleGenerativeAI} from '@langchain/google-genai';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { parseFile } from './prase-files';
-import { JsonOutputParser } from '@langchain/core/output_parsers';
-import { AiRespone, DocumentAiInfo } from '..//types/type';
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { ChatMistralAI } from "@langchain/mistralai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { parseFile } from "./prase-files";
+import { JsonOutputParser } from "@langchain/core/output_parsers";
+import { AiRespone, DocumentAiInfo } from "..//types/type";
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
@@ -14,82 +15,109 @@ export interface AIAnalyzeDocumnetResponse {
 }
 
 // Configuration for Mistral AI model
-const createMistralClient = () =>
+
+const createaiClient = () => 
   new ChatGoogleGenerativeAI({
     apiKey: process.env.GEMINI_API_KEY,
-    model: 'gemini-pro',
-  });
+    model: "gemini-pro",})
+  // new ChatMistralAI({
+  //   apiKey: process.env.MISTRAL_API_KEY,
+  //   model: "mistral-embed",
+  // });
+  // });
+
+
+  // return new ChatOpenAI({
+  //   apiKey: process.env.OPENAI_API_KEY,
+  //   model: "gpt-3.5-turbo",
+  // });
+;
+
 const predefinedCategories = [
-  'Technology',
-  'Health',
-  'Education',
-  'Entertainment',
-  'Finance',
-  'Sports',
-  'Science',
-  'Art',
-  'Travel',
-  'Business',
-  'Politics',
-  'Environment',
-  'Culture',
-  'Lifestyle',
-  'History',
-  'Music',
-  'Food',
-  'Fashion',
-  'Religion',
-  'Philosophy',
-  'Literature',
-  'Language',
-  'Psychology',
-  'Sociology',
-  'Mathematics',
-  'Physics',
-  'Chemistry',
-  'Biology',
-  'Engineering',
-  'Computer Science',
-  'Medicine',
-  'Law',
-  'Economics',
-  'Marketing',
-  'Management',
-  'Accounting',
-  'Human Resources',
-  'Sales',
-  'Customer Service',
-  'Operations',
-  'Product Management',
-  'Project Management',
-  'Quality Management',
-  'Supply Chain Management',
-  'Logistics',
-  'Procurement',
-  'Research',
-  'Development',
+  "Technology",
+  "Health",
+  "Education",
+  "Entertainment",
+  "Finance",
+  "Sports",
+  "Science",
+  "Art",
+  "Travel",
+  "Business",
+  "Politics",
+  "Environment",
+  "Culture",
+  "Lifestyle",
+  "History",
+  "Music",
+  "Food",
+  "Fashion",
+  "Religion",
+  "Philosophy",
+  "Literature",
+  "Language",
+  "Psychology",
+  "Sociology",
+  "Mathematics",
+  "Engineering",
+  "Medicine",
+  "Law",
+  "Economics",
+  "Marketing",
+  "Management",
+  "Architecture",
+  "Design",
+  "Photography",
+  "Journalism",
+  "Publishing",
+  "Advertising",
+  "Public Relations",
+  "Hospitality",
+  "Real Estate",
+  "Agriculture",
+  "Energy",
+  "Transportation",
+  "Manufacturing",
+  "Telecommunications",
+  "Retail",
+  "Insurance",
+  "Banking",
+  "Consulting",
+  "Government",
+  "Environmental Science",
+  "Sustainability",
+  "AI and Machine Learning",
+  "Cybersecurity",
+  "Data Science",
+  "Software Development",
+  "Healthcare",
+  "Biotechnology",
+  "E-commerce",
+  "Logistics",
+  "Human Resources",
+  "Customer Service",
 ];
 
 // Analyze the document and return the main topic, document type, key entities, and summary
 export const analyzeDocument = async (
-  file: Express.Multer.File,
+  file: Express.Multer.File
 ): Promise<AIAnalyzeDocumnetResponse> => {
   try {
     const parser = new JsonOutputParser<AIAnalyzeDocumnetResponse>();
-    const mistralClient = createMistralClient();
+    const aiClient = createaiClient();
 
     const fileContents: string = await parseFile(file);
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 2000,
-      separators: ['\n\n', '\n', '.', '!', '?'],
+      separators: ["\n\n", "\n", ".", "!", "?"],
       chunkOverlap: 50,
     });
     const output = (await splitter.createDocuments([fileContents])).slice(
       0,
-      15,
+      15
     );
 
-    let contextText = '';
+    let contextText = "";
     for (let i = 0; i < output.length; i++) {
       contextText += `${output[i].pageContent.trim()}\n---\n`;
       if (contextText.length > 2000) break;
@@ -104,50 +132,49 @@ export const analyzeDocument = async (
     Respond in JSON format`;
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ['system', 'You are a helpful assistant.'],
-      ['user', promptContent],
-      ['user', contextText],
+      ["system", "You are a helpful assistant."],
+      ["user", promptContent],
+      ["user", contextText],
     ]);
 
-    const chain = prompt.pipe(mistralClient).pipe(parser);
+    const chain = prompt.pipe(aiClient).pipe(parser);
     const response = await chain.invoke({});
     return response;
   } catch (error) {
-    console.error('Error analyzing file:', error);
+    console.error("Error analyzing file:", error);
     return null;
   }
 };
 
 // Add the files to the perfect folder
-
 export const categorizeDocuments = async (
   documents: DocumentAiInfo[],
-  existingCategories: string[],
+  existingCategories: string[]
 ): Promise<AiRespone[]> => {
   const categorizations = await Promise.all(
     documents.map(async (doc: DocumentAiInfo) => {
       const categorizePromptContent = `
       Categorize this document STRICTLY following these rules:
-      - Return ONLY a single category name
-      - predefined categories: ${predefinedCategories.join(', ')}
-      - Choose the most specific category that matches the document
-      - Respond only with the category name
+      - Return ONLY a single category name.
+      - Use one of these categories if the document matches any of them: ${predefinedCategories.join(", ")}.
+      - Choose the most specific category that accurately matches the document.
+      - Respond only with the category name, without any additional text.
 
-      Document Details:
+    Document Details:
       - Main Topic: ${doc.mainTopic}
       - Document Type: ${doc.documentType}
       - File Summary: ${doc.summary}
       `;
 
-      const mistralClient = createMistralClient();
+      const aiClient = createaiClient();
 
       try {
         const prompt = ChatPromptTemplate.fromMessages([
-          ['system', 'You are an expert document categorization assistant.'],
-          ['user', categorizePromptContent],
+          ["system", "You are an expert document categorization assistant."],
+          ["user", categorizePromptContent],
         ]);
 
-        const chain = prompt.pipe(mistralClient);
+        const chain = prompt.pipe(aiClient);
         const response = await chain.invoke({});
 
         const cleanCategory = response.content as string;
@@ -158,14 +185,14 @@ export const categorizeDocuments = async (
           originalDocument: doc,
         };
       } catch (error) {
-        console.error('Error analyzing document:', error);
+        console.error("Error analyzing document:", error);
         return {
-          category: 'Uncategorized',
+          category: "Uncategorized",
           originalDocument: doc,
           error: true,
         };
       }
-    }),
+    })
   );
   return categorizations;
 };
@@ -177,7 +204,6 @@ export const generateFileName = async (documentInfo: {
   keyEntities: string[];
   summary: string;
 }) => {
-
   const promptContent = `Generate a descriptive filename based on the following document information:
   Main Topic: ${documentInfo.mainTopic}
   Document Type: ${documentInfo.documentType}
@@ -188,27 +214,27 @@ export const generateFileName = async (documentInfo: {
   - Use only alphanumeric characters and hyphens
   - Do NOT include file extension
   - Focus on the most distinctive aspect of the document
-  
+
   respond only with the filename`;
 
-  const mistralClient = createMistralClient();
+  const aiClient = createaiClient();
 
   const prompt = ChatPromptTemplate.fromMessages([
     [
-      'system',
-      'You are an expert at generating concise, descriptive filenames.',
+      "system",
+      "You are an expert at generating concise, descriptive filenames.",
     ],
-    ['user', promptContent],
+    ["user", promptContent],
   ]);
 
-  const chain = prompt.pipe(mistralClient);
+  const chain = prompt.pipe(aiClient);
 
   try {
     const response = await chain.invoke({});
-    console.log('Generated filename:', response);
+    console.log("Generated filename:", response);
     return response.content as string;
   } catch (error) {
-    console.error('Error generating filename:', error);
-    return 'document';
+    console.error("Error generating filename:", error);
+    return "document";
   }
 };

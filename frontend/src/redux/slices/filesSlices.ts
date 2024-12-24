@@ -119,6 +119,23 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
+      // check for any unsupported file types
+      const unsupportedFiles = Array.from(files.values()).filter(
+        (file: FormDataEntryValue) =>
+          file instanceof File &&
+          ![
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "text/plain",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          ].includes(file.type)
+      );
+
+      if (unsupportedFiles.length) {
+        return rejectWithValue({
+          message: "Only PDF, DOCX, TXT, and SLSX files are allowed",
+        });
+      }
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
         files,

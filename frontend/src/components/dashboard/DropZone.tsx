@@ -34,6 +34,7 @@ export const UploadDropzone = () => {
     return () => clearInterval(interval);
   }
 
+
   useEffect(() => {
     if (uploadFileState.isFileUploaded) {
       setUploadProgress(100);

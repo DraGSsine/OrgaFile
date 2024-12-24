@@ -86,7 +86,8 @@ const ConfirmDeleteModal = ({
           .then((res) => {
             if (DeleteProfile.fulfilled.match(res)) {
               setIsModalOpen(false);
-              router.push("/auth/signin");
+              router.push("/pricing");
+              localStorage.removeItem("plan");
               return toast.success("Account deleted successfully");
             }
             if (DeleteProfile.rejected.match(res)) {

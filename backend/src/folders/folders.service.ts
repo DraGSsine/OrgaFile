@@ -112,7 +112,7 @@ export class FoldersService {
           .promise();
 
         data.push({
-          name: file.name,
+          name: `${file.name}.${file.format}`,
           content: response.Body as Buffer,
         });
       } catch (error) {
