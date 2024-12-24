@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/providers/Provider";
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 const inter = Inter({
   weight: ["100", "200", "300", "400", "500", "600"],
   subsets: ["vietnamese"],
@@ -23,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>{children}</Providers>
+        <SpeedInsights />
         <script
           defer
           data-website-id="676a4cee05bd20b105796fbc"
