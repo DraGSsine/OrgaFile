@@ -6,7 +6,7 @@ import Providers from "@/providers/Provider";
 const inter = Inter({
   weight: ["100", "200", "300", "400", "500", "600"],
   subsets: ["vietnamese"],
-  display: "swap", 
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,13 +19,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
+        <script
+          defer
+          data-website-id="676a4cee05bd20b105796fbc"
+          data-domain="orgafile.com"
+          src="https://datafa.st/js/script.js"
+        ></script>
       </body>
     </html>
   );
