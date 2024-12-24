@@ -11,13 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FoldersController = void 0;
 const common_1 = require("@nestjs/common");
 const folders_service_1 = require("./folders.service");
 const auth_guard_1 = require("../guards/auth.guard");
-const mongoose_1 = require("mongoose");
 const subscription_guard_1 = require("../guards/subscription.guard");
 let FoldersController = class FoldersController {
     constructor(foldersService) {
@@ -50,7 +48,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _a : Object, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], FoldersController.prototype, "loadOneFolder", null);
 __decorate([
@@ -60,7 +58,7 @@ __decorate([
     __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_b = typeof mongoose_1.ObjectId !== "undefined" && mongoose_1.ObjectId) === "function" ? _b : Object, Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], FoldersController.prototype, "downloadFolder", null);
 exports.FoldersController = FoldersController = __decorate([

@@ -13,10 +13,32 @@ export declare class UserService {
     private stripeClient;
     private readonly s3Client;
     constructor(configService: ConfigService, userModel: Model<UserDocument>, folderModel: Model<any>, fileModel: Model<any>, subscriptionModel: Model<any>, removedFileModel: Model<any>);
-    updateProfile(createUserDto: CreateUserDto, userId: string): unknown;
-    updatePassword(updatePassowrdDto: UpdatePasswordDto, userId: string): unknown;
-    remove(userId: string): unknown;
-    formatPaymentHistory(payments: any, invoices: any, subscriptiondb: any, user: any, stripeSubscription: any): unknown;
-    getUserInfo(userId: any): unknown;
-    hasSubscription(userId: string): unknown;
+    updateProfile(createUserDto: CreateUserDto, userId: string): Promise<any>;
+    updatePassword(updatePassowrdDto: UpdatePasswordDto, userId: string): Promise<string>;
+    remove(userId: string): Promise<string>;
+    formatPaymentHistory(payments: any, invoices: any, subscriptiondb: any, user: any, stripeSubscription: any): Promise<{
+        plan: any;
+        fullName: any;
+        email: any;
+        subscriptionEnds: string;
+        price: number;
+        status: any;
+        currency: any;
+        lastFourDigits: any;
+        cardBrand: any;
+        subscriptionHistory: any[];
+    }>;
+    getUserInfo(userId: any): Promise<{
+        plan: any;
+        fullName: any;
+        email: any;
+        subscriptionEnds: string;
+        price: number;
+        status: any;
+        currency: any;
+        lastFourDigits: any;
+        cardBrand: any;
+        subscriptionHistory: any[];
+    }>;
+    hasSubscription(userId: string): Promise<boolean>;
 }

@@ -12,4 +12,4 @@ export declare const generateFileName: (documentInfo: {
     documentType: string;
     keyEntities: string[];
     summary: string;
-}) => unknown;
+}) => Promise<string>;

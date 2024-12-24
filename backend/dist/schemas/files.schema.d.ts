@@ -1,4 +1,4 @@
-import { Document, ObjectId } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 export type FileDocument = File & Document;
 export declare class FileInfo {
     fileId: string;
@@ -16,4 +16,8 @@ export declare class File {
     userId: ObjectId;
     files: FileInfo[];
 }
-export declare const fileSchema: any;
+export declare const fileSchema: mongoose.Schema<File, mongoose.Model<File, any, any, any, mongoose.Document<unknown, any, File> & File & {
+    _id: mongoose.Types.ObjectId;
+}, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, File, mongoose.Document<unknown, {}, mongoose.FlatRecord<File>> & mongoose.FlatRecord<File> & {
+    _id: mongoose.Types.ObjectId;
+}>;

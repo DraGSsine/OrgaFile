@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadController = void 0;
 const common_1 = require("@nestjs/common");
@@ -103,7 +102,7 @@ __decorate([
     __param(0, (0, common_1.UploadedFiles)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof Array !== "undefined" && Array) === "function" ? _a : Object, Object]),
+    __metadata("design:paramtypes", [Array, Object]),
     __metadata("design:returntype", void 0)
 ], UploadController.prototype, "uploadFile", null);
 __decorate([

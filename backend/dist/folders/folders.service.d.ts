@@ -7,9 +7,9 @@ export declare class FoldersService {
     private readonly folderModel;
     constructor(configService: ConfigService, folderModel: Model<FolderDocument>);
     private readonly s3Client;
-    loadFolders(userId: string): unknown;
-    loadOneFolder(folderId: ObjectId, userId: string): unknown;
-    downloadFolder(folderId: ObjectId, userId: string): unknown;
+    loadFolders(userId: string): Promise<any[]>;
+    loadOneFolder(folderId: ObjectId, userId: string): Promise<import("../schemas/folders.schema").FolderInfo>;
+    downloadFolder(folderId: ObjectId, userId: string): Promise<any>;
     getFilesInFolder(files: FileInfo[]): Promise<{
         name: string;
         content: Buffer;

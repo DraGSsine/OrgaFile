@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.folderSchema = exports.Folder = exports.FolderInfo = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
@@ -19,7 +18,7 @@ class FolderInfo {
 exports.FolderInfo = FolderInfo;
 __decorate([
     (0, mongoose_1.Prop)({ required: true, type: mongoose_2.default.Schema.Types.ObjectId }),
-    __metadata("design:type", typeof (_a = typeof mongoose_2.ObjectId !== "undefined" && mongoose_2.ObjectId) === "function" ? _a : Object)
+    __metadata("design:type", Object)
 ], FolderInfo.prototype, "folderId", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
@@ -42,7 +41,7 @@ let Folder = class Folder {
 exports.Folder = Folder;
 __decorate([
     (0, mongoose_1.Prop)({ required: true, type: mongoose_2.default.Schema.Types.ObjectId }),
-    __metadata("design:type", typeof (_b = typeof mongoose_2.ObjectId !== "undefined" && mongoose_2.ObjectId) === "function" ? _b : Object)
+    __metadata("design:type", Object)
 ], Folder.prototype, "userId", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: [FolderInfo], default: [] }),
