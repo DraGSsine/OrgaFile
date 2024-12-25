@@ -17,14 +17,14 @@ export interface AIAnalyzeDocumnetResponse {
 // Configuration for Mistral AI model
 
 const createaiClient = () => 
-  new ChatGoogleGenerativeAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    model: "gemini-pro",})
+  // new ChatGoogleGenerativeAI({
+  //   apiKey: process.env.GEMINI_API_KEY,
+  //   model: "gemini-pro",})
 
-  // new ChatMistralAI({
-  //   apiKey: process.env.MISTRAL_API_KEY,
-  //   model: "mistral-large-latest",
-  // }) as any
+  new ChatMistralAI({
+    apiKey: process.env.MISTRAL_API_KEY,
+    model: "mistral-large-latest",
+  }) as any
 
 
 
