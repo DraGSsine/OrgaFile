@@ -152,6 +152,7 @@ export const categorizeDocuments = async (
   documents: DocumentAiInfo[],
   existingCategories: string[]
 ): Promise<AiRespone[]> => {
+  console.log(documents)
   const categorizations = await Promise.all(
     documents.map(async (doc: DocumentAiInfo) => {
       const categorizePromptContent = `
