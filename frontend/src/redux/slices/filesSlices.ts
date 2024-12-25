@@ -119,7 +119,7 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
-      // check for any unsupported file types
+      // Check for any unsupported file types
       const unsupportedFiles = Array.from(files.values()).filter(
         (file: FormDataEntryValue) =>
           file instanceof File &&
@@ -128,14 +128,18 @@ export const uploadFiles = createAsyncThunk(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "text/plain",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel",
+            "application/vnd.ms-excel.sheet.macroEnabled.12",
           ].includes(file.type)
       );
 
       if (unsupportedFiles.length) {
+        console.log("Unsupported files:", unsupportedFiles);
         return rejectWithValue({
-          message: "Only PDF, DOCX, TXT, and SLSX files are allowed",
+          message: "Only PDF, DOCX, TXT, and XLSX files are allowed"
         });
       }
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
         files,
@@ -143,6 +147,14 @@ export const uploadFiles = createAsyncThunk(
           withCredentials: true,
         }
       );
+
+      if (response.data.invalidFiles && response.data.invalidFiles.length > 0) {
+        return rejectWithValue({
+          message: "Some files are invalid",
+          invalidFiles: response.data.invalidFiles,
+        });
+      }
+
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -153,6 +165,7 @@ export const uploadFiles = createAsyncThunk(
     }
   }
 );
+
 
 export const removeFile = createAsyncThunk(
   "files/removeFileState",

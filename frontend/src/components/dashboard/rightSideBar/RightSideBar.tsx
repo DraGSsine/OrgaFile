@@ -1,4 +1,5 @@
-import { RequestUsage } from "./ReqesutUsage";
+
+import { CreditstUsage } from "./ReqesutUsage";
 import { StorageUsage } from "./StorageUsage";
 import UserOverview from "./UserOverview";
 
@@ -11,7 +12,7 @@ export const RightSideBar = () => {
       <div className="py-10 px-4">
         <div className="flex justify-between items-center 3xl:justify-around flex-col gap-8 ">
             <StorageUsage/>
-            <RequestUsage/>
+            <CreditstUsage/>
         </div>
       </div>
     </div>

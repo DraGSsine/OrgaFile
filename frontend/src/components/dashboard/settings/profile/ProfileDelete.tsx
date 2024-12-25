@@ -1,4 +1,5 @@
 "use client";
+import { resetAuthState } from "@/redux/slices/authSlice";
 import { DeleteProfile } from "@/redux/slices/settingsSlice";
 import { AppDispatch } from "@/redux/store";
 import {
@@ -88,6 +89,7 @@ const ConfirmDeleteModal = ({
               setIsModalOpen(false);
               router.push("/pricing");
               localStorage.removeItem("plan");
+              dispatch(resetAuthState());
               return toast.success("Account deleted successfully");
             }
             if (DeleteProfile.rejected.match(res)) {

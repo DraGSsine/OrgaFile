@@ -49,6 +49,7 @@ export default function TableFiles({
   const rowsPerPage = maxRows;
 
   // Pagination calculations
+
   const pages = Math.ceil(files?.length / rowsPerPage);
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -138,7 +139,7 @@ export default function TableFiles({
           </div>
 
           {isLoading ? (
-            <SkeletonLoader maxRows={maxRows} />
+            <SkeletonLoader rows={maxRows} />
           ) : (
             <div className="space-y-3 pt-4 h-[95%] overflow-y-scroll scrollbar-webkit scrollbar-thin" >
               {
@@ -251,8 +252,8 @@ export default function TableFiles({
   );
 }
 
-function SkeletonLoader({ maxRows }: { maxRows: number }) {
-  const rows = maxRows == 7 ? 5 : 10;
+function SkeletonLoader({ rows }: { rows: number }) {
+
   return (
     <div className="space-y-4">
       {[...Array(rows)].map((_, i) => (

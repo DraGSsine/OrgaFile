@@ -21,12 +21,13 @@ const SignupPageForm = () => {
   const { isLoading, userCreated, error } = useSelector(
     (state: RootState) => state.auth
   );
-  const [isSelected, setIsSelected] = useState(false);
-  const [userCredential, setUserInfo] = useState<userInfoType>({
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [userCredential, setUserCredential] = useState<userInfoType>({
     fullName: null,
     email: null,
     password: null,
     confirmPassword: null,
+    acceptTerms: false,
   });
   const [errorState, setErrorState] = useState<ZodIssue | null>(null);
   const User = z
@@ -84,32 +85,40 @@ const SignupPageForm = () => {
         name="fullname"
         label="Full Name"
         onChange={(e) =>
-          setUserInfo({ ...userCredential, fullName: e.target.value })
+          setUserCredential({ ...userCredential, fullName: e.target.value })
         }
       />
       <EmailInput
         errorState={errorState}
-        onChange={(e) => setUserInfo({ ...userCredential, email: e })}
+        onChange={(e) => setUserCredential({ ...userCredential, email: e })}
       />
       <PasswordInput
         errorState={errorState}
         label="Password"
         name="password"
-        onChange={(e) => setUserInfo({ ...userCredential, password: e })}
+        onChange={(e) => setUserCredential({ ...userCredential, password: e })}
       />
       <PasswordInput
         errorState={errorState}
         label="confirme Password"
         name="confirmPassword"
-        onChange={(e) => setUserInfo({ ...userCredential, confirmPassword: e })}
+        onChange={(e) =>
+          setUserCredential({ ...userCredential, confirmPassword: e })
+        }
       />
-      <Checkbox isSelected={isSelected} onValueChange={setIsSelected}>
+      <Checkbox
+        isSelected={acceptTerms}
+        onValueChange={() => {
+          setUserCredential({ ...userCredential, acceptTerms: !acceptTerms }),
+            setAcceptTerms(!acceptTerms);
+        }}
+      >
         <span className=" text-[1rem] text-zinc-500 ">
           I acknowledge and agree to the terms and conditions of the website
         </span>
       </Checkbox>
       <Button
-        isDisabled={!isSelected}
+        isDisabled={!acceptTerms}
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"

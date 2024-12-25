@@ -15,11 +15,10 @@ import {
 import { Dispatch, SetStateAction, useState } from "react";
 import { showUsageModalType } from "@/types/types";
 import { StorageUsage } from "../rightSideBar/StorageUsage";
-import { RequestUsage } from "../rightSideBar/ReqesutUsage";
-import { Button } from "@nextui-org/button";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
-import { SignOutAction } from "@/redux/slices/authSlice";
+import { SignOutAction, resetAuthState } from "@/redux/slices/authSlice";
+import { CreditstUsage } from "../rightSideBar/ReqesutUsage";
 
 interface SidebarContentProps {
   setShowUsageModal?: Dispatch<SetStateAction<showUsageModalType>>;
@@ -40,6 +39,7 @@ export function SidebarContent({
       dispatch(SignOutAction()).then(() => {
         router.push("/auth/signin");
         setLoading(false);
+        dispatch(resetAuthState());
       });
     }, 1000);
   };
@@ -91,7 +91,7 @@ export function SidebarContent({
                     onClick={() =>
                       setShowUsageModal({
                         open: !ShowUsageModal?.open!,
-                        modal: "request",
+                        modal: "credits",
                       })
                     }
                     className="w-6 h-6 text-green-500"
@@ -103,7 +103,7 @@ export function SidebarContent({
             ) : (
               <div className="flex items-center flex-col space-y-5 justify-center h-full">
                 <StorageUsage />
-                <RequestUsage />
+                <CreditstUsage />
               </div>
             )}
           </div>

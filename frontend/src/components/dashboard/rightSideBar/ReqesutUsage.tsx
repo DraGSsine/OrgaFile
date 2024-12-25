@@ -5,17 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { loadUserLimits } from "@/redux/slices/dashboardSlice";
 import { Activity01Icon } from "hugeicons-react";
-import { UsageCard } from "./UsageCard";
+import { UsageCard } from "./CreditstUsage";
 
-
-export function RequestUsage() {
+export function CreditstUsage() {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
-  
-  const { requestUsed, requestLimit } = useSelector(
+
+  const { creditsUsed, creditsLimit } = useSelector(
     (state: RootState) => state.dashboard.userLimits
   );
-  
+
   const { isFileUploaded } = useSelector(
     (state: RootState) => state.files.uploadFileState
   );
@@ -28,14 +27,14 @@ export function RequestUsage() {
 
   return (
     <UsageCard
-      title="Request Usage"
+      title="Credits Usage"
+      value={creditsUsed}
+      max={creditsLimit}
+      label={`${creditsUsed} of ${creditsLimit} credits`}
+      progressColor="hsl(117 100% 42%)"
       icon={<Activity01Icon />}
       iconColor="text-success-500"
       iconBgColor="bg-success-100/50 dark:bg-success-900/20"
-      value={requestUsed}
-      max={requestLimit}
-      label={`${requestUsed} of ${requestLimit} requests`}
-      progressColor="success"
       isLoading={loading}
     />
   );

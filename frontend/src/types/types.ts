@@ -14,6 +14,7 @@ export type userInfoType = {
   email: string | null;
   password: string | null;
   confirmPassword?: string | null;
+  acceptTerms: boolean;
 };
 
 export type variantType =
@@ -102,7 +103,7 @@ export type RouteNameType =
 
 export type showUsageModalType = {
   open: boolean;
-  modal: "storage" | "request";
+  modal: "storage" | "credits";
 };
 
 export interface userCookieInfoType {
@@ -138,13 +139,13 @@ export interface StorageProgressProps {
 
 export interface UsageCardProps {
   title: string;
-  icon: React.ReactNode;
-  iconColor: string;
-  iconBgColor: string;
   value: number;
   max: number;
   label: string;
-  progressColor: Color;
+  progressColor: string;
+  icon: React.ReactNode;
+  iconColor: string;
+  iconBgColor: string;
   isLoading: boolean;
 }
 
@@ -181,8 +182,8 @@ export interface initialDashboardStateType {
   userLimits: {
     storageLimit: number;
     storageUsed: number;
-    requestLimit: number;
-    requestUsed: number;
+    creditsLimit: number;
+    creditsUsed: number;
     loading: boolean;
     error: any;
   };

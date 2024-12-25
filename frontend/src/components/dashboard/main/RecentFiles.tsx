@@ -62,7 +62,7 @@ const RecentUploadsPage = () => {
       <RecentUploadsContainer
         files={recentFilesState.files}
         isLoading={isLoading}
-        maxRows={7}
+        maxRows={8}
         routeName="allFiles"
       />
     </div>

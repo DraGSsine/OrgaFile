@@ -6,8 +6,8 @@ const initialState: initialDashboardStateType = {
   userLimits: {
     storageLimit: 0,
     storageUsed: 0,
-    requestLimit: 0,
-    requestUsed: 0,
+    creditsLimit: 0,
+    creditsUsed: 0,
     loading: true,
     error: null,
   },
@@ -78,8 +78,8 @@ export const dashboardSlice = createSlice({
       state.userLimits.loading = false;
       state.userLimits.storageLimit = payload.storageLimit;
       state.userLimits.storageUsed = payload.storageUsed;
-      state.userLimits.requestLimit = payload.requestLimit;
-      state.userLimits.requestUsed = payload.requestUsed;
+      state.userLimits.creditsLimit = payload.creditsLimit;
+      state.userLimits.creditsUsed = payload.creditsUsed;
     });
     builder.addCase(loadUserLimits.rejected, (state, { payload }) => {
       state.userLimits.loading = false;
