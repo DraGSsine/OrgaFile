@@ -10,7 +10,7 @@ import { url } from "inspector";
 
 interface PlanConfig {
   storage: number;
-  requestLimit: number;
+  creditsLimit: number;
 }
 
 const SUBSCRIPTION_PLANS = {
@@ -20,9 +20,9 @@ const SUBSCRIPTION_PLANS = {
 } as const;
 
 const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
-  Basic: { storage: 5, requestLimit: 100 },
-  Standard: { storage: 15, requestLimit: 400 },
-  Premium: { storage: 20, requestLimit: 500 },
+  Basic: { storage: 5, creditsLimit: 100 },
+  Standard: { storage: 15, creditsLimit: 400 },
+  Premium: { storage: 20, creditsLimit: 500 },
 };
 
 @Injectable()
@@ -118,7 +118,7 @@ export class PaymentService {
 
     await this.userModel.updateOne(
       { _id: userId },
-      { ...PLAN_LIMITS[planName], requestUsed: 0 }
+      { ...PLAN_LIMITS[planName], creditsUsed: 0 }
     );
   }
 

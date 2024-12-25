@@ -86,8 +86,8 @@ export class DashboardService {
       return {
         storageLimit: user.storage,
         storageUsed: user.storageUsed,
-        requestLimit: user.requestLimit,
-        requestUsed: user.requestUsed,
+        creditsLimit: user.creditsLimit,
+        creditsUsed: user.creditsUsed,
       };
     } catch (error) {
       throw error;

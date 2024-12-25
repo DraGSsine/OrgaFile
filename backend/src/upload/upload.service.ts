@@ -43,7 +43,7 @@ export class UploadService {
 
     if (totalStorageGb > user.storage)
       throw new BadRequestException("Storage limit exceeded");
-    if (user.requestUsed + files.length > user.requestLimit)
+    if (user.creditsUsed + files.length > user.creditsLimit)
       throw new BadRequestException("Request limit exceeded");
 
     const fileDocuments = await uploadFiles(
@@ -59,7 +59,7 @@ export class UploadService {
       {
         $inc: {
           storageUsed: fileSize,
-          requestUsed: files.length,
+          creditsUsed: files.length,
         },
       }
     );
@@ -121,7 +121,7 @@ export class UploadService {
       const res = userFiles.files
         .slice()
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-        .slice(0, 9);
+        .slice(0, 8);
 
       return res;
     } catch (error) {

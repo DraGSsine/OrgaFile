@@ -40,7 +40,10 @@ export class AuthService {
   }
 
   async signUp(signUpDto: signUpDto) {
-    const { email, password } = signUpDto;
+    const { email, password, acceptTerms } = signUpDto;
+    if (!acceptTerms) {
+      throw new UnprocessableEntityException('Please accept terms and conditions');
+    }
     const userExists = await this.userModel.findOne({ email });
     if (userExists) {
       throw new UnprocessableEntityException('User already exists');

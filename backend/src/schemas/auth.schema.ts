@@ -26,10 +26,10 @@ export class User {
   storageUsed: number;
 
   @Prop({default: 0})
-  requestLimit: number;
+  creditsLimit: number;
 
   @Prop({ default: 0 })
-  requestUsed: number;
+  creditsUsed: number;
   @Prop({ enum: ['user', 'admin'], default: 'user' })
   role: 'user' | 'admin';
 
