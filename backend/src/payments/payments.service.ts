@@ -50,7 +50,7 @@ export class PaymentService {
       const event = this.stripe.webhooks.constructEvent(
         request.rawBody,
         request.headers["stripe-signature"] as string,
-        process.env.STRIPE_WEBHOOK_SECRET!
+        process.env.PROD === "true" ? process.env.STRIPE_WEBHOOK_SECRET_PROD! : process.env.STRIPE_WEBHOOK_SECRET_DEV!
       );
 
       switch (event.type) {
