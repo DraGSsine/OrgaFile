@@ -1,6 +1,6 @@
 import * as mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
-import * as pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse')
 
 const unicodeRemover = (text: string): string => {
   return text.replace(/[^\x00-\x7F]|\0/g, '');

@@ -107,7 +107,7 @@ export const analyzeDocument = async (
     const parser = new JsonOutputParser<AIAnalyzeDocumnetResponse>();
     const aiClient = createaiClient();
 
-    const fileContents: string = await parseFile(file);
+    const fileContents: string = await parseFile(file)
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 2000,
       separators: ["\n\n", "\n", ".", "!", "?"],
