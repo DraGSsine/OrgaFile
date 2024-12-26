@@ -9,9 +9,8 @@ import { cn } from "@nextui-org/react";
 import { showUsageModalType } from "@/types/types";
 import { StorageUsage } from "../rightSideBar/StorageUsage";
 
-import { CreditsUsage } from "../rightSideBar/CreditstUsage";
-import { CancelCircleIcon, XingIcon } from "hugeicons-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { CreditstUsage } from "../rightSideBar/ReqesutUsage";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -79,7 +78,7 @@ export default function Sidebar() {
           <ModalContent>
             <div className="flex items-center justify-center h-full">
               {showUsageModal.modal === "storage" && <StorageUsage />}
-              {showUsageModal.modal === "credits" && <CreditsUsage />}
+              {showUsageModal.modal === "credits" && <CreditstUsage />}
             </div>
           </ModalContent>
         </Modal>
