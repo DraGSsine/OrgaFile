@@ -18,6 +18,7 @@ export const SignInForm = () => {
   );
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<userInfoType>({
+    acceptTerms: false,
     email: null,
     password: null,
   });
