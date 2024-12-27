@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res,Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CookieOptions, Response } from 'express';
+import { CookieOptions, Response,Request } from 'express';
 import { signInDto, signUpDto } from './dto/auth.dto';
 
 @Controller('api/auth')
@@ -43,8 +43,11 @@ export class AuthController {
   }
 
   @Get('signout')
-  signOut(@Res() res: Response) {
-    res.clearCookie('token');
+  signOut(@Res() res: Response, @Req() req:Request) {
+    const cookies = req.cookies;
+    for (const cookie in cookies) {
+      res.clearCookie(cookie, this.resHeaders);
+    }
     return res.send({ message: 'Signed out successfully' });
   }
 }
