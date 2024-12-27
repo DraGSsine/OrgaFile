@@ -1,83 +1,103 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
-import { EmailInput, PasswordInput } from "../inputs";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
-import { Button } from "@nextui-org/react";
-import { userInfoType } from "@/types/types";
-import { ZodIssue, z } from "zod";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { SignInAction, resetAuthState } from "@/redux/slices/authSlice";
+import React, { FormEvent, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { z } from "zod";
+import { SignInAction } from "@/redux/slices/authSlice";
 import { createCheckoutSession } from "@/redux/slices/paymentSlice";
-import Cookies from "js-cookie";
-export const SignInForm = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { isLoading, error, isAuthenticated, userCreated } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const router = useRouter();
-  const [userInfo, setUserInfo] = useState<userInfoType>({
-    acceptTerms: false,
-    email: null,
-    password: null,
-  });
-  const [errorState, setErrorState] = useState<ZodIssue | null>(null);
-  const User = z.object({
-    email: z.string().email(),
-    password: z.string().min(6).max(30),
-  });
+import { toast } from "sonner";
+import { Button } from "@nextui-org/button";
+import { useRouter } from "next/navigation";
+import { Input } from "@nextui-org/react";
+import { AppDispatch } from "@/redux/store";
+import { userInfoType } from "@/types/types";
 
-  const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const parsedUser = User.safeParse(userInfo);
-    if (!parsedUser.success) {
-      setErrorState(parsedUser.error.errors[0]);
-    } else {
-      setErrorState(null);
-      try {
-        const resultAction = await dispatch(SignInAction(userInfo));
-        if (SignInAction.fulfilled.match(resultAction)) {
-          const checkoutResultAction = await dispatch(createCheckoutSession())
-          if (createCheckoutSession.fulfilled.match(checkoutResultAction)) {
-            toast.success("Sign in successful");
-            console.log(checkoutResultAction.payload)
-            router.push(checkoutResultAction.payload.url)
-          } else {
-            toast.error("An error occurred");
-          }
-        } else {
-          if (resultAction.payload) {
-            toast.error(resultAction.payload as string);
-          } else {
-            toast.error("Sign in failed");
-          }
+const userSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters").max(30),
+  acceptTerms: z
+    .boolean()
+    .refine(
+      (value) => value === true,
+      "You must accept the terms and conditions"
+    ),
+});
+
+const SignInForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignin = async () => {
+
+    setIsLoading(true);
+    setErrors({});
+    const userInfo: userInfoType = {
+      email: emailRef.current?.value || "",
+      password: passwordRef.current?.value || "",
+      acceptTerms: true,
+    };
+
+    try {
+      const validatedUser: userInfoType = userSchema.parse(userInfo);
+      const signInResult = await dispatch(SignInAction(validatedUser));
+
+      if (SignInAction.fulfilled.match(signInResult)) {
+        const checkoutResult = await dispatch(createCheckoutSession());
+
+        if (createCheckoutSession.fulfilled.match(checkoutResult)) {
+          toast.success("Sign in successful");
+          router.push(checkoutResult.payload.url);
+          return;
         }
-      } catch (error) {
+      }
+
+      toast.error((signInResult.payload as string) || "Sign in failed");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors: Record<string, string> = {}; 
+        error.errors.forEach((err) => {
+          formattedErrors[err.path[0]] = err.message;
+        });
+        setErrors(formattedErrors);
+      } else {
         toast.error("An unexpected error occurred");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
-    <form onSubmit={(e) => handleSignin(e)} className="flex gap-6 flex-col">
-      <EmailInput
-        errorState={errorState}
-        onChange={(e) => setUserInfo({ ...userInfo, email: e })}
+    <form className="flex gap-6 flex-col">
+      <Input
+        label="Email"
+        name="email"
+        ref={emailRef}
+        isInvalid={!!errors.email}
+        errorMessage={errors.email}
       />
-      <PasswordInput
-        errorState={errorState}
+      <Input
         label="Password"
+        type="password"
         name="password"
-        onChange={(e) => setUserInfo({ ...userInfo, password: e })}
+        ref={passwordRef}
+        isInvalid={!!errors.password}
+        errorMessage={errors.password}
       />
       <Button
         type="submit"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={isLoading ? true : false}
+        isLoading={isLoading}
+        onClick={handleSignin}
       >
         Sign in
       </Button>
     </form>
   );
 };
+
+export default SignInForm;

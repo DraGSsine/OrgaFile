@@ -47,7 +47,7 @@ const Slider = () => {
             className="w-full"
             style={{ color: "transparent" }}
             sizes="52.75rem"
-            src="/images/magic.png"
+            src="/images/analiyze.png"
           />
         </div>
       </div>

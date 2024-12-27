@@ -1,130 +1,139 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
-import { EmailInput, PasswordInput } from "../inputs";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { Button, Checkbox, Input, RadioGroup } from "@nextui-org/react";
-import { userInfoType } from "@/types/types";
-import { ZodIssue, z } from "zod";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { z } from "zod";
+import { Input, Checkbox, Button } from "@nextui-org/react";
+import { AppDispatch } from "@/redux/store";
+import { SignUpAction } from "@/redux/slices/authSlice";
+import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import {
-  SignInAction,
-  SignUpAction,
-  resetAuthState,
-} from "@/redux/slices/authSlice";
-import { createCheckoutSession } from "@/redux/slices/paymentSlice";
+import Link from "next/link";
+
+const userSchema = z
+  .object({
+    fullName: z.string().min(1, "Full Name is required"),
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(30),
+    confirmPassword: z.string(),
+    acceptTerms: z
+      .boolean()
+      .refine((value) => value === true, "You must accept terms"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const SignupPageForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const dispatch = useDispatch<any>();
-  const { isLoading, userCreated, error } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const [acceptTerms, setAcceptTerms] = useState(false);
-  const [userCredential, setUserCredential] = useState<userInfoType>({
-    fullName: null,
-    email: null,
-    password: null,
-    confirmPassword: null,
-    acceptTerms: false,
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [errorState, setErrorState] = useState<ZodIssue | null>(null);
-  const User = z
-    .object({
-      fullName: z.string().min(3).max(30),
-      email: z.string().email(),
-      password: z.string().min(6).max(30),
-      confirmPassword: z.string().min(6).max(30),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    });
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!localStorage.getItem("plan")) {
-      toast.error("Please select a plan");
-      router.push("/pricing");
-      return;
-    }
+  const handleSignup = async () => {
+    setIsLoading(true);
+    setErrors({});
 
-    const parsedUser = User.safeParse(userCredential);
-    if (!parsedUser.success) {
-      setErrorState(parsedUser.error.errors[0]);
-    } else {
-      setErrorState(null);
-      try {
-        const resultAction = await dispatch(SignUpAction(userCredential));
-        if (SignUpAction.fulfilled.match(resultAction)) {
-          toast.success("Account created successfully");
-          const checkoutResultAction = await dispatch(createCheckoutSession());
-          if (createCheckoutSession.fulfilled.match(checkoutResultAction)) {
-            router.push(checkoutResultAction.payload.url);
-          } else {
-            toast.error("An error occurred during checkout session creation");
-          }
-        } else {
-          if (resultAction.payload) {
-            toast.error(resultAction.payload as string);
-          } else {
-            toast.error("Sign up failed");
-          }
+    try {
+      const validatedUser = userSchema.parse({ ...formData, acceptTerms });
+      const signUpResult = await dispatch(SignUpAction(validatedUser));
+
+      if (SignUpAction.fulfilled.match(signUpResult)) {
+        const checkoutResult = await dispatch(createCheckoutSession());
+        if (createCheckoutSession.fulfilled.match(checkoutResult)) {
+          toast.success("Sign up successful");
+          router.push(checkoutResult.payload.url);
+          return;
         }
-      } catch (error) {
+      }
+      toast.error((signUpResult.payload as string) || "Sign up failed");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          formattedErrors[err.path[0]] = err.message;
+        });
+        setErrors(formattedErrors);
+      } else {
         toast.error("An unexpected error occurred");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={(e) => handleSignup(e)} className="flex gap-6 flex-col">
+    <form className="flex gap-6 flex-col">
       <Input
-        variant="bordered"
-        name="fullname"
         label="Full Name"
+        value={formData.fullName}
         onChange={(e) =>
-          setUserCredential({ ...userCredential, fullName: e.target.value })
+          setFormData((prev) => ({ ...prev, fullName: e.target.value }))
         }
+        isInvalid={!!errors.fullName}
+        errorMessage={errors.fullName}
       />
-      <EmailInput
-        errorState={errorState}
-        onChange={(e) => setUserCredential({ ...userCredential, email: e })}
+      <Input
+        label="Email"
+        value={formData.email}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, email: e.target.value }))
+        }
+        isInvalid={!!errors.email}
+        errorMessage={errors.email}
       />
-      <PasswordInput
-        errorState={errorState}
+      <Input
+        type="password"
         label="Password"
-        name="password"
-        onChange={(e) => setUserCredential({ ...userCredential, password: e })}
-      />
-      <PasswordInput
-        errorState={errorState}
-        label="confirme Password"
-        name="confirmPassword"
+        value={formData.password}
         onChange={(e) =>
-          setUserCredential({ ...userCredential, confirmPassword: e })
+          setFormData((prev) => ({ ...prev, password: e.target.value }))
         }
+        isInvalid={!!errors.password}
+        errorMessage={errors.password}
       />
+      <Input
+        type="password"
+        label="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, confirmPassword: e.target.value }))
+        }
+        isInvalid={!!errors.confirmPassword}
+        errorMessage={errors.confirmPassword}
+      />
+
       <Checkbox
         isSelected={acceptTerms}
-        onValueChange={() => {
-          setUserCredential({ ...userCredential, acceptTerms: !acceptTerms }),
-            setAcceptTerms(!acceptTerms);
-        }}
+        onValueChange={setAcceptTerms}
+        className="py-4"
+        size="sm"
       >
-        <span className=" text-[1rem] text-zinc-500 ">
-          I acknowledge and agree to the terms and conditions of the website
-        </span>
+        I agree with the&nbsp;
+        <Link className=" text-primary-500 " href="/terms">Terms</Link>
+        &nbsp; and&nbsp;
+        <Link className=" text-primary-500 " href="/privacy-policy">Privacy Policy</Link>
       </Checkbox>
       <Button
-        isDisabled={!acceptTerms}
-        type="submit"
+        type="button"
         color="primary"
         className="w-full h-[60px] text-lg"
-        isLoading={isLoading ? true : false}
+        isLoading={isLoading}
+        onClick={handleSignup}
+        isDisabled={!acceptTerms}
       >
-        Create Account
+        Sign up
       </Button>
     </form>
   );

@@ -52,7 +52,7 @@ const Features = () => {
             <div className="overflow-hidden flex items-start justify-center h-auto relative lg:h-80">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent z-10" />
               <Image
-                src="/images/share.png"
+                src="/images/filerename.png"
                 alt="Feature image"
                 className="h-full w-full object-contain"
                 loading="lazy"

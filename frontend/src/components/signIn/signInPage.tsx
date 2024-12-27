@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import {SignInForm} from "./signInForm";
+import SignInForm from "./signInForm";
+
 
 export const SignInPage = () => {
   return (
