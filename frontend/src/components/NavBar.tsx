@@ -66,7 +66,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white-500 text-primary-500"
+              className="bg-white text-primary-500"
             >
               Home
             </Button>
@@ -76,7 +76,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white-500 text-primary-500"
+              className="bg-white text-primary-500"
             >
               Pricing
             </Button>
@@ -86,7 +86,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white-500 text-primary-500"
+              className="bg-white text-primary-500"
             >
               Legal
             </Button>

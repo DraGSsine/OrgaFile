@@ -1,4 +1,6 @@
+import { HugeiconsProps } from "hugeicons-react";
 import { type } from "os";
+import { FC, ReactNode, RefAttributes } from "react";
 
 export type colorType =
   | "default"
@@ -16,7 +18,14 @@ export type userInfoType = {
   confirmPassword?: string | null;
   acceptTerms: boolean;
 };
+export type CategorizationMode = 'general' | 'basic' | 'custom';
 
+export interface CategorizationOption {
+  id: CategorizationMode;
+  title: string;
+  description: string;
+  icon: FC<Omit<HugeiconsProps, "ref"> & RefAttributes<SVGSVGElement>>;
+}
 export type variantType =
   | "bordered"
   | "solid"
