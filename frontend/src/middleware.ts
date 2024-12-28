@@ -4,12 +4,15 @@ import { jwtVerify } from "jose/jwt/verify";
 export async function middleware(request: NextRequest) {
   const cookie = request.cookies;
   const accessToken = cookie.get("token")?.value;
-  const protectedRoutes = ["/dashboard","/dashboard/settings","/payment/successful"];
+  const protectedRoutes = ["/dashboard", "/payment/successful"];
   const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
 
   const { isTokenValid, isSubscribed } = await validateToken(accessToken);
   try {
-    if (protectedRoutes.includes(request.nextUrl.pathname)) {
+    if (
+      request.nextUrl.pathname.startsWith("/dashboard") ||
+      request.nextUrl.pathname.startsWith("/payment/successful")
+    ) {
       if (!isTokenValid || !isSubscribed) {
         if (
           !isSubscribed &&

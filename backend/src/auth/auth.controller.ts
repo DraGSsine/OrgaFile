@@ -19,7 +19,7 @@ export class AuthController {
     const { token, user } = await this.authService.signIn(signInDto);
 
     res.cookie('token', token, this.resHeaders);
-
+    res.cookie('userId', user.id, {...this.resHeaders,httpOnly:false});
     return res.send({
       userInfo: {
         email: user.email,
@@ -33,6 +33,7 @@ export class AuthController {
     const { token, user } = await this.authService.signUp(signUpDto);
 
     res.cookie('token', token, this.resHeaders);
+    res.cookie('userId', user.id, {...this.resHeaders,httpOnly:false});
     return res.send({
       message: 'User created successfully',
       userInfo: {

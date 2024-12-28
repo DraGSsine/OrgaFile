@@ -49,11 +49,8 @@ export const UploadDropzone = () => {
       setUploadProgress(0);
     }
   }, [
-    loading,
     uploadFileState.isFileUploaded,
     uploadFileState.error,
-    dispatch,
-    router,
   ]);
 
   return (
@@ -86,7 +83,7 @@ export const UploadDropzone = () => {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 50MB)</p>
+                <p className="text-xs text-zinc-500">File (up to 50MB)</p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] && (

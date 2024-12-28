@@ -21,6 +21,14 @@ export interface FileInfo {
   summary: string;
 }
 
+export type FileMetaData = {
+  url: string;
+  format: string;
+  size: number;
+  fileId: string;
+  data: string;
+};
+
 export interface AiRespone {
   category: string;
   originalDocument: DocumentAiInfo;

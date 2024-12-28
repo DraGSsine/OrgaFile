@@ -9,7 +9,7 @@ import {
 import AWS from "aws-sdk";
 import { FileDocument, FileInfo } from "../schemas/files.schema";
 import { FolderDocument } from "../schemas/folders.schema";
-import { AiRespone, FolderInfoType } from "..//types/type";
+import { AiRespone, FileMetaData, FolderInfoType } from "..//types/type";
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];
@@ -22,45 +22,32 @@ const getAllCategoryNames = async (folders: FolderDocument[]) => {
 };
 
 export const uploadFiles = async (
-  files: Array<Express.Multer.File>,
+  files: FileMetaData[],
   userId: ObjectId,
   fileModel: Model<FileDocument>,
-  folderModel: Model<FolderDocument>,
-  s3Client: AWS.S3
+  folderModel: Model<FolderDocument>
 ) => {
   try {
     const fileData = [];
     const getAllCategories = [];
-    const S3Files = [];
+
     // Retrieve all folders categories from MongoDB
     const db_folders = await folderModel.find({ userId });
     const allCategories = await getAllCategoryNames(db_folders);
     getAllCategories.push(...allCategories);
 
     // Upload files to S3 and collect their metadata
-    const uploadPromises = files.map(async (file: Express.Multer.File) => {
+    const uploadPromises = files.map(async (file: FileMetaData) => {
       // Analyze file to determine its content and topic
       const documentInfo = await analyzeDocument(file);
 
       const newFileName = await generateFileName(documentInfo);
 
-      const nameKey = `${crypto.randomBytes(16).toString("hex")}-${newFileName}`;
-      const fileExtension = file.originalname.split(".").pop();
-      const urlend = `${userId}/${nameKey}.${fileExtension}`;
-      const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: urlend,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      };
-
-      S3Files.push(params)
-
       const data: FileInfo = {
-        fileId: `${nameKey}.${fileExtension}`,
+        fileId: file.fileId,
         topic: documentInfo.mainTopic,
-        url: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${urlend}`,
-        format: file.originalname.split(".").pop(),
+        url: file.url,
+        format: file.format,
         name: newFileName,
         size: file.size,
         createdAt: new Date(),
@@ -79,12 +66,6 @@ export const uploadFiles = async (
       { $push: { files: { $each: fileData } } },
       { upsert: true }
     );
-
-    // Upload files to S3
-    const uploadS3Promises = S3Files.map(async (file) => {
-      await s3Client.upload(file).promise();
-    });
-    await Promise.all(uploadS3Promises);
 
     // Organize files into folders based on enhanced categorization
     const categorizationResult: AiRespone[] = await categorizeDocuments(
@@ -139,10 +120,6 @@ export const uploadFiles = async (
       }
     }
   } catch (error) {
-    if (error.code === "UnsupportedMediaType") {
-      throw new UnsupportedMediaTypeException();
-    } else {
-      throw error;
-    }
+    throw new Error("Failed to upload file");
   }
 };

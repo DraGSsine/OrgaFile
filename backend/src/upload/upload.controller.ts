@@ -4,137 +4,102 @@ import {
   Post,
   Body,
   Delete,
-  UseInterceptors,
   Req,
   UseGuards,
-  UploadedFiles,
   BadRequestException,
   Param,
   Res,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '../guards/auth.guard';
-import multer from 'multer';
-import { SubscriptionGuard } from '../guards/subscription.guard';
-import { UploadService } from './upload.service';
+import { AuthGuard } from "../guards/auth.guard";
+import { SubscriptionGuard } from "../guards/subscription.guard";
+import { UploadService } from "./upload.service";
+import { FileMetaData } from "src/types/type";
 
-@Controller('api/files')
+@Controller("api/files")
 @UseGuards(AuthGuard)
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
-  @Post('upload')
+  @Post("upload")
   @UseGuards(SubscriptionGuard)
-  @UseInterceptors(
-    FilesInterceptor('files', null, {
-      limits: {
-        fileSize: 50 * 1024 * 1024, // 50 MB
-      },
-      fileFilter: (req, file, callback) => {
-        const allowedMimeTypes = [
-          'application/pdf',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'text/plain',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ];
-
-        if (allowedMimeTypes.includes(file.mimetype)) {
-          callback(null, true);
-        } else {
-          callback(
-            new BadRequestException(
-              'Only PDF, DOCX, TXT, and SLSX files are allowed',
-            ),
-            false,
-          );
-        }
-      },
-    }),
-  )
-  uploadFile(
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @Req() req: any,
-  ) {
+  async uploadFile(@Body() files: { files: FileMetaData[] }, @Req() req: any) {
     try {
-      return this.uploadService.uploadFiles(files, req.user.userId);
+      return this.uploadService.uploadFiles(files.files, req.user.userId);
     } catch (error) {
-      if (
-        error instanceof multer.MulterError &&
-        error.code === 'LIMIT_FILE_SIZE'
-      ) {
-        throw new BadRequestException('File size exceeds the limit of 50 MB');
-      }
-      throw new BadRequestException('An error occurred during file upload');
+      console.error("Upload file error:", error);
+      const filesIds = files.files.map((file) => file.fileId);
+      await this.uploadService.fialdUploadCleanup(req,filesIds);
+      throw new BadRequestException("Failed to upload file");
     }
   }
 
-  @Post('restore')
+  @Post("restore")
   @UseGuards(SubscriptionGuard)
   async restoreFile(@Body() requestBody: { fileId: string }, @Req() req: any) {
     const { fileId } = requestBody;
     return this.uploadService.restoreFile(req, fileId);
   }
-  @Get('load')
+  @Get("load")
   async loadAllFiles(@Req() req: any) {
     return this.uploadService.loadFiles(req.user.userId);
   }
 
-  @Get('recent')
+  @Get("recent")
   async findRecentFiles(@Req() req: any) {
     return this.uploadService.loadRecentFiles(req.user.userId);
   }
 
-  @Get('removed')
+  @Get("removed")
   async findRemovedFiles(@Req() req: any) {
     return this.uploadService.loadRemovedFiles(req.user.userId);
   }
 
-  @Delete('remove')
+  @Delete("remove")
   @UseGuards(SubscriptionGuard)
   remove(
     @Req() req: any,
-    @Body() requestBody: { fileId: string; isPermanently: boolean },
+    @Body() requestBody: { fileId: string; isPermanently: boolean }
   ) {
     const { fileId, isPermanently } = requestBody;
     return this.uploadService.remove(req, fileId, isPermanently);
   }
 
-  @Delete('removemany')
+  @Delete("removemany")
   @UseGuards(SubscriptionGuard)
   removeMany(
     @Req() req: any,
-    @Body() requestBody: { files: string[]; isPermanently: boolean },
+    @Body() requestBody: { files: string[]; isPermanently: boolean }
   ) {
     const { files, isPermanently } = requestBody;
     return this.uploadService.removeMany(req, files, isPermanently);
   }
-  @Get('download/:fileId')
+  @Get("download/:fileId")
   @UseGuards(SubscriptionGuard)
   async downloadFile(
-    @Param('fileId') fileId: string,
+    @Param("fileId") fileId: string,
     @Req() req: any,
-    @Res() res: any,
+    @Res() res: any
   ) {
     try {
       const { fileStream, fileName, fileSize } =
         await this.uploadService.downloadFile(req, fileId);
 
       res.set({
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${fileName}"`,
-        'Content-Length': fileSize,
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${fileName}"`,
+        "Content-Length": fileSize,
       });
 
-      fileStream.on('error', (error) => {
-        console.error('File stream error:', error);
-        res.status(500).send('Failed to download file');
+      fileStream.on("error", (error) => {
+        console.error("File stream error:", error);
+        res.status(500).send("Failed to download file");
       });
 
       fileStream.pipe(res);
     } catch (error) {
-      console.error('Download file error:', error);
-      throw new BadRequestException('Failed to download file');
+      console.error("Download file error:", error);
+      throw new BadRequestException("Failed to download file");
     }
   }
 }

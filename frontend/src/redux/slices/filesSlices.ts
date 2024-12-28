@@ -1,9 +1,24 @@
 import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import cookie from "js-cookie";
-import { toast } from "sonner";
+import {
+  PutObjectCommand,
+  PutObjectCommandOutput,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import cookies from "js-cookie";
+import { extractTextFromFile } from "@/helpers/parse";
+
+import { string } from "zod";
+type FileMetaData = {
+  url: string;
+  format: string;
+  size: number;
+  fileId: string;
+  data: string;
+};
 
 type FilesState = {
   toggleFile: {
@@ -119,53 +134,107 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
-      // Check for any unsupported file types
+      // Supported file types
+      const supportedTypes = [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ];
+
+      // Validate unsupported files
       const unsupportedFiles = Array.from(files.values()).filter(
-        (file: FormDataEntryValue) =>
-          file instanceof File &&
-          ![
-            "application/pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "text/plain",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.ms-excel",
-            "application/vnd.ms-excel.sheet.macroEnabled.12",
-          ].includes(file.type)
+        (file) => file instanceof File && !supportedTypes.includes(file.type)
       );
 
       if (unsupportedFiles.length) {
-        console.log("Unsupported files:", unsupportedFiles);
         return rejectWithValue({
-          message: "Only PDF, DOCX, TXT, and XLSX files are allowed"
+          message: "Only PDF, DOCX, TXT, and XLSX files are allowed.",
         });
       }
 
+      const userId = cookies.get("userId");
+      if (!userId) {
+        return rejectWithValue("User not authenticated.");
+      }
+
+      const filesMetaData: FileMetaData[] = [];
+      const uniqueKey = uuidv4();
+      // Extract file content and prepare metadata
+      for (const [key, value] of Array.from(files.entries())) {
+        if (value instanceof File) {
+          const file = value;
+          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+          const fileUrl = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/${fileKey}`;
+
+          // Extract file content
+          const fileContent = await extractTextFromFile(file);
+          if (!fileContent) {
+            return rejectWithValue("Failed to parse file content.");
+          }
+
+          filesMetaData.push({
+            url: fileUrl,
+            format: fileKey.split(".").pop()!,
+            size: file.size,
+            fileId: `${uniqueKey}-${file.name}`,
+            data: fileContent,
+          });
+        }
+      }
+
+      // Send metadata to backend
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
-        files,
-        {
-          withCredentials: true,
-        }
+        { files: filesMetaData },
+        { withCredentials: true }
       );
 
-      if (response.data.invalidFiles && response.data.invalidFiles.length > 0) {
+      if (response.data.invalidFiles?.length > 0) {
         return rejectWithValue({
-          message: "Some files are invalid",
+          message: "Some files are invalid.",
           invalidFiles: response.data.invalidFiles,
         });
       }
 
+      // Configure S3 client
+      const s3 = new S3Client({
+        region: process.env.NEXT_PUBLIC_S3_REGION!,
+        credentials: {
+          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
+        },
+      });
+
+      const uploadPromises: Promise<PutObjectCommandOutput>[] = [];
+
+      // Upload files to S3
+      for (const [key, value] of Array.from(files.entries())) {
+        if (value instanceof File) {
+          const file = value;
+          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+
+          // Create S3 upload command
+          const uploadCommand = new PutObjectCommand({
+            Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME!,
+            Key: fileKey,
+            Body: file,
+            ContentType: file.type,
+          });
+
+          uploadPromises.push(s3.send(uploadCommand));
+        }
+      }
+
+      // Wait for all uploads to complete
+      await Promise.all(uploadPromises);
       return response.data;
     } catch (error: any) {
-      if (error.response) {
-        return rejectWithValue(error.response.data);
-      } else {
-        return rejectWithValue("Failed to upload files");
-      }
+      console.error("Error uploading files:", error);
+      return rejectWithValue(error.response?.data || "Failed to upload files.");
     }
   }
 );
-
 
 export const removeFile = createAsyncThunk(
   "files/removeFileState",
