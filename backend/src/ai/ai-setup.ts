@@ -4,7 +4,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
-import { FileMetaData, categorizationModes } from "src/types/type";
+import { FileMetaData, categorizationModes } from "../types/type";
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;

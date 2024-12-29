@@ -8,7 +8,7 @@ import {
   FilesWithMode,
   FolderInfoType,
 } from "..//types/type";
-import { DocumentAnalyzer } from "src/ai/ai-setup";
+import { DocumentAnalyzer } from "../ai/ai-setup";
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];

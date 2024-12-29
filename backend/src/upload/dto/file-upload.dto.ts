@@ -1,5 +1,5 @@
 import { IsIn, IsString } from "class-validator";
-import { FileMetaData } from "src/types/type";
+import { FileMetaData } from "../../types/type";
 
 export class fileUploadDto {
   @IsString()

@@ -15,7 +15,7 @@ import { UserDocument } from "../schemas/auth.schema";
 import { RemovedFilesDocument } from "../schemas/removedFiles.schema";
 import { FolderDocument } from "../schemas/folders.schema";
 import { Readable } from "stream";
-import { FileMetaData, FilesWithMode } from "src/types/type";
+import { FileMetaData, FilesWithMode } from "../types/type";
 
 @Injectable()
 export class UploadService {
