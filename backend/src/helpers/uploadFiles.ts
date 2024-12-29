@@ -9,7 +9,12 @@ import {
 import AWS from "aws-sdk";
 import { FileDocument, FileInfo } from "../schemas/files.schema";
 import { FolderDocument } from "../schemas/folders.schema";
-import { AiRespone, FileMetaData, FolderInfoType } from "..//types/type";
+import {
+  AiRespone,
+  FileMetaData,
+  FilesWithMode,
+  FolderInfoType,
+} from "..//types/type";
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];
@@ -22,7 +27,7 @@ const getAllCategoryNames = async (folders: FolderDocument[]) => {
 };
 
 export const uploadFiles = async (
-  files: FileMetaData[],
+  files: FilesWithMode,
   userId: ObjectId,
   fileModel: Model<FileDocument>,
   folderModel: Model<FolderDocument>
@@ -37,7 +42,7 @@ export const uploadFiles = async (
     getAllCategories.push(...allCategories);
 
     // Upload files to S3 and collect their metadata
-    const uploadPromises = files.map(async (file: FileMetaData) => {
+    const uploadPromises = files.files.map(async (file: FileMetaData) => {
       // Analyze file to determine its content and topic
       const documentInfo = await analyzeDocument(file);
 
@@ -75,11 +80,11 @@ export const uploadFiles = async (
         keyEntities: file.keyEntities,
         summary: file.summary,
       })),
-      getAllCategories
+      getAllCategories,
+      files.categorizationMode,
+      files.customTags
     );
-    console.log(
-      "--------------------Categorization result---------------------"
-    );
+    console.log("------------------Categorization result-------------------");
     console.log(categorizationResult);
     console.log("-----------------------------------------");
     // Process the categorization result

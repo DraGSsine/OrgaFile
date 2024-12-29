@@ -4,7 +4,12 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
-import { AiRespone, DocumentAiInfo, FileMetaData } from "..//types/type";
+import {
+  AiRespone,
+  DocumentAiInfo,
+  FileMetaData,
+  categorizationModes,
+} from "..//types/type";
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
@@ -126,18 +131,47 @@ export const analyzeDocument = async (
 
 export const categorizeDocuments = async (
   documents: DocumentAiInfo[],
-  existingCategories: string[]
+  existingCategories: string[],
+  categorizetionMode: categorizationModes,
+  customTags: string[]
 ): Promise<AiRespone[]> => {
   try {
+    console.log("------------>categorizationMode", categorizetionMode);
+    console.log("------------>customTags", customTags);
+    let instraction:string;
+    if (categorizetionMode === "general") {
+      instraction = `
+      Categorize this document STRICTLY following these rules:
+      - Return ONLY a single category name
+
+      - predefined categories: ${predefinedCategories.join(", ")}
+      - Choose the most specific category that matches the document
+      - Respond only with the category name
+      `;
+    } else if (categorizetionMode === "basic") {
+      instraction = `
+      Categorize this document STRICTLY following these rules:
+
+      - Return ONLY a single category name
+      - Choose the most specific category that matches the document
+      - Respond only with the category name
+      `;
+    } else if (categorizetionMode === "custom") {
+      instraction = `
+      Categorize this document STRICTLY following these rules:
+
+      - Return ONLY a single category name
+      - your response should be based on this predefined categories is it possible: ${customTags.join(", ")}
+      - Choose the most specific category that matches the document
+      - Respond only with the category name
+    `;
+    }
+
     const categorizations = await Promise.all(
       documents.map(async (doc: DocumentAiInfo) => {
         const categorizePromptContent = `
-        Categorize this document STRICTLY following these rules:
-        - Return ONLY a single category name
-        - predefined categories: ${predefinedCategories.join(", ")}
-        - Choose the most specific category that matches the document
-        - Respond only with the category name
-  
+        ${instraction}
+
         Document Details:
         - Main Topic: ${doc.mainTopic}
         - Document Type: ${doc.documentType}

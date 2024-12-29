@@ -15,7 +15,7 @@ import { UserDocument } from "../schemas/auth.schema";
 import { RemovedFilesDocument } from "../schemas/removedFiles.schema";
 import { FolderDocument } from "../schemas/folders.schema";
 import { Readable } from "stream";
-import { FileMetaData } from "src/types/type";
+import { FileMetaData, FilesWithMode } from "src/types/type";
 
 @Injectable()
 export class UploadService {
@@ -35,17 +35,17 @@ export class UploadService {
     region: this.configService.get("S3_REGION"),
   });
 
-  async uploadFiles(files: FileMetaData[], userId: ObjectId) {
+  async uploadFiles(files: FilesWithMode, userId: ObjectId) {
     try {
       const user = await this.userModel.findById(userId);
       if (!user) throw new Error("User not found");
 
-      const fileSize = files.reduce((acc, file) => acc + file.size, 0);
+      const fileSize = files.files.reduce((acc, file) => acc + file.size, 0);
       const totalStorageGb = (fileSize + user.storageUsed) / 1024 ** 3;
 
       if (totalStorageGb > user.storage)
         throw new Error("Storage limit exceeded");
-      if (user.creditsUsed + files.length > user.creditsLimit)
+      if (user.creditsUsed + files.files.length > user.creditsLimit)
         throw new Error("Request limit exceeded");
 
       const fileDocuments = await uploadFiles(
@@ -60,7 +60,7 @@ export class UploadService {
         {
           $inc: {
             storageUsed: fileSize,
-            creditsUsed: files.length,
+            creditsUsed: files.files.length,
           },
         }
       );
@@ -328,25 +328,6 @@ export class UploadService {
     }
   }
 
-  async fialdUploadCleanup(req: any, fileIds: string[]) {
-    try {
-      const deleteParams = {
-        Bucket: this.configService.get("S3_BUCKET_NAME"),
-        Delete: {
-          Objects: fileIds.map((fileId) => ({
-            Key: `${req.user.userId}/${fileId}`,
-          })),
-        },
-      };
-
-      await this.s3Client.deleteObjects(deleteParams).promise();
-    } catch (error) {
-      console.error("Error cleaning up failed upload:", error);
-      throw new InternalServerErrorException(
-        "Failed to clean up failed upload"
-      );
-    }
-  }
   async downloadFile(
     req: any,
     fileId: string

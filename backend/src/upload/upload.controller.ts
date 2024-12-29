@@ -14,7 +14,7 @@ import {
 import { AuthGuard } from "../guards/auth.guard";
 import { SubscriptionGuard } from "../guards/subscription.guard";
 import { UploadService } from "./upload.service";
-import { FileMetaData } from "src/types/type";
+import { FileMetaData, FilesWithMode } from "src/types/type";
 
 @Controller("api/files")
 @UseGuards(AuthGuard)
@@ -23,13 +23,11 @@ export class UploadController {
 
   @Post("upload")
   @UseGuards(SubscriptionGuard)
-  async uploadFile(@Body() files: { files: FileMetaData[] }, @Req() req: any) {
+  async uploadFile(@Body() files: FilesWithMode, @Req() req: any) {
     try {
-      return this.uploadService.uploadFiles(files.files, req.user.userId);
+      return this.uploadService.uploadFiles(files, req.user.userId);
     } catch (error) {
       console.error("Upload file error:", error);
-      const filesIds = files.files.map((file) => file.fileId);
-      await this.uploadService.fialdUploadCleanup(req,filesIds);
       throw new BadRequestException("Failed to upload file");
     }
   }

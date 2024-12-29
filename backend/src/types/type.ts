@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
-import Stripe from 'stripe';
+import { Types } from "mongoose";
+import Stripe from "stripe";
 
 export interface AIAnalyzeDocumentResponse {
   mainTopic: string;
@@ -27,6 +27,14 @@ export type FileMetaData = {
   size: number;
   fileId: string;
   data: string;
+};
+
+export type categorizationModes = "general" | "basic" | "custom";
+
+export type FilesWithMode = {
+  categorizationMode: categorizationModes;
+  customTags: string[];
+  files: FileMetaData[];
 };
 
 export interface AiRespone {

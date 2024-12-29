@@ -10,21 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
 import {
   CloudIcon,
-  File01Icon,
   File02Icon,
   FileBlockIcon,
   Loading03Icon,
-  PlusMinus01Icon,
 } from "hugeicons-react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-  Chip,
-} from "@nextui-org/react";
 import { CategorizationMode, CategorizationOption } from "@/types/types";
+import { CategorizationModeSelector } from "./CategorixationModeSelector";
 
 export const UploadDropzone = () => {
   const router = useRouter();
@@ -59,7 +50,7 @@ export const UploadDropzone = () => {
         router.push("/dashboard/repository");
       }, 2000);
     } else if (uploadFileState.error) {
-      toast.error(uploadFileState.error.message || "File upload failed");
+      toast.error(uploadFileState.error);
       setLoading(false);
       setUploadProgress(0);
     }
@@ -138,7 +129,7 @@ export const UploadDropzone = () => {
                   {uploadFileState.error && (
                     <div className="flex gap-4 items-center justify-center py-6">
                       <p className="text-danger-500 text-medium">
-                        Failed to Upload files
+                        {uploadFileState.error}
                       </p>
                       <FileBlockIcon size={20} className="text-danger-500" />
                     </div>
@@ -159,175 +150,3 @@ export const UploadDropzone = () => {
     </>
   );
 };
-
-interface CustomTagInputProps {
-  tags: string[];
-  onAddTag: (tag: string) => void;
-  onRemoveTag: (tag: string) => void;
-}
-
-export function CategorizationModeSelector({ setShowModes }: any) {
-  const categorizationOptions: CategorizationOption[] = [
-    {
-      id: "general",
-      title: "General",
-      description: "Let us categorize your files for you.",
-      icon: File01Icon,
-    },
-    {
-      id: "basic",
-      title: "basic",
-      description: "Choose from a list of basic tags to categorize your files.",
-      icon: File02Icon,
-    },
-    {
-      id: "custom",
-      title: "Custom",
-      description: "Choose your own tags to categorize your files.",
-      icon: File02Icon,
-    },
-  ];
-
-  const [mode, setMode] = useState<CategorizationMode>("general");
-  const [customTags, setCustomTags] = useState<string[]>([]);
-
-  const handleSave = () => {
-    console.log("Selected mode:", mode);
-    console.log("Custom tags:", customTags);
-    setShowModes(false);
-  };
-
-  return (
-    <div className="border p-5 flex flex-col gap-4 w-[500px] m-4 border-dashed bg-white border-gray-300 rounded-lg">
-      <div>
-        {categorizationOptions.map((option) => (
-          <ModeCard
-            key={option.id}
-            option={option}
-            isSelected={mode === option.id}
-            onClick={() => setMode(option.id)}
-            isCustomMode={option.id === "custom"}
-            customTags={customTags}
-            onAddTag={(tag) => setCustomTags([...customTags, tag])}
-            onRemoveTag={(tag) =>
-              setCustomTags(customTags.filter((t) => t !== tag))
-            }
-          />
-        ))}
-      </div>
-
-      <Button color="primary" size="lg" onClick={handleSave} className="w-full">
-        Save Categorization Settings
-      </Button>
-    </div>
-  );
-}
-interface CustomTagInputProps {
-  tags: string[];
-  onAddTag: (tag: string) => void;
-  onRemoveTag: (tag: string) => void;
-}
-
-export function CustomTagInput({
-  tags,
-  onAddTag,
-  onRemoveTag,
-}: CustomTagInputProps) {
-  const [newTag, setNewTag] = useState("");
-
-  const handleAddTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      onAddTag(newTag.trim());
-      setNewTag("");
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleAddTag();
-    }
-  };
-
-  return (
-    <div className=" flex flex-col gap-2 mt-1">
-      <div className="flex gap-2">
-        <Input
-          placeholder="Enter a tag..."
-          value={newTag}
-          onChange={(e) => setNewTag(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-        <Button
-          isIconOnly
-          color="primary"
-          onClick={handleAddTag}
-          isDisabled={!newTag.trim()}
-        >
-          <PlusMinus01Icon className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <Chip
-            key={tag}
-            onClose={() => onRemoveTag(tag)}
-            variant="flat"
-            color="primary"
-          >
-            {tag}
-          </Chip>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-interface ModeCardProps {
-  option: CategorizationOption;
-  isSelected: boolean;
-  onClick: () => void;
-  isCustomMode?: boolean;
-  customTags?: string[];
-  onAddTag?: (tag: string) => void;
-  onRemoveTag?: (tag: string) => void;
-}
-
-export function ModeCard({
-  option: { title, description, icon: Icon },
-  isSelected,
-  onClick,
-  isCustomMode,
-  customTags = [],
-  onAddTag,
-  onRemoveTag,
-}: ModeCardProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={`p-4 rounded-lg transition-all duration-400 ease-in-out cursor-pointer ${
-        isSelected ? "border-primary bg-primary-50" : ""
-      }`}
-    >
-      <div className="flex w-full items-center justify-between gap-4">
-        <div className="p-2 rounded-md bg-primary-100">
-          <Icon className="w-5 h-5 text-primary" />
-        </div>
-        <div className="w-full">
-          {isCustomMode && isSelected && onAddTag && onRemoveTag ? (
-            <CustomTagInput
-              tags={customTags}
-              onAddTag={onAddTag}
-              onRemoveTag={onRemoveTag}
-            />
-          ) : (
-            <div className="flex flex-col w-full justify-between items-start">
-              <h3 className="text-lg font-semibold">{title}</h3>
-              <p className="text-sm text-gray-500 mt-1">{description}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}

@@ -11,7 +11,6 @@ import {
 import cookies from "js-cookie";
 import { extractTextFromFile } from "@/helpers/parse";
 
-import { string } from "zod";
 type FileMetaData = {
   url: string;
   format: string;
@@ -134,6 +133,19 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
+      // get the categorixation mode from local storage
+      const categorizationMode = localStorage.getItem("categorizationMode");
+      const customTags = JSON.parse(localStorage.getItem("customTags") || "[]");
+
+      if (
+        categorizationMode !== "custom" &&
+        categorizationMode !== "general" &&
+        categorizationMode !== "basic" &&
+        customTags.length === 0
+      ) {
+        return rejectWithValue("Please select a categorization mode.");
+      }
+
       // Supported file types
       const supportedTypes = [
         "application/pdf",
@@ -186,7 +198,7 @@ export const uploadFiles = createAsyncThunk(
       // Send metadata to backend
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
-        { files: filesMetaData },
+        { files: filesMetaData, categorizationMode, customTags },
         { withCredentials: true }
       );
 
