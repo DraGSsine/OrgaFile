@@ -1,18 +1,29 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import cookieParser = require('cookie-parser');
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ValidationPipe } from "@nestjs/common";
+import cookieParser = require("cookie-parser");
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   app.enableCors({
-    origin: process.env.PROD === 'true' ? 'https://orgafile.com' : 'http://localhost:3000',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin:
+      process.env.PROD === "true"
+        ? [
+            "https://orgafile.com",
+            "https://www.orgafile.com",
+            "https://backend.orgafile.com",
+          ]
+        : "http://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    allowedHeaders: "Content-Type, Accept, Authorization",
+    exposedHeaders: ["set-cookie"],
   });
+
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
+
   await app.listen(9010);
 }
+
 bootstrap();
