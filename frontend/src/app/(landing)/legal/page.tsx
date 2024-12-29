@@ -1,24 +1,69 @@
-import { Mail01Icon, Shield01Icon } from "hugeicons-react";
+import {
+  Alert01Icon,
+  ArrowRight01Icon,
+  File01Icon,
+  HeartCheckIcon,
+  JusticeScale01Icon,
+  LockIcon,
+  Mail01Icon,
+  Message01Icon,
+  Shield01Icon,
+  UserCheck01Icon,
+} from "hugeicons-react";
 import React from "react";
-import Link from "next/link";
-import { Metadata } from "next";
-
-export const metadata:Metadata = {
-  title: 'Legal',
-  description: "Read our privacy policy and terms of service to understand how we handle your data and use our service.",
-}
 
 const Page = () => {
+  const navItems = [
+    {
+      icon: <LockIcon className="w-5 h-5" />,
+      title: "Privacy & Security",
+      section: "#privacy",
+    },
+    {
+      icon: <JusticeScale01Icon className="w-5 h-5" />,
+      title: "Terms of Service",
+      section: "#terms",
+    },
+    {
+      icon: <UserCheck01Icon className="w-5 h-5" />,
+      title: "Your Rights",
+      section: "#rights",
+    },
+    {
+      icon: <Alert01Icon className="w-5 h-5" />,
+      title: "Guidelines",
+      section: "#guidelines",
+    },
+  ];
+
+  const securityMeasures = [
+    {
+      title: "Data Encryption",
+      desc: "End-to-end encryption for all file transfers and storage",
+    },
+    {
+      title: "Access Control",
+      desc: "Strict authentication and authorization protocols",
+    },
+    {
+      title: "Regular Audits",
+      desc: "Continuous security monitoring and vulnerability assessments",
+    },
+    {
+      title: "Compliance",
+      desc: "Adherence to international data protection standards",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           {/* Header */}
-          <header className="text-center mb-12">
-            <Link className="text-4xl font-bold text-gray-900 mb-2" href="/">OrgaFile</Link>
-            <div className="flex items-center justify-center space-x-2 mb-2">
+          <header className="text-center mb-16">
+            <div className="flex items-center justify-center space-x-2 mb-4">
               <Shield01Icon className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-xl text-gray-600">
+              <h2 className="text-2xl font-semibold text-gray-800">
                 Privacy Policy & Terms of Service
               </h2>
             </div>
@@ -27,172 +72,153 @@ const Page = () => {
             </p>
           </header>
 
-          {/* Content */}
+          {/* Quick Navigation */}
+          <nav className="mb-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {navItems.map((item) => (
+              <a
+                key={item.title}
+                href={item.section}
+                className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/50 transition-all group"
+              >
+                <div className="flex items-center space-x-3 text-gray-700">
+                  <span className="text-indigo-600">{item.icon}</span>
+                  <span className="font-medium">{item.title}</span>
+                </div>
+                <ArrowRight01Icon className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              </a>
+            ))}
+          </nav>
+
           <div className="prose prose-indigo max-w-none">
-            {/* Overview */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                1. Service Overview
+            {/* Service Overview */}
+            <section
+              id="overview"
+              className="mb-12 p-6 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-xl"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                <File01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                Service Overview
               </h2>
-              <p className="text-gray-600">
-                OrgaFile is an AI-powered file organization service that
-                processes your uploaded files using Mistral AI, automatically
-                categorizes and renames files based on content, and organizes
-                them into logical folder structures.
+              <p className="text-gray-700 leading-relaxed">
+                OrgaFile is an advanced AI-powered file organization service
+                that leverages cutting-edge technology to transform how you
+                manage your digital content. Our platform intelligently
+                processes your files using state-of-the-art AI, automatically
+                categorizing and renaming them based on content analysis, while
+                creating intuitive folder structures that make sense for your
+                workflow.
               </p>
             </section>
 
-            {/* Data Collection */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                2. Information We Collect
-              </h2>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    2.1 Personal Information
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Name and email address</li>
-                    <li>Payment and billing information</li>
-                    <li>Account credentials</li>
-                    <li>Usage statistics</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    2.2 File Data
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Uploaded files and their metadata</li>
-                    <li>AI-generated analysis results</li>
-                    <li>File organization structures</li>
-                    <li>Processing history</li>
-                  </ul>
+            {/* Privacy & Security */}
+            <section id="privacy" className="mb-12">
+              <div className="border-l-4 border-indigo-600 pl-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Information We Collect
+                </h2>
+                <div className="space-y-8">
+                  <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                      Personal Information
+                    </h3>
+                    <ul className="space-y-3">
+                      {[
+                        "Profile details including name and contact information",
+                        "Account credentials and authentication data",
+                        "Payment and subscription information",
+                        "Usage patterns and interaction statistics",
+                        "Communication preferences and settings",
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start">
+                          <span className="inline-block w-2 h-2 mt-2 mr-3 bg-indigo-600 rounded-full"></span>
+                          <span className="text-gray-600">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </section>
 
-            {/* Terms */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                3. Service Terms
+            {/* Security Measures */}
+            <section id="security" className="mb-12 bg-gray-50 p-6 rounded-xl">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <LockIcon className="w-6 h-6 mr-2 text-indigo-600" />
+                Security Measures
               </h2>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    3.1 Usage Guidelines
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {securityMeasures.map((item, i) => (
+                  <div key={i} className="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 className="font-semibold text-gray-800 mb-2">
+                      {item.title}
+                    </h4>
+                    <p className="text-gray-600 text-sm">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Dispute Resolution */}
+            <section className="mb-12 bg-gradient-to-br from-rose-50 to-indigo-50 p-8 rounded-xl">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <HeartCheckIcon className="w-6 h-6 mr-2 text-rose-500" />
+                Friendly Dispute Resolution
+              </h2>
+              <div className="space-y-6">
+                <p className="text-gray-700 leading-relaxed">
+                  At OrgaFile, we believe in maintaining positive relationships
+                  with our customers. We understand that disagreements may
+                  arise, and we're committed to resolving them in a friendly,
+                  professional, and efficient manner.
+                </p>
+                <div className="bg-white/50 rounded-lg p-6 space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Our Promise to You
                   </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Do not upload malicious files or malware</li>
-                    <li>Do not upload illegally obtained content</li>
-                    <li>Do not attempt to manipulate the AI system</li>
-                    <li>Do not exceed storage quotas</li>
-                    <li>Do not share account credentials</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    3.2 File Limitations
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Maximum file size: 100MB per file</li>
-                    <li>Monthly storage quota: 10GB</li>
-                    <li>Processing time varies by file size and type</li>
-                    <li>
-                      Some file types may have limited analysis capabilities
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <Message01Icon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <span className="text-gray-700">
+                        Open and transparent communication at all times
+                      </span>
+                    </li>
+                    <li className="flex items-start">
+                      <HeartCheckIcon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <span className="text-gray-700">
+                        Friendly and understanding approach to problem-solving
+                      </span>
+                    </li>
+                    <li className="flex items-start">
+                      <LockIcon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <span className="text-gray-700">
+                        Fair and unbiased consideration of all concerns
+                      </span>
                     </li>
                   </ul>
                 </div>
-              </div>
-            </section>
-
-            {/* Rights & Responsibilities */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                4. Your Rights & Responsibilities
-              </h2>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    4.1 Your Rights
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Access and delete your files at any time</li>
-                    <li>Export your data and files</li>
-                    <li>Cancel your subscription</li>
-                    <li>Request support assistance</li>
-                    <li>Retain full ownership of your files</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-3">
-                    4.2 Your Responsibilities
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                    <li>Maintain account security</li>
-                    <li>Keep subscription active for service access</li>
-                    <li>Comply with usage guidelines</li>
-                    <li>Respect storage limitations</li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            {/* Security */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                5. Security & Privacy
-              </h2>
-              <div className="space-y-4">
-                <p className="text-gray-600">
-                  We implement industry-standard security measures to protect
-                  your data:
+                <p className="text-gray-700 leading-relaxed">
+                  If you experience any issues or have concerns, our support
+                  team is here to help. We'll work together to find a solution
+                  that makes everyone happy, without any legal complications or
+                  formal proceedings.
                 </p>
-                <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                  <li>End-to-end encryption for file transmission</li>
-                  <li>Secure storage with encryption at rest</li>
-                  <li>Regular security audits and updates</li>
-                  <li>Restricted access to storage systems</li>
-                  <li>Automated backup systems</li>
-                </ul>
               </div>
             </section>
 
-            {/* Changes */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                6. Changes & Termination
-              </h2>
-              <div className="space-y-4">
-                <p className="text-gray-600">We reserve the right to:</p>
-                <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                  <li>Modify service features with notice</li>
-                  <li>Update the AI processing system</li>
-                  <li>Adjust pricing with advance notice</li>
-                  <li>Terminate accounts for violations</li>
-                  <li>Modify these terms with user notification</li>
-                </ul>
+            {/* Footer */}
+            <footer className="mt-16 pt-8 border-t border-gray-200">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="flex items-center text-gray-600 hover:text-indigo-600 transition-colors">
+                  <Mail01Icon className="w-5 h-5 mr-2" />
+                  <a href="mailto:support@orgafile.com">support@orgafile.com</a>
+                </div>
+                <p className="text-center text-sm text-gray-500">
+                  By using OrgaFile, you agree to these terms and privacy
+                  policy.
+                </p>
               </div>
-            </section>
+            </footer>
           </div>
-
-          {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-gray-200">
-
-            <div className="flex items-center justify-center mt-4 text-gray-600">
-              <Mail01Icon className="w-5 h-5 mr-2" />
-              <a
-                href="mailto:support@orgafile.com"
-                className="hover:text-indigo-600"
-              >
-                support@orgafile.com
-              </a>
-            </div>
-            <p className="text-center mt-4 text-sm text-gray-500">
-              By using OrgaFile, you agree to these terms and privacy policy.
-            </p>
-          </footer>
         </div>
       </div>
     </div>
