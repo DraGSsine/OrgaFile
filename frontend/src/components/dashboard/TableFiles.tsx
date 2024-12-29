@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
   Button,
-  Card,
-  CardBody,
   Checkbox,
   Chip,
   Pagination,
@@ -12,7 +10,6 @@ import {
 import Image from "next/image";
 import {
   FormatTheDate,
-  bytesToMegaBytes,
   formatFileSize,
   getFileImage,
 } from "@/helpers/helpers";
@@ -26,7 +23,6 @@ import { RouteNameType, filesType } from "@/types/types";
 import FilesSettings from "./files/FilesSettings";
 import {
   Delete02Icon,
-  FileSearchIcon,
   HelpCircleIcon,
 } from "hugeicons-react";
 
@@ -67,7 +63,7 @@ export default function TableFiles({
       })
     );
     dispatch(setConfirmFileRemoveModal(true))
-    // setSelectedKeys(new Set());
+    setSelectedKeys(new Set());
   };
 
   // Toggle selection of a single file
@@ -99,7 +95,6 @@ export default function TableFiles({
   return (
     <div className="relative row-start-2 row-end-17  ">
       {/* Bulk Delete Action */}
-
       <div
         className={` ${selectedKeys.size <= 0 ? " hidden" : " flex justify-center "
           } absolute right-0 -top-10 `}

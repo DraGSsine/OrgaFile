@@ -1,11 +1,4 @@
-import { UnsupportedMediaTypeException } from "@nestjs/common";
 import { Model, ObjectId, Types } from "mongoose";
-import * as crypto from "crypto";
-import {
-  analyzeDocument,
-  generateFileName,
-  categorizeDocuments,
-} from "../ai/ai-setup";
 import AWS from "aws-sdk";
 import { FileDocument, FileInfo } from "../schemas/files.schema";
 import { FolderDocument } from "../schemas/folders.schema";
@@ -15,6 +8,7 @@ import {
   FilesWithMode,
   FolderInfoType,
 } from "..//types/type";
+import { DocumentAnalyzer } from "src/ai/ai-setup";
 
 const getAllCategoryNames = async (folders: FolderDocument[]) => {
   const categories = [];
@@ -35,7 +29,7 @@ export const uploadFiles = async (
   try {
     const fileData = [];
     const getAllCategories = [];
-
+    const documentAnalyzer = new DocumentAnalyzer();
     // Retrieve all folders categories from MongoDB
     const db_folders = await folderModel.find({ userId });
     const allCategories = await getAllCategoryNames(db_folders);
@@ -44,9 +38,9 @@ export const uploadFiles = async (
     // Upload files to S3 and collect their metadata
     const uploadPromises = files.files.map(async (file: FileMetaData) => {
       // Analyze file to determine its content and topic
-      const documentInfo = await analyzeDocument(file);
+      const documentInfo = await documentAnalyzer.analyzeDocument(file);
 
-      const newFileName = await generateFileName(documentInfo);
+      const newFileName = await documentAnalyzer.generateFileName(documentInfo);
 
       const data: FileInfo = {
         fileId: file.fileId,
@@ -73,7 +67,7 @@ export const uploadFiles = async (
     );
 
     // Organize files into folders based on enhanced categorization
-    const categorizationResult: AiRespone[] = await categorizeDocuments(
+    const categorizationResult: AiRespone[] = await documentAnalyzer.categorizeDocuments(
       fileData.map((file) => ({
         mainTopic: file.topic,
         documentType: file.documentType,

@@ -29,7 +29,7 @@ export type FileMetaData = {
   data: string;
 };
 
-export type categorizationModes = "general" | "basic" | "custom";
+export type categorizationModes = "general" | "custom";
 
 export type FilesWithMode = {
   categorizationMode: categorizationModes;

@@ -41,6 +41,7 @@ export default function ConfirmDelete() {
           removeManyFiles({ files: removeFileState.files, isPermanently: true })
         ).then(() => {
           dispatch(setConfirmFileRemoveModal(false));
+          dispatch(resetConfirmFileRemoveModal());
         });
       } else {
         dispatch(
@@ -50,6 +51,7 @@ export default function ConfirmDelete() {
           })
         ).then(() => {
           dispatch(setConfirmFileRemoveModal(false));
+          dispatch(resetConfirmFileRemoveModal());
         });
       }
     } else {
@@ -58,12 +60,14 @@ export default function ConfirmDelete() {
           removeFile({ fileId: removeFileState.files[0], isPermanently: true })
         ).then(() => {
           dispatch(setConfirmFileRemoveModal(false));
+          dispatch(resetConfirmFileRemoveModal());
         });
       } else {
         dispatch(
           removeFile({ fileId: removeFileState.files[0], isPermanently: false })
         ).then(() => {
           dispatch(setConfirmFileRemoveModal(false));
+          dispatch(resetConfirmFileRemoveModal());
         });
       }
     }

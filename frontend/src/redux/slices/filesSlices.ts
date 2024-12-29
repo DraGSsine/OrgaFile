@@ -160,9 +160,9 @@ export const uploadFiles = createAsyncThunk(
       );
 
       if (unsupportedFiles.length) {
-        return rejectWithValue({
-          message: "Only PDF, DOCX, TXT, and XLSX files are allowed.",
-        });
+        return rejectWithValue(
+          "Only PDF, DOCX, TXT, and XLSX files are allowed."
+        );
       }
 
       const userId = cookies.get("userId");
@@ -203,10 +203,7 @@ export const uploadFiles = createAsyncThunk(
       );
 
       if (response.data.invalidFiles?.length > 0) {
-        return rejectWithValue({
-          message: "Some files are invalid.",
-          invalidFiles: response.data.invalidFiles,
-        });
+        return rejectWithValue("Some files are invalid.");
       }
 
       // Configure S3 client
@@ -243,7 +240,10 @@ export const uploadFiles = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       console.error("Error uploading files:", error);
-      return rejectWithValue(error.response?.data || "Failed to upload files.");
+      if (error.response?.status == 500) {
+        return rejectWithValue("Server error. Please try again later.");
+      }
+      return rejectWithValue(error.response?.data.message || "Failed to upload files.");
     }
   }
 );

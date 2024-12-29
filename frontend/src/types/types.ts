@@ -1,6 +1,20 @@
 import { HugeiconsProps } from "hugeicons-react";
-import { type } from "os";
-import { FC, ReactNode, RefAttributes } from "react";
+import { FC, RefAttributes } from "react";
+export interface ModeCardProps {
+  option: CategorizationOption;
+  isSelected: boolean;
+  onClick: () => void;
+  isCustomMode?: boolean;
+  customTags?: string[];
+  onAddTag?: (tag: string) => void;
+  onRemoveTag?: (tag: string) => void;
+}
+
+export interface CustomTagInputProps {
+  tags: string[];
+  onAddTag: (tag: string) => void;
+  onRemoveTag: (tag: string) => void;
+}
 
 export type colorType =
   | "default"
@@ -18,7 +32,7 @@ export type userInfoType = {
   confirmPassword?: string | null;
   acceptTerms: boolean;
 };
-export type CategorizationMode = 'general' | 'basic' | 'custom';
+export type CategorizationMode = "general" | "custom";
 
 export interface CategorizationOption {
   id: CategorizationMode;

@@ -7,14 +7,13 @@ import { useRouter } from "next/navigation";
 import ProgressBar from "./Progress";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
+import { filesSlice, setUploadModal, uploadFiles } from "@/redux/slices/filesSlices";
 import {
   CloudIcon,
   File02Icon,
   FileBlockIcon,
   Loading03Icon,
 } from "hugeicons-react";
-import { CategorizationMode, CategorizationOption } from "@/types/types";
 import { CategorizationModeSelector } from "./CategorixationModeSelector";
 
 export const UploadDropzone = () => {
@@ -28,7 +27,7 @@ export const UploadDropzone = () => {
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev < 95) {
-          let random = Math.random() * 10;
+          let random = Math.random() * 2;
           if (prev + random > 95) {
             return 95;
           }
@@ -54,13 +53,7 @@ export const UploadDropzone = () => {
       setLoading(false);
       setUploadProgress(0);
     }
-  }, [
-    loading,
-    uploadFileState.isFileUploaded,
-    uploadFileState.error,
-    dispatch,
-    router,
-  ]);
+  }, [uploadFileState.isFileUploaded, uploadFileState.error]);
   return (
     <>
       {showModes ? (
@@ -76,8 +69,9 @@ export const UploadDropzone = () => {
 
             progressHandler();
             setLoading(true);
-            dispatch(uploadFiles(formData));
-          }}
+            dispatch(uploadFiles(formData))
+;
+         }}
         >
           {({ getRootProps, getInputProps, acceptedFiles }) => (
             <div
@@ -90,7 +84,7 @@ export const UploadDropzone = () => {
                   className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <CloudIcon className="h-6 w-6 text-zinc-500 mb-2" />
+                    <CloudIcon className="h-6 w-6 text-blue-500 mb-2" />
                     <p className="mb-2 text-sm text-zinc-700">
                       <span className="font-semibold">Click to upload</span> or
                       drag and drop

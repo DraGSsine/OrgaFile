@@ -23,6 +23,7 @@ const initialState: initialDashboardStateType = {
   SignoutModal: {
     isOpen: false,
   },
+  
 };
 
 export const loadUserLimits = createAsyncThunk(
