@@ -68,7 +68,7 @@ const Page = () => {
               </h2>
             </div>
             <p className="text-sm text-gray-500">
-              Last updated: {new Date().toLocaleDateString()}
+              Last updated: 12/30/2024
             </p>
           </header>
 
@@ -140,6 +140,108 @@ const Page = () => {
               </div>
             </section>
 
+            {/* Terms of Service */}
+            <section id="terms" className="mb-12 bg-gray-50 p-6 rounded-xl">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <JusticeScale01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                Terms of Service
+              </h2>
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Service Usage
+                  </h3>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700">
+                      By using OrgaFile, you agree to maintain appropriate usage of our services and adhere to our community guidelines.
+                    </li>
+                    <li className="text-gray-700">
+                      Users must be at least 18 years old or have parental consent to use our services.
+                    </li>
+                    <li className="text-gray-700">
+                      You are responsible for maintaining the confidentiality of your account credentials.
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Subscription Terms
+                  </h3>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700">
+                      Subscriptions are billed on a recurring basis unless cancelled.
+                    </li>
+                    <li className="text-gray-700">
+                      Refunds are provided according to our refund policy.
+                    </li>
+                    <li className="text-gray-700">
+                      Service features may vary by subscription tier.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            {/* Your Rights */}
+            <section id="rights" className="mb-12">
+              <div className="border-l-4 border-indigo-600 pl-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <UserCheck01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                  Your Rights
+                </h2>
+                <div className="space-y-6">
+                  <p className="text-gray-700">As our user, you have the right to:</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Access</h3>
+                      <p className="text-gray-600">Request a copy of your personal data and see how it's being used.</p>
+                    </div>
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Deletion</h3>
+                      <p className="text-gray-600">Request the deletion of your personal information from our systems.</p>
+                    </div>
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Portability</h3>
+                      <p className="text-gray-600">Transfer your data to another service provider in a readable format.</p>
+                    </div>
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Correction</h3>
+                      <p className="text-gray-600">Update or correct any inaccurate personal information we have.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Guidelines */}
+            <section id="guidelines" className="mb-12 bg-gray-50 p-6 rounded-xl">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <Alert01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                Guidelines
+              </h2>
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Acceptable Use Policy
+                  </h3>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700">
+                      • Respect other users' privacy and intellectual property rights
+                    </li>
+                    <li className="text-gray-700">
+                      • Do not upload malicious content or files that violate our terms
+                    </li>
+                    <li className="text-gray-700">
+                      • Maintain appropriate file naming conventions and organization
+                    </li>
+                    <li className="text-gray-700">
+                      • Report any suspicious activity or violations
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
             {/* Security Measures */}
             <section id="security" className="mb-12 bg-gray-50 p-6 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -159,7 +261,7 @@ const Page = () => {
             </section>
 
             {/* Dispute Resolution */}
-            <section className="mb-12 bg-gradient-to-br from-rose-50 to-indigo-50 p-8 rounded-xl">
+            <section id="dispute" className="mb-12 bg-gradient-to-br from-rose-50 to-indigo-50 p-8 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <HeartCheckIcon className="w-6 h-6 mr-2 text-rose-500" />
                 Friendly Dispute Resolution
@@ -223,6 +325,6 @@ const Page = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Page;
+export default Page
