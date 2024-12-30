@@ -34,7 +34,6 @@
     "@nestjs/platform-express": "^10.3.8",
     "@types/multer": "^1.4.11",
     "adm-zip": "^0.5.12",
-    "aws-sdk": "^2.1605.0",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
@@ -42,14 +41,8 @@
     "common-tags": "^1.8.2",
     "cookie-parser": "^1.4.6",
     "langchain": "^0.1.36",
-    "mammoth": "^1.8.0",
     "mongoose": "^8.2.3",
-    "multer": "^1.4.5-lts.1",
-    "pdf-parse": "^1.1.1",
-    "pdf2json": "^3.1.4",
-    "pdfjs-dist": "^4.2.67",
-    "stripe": "^15.7.0",
-    "xlsx": "^0.18.5"
+    "stripe": "^15.7.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.0.0",

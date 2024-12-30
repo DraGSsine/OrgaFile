@@ -6,7 +6,7 @@ import {
   UnsupportedMediaTypeException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as AWS from "aws-sdk";
+import { DeleteObjectCommand, DeleteObjectsCommand, GetObjectCommand, HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, ObjectId } from "mongoose";
 import { uploadFiles } from "../helpers/uploadFiles";
@@ -27,12 +27,12 @@ export class UploadService {
     @InjectModel("User") private readonly userModel: Model<UserDocument>,
     @InjectModel("Folder") private readonly folderModel: Model<FolderDocument>
   ) {}
-  private readonly s3Client = new AWS.S3({
+  private readonly s3Client = new S3Client({
+    region: process.env.S3_REGION,
     credentials: {
-      accessKeyId: this.configService.get("S3_ACCESS_KEY_ID"),
-      secretAccessKey: this.configService.get("S3_SECRET_ACCESS_KEY"),
+      accessKeyId: process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     },
-    region: this.configService.get("S3_REGION"),
   });
 
   async uploadFiles(files: FilesWithMode, userId: ObjectId) {
@@ -194,7 +194,8 @@ export class UploadService {
         
         await user.save();
         await user.save();
-        await this.s3Client.deleteObject(deleteParams).promise();
+        const command = new DeleteObjectCommand(deleteParams);
+        await this.s3Client.send(command)
         return "File deleted permanently";
       } else {
         const file = await this.fileModel.findOne({
@@ -292,7 +293,8 @@ export class UploadService {
           user.storageUsed = updatedStorage;
         }
         await user.save();
-        await this.s3Client.deleteObjects(deleteParams).promise();
+        const command = new DeleteObjectsCommand(deleteParams);
+        await this.s3Client.send(command)
 
         return "Files deleted permanently";
       } else {
@@ -332,7 +334,7 @@ export class UploadService {
   async downloadFile(
     req: any,
     fileId: string
-  ): Promise<{ fileStream: Readable; fileName: string; fileSize: number }> {
+  ): Promise<{ fileStream: any; fileName: string; fileSize: number }> {
     try {
       const file = await this.fileModel.findOne({
         userId: req.user.userId,
@@ -352,17 +354,16 @@ export class UploadService {
       };
 
       // Get the file metadata to retrieve the file size
-      const headResult = await this.s3Client
-        .headObject(downloadParams)
-        .promise();
+      const headCommand = new HeadObjectCommand(downloadParams);
+      const headResult = await this.s3Client.send(headCommand);
       const fileSize = headResult.ContentLength;
-
-      const fileStream = this.s3Client
-        .getObject(downloadParams)
-        .createReadStream();
+      // Get the file stream
+      const downloadCommand = new GetObjectCommand(downloadParams);
+      const fileStream = (await this.s3Client.send(downloadCommand)).Body
 
       return { fileStream, fileName: name, fileSize };
     } catch (error) {
+      console.error("Error downloading file:", error);
       throw new InternalServerErrorException("Failed to download file");
     }
   }

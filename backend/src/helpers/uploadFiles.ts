@@ -1,5 +1,4 @@
 import { Model, ObjectId, Types } from "mongoose";
-import AWS from "aws-sdk";
 import { FileDocument, FileInfo } from "../schemas/files.schema";
 import { FolderDocument } from "../schemas/folders.schema";
 import {

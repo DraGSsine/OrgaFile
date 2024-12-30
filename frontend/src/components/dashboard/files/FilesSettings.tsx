@@ -58,7 +58,6 @@ const FilesSettings = ({
       toast.promise(
         dispatch(downloadFile({ fileId, fileName }))
           .then(() => {
-            dispatch(resetFilesState());
           })
           .catch((err) => {
             toast.error(err?.message || "Failed to download file");

@@ -7,17 +7,17 @@ import { UserDocument } from "..//schemas/auth.schema";
 import * as bcrypt from "bcrypt";
 import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
-import * as AWS from "aws-sdk";
+import {DeleteObjectsCommand, S3Client} from "@aws-sdk/client-s3";
 
 @Injectable()
 export class UserService {
   private stripeClient: Stripe;
-  private readonly s3Client = new AWS.S3({
+  private readonly s3Client = new S3Client({
+    region: process.env.S3_REGION!,
     credentials: {
-      accessKeyId: this.configService.get("S3_ACCESS_KEY_ID"),
-      secretAccessKey: this.configService.get("S3_SECRET_ACCESS_KEY"),
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY!,
     },
-    region: this.configService.get("S3_REGION"),
   });
   constructor(
     private readonly configService: ConfigService,
@@ -97,7 +97,8 @@ export class UserService {
             })),
           },
         };
-        await this.s3Client.deleteObjects(deleteParams).promise();
+        const deleteCommand = new DeleteObjectsCommand(deleteParams);
+        await this.s3Client.send(deleteCommand);
       }
       // Remove the user data from the database
       await this.userModel.findOneAndDelete({ _id: userId });
