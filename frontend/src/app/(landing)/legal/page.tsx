@@ -194,7 +194,7 @@ const Page = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-6 rounded-lg shadow-sm">
                       <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Access</h3>
-                      <p className="text-gray-600">Request a copy of your personal data and see how it's being used.</p>
+                      <p className="text-gray-600">Request a copy of your personal data and see how it&apos;s being used.</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-sm">
                       <h3 className="text-lg font-semibold text-gray-800 mb-3">Data Deletion</h3>
@@ -226,7 +226,7 @@ const Page = () => {
                   </h3>
                   <ul className="space-y-4">
                     <li className="text-gray-700">
-                      • Respect other users' privacy and intellectual property rights
+                      • Respect other users&apos; privacy and intellectual property rights
                     </li>
                     <li className="text-gray-700">
                       • Do not upload malicious content or files that violate our terms
@@ -270,7 +270,7 @@ const Page = () => {
                 <p className="text-gray-700 leading-relaxed">
                   At OrgaFile, we believe in maintaining positive relationships
                   with our customers. We understand that disagreements may
-                  arise, and we're committed to resolving them in a friendly,
+                  arise, and we&apos;re committed to resolving them in a friendly,
                   professional, and efficient manner.
                 </p>
                 <div className="bg-white/50 rounded-lg p-6 space-y-4">
@@ -300,7 +300,7 @@ const Page = () => {
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   If you experience any issues or have concerns, our support
-                  team is here to help. We'll work together to find a solution
+                  team is here to help. We&apos;ll work together to find a solution
                   that makes everyone happy, without any legal complications or
                   formal proceedings.
                 </p>

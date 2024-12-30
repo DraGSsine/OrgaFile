@@ -68,7 +68,7 @@ export function CategorizationModeSelector({ setShowModes }: any) {
   };
 
   return (
-    <div className="border min-h-80 justify-between p-5 flex flex-col gap-4 w-[500px] m-4 border-dashed bg-white border-gray-300 rounded-lg">
+    <div className="border min-h-80 justify-between p-5 flex flex-col gap-4 max-w-[500px] m-4 border-dashed bg-white border-gray-300 rounded-lg">
       <div className="flex flex-col gap-4">
         {categorizationOptions.map((option) => (
           <ModeCard
