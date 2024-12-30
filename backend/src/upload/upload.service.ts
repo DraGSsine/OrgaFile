@@ -173,7 +173,6 @@ export class UploadService {
           Key: fileKey,
         };
 
-        await this.s3Client.deleteObject(deleteParams).promise();
         // Update the user's storageUsed property
         const size = userFiles.files.find(
           (file) => file.fileId === fileId
@@ -184,7 +183,7 @@ export class UploadService {
           { userId: req.user.userId, "folders.files.fileId": fileId },
           { $pull: { "folders.$.files": { fileId } } }
         );
-
+        
         if (folderUpdateResult.modifiedCount > 0) {
           // Check if the folder has 0 files and remove it if true
           await this.folderModel.updateOne(
@@ -192,9 +191,10 @@ export class UploadService {
             { $pull: { folders: { files: { $size: 0 } } } }
           );
         }
-
+        
         await user.save();
         await user.save();
+        await this.s3Client.deleteObject(deleteParams).promise();
         return "File deleted permanently";
       } else {
         const file = await this.fileModel.findOne({
@@ -302,7 +302,8 @@ export class UploadService {
         });
 
         if (!files) {
-          throw new NotFoundException("Files not found");
+          console.log("Files not found");
+          return
         }
 
         await this.fileModel.updateOne(

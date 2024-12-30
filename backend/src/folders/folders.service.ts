@@ -2,56 +2,56 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
-import * as admZip from 'adm-zip';
-import { FolderDocument } from '../schemas/folders.schema';
-import { FileInfo } from '../schemas/files.schema';
-import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model, ObjectId } from "mongoose";
+import * as admZip from "adm-zip";
+import { FolderDocument } from "../schemas/folders.schema";
+import { FileInfo } from "../schemas/files.schema";
+import { ConfigService } from "@nestjs/config";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 @Injectable()
 export class FoldersService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectModel('Folder') private readonly folderModel: Model<FolderDocument>,
+    @InjectModel("Folder") private readonly folderModel: Model<FolderDocument>
   ) {}
-  private readonly s3Client = new AWS.S3({
+  private readonly s3Client = new S3Client({
+    region: process.env.S3_REGION!,
     credentials: {
-      accessKeyId: this.configService.get('S3_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY'),
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY!,
     },
-    region: this.configService.get('S3_REGION'),
   });
   async loadFolders(userId: string) {
     try {
       const foldersData = await this.folderModel
         .find({ userId })
-        .select('folders')
+        .select("folders")
         .lean();
 
       const folders = foldersData.map((doc: any) => doc.folders).flat();
       return folders;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to load folders');
+      throw new InternalServerErrorException("Failed to load folders");
     }
   }
   async loadOneFolder(folderId: ObjectId, userId: string) {
     try {
       const userFolders = await this.folderModel.findOne({ userId });
       if (!userFolders) {
-        throw new NotFoundException('Folder not found');
+        throw new NotFoundException("Folder not found");
       }
       const folder = userFolders.folders.find(
-        (folder) => folder.folderId == folderId,
+        (folder) => folder.folderId == folderId
       );
       if (!folder) {
-        throw new NotFoundException('Folder not found');
+        throw new NotFoundException("Folder not found");
       }
       return folder;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to load folder');
+      throw new InternalServerErrorException("Failed to load folder");
     }
   }
 
@@ -59,16 +59,16 @@ export class FoldersService {
     try {
       const userFolders = await this.folderModel.findOne({ userId });
       if (!userFolders) {
-        throw new NotFoundException('Folder not found');
+        throw new NotFoundException("Folder not found");
       }
 
       // Find specific folder
       const folder = userFolders.folders.find(
-        (f) => f.folderId.toString() === folderId.toString(),
+        (f) => f.folderId.toString() === folderId.toString()
       );
 
       if (!folder) {
-        throw new NotFoundException('Specific folder not found');
+        throw new NotFoundException("Specific folder not found");
       }
 
       const zip = new admZip();
@@ -82,20 +82,20 @@ export class FoldersService {
 
       // Convert to Base64
       const zipBuffer = zip.toBuffer();
-      const base64Zip = zipBuffer.toString('base64');
+      const base64Zip = zipBuffer.toString("base64");
 
       return base64Zip;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(
-        'Failed to download folder',
-        error.message,
+        "Failed to download folder",
+        error.message
       );
     }
   }
 
   async getFilesInFolder(
-    files: FileInfo[],
+    files: FileInfo[]
   ): Promise<{ name: string; content: Buffer }[]> {
     const data = [];
 
@@ -104,20 +104,16 @@ export class FoldersService {
         const { bucket, key } = this.parseS3Url(file.url);
 
         // Retrieve file from S3
-        const response = await this.s3Client
-          .getObject({
-            Bucket: bucket,
-            Key: key,
-          })
-          .promise();
+        const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+        const response = await this.s3Client.send(command)
 
         data.push({
           name: `${file.name}.${file.format}`,
-          content: response.Body as Buffer,
+          content: response.Body,
         });
       } catch (error) {
         console.error(
-          `Failed to fetch file: ${file.name}, error: ${error.message}`,
+          `Failed to fetch file: ${file.name}, error: ${error.message}`
         );
       }
     }
@@ -126,7 +122,7 @@ export class FoldersService {
   }
 
   private parseS3Url(url: string): { bucket: string; key: string } {
-    const cleanUrl = url.replace(/^\/\//, 'https://');
+    const cleanUrl = url.replace(/^\/\//, "https://");
 
     const urlPattern = /https:\/\/([^.]+\.s3\.amazonaws\.com)\/([^/]+)\/(.*)/;
     const match = cleanUrl.match(urlPattern);
@@ -136,8 +132,8 @@ export class FoldersService {
     }
 
     return {
-      bucket: match[1].replace('.s3.amazonaws.com', ''),
-      key: match[2] + '/' + match[3],
+      bucket: match[1].replace(".s3.amazonaws.com", ""),
+      key: match[2] + "/" + match[3],
     };
   }
 }
