@@ -6,10 +6,10 @@ import axios from "axios";
 import {
   PutObjectCommand,
   PutObjectCommandOutput,
-  S3Client,
 } from "@aws-sdk/client-s3";
 import cookies from "js-cookie";
 import { extractTextFromFile } from "@/helpers/parse";
+import { s3 } from "@/conf/aws.config";
 
 type FileMetaData = {
   url: string;
@@ -205,15 +205,6 @@ export const uploadFiles = createAsyncThunk(
       if (response.data.invalidFiles?.length > 0) {
         return rejectWithValue("Some files are invalid.");
       }
-
-      // Configure S3 client
-      const s3 = new S3Client({
-        region: process.env.NEXT_PUBLIC_S3_REGION!,
-        credentials: {
-          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-        },
-      });
 
       const uploadPromises: Promise<PutObjectCommandOutput>[] = [];
 

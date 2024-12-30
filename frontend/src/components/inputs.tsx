@@ -6,7 +6,8 @@ import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
 import { SearchIcon } from "../../public/icons";
 import Image from "next/image";
 import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
-
+import { getPresignedUrl } from "@/helpers/aws";
+import cookies from "js-cookie";
 
 export const SearchInput = () => {
 
@@ -22,9 +23,12 @@ export const SearchInput = () => {
       variant="bordered"
       placeholder="Search for files"
       className=" hidden md:flex w-[400px] 2xl:w-[600px] placeholder:text-gray-600"
-      onSelectionChange={(key: any) => {
+      onSelectionChange={async (key: any) => {
         if (!key) return;
-        const url = files[key].url;
+        const userId = cookies.get("userId");
+        const fileId = files[key].fileId;
+        const url = await getPresignedUrl(`${userId}/${fileId}`);
+        console.log("url", url);
         dispatch(ToggleFile({ isOpen: true, url}));
       }}
       startContent={
