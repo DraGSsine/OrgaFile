@@ -6,8 +6,9 @@ import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
 import { SearchIcon } from "../../public/icons";
 import Image from "next/image";
 import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
-import { getPresignedUrl } from "@/helpers/aws";
+
 import cookies from "js-cookie";
+import { getPresignedUrl } from "@/helpers/action";
 
 export const SearchInput = () => {
 

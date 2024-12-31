@@ -10,6 +10,7 @@ import { FolderDocument } from "../schemas/folders.schema";
 import { FileInfo } from "../schemas/files.schema";
 import { ConfigService } from "@nestjs/config";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 @Injectable()
 export class FoldersService {
@@ -18,10 +19,10 @@ export class FoldersService {
     @InjectModel("Folder") private readonly folderModel: Model<FolderDocument>
   ) {}
   private readonly s3Client = new S3Client({
-    region: process.env.S3_REGION!,
+    region: process.env.AWS_REGION!,
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.SECRET_ACCESS_KEY!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
     },
   });
   async loadFolders(userId: string) {
@@ -73,14 +74,21 @@ export class FoldersService {
 
       const zip = new admZip();
 
-      // Download and add files to zip
-      const downloadFiles = await this.getFilesInFolder(folder.files);
+      for (const file of folder.files) {
+        const command = new GetObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: `${userId}/${file.fileId}`,
+        });
 
-      for (const file of downloadFiles) {
-        zip.addFile(file.name, file.content);
+        const signedUrl = await getSignedUrl(this.s3Client, command, {
+          expiresIn: 60,
+        });
+        const response = await fetch(signedUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        zip.addFile(`${file.name}.${file.format}`, Buffer.from(arrayBuffer));
       }
 
-      // Convert to Base64
       const zipBuffer = zip.toBuffer();
       const base64Zip = zipBuffer.toString("base64");
 
@@ -92,48 +100,5 @@ export class FoldersService {
         error.message
       );
     }
-  }
-
-  async getFilesInFolder(
-    files: FileInfo[]
-  ): Promise<{ name: string; content: Buffer }[]> {
-    const data = [];
-
-    for (const file of files) {
-      try {
-        const { bucket, key } = this.parseS3Url(file.url);
-
-        // Retrieve file from S3
-        const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-        const response = await this.s3Client.send(command)
-
-        data.push({
-          name: `${file.name}.${file.format}`,
-          content: response.Body,
-        });
-      } catch (error) {
-        console.error(
-          `Failed to fetch file: ${file.name}, error: ${error.message}`
-        );
-      }
-    }
-
-    return data;
-  }
-
-  private parseS3Url(url: string): { bucket: string; key: string } {
-    const cleanUrl = url.replace(/^\/\//, "https://");
-
-    const urlPattern = /https:\/\/([^.]+\.s3\.amazonaws\.com)\/([^/]+)\/(.*)/;
-    const match = cleanUrl.match(urlPattern);
-
-    if (!match) {
-      throw new Error(`Invalid S3 URL format: ${url}`);
-    }
-
-    return {
-      bucket: match[1].replace(".s3.amazonaws.com", ""),
-      key: match[2] + "/" + match[3],
-    };
   }
 }

@@ -2,14 +2,11 @@ import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import {
-  PutObjectCommand,
-  PutObjectCommandOutput,
-} from "@aws-sdk/client-s3";
+import axios, { AxiosResponse } from "axios";
+import { PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3";
 import cookies from "js-cookie";
 import { extractTextFromFile } from "@/helpers/parse";
-import { s3 } from "@/conf/aws.config";
+import { generateFileUrl, getS3SignedUrl } from "@/helpers/action";
 
 type FileMetaData = {
   url: string;
@@ -177,7 +174,7 @@ export const uploadFiles = createAsyncThunk(
         if (value instanceof File) {
           const file = value;
           const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-          const fileUrl = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/${fileKey}`;
+          const fileUrl = await generateFileUrl(fileKey);
 
           // Extract file content
           const fileContent = await extractTextFromFile(file);
@@ -206,7 +203,7 @@ export const uploadFiles = createAsyncThunk(
         return rejectWithValue("Some files are invalid.");
       }
 
-      const uploadPromises: Promise<PutObjectCommandOutput>[] = [];
+      const uploadPromises: Promise<AxiosResponse<any, any>>[] = [];
 
       // Upload files to S3
       for (const [key, value] of Array.from(files.entries())) {
@@ -215,26 +212,29 @@ export const uploadFiles = createAsyncThunk(
           const fileKey = `${userId}/${uniqueKey}-${file.name}`;
 
           // Create S3 upload command
-          const uploadCommand = new PutObjectCommand({
-            Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME!,
-            Key: fileKey,
-            Body: file,
-            ContentType: file.type,
+          const { success, url } = await getS3SignedUrl(fileKey);
+          if (!success) {
+            return rejectWithValue("Failed to get signed URL.");
+          }
+          const uploadPromise = axios.put(url, file, {
+            headers: {
+              "Content-Type": file.type,
+            },
           });
-
-          uploadPromises.push(s3.send(uploadCommand));
+          uploadPromises.push(uploadPromise);
         }
+        // Wait for all uploads to complete
+        await Promise.all(uploadPromises);
+        return response.data;
       }
-
-      // Wait for all uploads to complete
-      await Promise.all(uploadPromises);
-      return response.data;
     } catch (error: any) {
       console.error("Error uploading files:", error);
       if (error.response?.status == 500) {
         return rejectWithValue("Server error. Please try again later.");
       }
-      return rejectWithValue(error.response?.data.message || "Failed to upload files.");
+      return rejectWithValue(
+        error.response?.data.message || "Failed to upload files."
+      );
     }
   }
 );

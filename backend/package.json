@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.717.0",
+    "@aws-sdk/s3-request-presigner": "^3.717.0",
     "@langchain/core": "^0.3.26",
     "@langchain/google-genai": "^0.1.6",
     "@langchain/mistralai": "^0.0.19",
