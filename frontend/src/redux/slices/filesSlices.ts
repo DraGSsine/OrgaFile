@@ -137,12 +137,14 @@ export const uploadFiles = createAsyncThunk(
       if (
         categorizationMode !== "custom" &&
         categorizationMode !== "general" &&
-        categorizationMode !== "basic" &&
-        customTags.length === 0
+        categorizationMode !== "basic"
       ) {
         return rejectWithValue("Please select a categorization mode.");
       }
 
+      if (categorizationMode === 'custom' && customTags.length === 0) {
+        return rejectWithValue("Please add at least one custom tag.");
+      }
       // Supported file types
       const supportedTypes = [
         "application/pdf",

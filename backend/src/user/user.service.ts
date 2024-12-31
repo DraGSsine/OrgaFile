@@ -85,7 +85,7 @@ export class UserService {
       const userFiles = await this.fileModel.findOne({ userId });
 
       // Get all the file ids of the user
-      const fileIds = userFiles.files.map((file) => file.fileId);
+      const fileIds = userFiles?.files.map((file) => file.fileId);
 
       if (fileIds.length > 0) {
         // Remove the user objects from S3
