@@ -50,6 +50,10 @@ export function CategorizationModeSelector({ setShowModes }: any) {
   const handleSave = () => {
     localStorage.setItem("categorizationMode", mode);
     localStorage.setItem("customTags", JSON.stringify(customTags));
+    if (mode === "custom" && customTags.length === 0) {
+      toast.info("Please add at least one tag for custom categorization");
+      return;
+    }
     setShowModes(false);
   };
 

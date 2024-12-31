@@ -24,12 +24,16 @@ export async function getPresignedUrl(key: string) {
 }
 
 export async function getS3SignedUrl(
-  fileKey: string
+  fileKey: string,
+  fileType: string,
+  fileSize: number
 ): Promise<{ success: boolean; url: string }> {
   try {
     const uploadCommand = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME!,
       Key: fileKey,
+      ContentType: fileType,
+      ContentLength: fileSize,
     });
     const url = await getSignedUrl(s3, uploadCommand, { expiresIn: 60 });
     return { success: true, url };

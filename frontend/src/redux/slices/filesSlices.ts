@@ -142,7 +142,7 @@ export const uploadFiles = createAsyncThunk(
         return rejectWithValue("Please select a categorization mode.");
       }
 
-      if (categorizationMode === 'custom' && customTags.length === 0) {
+      if (categorizationMode === "custom" && customTags.length === 0) {
         return rejectWithValue("Please add at least one custom tag.");
       }
       // Supported file types
@@ -214,7 +214,11 @@ export const uploadFiles = createAsyncThunk(
           const fileKey = `${userId}/${uniqueKey}-${file.name}`;
 
           // Create S3 upload command
-          const { success, url } = await getS3SignedUrl(fileKey);
+          const { success, url } = await getS3SignedUrl(
+            fileKey,
+            file.type,
+            file.size
+          );
           if (!success) {
             return rejectWithValue("Failed to get signed URL.");
           }

@@ -1,0 +1,41 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Build project
+        run: npm run build
+        working-directory: backend
+
+      - name: Get SSH key
+        run: echo "${{ secrets.EC2_KEY_PEM }}" | base64 --decode > key.pem
+
+      - name: Set permissions for SSH key
+        run: chmod 400 key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd /var/www/html && git pull"
+
+      - name: Deploy using SCP
+        run: |
+          scp -i key.pem -r ./backend/dist/* ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/sites/orgafile
