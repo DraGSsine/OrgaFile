@@ -21,8 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: backend
-      - name: instal nestjs
+
+      - name: Install NestJS CLI
         run: npm i -g @nestjs/cli
+
       - name: Build project
         run: npm run build
         working-directory: backend
@@ -35,7 +37,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd /var/www/html && git pull"
+          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd /var/www/html && git pull origin main"
 
       - name: Deploy using SCP
         run: |
