@@ -81,7 +81,7 @@ const Pricing = () => {
             </div>
           </div>
 
-          <div className="-mx-4 flex flex-wrap justify-center space-x-6">
+          <div className="flex flex-wrap justify-center gap-6 ">
             {plans.map((plan, index) => (
               <PricingCard key={index} {...plan} />
             ))}
