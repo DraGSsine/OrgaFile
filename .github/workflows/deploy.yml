@@ -50,7 +50,7 @@ jobs:
 
       - name: Deploy using SCP
         run: |
-          scp -i key.pem -r ./backend/dist/* ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/sites/orgafile
+          scp -i key.pem -r ./backend/dist ./backend/package.json ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/sites/orgafile
       - name: Restart Application
         run: |
-          ssh -i key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "pm2 restart all || sudo systemctl restart nginx"
+          ssh -i key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd /sites/orgafile && sudo npm i && pm2 restart all || sudo systemctl restart nginx"
