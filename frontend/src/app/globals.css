@@ -48,16 +48,14 @@ html {
   display: none;
 }
 
-
-
 tbody tr {
   height: 70px !important;
 }
 
 .boujee-text {
   --bg-size: 400%;
-  --color-one: #4f46e5;
-  --color-two: #4bf76e;
+  --color-one: #0065fd;
+  --color-two: #00ff33;
   background: linear-gradient(
       90deg,
       var(--color-one),
@@ -74,8 +72,11 @@ tbody tr {
     animation: move-bg 8s linear infinite;
   }
   @keyframes move-bg {
-    to {
+    from {
       background-position: var(--bg-size) 0;
+    }
+    to {
+      background-position: 0 0;
     }
   }
 }
@@ -83,7 +84,7 @@ tbody tr {
 .fade-in {
   animation: fadeIn 0.5s;
 }
-.text-responsive{ 
+.text-responsive {
   @apply text-sm md:text-base xl:text-lg 2xl:text-2xl;
 }
 @keyframes fadeIn {
