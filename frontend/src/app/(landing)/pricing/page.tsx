@@ -13,53 +13,50 @@ const Pricing = () => {
     {
       productId: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
       type: "Basic",
-      price: "$9",
+      price: "$9.99",
       subscription: "month",
-      description:
-        "Ideal for individuals or small groups requiring fundamental file management and straightforward sorting.",
+      description: "Ideal for individuals or small groups requiring fundamental file management and straightforward sorting.",
       mostpopular: false,
       features: [
         "Upload 20 files simultaneously",
-        "100 Credits/monthh",
+        "100 Credits/month",
         "Basic AI Sorting Algorithm",
-        "5Gb Storage",
+        "5GB Storage",
         "24/7 Support",
       ],
     },
     {
       productId: "price_1Q3Mh3HbzmnInIZ1QvC4glTC",
       type: "Standard",
-      price: "$19",
-      subscription: "year",
-      description:
-        "Ideal for individuals or small teams seeking enhanced file organization and efficient sorting capabilities.",
+      price: "$14.99",
+      subscription: "month",
+      description: "Ideal for individuals or small teams seeking enhanced file organization and efficient sorting capabilities.",
       active: true,
       mostpopular: true,
       features: [
-        "Upload 40 files simultaneously",
-        "300 Credits/monthh",
-        "Premium AI Sorting Algorithm",
-        "15Gb Storage",
+        "Upload 50 files simultaneously",
+        "500 Credits/month",
+        "Gold AI Sorting Algorithm",
+        "25GB Storage",
         "24/7 Support",
       ],
     },
     {
       productId: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
-      type: "Premium",
-      price: "$39",
-      subscription: " month",
-      description:
-        "The ultimate solution for extensive file management needs, offering advanced sorting capabilities and customization options.",
+      type: "Gold",
+      price: "$29.99",
+      subscription: "month",
+      description: "The ultimate solution for extensive file management needs, offering advanced sorting capabilities and customization options.",
       mostpopular: false,
       features: [
-        "Upload 50 files simultaneously",
-        "400 Credits/monthh",
-        "Premium AI Sorting Algorithm",
-        "20Gb Storage",
+        "Upload 100 files simultaneously",
+        "1000 Credits/month",
+        "Gold AI Sorting Algorithm",
+        "50GB Storage",
         "24/7 Support",
       ],
     },
-  ]
+   ]
   return (
     <MaxWidthWrapper>
       <section className="relative z-10 overflow-hidden bg-white pb-12 pt-20 dark:bg-dark lg:pb-[90px] lg:pt-[120px]">

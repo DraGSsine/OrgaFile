@@ -16,13 +16,13 @@ interface PlanConfig {
 const SUBSCRIPTION_PLANS = {
   Basic: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
   Standard: "price_1Q3Mh3HbzmnInIZ1QvC4glTC",
-  Premium: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
+  Gold: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
 } as const;
 
 const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
   Basic: { storage: 5, creditsLimit: 100 },
-  Standard: { storage: 15, creditsLimit: 400 },
-  Premium: { storage: 20, creditsLimit: 500 },
+  Standard: { storage: 25, creditsLimit: 500 },
+  Gold: { storage: 50, creditsLimit: 1000 },
 };
 
 @Injectable()

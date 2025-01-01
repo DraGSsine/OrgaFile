@@ -9,8 +9,8 @@ export class Subscription {
   userId: string;
 
   @Prop()
-  @Prop({ enum: ['Basic', 'Standard', 'Premium'] })
-  plan: 'Basic' | 'Standard' | 'Premium';
+  @Prop({ enum: ['Basic', 'Standard', 'Gold'] })
+  plan: 'Basic' | 'Standard' | 'Gold';
 
   @Prop({ 
     default: 'inactive', 

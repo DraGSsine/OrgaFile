@@ -42,6 +42,7 @@
 /*Hide the scroll bar*/
 html {
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .hide-scroll-bar::-webkit-scrollbar {
