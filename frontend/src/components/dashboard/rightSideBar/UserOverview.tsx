@@ -15,7 +15,7 @@ const UserOverview = () => {
         <InfoSkeleton />
       ) : (
         <div className="flex flex-col">
-          <span className="font-semibold text-lg capitalize">{fullName}</span>
+          <span className="font-semibold text-lg capitalize">Plan</span>
           <span className="text-primary font-bold">{plan}</span>
         </div>
       )}
