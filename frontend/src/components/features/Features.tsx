@@ -12,7 +12,7 @@ const Features = () => {
         </h2>
         <p className="pretty-text-small w-[60%]">
           OrgaFile transforms how you manage files by automatically analyzing
-          and categorizing your documents. Our AI understands your files'
+          and categorizing your documents. Our AI understands your file&apos;s
           content and organizes them into logical categories, saving you hours
           of manual work.
         </p>
@@ -43,7 +43,7 @@ const Features = () => {
                 <span>
                   Upload your files and watch as our AI instantly analyzes their
                   content and sorts them into the perfect categories. Whether
-                  it's business documents, personal files, or project materials,
+                  it&apos;s business documents, personal files, or project materials,
                   OrgaFile knows exactly where each file belongs.
                 </span>
               </p>
@@ -102,7 +102,7 @@ const Features = () => {
               </h3>
               <p className="text-slate-600 mt-2 [text-wrap:balance]">
                 Create custom categories to organize your files exactly how you
-                want. Whether it's by project, client, or department, you can
+                want. Whether it&apos;s by project, client, or department, you can
                 tailor OrgaFile to fit your unique needs.
               </p>
             </div>

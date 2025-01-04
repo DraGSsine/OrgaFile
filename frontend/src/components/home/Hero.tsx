@@ -33,9 +33,9 @@ const Hero = () => {
           </span>
         </h1>
         <p className="pt-4 pb-14 text-center mt-4 text-zinc-400 max-w-[60%] text-medium leading-8">
-          Drop your messy files and watch the magic happen. OrgaFile's AI
-          instantly analyzes each file's content and automatically sorts them
-          into the perfect categories - whether it's business documents, sports
+          Drop your messy files and watch the magic happen. OrgaFile&apos;s AI
+          instantly analyzes each file&apos;s content and automatically sorts them
+          into the perfect categories - whether it&apos;s business documents, sports
           data, or personal files. No more manual sorting needed.
         </p>
         <div className="flex space-x-8">

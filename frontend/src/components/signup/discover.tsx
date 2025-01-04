@@ -15,7 +15,7 @@ const Discover = () => {
           </h1>
           <p className="text-gray-200 font-extralight">
             Stop spending hours manually sorting files. Upload your documents, and watch as 
-            OrgaFile's AI instantly categorizes them into perfect folders. Whether it's business 
+            OrgaFile&apos;s AI instantly categorizes them into perfect folders. Whether it&apos;s business 
             reports, sports data, or personal documents - our smart system knows exactly where 
             each file belongs.
           </p>
