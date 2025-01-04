@@ -121,7 +121,7 @@ const SignupPageForm = () => {
         size="sm"
       >
         I agree with the&nbsp;
-        <Link className=" text-primary-color " href="/terms">
+        <Link className=" text-primary-color " href="/legal">
           terms & privacy policy
         </Link>
       </Checkbox>
