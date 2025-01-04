@@ -23,7 +23,7 @@ const HowItWorkCard = ({
       data-id={step}
       className={` max-w-[350px] cursor-pointer flex flex-col gap-4 items-start group ${activeStep == step && "bg-slate-50 border-slate-100"} hover:bg-slate-50  hover:border-slate-100 border border-transparent rounded-lg transition-all md:-m-5 p-5`}
     >
-      <div className="mt-1 bg-indigo-50 border shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-10 h-10 shrink-0">
+      <div className="mt-1 bg-indigo-50 border text-primary-color shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-10 h-10 shrink-0">
         {icon}
       </div>
       <div>

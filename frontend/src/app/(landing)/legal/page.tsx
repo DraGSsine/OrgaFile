@@ -56,13 +56,13 @@ const Page = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           {/* Header */}
           <header className="text-center mb-16">
             <div className="flex items-center justify-center space-x-2 mb-4">
-              <Shield01Icon className="w-5 h-5 text-indigo-600" />
+              <Shield01Icon className="w-5 h-5 text-primary-color" />
               <h2 className="text-2xl font-semibold text-gray-800">
                 Privacy Policy & Terms of Service
               </h2>
@@ -81,10 +81,10 @@ const Page = () => {
                 className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/50 transition-all group"
               >
                 <div className="flex items-center space-x-3 text-gray-700">
-                  <span className="text-indigo-600">{item.icon}</span>
+                  <span className="text-primary-color">{item.icon}</span>
                   <span className="font-medium">{item.title}</span>
                 </div>
-                <ArrowRight01Icon className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+                <ArrowRight01Icon className="w-4 h-4 text-gray-400 group-hover:text-primary-color transition-colors" />
               </a>
             ))}
           </nav>
@@ -93,10 +93,10 @@ const Page = () => {
             {/* Service Overview */}
             <section
               id="overview"
-              className="mb-12 p-6 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-xl"
+              className="mb-12 p-6 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-xl"
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <File01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                <File01Icon className="w-6 h-6 mr-2 text-primary-color" />
                 Service Overview
               </h2>
               <p className="text-gray-700 leading-relaxed">
@@ -112,7 +112,7 @@ const Page = () => {
 
             {/* Privacy & Security */}
             <section id="privacy" className="mb-12">
-              <div className="border-l-4 border-indigo-600 pl-6">
+              <div className="border-l-4 border-primary-color pl-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Information We Collect
                 </h2>
@@ -130,7 +130,7 @@ const Page = () => {
                         "Communication preferences and settings",
                       ].map((item, i) => (
                         <li key={i} className="flex items-start">
-                          <span className="inline-block w-2 h-2 mt-2 mr-3 bg-indigo-600 rounded-full"></span>
+                          <span className="inline-block w-2 h-2 mt-2 mr-3 bg-primary-color rounded-full"></span>
                           <span className="text-gray-600">{item}</span>
                         </li>
                       ))}
@@ -143,7 +143,7 @@ const Page = () => {
             {/* Terms of Service */}
             <section id="terms" className="mb-12 bg-gray-50 p-6 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <JusticeScale01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                <JusticeScale01Icon className="w-6 h-6 mr-2 text-primary-color" />
                 Terms of Service
               </h2>
               <div className="space-y-6">
@@ -184,9 +184,9 @@ const Page = () => {
 
             {/* Your Rights */}
             <section id="rights" className="mb-12">
-              <div className="border-l-4 border-indigo-600 pl-6">
+              <div className="border-l-4 border-primary-color pl-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <UserCheck01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                  <UserCheck01Icon className="w-6 h-6 mr-2 text-primary-color" />
                   Your Rights
                 </h2>
                 <div className="space-y-6">
@@ -216,7 +216,7 @@ const Page = () => {
             {/* Guidelines */}
             <section id="guidelines" className="mb-12 bg-gray-50 p-6 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <Alert01Icon className="w-6 h-6 mr-2 text-indigo-600" />
+                <Alert01Icon className="w-6 h-6 mr-2 text-primary-color" />
                 Guidelines
               </h2>
               <div className="space-y-6">
@@ -245,7 +245,7 @@ const Page = () => {
             {/* Security Measures */}
             <section id="security" className="mb-12 bg-gray-50 p-6 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <LockIcon className="w-6 h-6 mr-2 text-indigo-600" />
+                <LockIcon className="w-6 h-6 mr-2 text-primary-color" />
                 Security Measures
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -261,7 +261,7 @@ const Page = () => {
             </section>
 
             {/* Dispute Resolution */}
-            <section id="dispute" className="mb-12 bg-gradient-to-br from-rose-50 to-indigo-50 p-8 rounded-xl">
+            <section id="dispute" className="mb-12 bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <HeartCheckIcon className="w-6 h-6 mr-2 text-rose-500" />
                 Friendly Dispute Resolution
@@ -279,19 +279,19 @@ const Page = () => {
                   </h3>
                   <ul className="space-y-3">
                     <li className="flex items-start">
-                      <Message01Icon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <Message01Icon className="w-5 h-5 mr-3 text-primary-color mt-1" />
                       <span className="text-gray-700">
                         Open and transparent communication at all times
                       </span>
                     </li>
                     <li className="flex items-start">
-                      <HeartCheckIcon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <HeartCheckIcon className="w-5 h-5 mr-3 text-primary-color mt-1" />
                       <span className="text-gray-700">
                         Friendly and understanding approach to problem-solving
                       </span>
                     </li>
                     <li className="flex items-start">
-                      <LockIcon className="w-5 h-5 mr-3 text-indigo-600 mt-1" />
+                      <LockIcon className="w-5 h-5 mr-3 text-primary-color mt-1" />
                       <span className="text-gray-700">
                         Fair and unbiased consideration of all concerns
                       </span>
@@ -310,7 +310,7 @@ const Page = () => {
             {/* Footer */}
             <footer className="mt-16 pt-8 border-t border-gray-200">
               <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="flex items-center text-gray-600 hover:text-indigo-600 transition-colors">
+                <div className="flex items-center text-gray-600 hover:text-primary-color transition-colors">
                   <Mail01Icon className="w-5 h-5 mr-2" />
                   <a href="mailto:support@orgafile.com">support@orgafile.com</a>
                 </div>

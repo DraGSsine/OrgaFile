@@ -107,7 +107,7 @@ export function CurrentPlanCard() {
 
         <div className="mt-4">
           <div className="flex items-baseline">
-            <span className="text-3xl font-bold text-blue-600">{price}</span>
+            <span className="text-3xl font-bold text-primary-color">{price}</span>
             <span className="ml-1 text-gray-500">/month</span>
           </div>
 
@@ -125,14 +125,14 @@ export function CurrentPlanCard() {
               <Button
                 isLoading={billingLoading}
                 onClick={onManageBilling}
-                className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="flex-1 rounded-lg bg-primary-color px-4 py-2 text-sm font-semibold text-white hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-primary-color focus:ring-offset-2"
               >
                 Stripe Portal
               </Button>
               <Button
                 isLoading={cancelLoading}
                 onClick={cancelSubs}
-                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-color focus:ring-offset-2"
               >
                 Cancel Plan
               </Button>
@@ -142,7 +142,7 @@ export function CurrentPlanCard() {
             <Button
               isLoading={renewLoading}
               onClick={renewSubs}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="w-full rounded-lg bg-primary-color px-4 py-2 text-sm font-semibold text-white hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-primary-color focus:ring-offset-2"
             >
               Reactivate Subscription
             </Button>
@@ -152,7 +152,7 @@ export function CurrentPlanCard() {
             <Button
               isLoading={upgradePlanLoading}
               onClick={upgradePlan}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="w-full rounded-lg bg-primary-color px-4 py-2 text-sm font-semibold text-white hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-primary-color focus:ring-offset-2"
             >
               Upgrade Plan
             </Button>

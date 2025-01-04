@@ -16,7 +16,7 @@ const UserOverview = () => {
       ) : (
         <div className="flex flex-col">
           <span className="font-semibold text-lg capitalize">Plan</span>
-          <span className="text-primary font-bold">{plan}</span>
+          <span className="text-primary-color font-bold">{plan}</span>
         </div>
       )}
       <UserProfile email={email} />

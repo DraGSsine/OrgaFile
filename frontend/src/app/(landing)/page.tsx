@@ -7,7 +7,6 @@ import NewsLetter from "@/components/newsLetter/NewsLetter";
 import { cookies } from "next/headers";
 
 export default async function Home() {
-  console.log("cookies from the front",await cookies())
   return (
     <>
       <MaxWidthWrapper>

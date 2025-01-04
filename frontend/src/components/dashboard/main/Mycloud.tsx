@@ -17,7 +17,7 @@ const getColorBaseOnFormat = (format: string) => {
       };
     case "docx":
       return {
-        barColor: "bg-primary-400",
+        barColor: "bg-primary-color",
         backGroundColor: "bg-primary-100",
       };
     case "txt":

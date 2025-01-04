@@ -17,7 +17,7 @@ export function NavItem({ href, name, icon: Icon, isActive }: NavItemProps) {
       className={cn(
         "w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all sm:justify-center xl:justify-start",
         isActive
-          ? "bg-primary-100 text-primary-600"
+          ? "bg-primary-100 text-primary-color"
           : "text-default-600 hover:bg-default-100"
       )}
     >

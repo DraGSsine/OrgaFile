@@ -11,19 +11,9 @@ const initialState: initialDashboardStateType = {
     loading: true,
     error: null,
   },
-  cloudInfo: {
-    data: {
-      filesFormatInfo: [],
-      storageUsed: 0,
-      storage: 0,
-    },
-    loading: true,
-    error: null,
-  },
   SignoutModal: {
     isOpen: false,
   },
-  
 };
 
 export const loadUserLimits = createAsyncThunk(
@@ -32,23 +22,6 @@ export const loadUserLimits = createAsyncThunk(
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/dashboard/load-user-limits`,
-        {
-          withCredentials: true,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  }
-);
-
-export const loadClouInfo = createAsyncThunk(
-  "dashboard/loadCloudInfo",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/dashboard/load-cloud-info`,
         {
           withCredentials: true,
         }
@@ -85,19 +58,6 @@ export const dashboardSlice = createSlice({
     builder.addCase(loadUserLimits.rejected, (state, { payload }) => {
       state.userLimits.loading = false;
       state.userLimits.error = "Failed to fetch user limits";
-    });
-
-    builder.addCase(loadClouInfo.pending, (state) => {
-      state.cloudInfo.loading = true;
-    });
-    builder.addCase(loadClouInfo.fulfilled, (state, { payload }) => {
-      state.cloudInfo.loading = false;
-      state.cloudInfo.data = payload;
-    });
-
-    builder.addCase(loadClouInfo.rejected, (state, { payload }) => {
-      state.cloudInfo.loading = false;
-      state.cloudInfo.error = "Failed to fetch cloud info";
     });
   },
 });

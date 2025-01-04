@@ -82,7 +82,7 @@ export function SidebarContent({
                   }
                   className=" w-full h-10 flex items-center justify-center rounded-xl bg-blue-100 cursor-pointer"
                 >
-                  <div className="w-6 h-6 text-blue-500">
+                  <div className="w-6 h-6 text-primary-color">
                     <CloudIcon />
                   </div>
                 </div>

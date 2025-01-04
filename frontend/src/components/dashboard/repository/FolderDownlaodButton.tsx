@@ -40,14 +40,12 @@ const FolderDownlaodButton = ({ folder }: { folder: FolderType }) => {
   }
 
   return (
-    <Button
+    <button
       onClick={() => HandleDownloadFolder()}
-      isIconOnly
-      disableRipple
-      className="bg-transparent hover:bg-transparent"
+      className="p-2 hover:bg-blue-50 rounded-full transition-colors"
     >
-      <CloudDownloadIcon size={22} strokeWidth={2.5} className=" text-blue-500" />
-    </Button>
+      <CloudDownloadIcon className="w-6 h-6 text-primary-color" />
+    </button>
   );
 };
 

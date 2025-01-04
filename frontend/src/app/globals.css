@@ -13,7 +13,8 @@
     "txt-color":"var(--txt-color)",
     "zip-color":"var(--zip-color)",
     "doc-color":"var(--doc-color)", */
-  --primary-color: #4b81f7;
+  --primary-color: #0164ff;
+  --primary-forground-color: #2b7cff;
   --secondary-color: #4bf76e;
   --third-color: #332f89;
   --dark-primary-color: #514bf7;
@@ -55,13 +56,11 @@ tbody tr {
 
 .boujee-text {
   --bg-size: 400%;
-  --color-one: #0065fd;
-  --color-two: #00ff33;
   background: linear-gradient(
       90deg,
-      var(--color-one),
-      var(--color-two),
-      var(--color-one)
+      var(--primary-color),
+      var(--secondary-color),
+      var(--primary-color)
     )
     0 0 / var(--bg-size) 100%;
   color: transparent;

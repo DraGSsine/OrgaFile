@@ -11,21 +11,21 @@ const HowItWorks = () => {
       step: "Step 1",
       feature: "Upload Your Files",
       description:
-        "Easily upload files of any format or size. Our intuitive interface is designed to provide a hassle-free uploading experience.",
+        "Simply drag and drop your messy files into OrgaFile. Our platform accepts pdfs,xls,docs,text files, and more is comming",
     },
     {
       icon: <MagicWand01Icon size={24} stroke="#4b81f7" />,
       step: "Step 2",
-      feature: "OrgaFile Analysis",
+      feature: "AI Categorization",
       description:
-        "Sit back and let OrgaFile work its magic. Our AI-driven document management system will analyze and organize your uploads for optimal efficiency.",
+        "Watch as our AI instantly analyzes your files' content and automatically sorts them into perfect categories. No manual organization needed.",
     },
     {
       icon: <CloudDownloadIcon size={24} stroke="#4b81f7" />,
       step: "Step 3",
-      feature: "Download Files",
+      feature: "Access Organized Files",
       description:
-        "Access and download your files with just one click. OrgaFile ensures your files are always ready and available when you need them.",
+        "Find your files instantly in their categorized folders. Download or access your perfectly organized documents from anywhere.",
     },
   ];
 
@@ -37,16 +37,16 @@ const HowItWorks = () => {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mt-24 max-w-3xl mx-auto flex flex-col items-center justify-center">
-            <span className="bg-purple-100 border-purple-200 border text-purple-600 rounded-full text-xs font-medium px-3 py-1 ">
+            <span className="bg-purple-100 border-purple-200 border text-purple-600 rounded-full text-xs font-medium px-3 py-1">
               HOW IT WORKS
             </span>
             <h2 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-4 text-center">
-              Streamline Your Workflow
+              From Messy to Organized in Seconds
             </h2>
             <p className="text-lg mt-4 text-slate-600 text-center [text-wrap:pretty]">
-              OrgaFile is designed to optimize your everyday business tasks. Our
-              platform offers a range of features to help you manage your
-              documents efficiently and effectively.
+              Experience the power of AI-driven file organization. OrgaFile automatically 
+              analyzes your documents and sorts them into logical categories, saving you 
+              hours of manual work.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-8 md:gap-16">
@@ -61,7 +61,7 @@ const HowItWorks = () => {
             ))}
           </div>
           <div className="hidden lg:mt-20 lg:pt-2 lg:block">
-            <Slider/>
+            <Slider />
           </div>
         </div>
       </section>

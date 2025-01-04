@@ -210,19 +210,6 @@ export interface initialDashboardStateType {
     loading: boolean;
     error: any;
   };
-  cloudInfo: {
-    data: {
-      filesFormatInfo: {
-        name: string;
-        size: number;
-        numberOfFiles: number;
-      }[];
-      storageUsed: number;
-      storage: number;
-    };
-    loading: boolean;
-    error: any;
-  };
   SignoutModal: {
     isOpen: boolean;
   };

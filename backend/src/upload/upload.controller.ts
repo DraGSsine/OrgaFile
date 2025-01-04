@@ -25,10 +25,15 @@ export class UploadController {
   @UseGuards(SubscriptionGuard)
   async uploadFile(@Body() files: FilesWithMode, @Req() req: any) {
     try {
+      if (!files.files || !files.files.length) {
+        throw new BadRequestException("No files to upload");
+      }else if(files.files.length > 40){
+        throw new BadRequestException("You can upload maximum 40 files at a time");
+      }
       return this.uploadService.uploadFiles(files, req.user.userId);
     } catch (error) {
       console.error("Upload file error:", error);
-      throw new BadRequestException("Failed to upload file");
+      throw new BadRequestException(error.message);
     }
   }
 

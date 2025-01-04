@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import { ArrowRight01Icon } from "hugeicons-react";
+import { Logo } from "./dashboard/sidebar/logo";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,13 +30,7 @@ const NavBar = () => {
 
       <NavbarContent className="sm:flex" justify="start">
         <NavbarBrand>
-          <Link
-            href="/"
-            className="text-3xl font-semibold flex items-center transition focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:shadow-outline-indigo rounded-full px-2 -ml-2"
-          >
-            <span className="font-bold text-primary-500">Orga</span>
-            <span className="text-slate-600">File</span>
-          </Link>
+          <Logo />
         </NavbarBrand>
       </NavbarContent>
 
@@ -52,7 +47,7 @@ const NavBar = () => {
             log in
           </Link>
 
-          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color">
             Get Started
             <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
@@ -66,7 +61,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white text-primary-500"
+              className="bg-white text-primary-color"
             >
               Home
             </Button>
@@ -76,7 +71,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white text-primary-500"
+              className="bg-white text-primary-color"
             >
               Pricing
             </Button>
@@ -86,7 +81,7 @@ const NavBar = () => {
             <Button
               variant="flat"
               radius="full"
-              className="bg-white text-primary-500"
+              className="bg-white text-primary-color"
             >
               Legal
             </Button>
@@ -98,12 +93,12 @@ const NavBar = () => {
               endContent={<ArrowRight01Icon size={20} />}
               variant="flat"
               radius="full"
-              className="bg-zinc-200 text-primary-500"
+              className="bg-zinc-200 text-primary-color"
             >
               Log in
             </Button>
           </Link>
-          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500">
+          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color">
             Get Started
             <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>

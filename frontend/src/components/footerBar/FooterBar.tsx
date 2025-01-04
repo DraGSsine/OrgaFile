@@ -8,13 +8,13 @@ const FooterBar = () => {
         <div className="flex justify-between">
           <div>
             <Link href="/" className="text-lg flex items-center">
-              <span className="font-bold text-indigo-600">Orga</span>
+              <span className="font-bold text-primary-color">Orga</span>
               <span className="text-slate-600">File</span>
             </Link>
             <p className="mt-4 text-sm text-slate-700 max-w-xs"></p>
             <div className="flex gap-3 mt-4 items-center">
               <Link
-                href="https://twitter.com/yassineouchen"
+                href="https://x.com/orgafile_com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-slate-200 hover:bg-slate-300 rounded w-6 h-6 inline-flex items-center justify-center text-slate-500"
@@ -71,7 +71,7 @@ const FooterBar = () => {
       <div className="mt-14 pt-8 px-5 border-t border-slate-200">
         <div className="max-w-screen-xl mx-auto px-5">
           <p className="text-center text-sm text-slate-600 [text-wrap:balance]">
-            Copyright © 2024 OrgaFile. All rights reserved.
+            Copyright © 2025 OrgaFile. All rights reserved.
           </p>
         </div>
       </div>

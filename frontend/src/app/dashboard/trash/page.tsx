@@ -48,7 +48,7 @@ const Page = () => {
   return (
     <div className=" h-full pt-5 grid grid-rows-12 ">
       <HeaderPage
-        icon={<Delete02Icon className=" h-8 w-8 text-primary-500 " />}
+        icon={<Delete02Icon className=" h-8 w-8 text-primary-color " />}
         title="Deleted Files"
         description="Restore Your Deleted Files"
       />

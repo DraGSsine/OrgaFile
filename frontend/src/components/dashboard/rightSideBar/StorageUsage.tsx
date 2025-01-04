@@ -40,7 +40,7 @@ export function StorageUsage() {
       label={`${formatFileSize(storageUsed)} of ${storageLimit} GB`}
       progressColor="hsl(201 100% 47%)"
       icon={<CloudIcon />}
-      iconColor="text-primary-500"
+      iconColor="text-primary-color"
       iconBgColor="bg-primary-100/50 dark:bg-primary-900/20"
       isLoading={loading}
     />

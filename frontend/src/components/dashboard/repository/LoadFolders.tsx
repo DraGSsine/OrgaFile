@@ -49,7 +49,7 @@ const LoadFolders = () => {
           <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
             <FolderOpenIcon
               size={50}
-              className="fill-white text-blue-500 text-1"
+              className="fill-white text-primary-color text-1"
             />
           </div>
           <div>
@@ -78,7 +78,7 @@ const FolderLoadSkeleton = () => {
   return (
     <div className="  justify-between flex  flex-col bg-blue-100 p-6 animate-pulse rounded-lg fade-in">
       <div className="flex justify-between items-center mb-5">
-        <Folder01Icon size={60} className="fill-blue-500 text-blue-500" />
+        <Folder01Icon size={60} className="fill-primary-color text-primary-color" />
         <div className="bg-white rounded-full h-8 w-8"></div>
       </div>
 
@@ -92,7 +92,7 @@ const FolderLoadSkeleton = () => {
           capitalize flex justify-between items-center bg-white rounded-full mt-4"
       >
         <div className="bg-white h-5 w-10 rounded-full"></div>
-        <div className="bg-blue-500 h-8 w-20 rounded-full"></div>
+        <div className="bg-primary-color h-8 w-20 rounded-full"></div>
       </div>
     </div>
   );

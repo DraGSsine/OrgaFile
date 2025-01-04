@@ -1,19 +1,17 @@
-import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import React from "react";
-import { ArrowRight } from "../../../public/icons";
 import Image from "next/image";
 import { Metadata } from "next";
 import { ArrowRight01Icon } from "hugeicons-react";
 
 export const metadata: Metadata = {
-  title: "OrgaFile | AI-Powered File Organization Made Simple",
+  title: "OrgaFile | Smart File Categorization & Organization",
   description:
-    "Transform your messy files into an organized system with OrgaFile's AI-powered document management. Upload multiple files at once and let our smart algorithm categorize and rename them automatically.",
+    "Say goodbye to messy folders. OrgaFile's AI automatically analyzes your files and sorts them into perfect categories, bringing order to your digital workspace instantly.",
   openGraph: {
-    title: "OrgaFile | AI-Powered File Organization Made Simple",
+    title: "OrgaFile | Smart File Categorization & Organization",
     description:
-      "Transform your messy files into an organized system with OrgaFile's AI-powered document management.",
+      "Say goodbye to messy folders. OrgaFile's AI automatically analyzes your files and sorts them into perfect categories.",
     images: [
       {
         url: "/images/dashboard.png",
@@ -24,39 +22,40 @@ export const metadata: Metadata = {
 
 const Hero = () => {
   return (
-    <section className=" flex flex-col items-center ">
+    <section className="flex flex-col items-center">
       <div className="w-full flex flex-col items-center pb-10 pt-20">
         <h1 className="text-6xl md:text-7xl font-bold text-center">
           <span className="boujee-text block py-2">
-            Organize Files Instantly
+            Smart File Categorization
           </span>
           <span className="inline-block duration-700 leading-[5rem]">
-            With AI-Powered Intelligence
+            Powered by AI
           </span>
         </h1>
         <p className="pt-4 pb-14 text-center mt-4 text-zinc-400 max-w-[60%] text-medium leading-8">
-          Stop wasting time manually organizing files. OrgaFile uses AI to
-          automatically analyze, rename, and categorize your documents, making
-          file management effortless. Upload once, stay organized forever.
+          Drop your messy files and watch the magic happen. OrgaFile's AI
+          instantly analyzes each file's content and automatically sorts them
+          into the perfect categories - whether it's business documents, sports
+          data, or personal files. No more manual sorting needed.
         </p>
         <div className="flex space-x-8">
           <Link
             href="/pricing"
-            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 text-white bg-blue-500 font-medium"
+            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color font-medium"
           >
-            Try It Now
+            Start Organizing
             <ArrowRight01Icon className="font-bold ml-2" size={25} />
           </Link>
           <Link
             href="#how-it-works"
-            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 border text-primary-500 bg-white border-blue-500 font-medium"
+            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 border text-primary-color bg-white border-primary-color font-medium"
           >
-            How It Works
+            See How It Works
             <ArrowRight01Icon className="font-bold ml-2" size={25} />
           </Link>
         </div>
       </div>
-      <div className="relative ">
+      <div className="relative">
         <div className="pointer-events-none absolute inset-x-0 -top-20 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
           <div
             style={{
@@ -67,10 +66,10 @@ const Hero = () => {
           />
         </div>
 
-        <div className=" rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:rounded-lg p-4">
+        <div className="rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:rounded-lg p-4">
           <Image
             src="/images/dashboard.png"
-            alt="product preview"
+            alt="OrgaFile dashboard showing smart file categorization"
             width={1200}
             height={800}
             quality={100}

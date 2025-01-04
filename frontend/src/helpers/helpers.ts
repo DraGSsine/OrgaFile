@@ -32,7 +32,7 @@ export const getColorBaseOnFormat = (format: string): ColorScheme => {
       backGroundColor: "bg-danger-50",
     },
     docx: {
-      barColor: "bg-primary-500",
+      barColor: "bg-primary-color",
       backGroundColor: "bg-primary-50",
     },
     txt: {

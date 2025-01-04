@@ -42,7 +42,7 @@ const Page = () => {
   ]);
   return (
     <div className=" h-full pt-5 grid grid-rows-12 ">
-      <HeaderPage icon={<Folder02Icon className=" h-8 w-8 text-primary-500"/>} title={folder?.name!} description="your organized files" />
+      <HeaderPage icon={<Folder02Icon className=" h-8 w-8 text-primary-color"/>} title={folder?.name!} description="your organized files" />
       <TableFiles
         maxRows={7}
         files={folder?.files ?? []}

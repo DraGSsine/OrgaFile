@@ -37,7 +37,7 @@ const UploadButton = ({
         size="xl"
         radius="lg"
         classNames={{
-          backdrop: "bg-[#fff]  bg-opacity-50 backdrop-opacity-50 blur-xs border-2 border-blue-500 ",
+          backdrop: "bg-[#fff]  bg-opacity-50 backdrop-opacity-50 blur-xs border-2 border-primary-color ",
         }}
       >
         <ModalContent>

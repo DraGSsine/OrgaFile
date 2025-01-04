@@ -5,6 +5,8 @@ import { FileInfo, fileSchema } from './files.schema';
 export type FolderDocument = Folder & Document;
 
 export class FolderInfo {
+  @Prop({ required: true, default: Date.now() }) //
+  createdAt: Date;
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
   folderId: ObjectId;
   @Prop({ required: true })

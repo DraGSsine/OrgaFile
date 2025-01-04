@@ -7,9 +7,9 @@ import { AuthGuard } from '../guards/auth.guard';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('load-cloud-info')
+  @Get('recent-folders')
   async cloudInfo(@Req() req: any) {
-    return this.dashboardService.cloudInfo(req.user.userId);
+    return this.dashboardService.recentFolders(req.user.userId);
   }
 
   @Get('load-user-limits')

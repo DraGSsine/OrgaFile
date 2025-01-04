@@ -249,7 +249,7 @@ export function ModeCard({
       onClick={onClick}
       className={`p-4 min-h-[105px] flex flex-col rounded-lg transition-all duration-200 cursor-pointer border ${
         isSelected
-          ? "border-primary bg-primary-50/30"
+          ? "border-primary-color bg-primary-50/30"
           : "border-default-200 hover:border-primary-200 hover:bg-default-50"
       }`}
     >

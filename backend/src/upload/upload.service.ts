@@ -352,7 +352,7 @@ export class UploadService {
         Bucket: this.configService.get("S3_BUCKET_NAME"),
         Key: fileKey,
       };
-
+      console.log(downloadParams);
       // Get the file metadata to retrieve the file size
       const headCommand = new HeadObjectCommand(downloadParams);
       const headResult = await this.s3Client.send(headCommand);

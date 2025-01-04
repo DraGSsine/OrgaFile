@@ -3,7 +3,7 @@
 import { RecentUploadsProps } from "@/types/types";
 import TableFiles from "../TableFiles";
 import { HeaderPage } from "../HeaderPage";
-import { FolderUploadIcon } from "hugeicons-react";
+import { File02Icon, FolderUploadIcon } from "hugeicons-react";
 
 
 export function RecentUploadsContainer({
@@ -14,7 +14,7 @@ export function RecentUploadsContainer({
 }: RecentUploadsProps) {
   return (
     <div className=" h-full grid grid-rows-12 ">
-      <HeaderPage icon={<FolderUploadIcon className="w-8 h-8 text-primary-500" />} title="Recent Uploads" description={`view last ${maxRows} files`} />
+      <HeaderPage icon={<File02Icon className="w-8 h-8 text-primary-color" />} title="Recent Uploads" description={`view last ${maxRows} files`} />
         <TableFiles
           maxRows={maxRows}
           files={files}

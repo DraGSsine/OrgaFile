@@ -67,10 +67,9 @@ export const UploadDropzone = () => {
               formData.append("files", file);
             });
 
+            dispatch(uploadFiles(formData))
             progressHandler();
             setLoading(true);
-            dispatch(uploadFiles(formData))
-;
          }}
         >
           {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -84,7 +83,7 @@ export const UploadDropzone = () => {
                   className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <CloudIcon className="h-6 w-6 text-blue-500 mb-2" />
+                    <CloudIcon className="h-6 w-6 text-primary-color mb-2" />
                     <p className="mb-2 text-sm text-zinc-700">
                       <span className="font-semibold">Click to upload</span> or
                       drag and drop
@@ -95,7 +94,7 @@ export const UploadDropzone = () => {
                   {acceptedFiles && acceptedFiles[0] && (
                     <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
                       <div className="px-3 py-2 h-full grid place-items-center">
-                        <File02Icon className="h-4 w-4 text-blue-500" />
+                        <File02Icon className="h-4 w-4 text-primary-color" />
                       </div>
                       <div className="px-3 py-2 h-full text-sm truncate">
                         {acceptedFiles[0].name}

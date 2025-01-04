@@ -133,7 +133,11 @@ export const uploadFiles = createAsyncThunk(
       // get the categorixation mode from local storage
       const categorizationMode = localStorage.getItem("categorizationMode");
       const customTags = JSON.parse(localStorage.getItem("customTags") || "[]");
-
+      if (files.getAll("files").length === 0) {
+        return rejectWithValue("Please select a file to upload.");
+      } else if (files.getAll("files").length > 40) {
+        return rejectWithValue("You can upload maximum 40 files at a time.");
+      }
       if (
         categorizationMode !== "custom" &&
         categorizationMode !== "general" &&
@@ -155,7 +159,7 @@ export const uploadFiles = createAsyncThunk(
 
       // Validate unsupported files
       const unsupportedFiles = Array.from(files.values()).filter(
-        (file) => file instanceof File && !supportedTypes.includes(file.type)
+        (file) => !supportedTypes.includes((file as File).type)
       );
 
       if (unsupportedFiles.length) {
@@ -173,25 +177,23 @@ export const uploadFiles = createAsyncThunk(
       const uniqueKey = uuidv4();
       // Extract file content and prepare metadata
       for (const [key, value] of Array.from(files.entries())) {
-        if (value instanceof File) {
-          const file = value;
-          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-          const fileUrl = await generateFileUrl(fileKey);
+        const file = value as File;
+        const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+        const fileUrl = await generateFileUrl(fileKey);
 
-          // Extract file content
-          const fileContent = await extractTextFromFile(file);
-          if (!fileContent) {
-            return rejectWithValue("Failed to parse file content.");
-          }
-
-          filesMetaData.push({
-            url: fileUrl,
-            format: fileKey.split(".").pop()!,
-            size: file.size,
-            fileId: `${uniqueKey}-${file.name}`,
-            data: fileContent,
-          });
+        // Extract file content
+        const fileContent = await extractTextFromFile(file);
+        if (!fileContent) {
+          return rejectWithValue("Failed to parse file content.");
         }
+
+        filesMetaData.push({
+          url: fileUrl,
+          format: fileKey.split(".").pop()!,
+          size: file.size,
+          fileId: `${uniqueKey}-${file.name}`,
+          data: fileContent,
+        });
       }
 
       // Send metadata to backend
@@ -209,30 +211,28 @@ export const uploadFiles = createAsyncThunk(
 
       // Upload files to S3
       for (const [key, value] of Array.from(files.entries())) {
-        if (value instanceof File) {
-          const file = value;
-          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+        const file = value as File;
+        const fileKey = `${userId}/${uniqueKey}-${file.name}`;
 
-          // Create S3 upload command
-          const { success, url } = await getS3SignedUrl(
-            fileKey,
-            file.type,
-            file.size
-          );
-          if (!success) {
-            return rejectWithValue("Failed to get signed URL.");
-          }
-          const uploadPromise = axios.put(url, file, {
-            headers: {
-              "Content-Type": file.type,
-            },
-          });
-          uploadPromises.push(uploadPromise);
+        // Create S3 upload command
+        const { success, url } = await getS3SignedUrl(
+          fileKey,
+          file.type,
+          file.size
+        );
+        if (!success) {
+          return rejectWithValue("Failed to get signed URL.");
         }
-        // Wait for all uploads to complete
-        await Promise.all(uploadPromises);
-        return response.data;
+        const uploadPromise = axios.put(url, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+        uploadPromises.push(uploadPromise);
       }
+      // Wait for all uploads to complete
+      await Promise.all(uploadPromises);
+      return response.data;
     } catch (error: any) {
       console.error("Error uploading files:", error);
       if (error.response?.status == 500) {

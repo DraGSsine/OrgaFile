@@ -112,7 +112,7 @@ export default function TableFiles({
         </Tooltip>
       </div>
 
-      <div className="rounded-t-lg h-full shadow-small grid grid-rows-16 grid-cols-16 p-4 ">
+      <div className="rounded-t-lg h-full shadow-small bg-white  grid grid-rows-16 grid-cols-16 p-4 ">
         {/* Header Row - Mimicking Table Header */}
         <div className="row-start-1 row-end-16 col-start-1 col-end-17 " >
           <div className=" h-[5%] grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7  font-semibold rounded-lg  bg-[#e7e8e9] text-gray-500">
@@ -180,16 +180,6 @@ export default function TableFiles({
                           {file.documentType}
                         </Chip>
 
-                        {/* <Tooltip content={file.format}>
-                          <Button
-                            className="md:hidden"
-                            color="primary"
-                            variant="light"
-                            size="sm"
-                          >
-                            <FileSearchIcon size={24} />
-                          </Button>
-                        </Tooltip> */}
                       </div>
                       <div className="text-center hidden sm:flex justify-center">
                         <Chip

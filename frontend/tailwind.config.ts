@@ -22,6 +22,7 @@ const config: Config = {
       },
       colors: {
         "primary-color": "var(--primary-color)",
+        "primary-forground-color": "var(--primary-forground-color)",
         "secondary-color": "var(--secondary-color)",
         "third-color": "var(--third-color)",
         "dark-primary-color": "var(--dark-primary-color)",
@@ -83,8 +84,7 @@ const config: Config = {
         light: {
           colors: {
             primary: {
-              foreground: "#FFFFFF",
-              DEFAULT: "#0070F0",
+              DEFAULT: "#0164ff",
             },
           },
         },

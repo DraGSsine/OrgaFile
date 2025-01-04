@@ -1,9 +1,10 @@
-import CloudCards from '@/components/dashboard/cloudCards/CloudCards'
+
+import FolderCards from '@/components/dashboard/cloudCards/FolderCards'
 import RecentFiles from '@/components/dashboard/main/RecentFiles'
 const Dashboard = () => {
   return (
     <div className='h-full grid grid-rows-16'>
-        <CloudCards />
+        <FolderCards />
         <RecentFiles />
     </div>
   )
