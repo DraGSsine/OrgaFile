@@ -1,8 +1,7 @@
 "use client";
 
-import { Skeleton } from "@nextui-org/react";
 import { motion } from "framer-motion";
-import { CloudDownloadIcon, Folder01Icon } from "hugeicons-react";
+import { Folder01Icon } from "hugeicons-react";
 
 export function CloudSkeleton() {
   return (

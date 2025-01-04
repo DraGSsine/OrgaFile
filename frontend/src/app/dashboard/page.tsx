@@ -1,5 +1,5 @@
 
-import FolderCards from '@/components/dashboard/cloudCards/FolderCards'
+import FolderCards from '@/components/dashboard/FolderCards/FolderCards'
 import RecentFiles from '@/components/dashboard/main/RecentFiles'
 const Dashboard = () => {
   return (
