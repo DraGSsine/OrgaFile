@@ -22,6 +22,7 @@ export class AuthService {
     if (!user) {
       throw new UnprocessableEntityException("Email or password is incorrect");
     }
+    const userId = user._id.toString();
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       throw new UnprocessableEntityException("Email or password is incorrect");
@@ -29,7 +30,7 @@ export class AuthService {
     const isSubscribed = await this.subscriptionModel.findOne({
       userId: user._id,
     });
-    const token = await this.generateTokens(user._id, !!isSubscribed);
+    const token = await this.generateTokens(userId, !!isSubscribed);
     return {
       token,
       user: {
@@ -56,7 +57,8 @@ export class AuthService {
       ...signUpDto,
       password: encryptedPassword,
     });
-    const token = await this.generateTokens(newUser._id, false);
+    const userId = newUser._id.toString();
+    const token = await this.generateTokens(userId, false);
     return {
       token,
       user: {

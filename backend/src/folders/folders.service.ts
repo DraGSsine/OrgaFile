@@ -76,7 +76,7 @@ export class FoldersService {
 
       for (const file of folder.files) {
         const command = new GetObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
+          Bucket: process.env.AWS_BUCKET_NAME!,
           Key: `${userId}/${file.fileId}`,
         });
 

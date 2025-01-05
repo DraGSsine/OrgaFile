@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 
 const Hero = () => {
   return (
-    <section className="flex flex-col items-center">
+    <section className="flex flex-col items-center px-4 ">
       <div className="w-full flex flex-col items-center pb-10 pt-20">
-        <h1 className="text-6xl md:text-7xl font-bold text-center">
+        <h1 className="text-5xl md:text-7xl font-bold text-center">
           <span className="boujee-text block py-2">
             Smart File Categorization
           </span>
@@ -32,7 +32,7 @@ const Hero = () => {
             Powered by AI
           </span>
         </h1>
-        <p className="pt-4 pb-14 text-center mt-4 text-zinc-400 max-w-[60%] text-medium leading-8">
+        <p className="pt-4 pb-14 text-center mt-4 text-zinc-400 max-w-[600px] text-medium leading-8">
           Drop your messy files and watch the magic happen. OrgaFile&apos;s AI
           instantly analyzes each file&apos;s content and automatically sorts them
           into the perfect categories - whether it&apos;s business documents, sports
@@ -41,17 +41,17 @@ const Hero = () => {
         <div className="flex space-x-8">
           <Link
             href="/pricing"
-            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color font-medium"
+            className="flex items-center justify-center p-3 rounded-full xl:px-6 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color font-medium"
           >
             Start Organizing
-            <ArrowRight01Icon className="font-bold ml-2" size={25} />
+            <ArrowRight01Icon className="font-bold ml-2 w-12 h-8 " />
           </Link>
           <Link
             href="#how-it-works"
-            className="flex items-center justify-center p-3 rounded-full px-6 transition-all duration-300 ease-in hover:opacity-90 border text-primary-color bg-white border-primary-color font-medium"
+            className="flex items-center justify-center p-3 rounded-full xl:px-6 transition-all duration-300 ease-in hover:opacity-90 border text-primary-color bg-white border-primary-color font-medium"
           >
             See How It Works
-            <ArrowRight01Icon className="font-bold ml-2" size={25} />
+            <ArrowRight01Icon className="font-bold ml-2 w-12 h-8 " />
           </Link>
         </div>
       </div>

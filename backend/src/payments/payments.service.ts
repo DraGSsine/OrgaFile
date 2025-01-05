@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus, RawBodyRequest } from "@nestjs/common";
+import { Injectable, HttpStatus, RawBodyRequest, BadRequestException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import Stripe from "stripe";
@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import { JwtService } from "@nestjs/jwt";
 import { UserDocument } from "../schemas/auth.schema";
 import { subscriptionDocument } from "../schemas/subscriptions.schema";
-import { url } from "inspector";
+
 
 interface PlanConfig {
   storage: number;
@@ -14,9 +14,9 @@ interface PlanConfig {
 }
 
 const SUBSCRIPTION_PLANS = {
-  Basic: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
-  Standard: "price_1Q3Mh3HbzmnInIZ1QvC4glTC",
-  Gold: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
+  Basic: "price_1QdWvfIdcozZ05jbkt3Qs7qx",
+  Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
+  Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
 } as const;
 
 const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
@@ -50,7 +50,7 @@ export class PaymentService {
       const event = this.stripe.webhooks.constructEvent(
         request.rawBody,
         request.headers["stripe-signature"] as string,
-        process.env.PROD === "true" ? process.env.STRIPE_WEBHOOK_SECRET_PROD! : process.env.STRIPE_WEBHOOK_SECRET_DEV!
+        process.env.STRIPE_WEBHOOK_SECRET!
       );
 
       switch (event.type) {
@@ -165,6 +165,10 @@ export class PaymentService {
     userId: string
   ) {
     try {
+      if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
+        throw new BadRequestException("Invalid plan");
+      }
+      console.log("------------------------------->",plan)
       const customerId = await this.findOrCreateCustomer(userId);
 
       const subscription = await this.subscriptionModel.findOne({ userId });
@@ -184,7 +188,7 @@ export class PaymentService {
       return { url: session.url! };
     } catch (error) {
       console.error("Checkout session error:", error);
-      return { error: "Failed to create checkout session" };
+      throw new Error("Failed to create checkout session");
     }
   }
 

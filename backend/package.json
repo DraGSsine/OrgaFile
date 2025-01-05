@@ -41,7 +41,7 @@
     "class-validator": "^0.14.1",
     "common-tags": "^1.8.2",
     "cookie-parser": "^1.4.6",
-    "langchain": "^0.1.36",
+    "langchain": "^0.3.9",
     "mongoose": "^8.2.3",
     "stripe": "^15.7.0"
   },

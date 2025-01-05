@@ -169,7 +169,7 @@ export class UploadService {
         // Delete the file from S3
         const fileKey = `${req.user.userId}/${fileId}`;
         const deleteParams = {
-          Bucket: this.configService.get("S3_BUCKET_NAME"),
+          Bucket: this.configService.get("AWS_BUCKET_NAME"),
           Key: fileKey,
         };
 
@@ -277,7 +277,7 @@ export class UploadService {
         }
 
         const deleteParams = {
-          Bucket: this.configService.get("S3_BUCKET_NAME"),
+          Bucket: this.configService.get("AWS_BUCKET_NAME"),
           Delete: {
             Objects: fileIds.map((fileId) => ({
               Key: `${req.user.userId}/${fileId}`,
@@ -349,7 +349,7 @@ export class UploadService {
 
       const fileKey = `${req.user.userId}/${fileId}`;
       const downloadParams = {
-        Bucket: this.configService.get("S3_BUCKET_NAME"),
+        Bucket: this.configService.get("AWS_BUCKET_NAME"),
         Key: fileKey,
       };
       console.log(downloadParams);

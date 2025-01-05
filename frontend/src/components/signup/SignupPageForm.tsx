@@ -45,31 +45,44 @@ const SignupPageForm = () => {
     setIsLoading(true);
     setErrors({});
 
-    try {
-      const validatedUser = userSchema.parse({ ...formData, acceptTerms });
-      const signUpResult = await dispatch(SignUpAction(validatedUser));
+    const plan = localStorage.getItem("plan");
+    if (plan === "Basic" || plan === "Gold" || plan === "Standard") {
+      try {
+        const validatedUser = userSchema.parse({ ...formData, acceptTerms });
 
-      if (SignUpAction.fulfilled.match(signUpResult)) {
-        const checkoutResult = await dispatch(createCheckoutSession());
-        if (createCheckoutSession.fulfilled.match(checkoutResult)) {
-          toast.success("Sign up successful");
-          router.push(checkoutResult.payload.url);
-          return;
+        const signUpResult = await dispatch(SignUpAction(validatedUser));
+        if (SignUpAction.fulfilled.match(signUpResult)) {
+          const checkoutResult = await dispatch(createCheckoutSession());
+          if (createCheckoutSession.fulfilled.match(checkoutResult)) {
+            toast.success("Sign up successful");
+            localStorage.removeItem("plan");
+            router.push(checkoutResult.payload.url);
+            return;
+          } else {
+            toast.error(
+              (signUpResult.payload.message as string) || "Sign up failed"
+            );
+            return;
+          }
         }
+        toast.error((signUpResult.payload as string) || "Sign up failed");
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const formattedErrors: Record<string, string> = {};
+          error.errors.forEach((err) => {
+            formattedErrors[err.path[0]] = err.message;
+          });
+          setErrors(formattedErrors);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
+      } finally {
+        setIsLoading(false);
       }
-      toast.error((signUpResult.payload as string) || "Sign up failed");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const formattedErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          formattedErrors[err.path[0]] = err.message;
-        });
-        setErrors(formattedErrors);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    } finally {
+    } else {
       setIsLoading(false);
+      router.push("/pricing");
+      toast.info("Please select a plan");
     }
   };
 

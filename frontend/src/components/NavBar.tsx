@@ -29,7 +29,7 @@ const NavBar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:flex" justify="start">
-        <NavbarBrand>
+        <NavbarBrand className="flex justify-end sm:justify-start">
           <Logo />
         </NavbarBrand>
       </NavbarContent>

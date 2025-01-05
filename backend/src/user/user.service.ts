@@ -90,7 +90,7 @@ export class UserService {
       if (fileIds.length > 0) {
         // Remove the user objects from S3
         const deleteParams = {
-          Bucket: this.configService.get("S3_BUCKET_NAME"),
+          Bucket: this.configService.get("AWS_BUCKET_NAME"),
           Delete: {
             Objects: fileIds.map((fileId) => ({
               Key: `${userId}/${fileId}`,
@@ -191,6 +191,7 @@ export class UserService {
   async getUserInfo(userId) {
     try {
       // Get user and latest subscription
+      console.log("userId", userId);
       const user = await this.userModel.findOne({ _id: userId });
       if (!user) {
         throw new UnprocessableEntityException(["User not found"]);
@@ -239,7 +240,7 @@ export class UserService {
       );
     } catch (error) {
       console.error("Error in getUserInfo:", error);
-      throw new UnprocessableEntityException(["User not found"]);
+      throw new UnprocessableEntityException(error.message);
     }
   }
 

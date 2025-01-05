@@ -16,7 +16,7 @@ const s3 = new S3Client({
 
 export async function getPresignedUrl(key: string) {
   const getCommand = new GetObjectCommand({
-    Bucket: process.env.S3_BUCKET_NAME!,
+    Bucket: process.env.AWS_BUCKET_NAME!,
     Key: key,
   });
   const url = await getSignedUrl(s3, getCommand, { expiresIn: 3600 });
@@ -30,7 +30,7 @@ export async function getS3SignedUrl(
 ): Promise<{ success: boolean; url: string }> {
   try {
     const uploadCommand = new PutObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME!,
+      Bucket: process.env.AWS_BUCKET_NAME!,
       Key: fileKey,
       ContentType: fileType,
       ContentLength: fileSize,
@@ -44,5 +44,5 @@ export async function getS3SignedUrl(
 }
 
 export async function generateFileUrl(fileKey: string) {
-  return `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${fileKey}`;
+  return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${fileKey}`;
 }
