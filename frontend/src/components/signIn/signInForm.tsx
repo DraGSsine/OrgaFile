@@ -31,7 +31,6 @@ const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignin = async () => {
-
     setIsLoading(true);
     setErrors({});
     const userInfo: userInfoType = {
@@ -51,13 +50,17 @@ const SignInForm = () => {
           toast.success("Sign in successful");
           router.push(checkoutResult.payload.url);
           return;
+        } else {
+          toast.error(
+            (signInResult.payload.message as string) || "Sign in failed"
+          );
+          return;
         }
       }
-
-      toast.error((signInResult.payload as string) || "Sign in failed");
+      toast.error((signInResult.payload as string) || "Sign up failed");
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const formattedErrors: Record<string, string> = {}; 
+        const formattedErrors: Record<string, string> = {};
         error.errors.forEach((err) => {
           formattedErrors[err.path[0]] = err.message;
         });

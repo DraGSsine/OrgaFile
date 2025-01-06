@@ -32,6 +32,7 @@ export class AuthService {
     });
     const token = await this.generateTokens(userId, !!isSubscribed);
     return {
+      message: "User signed in successfully",
       token,
       user: {
         id: user._id.toString(),

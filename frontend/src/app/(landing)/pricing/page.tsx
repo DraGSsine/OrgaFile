@@ -48,7 +48,7 @@ const Pricing = () => {
     {
       productId: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
       type: "Gold",
-      price: "$29.99",
+      price: "$19.99",
       subscription: "month",
       description: "Complete solution for users with extensive file organization needs requiring maximum credits and storage.",
       mostpopular: false,

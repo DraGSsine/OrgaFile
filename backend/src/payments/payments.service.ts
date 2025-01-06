@@ -1,4 +1,9 @@
-import { Injectable, HttpStatus, RawBodyRequest, BadRequestException } from "@nestjs/common";
+import {
+  Injectable,
+  HttpStatus,
+  RawBodyRequest,
+  BadRequestException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import Stripe from "stripe";
@@ -6,7 +11,6 @@ import { Request, Response } from "express";
 import { JwtService } from "@nestjs/jwt";
 import { UserDocument } from "../schemas/auth.schema";
 import { subscriptionDocument } from "../schemas/subscriptions.schema";
-
 
 interface PlanConfig {
   storage: number;
@@ -29,16 +33,34 @@ const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
 export class PaymentService {
   private stripe: Stripe;
   private redirectUrl: string;
-
+  private webhookSecret: string;
   constructor(
     @InjectModel("Subscription")
     private subscriptionModel: Model<subscriptionDocument>,
     @InjectModel("User") private userModel: Model<UserDocument>,
     private jwtService: JwtService
   ) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      throw new Error("Stripe secret key is not provided");
+    }
+
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      throw new Error("Stripe webhook secret is not provided");
+    }
+    this.webhookSecret = webhookSecret;
+    this.stripe = new Stripe(key, {
       apiVersion: "2024-04-10",
     });
+    if (process.env.PROD === undefined) {
+      throw new Error("Environment not set");
+    }
+
+    if (!process.env.NEXT_APP_URL_PROD && !process.env.NEXT_APP_URL_DEV) {
+      throw new Error("Redirect URL not provided");
+    }
+
     this.redirectUrl =
       process.env.PROD === "true"
         ? process.env.NEXT_APP_URL_PROD!
@@ -50,7 +72,7 @@ export class PaymentService {
       const event = this.stripe.webhooks.constructEvent(
         request.rawBody,
         request.headers["stripe-signature"] as string,
-        process.env.STRIPE_WEBHOOK_SECRET!
+        this.webhookSecret
       );
 
       switch (event.type) {
@@ -168,7 +190,7 @@ export class PaymentService {
       if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
         throw new BadRequestException("Invalid plan");
       }
-      console.log("------------------------------->",plan)
+      console.log("------------------------------->", plan);
       const customerId = await this.findOrCreateCustomer(userId);
 
       const subscription = await this.subscriptionModel.findOne({ userId });
