@@ -304,7 +304,7 @@ export class UploadService {
         });
 
         if (!files) {
-          console.log("Files not found");
+          console.error("Files not found");
           return
         }
 
@@ -352,7 +352,6 @@ export class UploadService {
         Bucket: this.configService.get("AWS_BUCKET_NAME"),
         Key: fileKey,
       };
-      console.log(downloadParams);
       // Get the file metadata to retrieve the file size
       const headCommand = new HeadObjectCommand(downloadParams);
       const headResult = await this.s3Client.send(headCommand);

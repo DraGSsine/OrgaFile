@@ -55,7 +55,6 @@ const SignupPageForm = () => {
           const checkoutResult = await dispatch(createCheckoutSession());
           if (createCheckoutSession.fulfilled.match(checkoutResult)) {
             toast.success("Sign up successful");
-            localStorage.removeItem("plan");
             router.push(checkoutResult.payload.url);
             return;
           } else {

@@ -222,15 +222,6 @@ export class DocumentAnalyzer {
     customTags: string,
     existingCategories: string[]
   ): string {
-    const basePrompt = `
-      Categorize this document by following these rules:
-      1. First, check if the document fits into any of these existing categories:
-         ${existingCategories.join(", ")}
-    `;
-    console.log(
-      "------------------------------------------------------------------------------->",
-      customTags
-    );
     const modeSpecificPrompts = {
       general: `
       Available categories: ${PREDEFINED_CATEGORIES.join(", ")}
@@ -273,6 +264,9 @@ export class DocumentAnalyzer {
   private async correctTyposInCategories(
     categories: string[]
   ): Promise<string> {
+    if (categories.length === 0) {
+      return "";
+    }
     const chain = PROMPT_TEMPLATES.typoCorrection.pipe(
       AIClientFactory.getInstance()
     );

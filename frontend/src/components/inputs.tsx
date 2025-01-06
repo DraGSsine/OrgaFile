@@ -29,7 +29,6 @@ export const SearchInput = () => {
         const userId = cookies.get("userId");
         const fileId = files[key].fileId;
         const url = await getPresignedUrl(`${userId}/${fileId}`);
-        console.log("url", url);
         dispatch(ToggleFile({ isOpen: true, url}));
       }}
       startContent={

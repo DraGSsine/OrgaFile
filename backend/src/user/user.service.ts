@@ -190,8 +190,6 @@ export class UserService {
 
   async getUserInfo(userId) {
     try {
-      // Get user and latest subscription
-      console.log("userId", userId);
       const user = await this.userModel.findOne({ _id: userId });
       if (!user) {
         throw new UnprocessableEntityException(["User not found"]);

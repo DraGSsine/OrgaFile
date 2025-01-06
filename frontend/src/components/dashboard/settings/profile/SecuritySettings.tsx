@@ -43,7 +43,6 @@ export function SecuritySettings() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form data:", formData);
     try {
       // Validate form data with Zod
       const validatedData = passwordSchema.parse(formData);

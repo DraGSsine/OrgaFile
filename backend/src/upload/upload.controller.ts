@@ -14,7 +14,7 @@ import {
 import { AuthGuard } from "../guards/auth.guard";
 import { SubscriptionGuard } from "../guards/subscription.guard";
 import { UploadService } from "./upload.service";
-import { FileMetaData, FilesWithMode } from "../types/type";
+import { FilesWithMode } from "../types/type";
 
 @Controller("api/files")
 @UseGuards(AuthGuard)

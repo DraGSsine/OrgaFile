@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios, { AxiosResponse } from "axios";
 import { PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3";
 import cookies from "js-cookie";
-import { extractTextFromFile } from "@/helpers/parse";
+import { extractTextFromFile, validateFileType } from "@/helpers/parse";
 import { generateFileUrl, getS3SignedUrl } from "@/helpers/action";
 
 type FileMetaData = {
@@ -130,44 +130,41 @@ export const uploadFiles = createAsyncThunk(
   "files/uploadFiles",
   async (files: FormData, { rejectWithValue }) => {
     try {
-      // get the categorixation mode from local storage
       const categorizationMode = localStorage.getItem("categorizationMode");
       const customTags = JSON.parse(localStorage.getItem("customTags") || "[]");
-      if (files.getAll("files").length === 0) {
+      
+      const filesList = files.getAll("files");
+      
+      if (filesList.length === 0) {
         return rejectWithValue("Please select a file to upload.");
-      } else if (files.getAll("files").length > 40) {
+      } else if (filesList.length > 40) {
         return rejectWithValue("You can upload maximum 40 files at a time.");
       }
-      if (
-        categorizationMode !== "custom" &&
-        categorizationMode !== "general" &&
-        categorizationMode !== "basic"
-      ) {
-        return rejectWithValue("Please select a categorization mode.");
-      }
 
-      if (categorizationMode === "custom" && customTags.length === 0) {
-        return rejectWithValue("Please add at least one custom tag.");
-      }
-      // Supported file types
-      const supportedTypes = [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "text/plain",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      ];
-
-      // Validate unsupported files
-      const unsupportedFiles = Array.from(files.values()).filter(
-        (file) => !supportedTypes.includes((file as File).type)
+      // Validate all files
+      const validationResults = await Promise.all(
+        Array.from(filesList).map(async (fileEntry: FormDataEntryValue) => {
+          const file = fileEntry as File;
+          const validation = await validateFileType(file);
+          return {
+            file,
+            ...validation
+          };
+        })
       );
 
-      if (unsupportedFiles.length) {
+      // Check for invalid files
+      const invalidFiles = validationResults.filter(result => !result.isValid);
+      if (invalidFiles.length > 0) {
+        const invalidFileNames = invalidFiles
+          .map(result => `${result.file.name} (detected as: ${result.detectedType || 'unknown'})`)
+          .join(', ');
         return rejectWithValue(
-          "Only PDF, DOCX, TXT, and XLSX files are allowed."
+          `Invalid files detected: ${invalidFileNames}. Files must match their extensions.`
         );
       }
 
+      // Continue with your existing upload logic for valid files
       const userId = cookies.get("userId");
       if (!userId) {
         return rejectWithValue("User not authenticated.");
@@ -175,67 +172,53 @@ export const uploadFiles = createAsyncThunk(
 
       const filesMetaData: FileMetaData[] = [];
       const uniqueKey = uuidv4();
-      // Extract file content and prepare metadata
-      for (const [key, value] of Array.from(files.entries())) {
-        const file = value as File;
+
+      // Process valid files
+      for (const { file } of validationResults) {
         const fileKey = `${userId}/${uniqueKey}-${file.name}`;
         const fileUrl = await generateFileUrl(fileKey);
-
-        // Extract file content
+        console.log(file)
         const fileContent = await extractTextFromFile(file);
         if (!fileContent) {
-          return rejectWithValue("Failed to parse file content.");
+          return rejectWithValue(`Failed to parse content of file: ${file.name}`);
         }
 
         filesMetaData.push({
           url: fileUrl,
-          format: fileKey.split(".").pop()!,
+          format: file.name.split('.').pop()!,
           size: file.size,
           fileId: `${uniqueKey}-${file.name}`,
           data: fileContent,
         });
       }
 
-      // Send metadata to backend
+      // Rest of your upload logic...
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
         { files: filesMetaData, categorizationMode, customTags },
         { withCredentials: true }
       );
 
-      if (response.data.invalidFiles?.length > 0) {
-        return rejectWithValue("Some files are invalid.");
-      }
-
-      const uploadPromises: Promise<AxiosResponse<any, any>>[] = [];
-
-      // Upload files to S3
-      for (const [key, value] of Array.from(files.entries())) {
-        const file = value as File;
+      // Upload to S3
+      const uploadPromises = validationResults.map(async ({ file }) => {
         const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-
-        // Create S3 upload command
-        const { success, url } = await getS3SignedUrl(
-          fileKey,
-          file.type,
-          file.size
-        );
+        const { success, url } = await getS3SignedUrl(fileKey, file.type, file.size);
+        
         if (!success) {
-          return rejectWithValue("Failed to get signed URL.");
+          throw new Error(`Failed to get signed URL for ${file.name}`);
         }
-        const uploadPromise = axios.put(url, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
+
+        return axios.put(url, file, {
+          headers: { "Content-Type": file.type }
         });
-        uploadPromises.push(uploadPromise);
-      }
-      // Wait for all uploads to complete
+      });
+
       await Promise.all(uploadPromises);
       return response.data;
+
     } catch (error: any) {
       console.error("Error uploading files:", error);
-      if (error.response?.status == 500) {
+      if (error.response?.status === 500) {
         return rejectWithValue("Server error. Please try again later.");
       }
       return rejectWithValue(

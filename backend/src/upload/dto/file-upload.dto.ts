@@ -3,7 +3,7 @@ import { FileMetaData } from "../../types/type";
 
 export class fileUploadDto {
   @IsString()
-  @IsIn(["general", "basic", "custom"])
+  @IsIn(["general", "custom"])
   categorizationMode: string;
   @IsString({ each: true })
   customTags: string[];

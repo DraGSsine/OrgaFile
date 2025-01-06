@@ -39,7 +39,6 @@ export class UserController {
     @Body() updatePassowrdDto: UpdatePasswordDto,
     @Req() req: any
   ) {
-    console.log(updatePassowrdDto);
     return this.userService.updatePassword(updatePassowrdDto, req.user.userId);
   }
 

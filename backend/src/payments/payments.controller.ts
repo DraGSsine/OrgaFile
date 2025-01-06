@@ -34,7 +34,6 @@ export class PaymentController {
         createPaymentDto.plan,
         request.user.userId,
       );
-      console.log('Checkout session result:', result); 
       return response.send(result);
     } catch (error) {
       console.error('Error creating checkout session:', error);

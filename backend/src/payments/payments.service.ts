@@ -25,8 +25,8 @@ const SUBSCRIPTION_PLANS = {
 
 const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
   Basic: { storage: 5, creditsLimit: 100 },
-  Standard: { storage: 25, creditsLimit: 500 },
-  Gold: { storage: 50, creditsLimit: 1000 },
+  Standard: { storage: 15, creditsLimit: 500 },
+  Gold: { storage: 25, creditsLimit: 1000 },
 };
 
 @Injectable()
@@ -122,7 +122,7 @@ export class PaymentService {
     )?.[0];
 
     if (!planName) {
-      console.log("Unknown plan ID", { planId });
+      console.error("Unknown plan ID", { planId });
       return;
     }
     await this.subscriptionModel.findOneAndUpdate(
@@ -190,7 +190,6 @@ export class PaymentService {
       if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
         throw new BadRequestException("Invalid plan");
       }
-      console.log("------------------------------->", plan);
       const customerId = await this.findOrCreateCustomer(userId);
 
       const subscription = await this.subscriptionModel.findOne({ userId });

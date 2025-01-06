@@ -37,7 +37,7 @@ const Pricing = () => {
       mostpopular: true,
       features: [
         "500 Files/month",
-        "25GB Storage",
+        "15GB Storage",
         "Unlimited custom categories",
         "Advanced AI categorization",
         "Smart folder suggestions",
@@ -54,7 +54,7 @@ const Pricing = () => {
       mostpopular: false,
       features: [
         "1000 Files/month",
-        "50GB Storage",
+        "25GB Storage",
         "Unlimited custom categories",
         "Advanced AI categorization",
         "Smart folder suggestions",

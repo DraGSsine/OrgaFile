@@ -1,9 +1,11 @@
 import * as XLSX from "xlsx";
 import * as mammoth from "mammoth";
+import { fileTypeFromBlob } from "file-type";
+import { get } from "http";
 
 export async function extractTextFromFile(file: File): Promise<string> {
   const extension = file.name.split(".").pop()?.toLowerCase();
-
+  console.log(extension);
   let text = "";
   switch (extension) {
     case "pdf":
@@ -20,6 +22,14 @@ export async function extractTextFromFile(file: File): Promise<string> {
     case "txt":
       text = await extractFromTXT(file);
       break;
+    // case "png":
+    // case "jpg":
+    // case "jpeg":
+    // case "gif":
+    // case "webp":
+    // case "svg":
+    //   text = await getBase64(file);
+    //   break;
     default:
       throw new Error("Unsupported file format");
   }
@@ -29,6 +39,17 @@ export async function extractTextFromFile(file: File): Promise<string> {
 
   // Return the first 2000 characters
   return text.slice(0, 2000);
+}
+
+async function getBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export async function extractFromPDF(file: File): Promise<string> {
@@ -71,4 +92,68 @@ async function extractFromExcel(file: File): Promise<string> {
 async function extractFromTXT(file: File): Promise<string> {
   const text = await file.text();
   return text;
+}
+
+// Define supported extensions and their corresponding actual file signatures
+
+export async function validateFileType(
+  file: File
+): Promise<{ isValid: boolean; detectedType: string | null }> {
+  const SUPPORTED_EXTENSIONS = {
+    pdf: ["pdf"],
+    png: ["png"],
+    jpg: ["jpg", "jpeg"],
+    jpeg: ["jpg", "jpeg"],
+    gif: ["gif"],
+    webp: ["webp"],
+    svg: ["svg"],
+    doc: ["doc"],
+    docx: ["docx"],
+    xlsx: ["xlsx"],
+    txt: ["txt"],
+  } as const;
+  // Get the claimed extension from the filename
+  const claimedExtension = file.name.split(".").pop()?.toLowerCase() || "";
+
+  if (!claimedExtension || !(claimedExtension in SUPPORTED_EXTENSIONS)) {
+    return { isValid: false, detectedType: null };
+  }
+
+  // Special case for .txt files since they don't have a binary signature
+  if (claimedExtension === "txt") {
+    try {
+      // Try to read the file as text
+      await file.text();
+      return { isValid: true, detectedType: "txt" };
+    } catch {
+      return { isValid: false, detectedType: null };
+    }
+  }
+
+  try {
+    // Detect the actual file type from its content
+    const fileType = await fileTypeFromBlob(file);
+
+    // If we couldn't detect the type and it's not a txt file, reject it
+    if (!fileType) {
+      return { isValid: false, detectedType: null };
+    }
+
+    // Get the actual extension from the detected mime type
+    const detectedExt = fileType.ext;
+
+    // Check if the detected type matches any of the allowed types for the claimed extension
+    const allowedTypes = SUPPORTED_EXTENSIONS[
+      claimedExtension as keyof typeof SUPPORTED_EXTENSIONS
+    ] as unknown as any[];
+    const isValid = allowedTypes.includes(detectedExt);
+
+    return {
+      isValid,
+      detectedType: detectedExt,
+    };
+  } catch (error) {
+    console.error("Error validating file type:", error);
+    return { isValid: false, detectedType: null };
+  }
 }
