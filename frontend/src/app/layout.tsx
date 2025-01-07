@@ -24,6 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          defer
+          data-website-id="677d56f856a8569fc404ff2c"
+          data-domain="orgafile.com"
+          src="https://datafa.st/js/script.js"
+        ></script>
         <Script
           type="module"
           src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs"

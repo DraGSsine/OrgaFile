@@ -44,7 +44,7 @@ const Page = () => {
     <div className=" h-full pt-5 grid grid-rows-12 ">
       <HeaderPage icon={<Folder02Icon className=" h-8 w-8 text-primary-color"/>} title={folder?.name!} description="your organized files" />
       <TableFiles
-        maxRows={7}
+        maxRows={10}
         files={folder?.files ?? []}
         isLoading={!folder?.files && true}
         routeName="recentFiles"

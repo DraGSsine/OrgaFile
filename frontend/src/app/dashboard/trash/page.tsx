@@ -53,7 +53,7 @@ const Page = () => {
         description="Restore Your Deleted Files"
       />
       <TableFiles
-        maxRows={11}
+        maxRows={10}
         files={loadRemovedFilesState.files}
         isLoading={isLoading}
         routeName="removedFiles"

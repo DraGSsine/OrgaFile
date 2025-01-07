@@ -61,7 +61,7 @@ const AllFilesPage = () => {
     <div className=" h-full pt-5 grid grid-rows-12 ">
       <HeaderPage icon={<File01Icon className=" h-8 w-8 text-primary-color" />} title="All Files" description="Discover All Your upladed files " />
       <TableFiles
-        maxRows={11}
+        maxRows={10}
         files={loadFilesState.files}
         isLoading={isLoading}
         routeName="allFiles"

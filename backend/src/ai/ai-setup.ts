@@ -1,33 +1,9 @@
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { ChatMistralAI } from "@langchain/mistralai";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { JsonOutputParser } from "@langchain/core/output_parsers";
+import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 import { FileMetaData, categorizationModes } from "../types/type";
-import { HumanMessage } from "@langchain/core/messages";
 
-export interface AIAnalyzeDocumnetResponse {
-  mainTopic: string;
-  documentType: string;
-  keyEntities: string[];
-  summary: string;
-}
-
-export interface DocumentAiInfo {
-  mainTopic: string;
-  documentType: string;
-  keyEntities: string[];
-  summary: string;
-}
-
-export interface AiResponse {
-  category: string;
-  originalDocument: DocumentAiInfo;
-  error?: boolean;
-}
-
-// constants.ts
 export const CHUNK_SIZE = 2000;
 export const CHUNK_OVERLAP = 50;
 export const MAX_CHUNKS = 15;
@@ -51,20 +27,50 @@ export const PREDEFINED_CATEGORIES = [
   "Environment",
 ] as const;
 
+export interface AIAnalyzeDocumentResponse {
+  mainTopic: string;
+  documentType: string;
+  keyEntities: string[];
+  summary: string;
+}
+
+export interface DocumentAiInfo {
+  mainTopic: string;
+  documentType: string;
+  keyEntities: string[];
+  summary: string;
+}
+
+export interface AiResponse {
+  category: string;
+  originalDocument: DocumentAiInfo;
+  error?: boolean;
+  isExistingCategory?: boolean;
+}
+
 export const PROMPT_TEMPLATES = {
   analysis: ChatPromptTemplate.fromMessages([
-    ["system", "You are a helpful assistant."],
+    [
+      "system",
+      `You are a document analysis expert. Always respond with valid JSON matching this exact schema:
+    {{
+      "mainTopic": "string (2-3 words)",
+      "documentType": "string",
+      "keyEntities": ["string"],
+      "summary": "string"
+    }}`,
+    ],
     [
       "user",
-      `Analyze the following document context and provide:
-      1. mainTopic: A concise phrase of less than 3 words describing the most specific and distinctive main topic.
-      2. documentType: Identify the type of document (e.g., report, article, code, etc.).
-      3. keyEntities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
-      4. summary: A brief 2-3 sentence summary of the main points.
-
-      Respond in JSON format`,
+      `Analyze this document:
+    {context}
+    
+    Remember:
+    - mainTopic must be 2-3 words
+    - keyEntities must be an array of 5 or fewer strings
+    - summary must be 2-3 complete sentences
+    - All JSON fields are required`,
     ],
-    ["user", "{context}"],
   ]),
 
   filename: ChatPromptTemplate.fromMessages([
@@ -74,78 +80,61 @@ export const PROMPT_TEMPLATES = {
     ],
     [
       "user",
-      `Generate a descriptive filename based on the following document information:
-      Main Topic: {mainTopic}
-      Document Type: {documentType}
-      Summary: {summary}
+      `Generate a descriptive filename based on:
+    Main Topic: {mainTopic}
+    Document Type: {documentType}
+    Summary: {summary}
 
-      Generate filename strictly following these rules:
-      - Create a concise filename of 1-4 words
-      - Use only alphanumeric characters and hyphens
-      - Do NOT include file extension
-      - Focus on the most distinctive aspect of the document
+    Rules:
+    - Use 1-4 words
+    - Only alphanumeric and hyphens
+    - No file extensions
+    - Focus on most distinctive aspect
 
-      respond only with the filename`,
+    Return filename only.`,
     ],
   ]),
-
-  categorization: (categoryPrompt: string) =>
-    ChatPromptTemplate.fromMessages([
-      [
-        "system",
-        `You are an expert document categorization assistant. Given a document, analyze its content and categorize it following these steps:
-
-      1. Score each possible category based on how well it matches the document's content:
-         - Calculate relevance score (0-100) for each category
-         - Consider the document's main topic, type, and overall content
-         - Higher scores mean better category fit
-      `,
-      ],
-      [
-        "user",
-        `
-        ${categoryPrompt}
-      2. Choose the category with the highest relevance score
-
-      Document Details:
-      - Main Topic: {mainTopic}
-      - Document Type: {documentType}
-      - Summary: {summary}
-    `,
-      ],
-    ]),
-
   typoCorrection: ChatPromptTemplate.fromMessages([
-    ["system", "You are a helpful assistant that corrects typos in text."],
+    ["system", "You are an expert at correcting typos in categories."],
     [
       "user",
-      `Correct any typos in the following of categories:
-      {categories}
+      `Correct any typos in these categories:
+    {categories}
 
-      Respond with the corrected list of categories .`,
+    Return corrected categories as a comma-separated string.`,
     ],
   ]),
-  analysisImage: ChatPromptTemplate.fromMessages([
-    ["system", "You are a helpful assistant."],
+  categorization: ChatPromptTemplate.fromMessages([
+    [
+      "system",
+      "You are a document categorization expert who follows rules strictly.",
+    ],
     [
       "user",
-      ` Analyze the following image and provide:
-      1. mainTopic: A concise phrase of less than 3 words describing the most specific and distinctive main topic.
-      2. documentType: Identify the type of document (e.g., report, article, code, etc.).
-      3. keyEntities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
-      4. summary: A brief 2-3 sentence summary of the main points.
+      `Categorize this document using these priority rules:
+    {context}
 
-      Respond in JSON format`,
+    Document Info:
+    - Topic: {mainTopic}
+    - Type: {documentType}
+    - Summary: {summary}
+
+    Output format: Return ONLY the category name as a plain string, no JSON or explanation.
+    
+    Remember:
+    1. MUST use existing categories if any reasonable match exists
+    2. Only use default categories if no existing category fits
+    3. Create new category ONLY if no other options fit`,
     ],
+  ]),
+
+  analysisImage: ChatPromptTemplate.fromMessages([
+    ["system", "You are a document analysis expert specializing in images."],
     [
-      "human",
-      [
-        {
-          type: "image_url",
-          image_url: { url: "{context}" },
-        },
-      ],
+      "user",
+      "Analyze this image and provide valid JSON with mainTopic, documentType, keyEntities, and summary.",
     ],
+    ["human", [{ type: "image_url", image_url: "{context}" }]],
   ]),
 };
 
@@ -153,16 +142,15 @@ export class AIClientFactory {
   private static instance: any;
 
   static getInstance(): any {
-    const apiKey = process.env.OPENAI_API_KEY;
-    const model = "gpt-4o-mini";
     if (!this.instance) {
-      if (!apiKey) {
-        throw new Error("MISTRAL_API_KEY is not set in environment variables");
-      }
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) throw new Error("OPENAI_API_KEY not set");
 
       this.instance = new ChatOpenAI({
         apiKey,
-        model,
+        model: "gpt-4o-mini",
+        temperature: 0.3,
+        maxTokens: 500,
       });
     }
     return this.instance;
@@ -170,138 +158,118 @@ export class AIClientFactory {
 }
 
 export class DocumentSplitter {
-  private splitter: any;
+  private splitter: RecursiveCharacterTextSplitter;
 
   constructor() {
     this.splitter = new RecursiveCharacterTextSplitter({
       chunkSize: CHUNK_SIZE,
-      separators: ["\n\n", "\n", ".", "!", "?"],
       chunkOverlap: CHUNK_OVERLAP,
+      separators: ["\n\n", "\n", ".", "!", "?"],
     });
   }
 
   async split(content: string): Promise<string> {
     const chunks = await this.splitter.createDocuments([content]);
-    const limitedChunks = chunks.slice(0, MAX_CHUNKS);
-
-    return limitedChunks.reduce((acc, chunk) => {
-      if (acc.length < MAX_CONTEXT_LENGTH) {
-        return acc + chunk.pageContent.trim() + "\n---\n";
-      }
-      return acc;
-    }, "");
+    return chunks
+      .slice(0, MAX_CHUNKS)
+      .reduce(
+        (acc, chunk) =>
+          acc.length < MAX_CONTEXT_LENGTH
+            ? acc + chunk.pageContent.trim() + "\n---\n"
+            : acc,
+        ""
+      );
   }
 }
 
-export interface AIAnalyzeDocumentResponse {
-  mainTopic: string;
-  documentType: string;
-  keyEntities: string[];
-  summary: string;
-}
+const analysisFunctionSchema = {
+  name: "analyzer",
+  description: "Analyzes document content and extracts key information",
+  parameters: {
+    type: "object",
+    properties: {
+      mainTopic: {
+        type: "string",
+        description: "2-3 words describing the main topic",
+      },
+      documentType: {
+        type: "string",
+        description: "Type of document",
+      },
+      keyEntities: {
+        type: "array",
+        items: { type: "string" },
+        description: "Up to 5 important entities",
+      },
+      summary: {
+        type: "string",
+        description: "2-3 sentence summary",
+      },
+    },
+    required: ["mainTopic", "documentType", "keyEntities", "summary"],
+  },
+};
 
 export class DocumentAnalyzer {
   private splitter: DocumentSplitter;
-  private parser: JsonOutputParser<AIAnalyzeDocumentResponse>;
+  private parser: JsonOutputFunctionsParser;
 
   constructor() {
     this.splitter = new DocumentSplitter();
-    this.parser = new JsonOutputParser<AIAnalyzeDocumentResponse>();
+    this.parser = new JsonOutputFunctionsParser();
   }
 
   async analyzeDocument(
     file: FileMetaData
   ): Promise<AIAnalyzeDocumentResponse> {
-    try {
-      if (SUPPORTED_IMAGES.includes(file.format)) {
-        const chain = PROMPT_TEMPLATES.analysisImage
-          .pipe(AIClientFactory.getInstance())
-          .pipe(this.parser);
-        const res = await chain.invoke({ context: file.data });
-        console.log("--->", res);
-        return res as any;
-      } else {
-        const contextText = await this.splitter.split(file.data);
-        const chain = PROMPT_TEMPLATES.analysis
-          .pipe(AIClientFactory.getInstance())
-          .pipe(this.parser);
+    const maxRetries = 3;
 
-        return await chain.invoke({ context: contextText });
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const model = AIClientFactory.getInstance().bind({
+          functions: [analysisFunctionSchema],
+          function_call: { name: "analyzer" },
+        });
+
+        if (SUPPORTED_IMAGES.includes(file.format)) {
+          const chain = PROMPT_TEMPLATES.analysisImage
+            .pipe(model)
+            .pipe(this.parser);
+          return (await chain.invoke({
+            context: file.data,
+          })) as AIAnalyzeDocumentResponse;
+        } else {
+          const contextText = await this.splitter.split(file.data);
+          const chain = PROMPT_TEMPLATES.analysis.pipe(model).pipe(this.parser);
+          return (await chain.invoke({
+            context: contextText,
+          })) as AIAnalyzeDocumentResponse;
+        }
+      } catch (error) {
+        if (i === maxRetries - 1)
+          throw new Error(`Analysis failed: ${error.message}`);
+        console.warn(`Retry ${i + 1}/${maxRetries} due to error`);
       }
-    } catch (error) {
-      console.error("Error analyzing document:", error);
-      throw new Error("Failed to analyze document");
     }
+    throw new Error("Analysis failed after all retries");
   }
 
-  async generateFileName(
-    documentInfo: AIAnalyzeDocumentResponse
-  ): Promise<string> {
+  async generateFileName(docInfo: AIAnalyzeDocumentResponse): Promise<string> {
     try {
       const chain = PROMPT_TEMPLATES.filename.pipe(
         AIClientFactory.getInstance()
       );
-      const response = await chain.invoke(documentInfo);
-      return (response as any).content as string;
+      const response = await chain.invoke(docInfo);
+      return (response as any).content;
     } catch (error) {
-      console.error("Error generating filename:", error);
-      throw new Error("Failed to generate filename");
+      throw new Error(`Filename generation failed: ${error.message}`);
     }
-  }
-
-  private getCategoryPrompt(
-    mode: categorizationModes,
-    customTags: string,
-    existingCategories: string[]
-  ): string {
-    const modeSpecificPrompts = {
-      general: `
-      IMPORTANT - Follow these scoring rules in order:
-
-      1. Existing Categories (HIGHEST PRIORITY): ${existingCategories.join(", ")}
-      3. Default Categories (MEDIUM PRIORITY): ${PREDEFINED_CATEGORIES.join(", ")}
-
-      Strict Rules:
-      - You MUST use Existing Categories if there's ANY reasonable match
-      - ONLY fall back to default categories if NO Existing category fits
-      - Return ONLY the category name, nothing else
-      - Do not modify category names
-
-      Document Details:
-      - Main Topic: {mainTopic}
-      - Document Type: {documentType}
-      - Summary: {summary}
-    `,
-
-      custom: `
-      IMPORTANT - Follow these scoring rules in order:
-
-      1. Custom Categories (HIGHEST PRIORITY): ${customTags}
-      2. Existing Categories (MEDIUM PRIORITY): ${existingCategories.join(", ")}
-      3. Default Categories (LOWEST PRIORITY): ${PREDEFINED_CATEGORIES.join(", ")}
-
-      Strict Rules:
-      - You MUST use custom categories if there's ANY reasonable match
-      - ONLY fall back to existing or default categories if NO custom category fits
-      - Return ONLY the category name, nothing else
-      - Do not modify category names
-
-      Document Details:
-      - Main Topic: {mainTopic}
-      - Document Type: {documentType}
-      - Summary: {summary}
-    `,
-    };
-
-    return modeSpecificPrompts[mode];
   }
 
   private async correctTyposInCategories(
     categories: string[]
   ): Promise<string> {
-    if (categories.length === 0) {
-      return "";
-    }
+    if (!categories.length) return "";
     const chain = PROMPT_TEMPLATES.typoCorrection.pipe(
       AIClientFactory.getInstance()
     );
@@ -316,49 +284,41 @@ export class DocumentAnalyzer {
     customTags: string[]
   ): Promise<AiResponse[]> {
     try {
-      const cleanExistingCategories = [...new Set(existingCategories)]
-        .filter((category) => category.trim() !== "")
-        .filter((category) => category.toLowerCase() !== "uncategorized");
-
-      // Correct typos in custom tags
-      const correctedCustomTags =
-        await this.correctTyposInCategories(customTags);
-
-      const categoryPrompt = this.getCategoryPrompt(
-        categorizationMode,
-        correctedCustomTags,
-        cleanExistingCategories
-      );
+      const correctedTags = await this.correctTyposInCategories(customTags);
 
       return await Promise.all(
         documents.map(async (doc) => {
           try {
-            const prompt = PROMPT_TEMPLATES.categorization(categoryPrompt);
-            const chain = prompt.pipe(AIClientFactory.getInstance());
+            let context = `
+          1. Custom Categories (HIGHEST): ${correctedTags}
+          2. Existing Categories (MEDIUM): ${existingCategories}
+          3. Default Categories (LOW): ${PREDEFINED_CATEGORIES}`;
 
-            const response = await chain.invoke({
-              mainTopic: doc.mainTopic,
-              documentType: doc.documentType,
-              summary: doc.summary,
-            });
-
-            const category = (response as any).content as string;
-
-            if (
-              !cleanExistingCategories.includes(category) &&
-              category.toLowerCase() !== "uncategorized"
-            ) {
-              cleanExistingCategories.push(category);
+            if (categorizationMode === "general") {
+              context = `
+            1. Existing Categories (HIGH): ${existingCategories}
+            2. Default Categories (MEDIUM): ${PREDEFINED_CATEGORIES}`;
             }
+
+            const response = await PROMPT_TEMPLATES.categorization
+              .pipe(AIClientFactory.getInstance())
+              .invoke({
+                mainTopic: doc.mainTopic,
+                documentType: doc.documentType,
+                summary: doc.summary,
+                context,
+              });
+
+            const category = (response as any).content;
+            existingCategories.push(category);
 
             return {
               category,
               originalDocument: doc,
               error: false,
-              isExistingCategory: cleanExistingCategories.includes(category),
+              isExistingCategory: existingCategories.includes(category),
             };
           } catch (error) {
-            console.error("Error categorizing document:", error);
             return {
               category: "Uncategorized",
               originalDocument: doc,
@@ -369,8 +329,7 @@ export class DocumentAnalyzer {
         })
       );
     } catch (error) {
-      console.error("Error in batch categorization:", error);
-      throw new Error("Failed to categorize documents");
+      throw new Error(`Categorization failed: ${error.message}`);
     }
   }
 }

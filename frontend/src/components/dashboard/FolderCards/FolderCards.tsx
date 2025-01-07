@@ -5,7 +5,7 @@ import { CloudSkeleton } from "./CloudSkeleton";
 import { FolderCard } from "./FolderCard";
 import { motion } from "framer-motion";
 import { HeaderPage } from "../HeaderPage";
-import { Folder01Icon, Folder02Icon, FolderOpenIcon, HardDriveIcon } from "hugeicons-react";
+import { Folder01Icon, FolderOpenIcon } from "hugeicons-react";
 import axios from "axios";
 import { FolderType } from "@/types/types";
 
@@ -56,24 +56,40 @@ export default function FolderCards() {
               );
             })
           ) : (
-            <div className="h-full w-full flex items-center justify-center bg-white shadow-small rounded-xl col-start-1 col-end-6">
-            <div className="grid gap-4 w-60">
-              <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
-                <FolderOpenIcon
-                  size={50}
-                  className="fill-white text-primary-color text-1"
-                />
-              </div>
-              <div>
-                <h2 className="text-center text-black text-base font-semibold leading-relaxed pb-1">
-                  No folders found
-                </h2>
-                <p className="text-center text-black text-sm font-normal leading-snug pb-4">
-                  Upload Your files to show your organized folders
-                </p>
+            <div className="h-full w-full flex items-center justify-center  bg-white shadow-small rounded-xl col-start-1 col-end-6">
+              <div className="grid gap-4">
+                <div className=" flex items-center justify-center ">
+                  <FolderOpenIcon className="h-24 w-24 text-gray-200 " />
+                </div>
+
+                <motion.div
+                  className="relative z-10 flex flex-col items-center text-center space-y-2  mx-auto px-4"
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <motion.h2
+                    className="text-3xl font-bold pb-2 pt-2 text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    No folders found
+                  </motion.h2>
+
+                  <motion.div
+                    className="space-y-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <p className="text-lg text-slate-600 leading-relaxed">
+                      Upload Your files to show your organized folders
+                    </p>
+                  </motion.div>
+                </motion.div>
               </div>
             </div>
-          </div>
           )}
         </div>
       )}
