@@ -2,8 +2,7 @@ import { filesType } from "@/types/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import axios, { AxiosResponse } from "axios";
-import { PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3";
+import axios from "axios";
 import cookies from "js-cookie";
 import { extractTextFromFile, validateFileType } from "@/helpers/parse";
 import { generateFileUrl, getS3SignedUrl } from "@/helpers/action";
@@ -40,6 +39,7 @@ type FilesState = {
     isPermanently: boolean;
     isLoading: boolean;
     isFileDeleted: boolean;
+    isFileDeletedPermanently: boolean
     error: any;
   };
   loadRemovedFilesState: {
@@ -85,6 +85,7 @@ const initialState: FilesState = {
     isPermanently: false,
     isLoading: false,
     isFileDeleted: false,
+    isFileDeletedPermanently: false,
     error: null,
   },
   loadRemovedFilesState: {
@@ -132,9 +133,9 @@ export const uploadFiles = createAsyncThunk(
     try {
       const categorizationMode = localStorage.getItem("categorizationMode");
       const customTags = JSON.parse(localStorage.getItem("customTags") || "[]");
-      
+
       const filesList = files.getAll("files");
-      
+
       if (filesList.length === 0) {
         return rejectWithValue("Please select a file to upload.");
       } else if (filesList.length > 40) {
@@ -148,17 +149,24 @@ export const uploadFiles = createAsyncThunk(
           const validation = await validateFileType(file);
           return {
             file,
-            ...validation
+            ...validation,
           };
         })
       );
 
       // Check for invalid files
-      const invalidFiles = validationResults.filter(result => !result.isValid);
+      const invalidFiles = validationResults.filter(
+        (result) => !result.isValid
+      );
       if (invalidFiles.length > 0) {
         const invalidFileNames = invalidFiles
-          .map(result => `${result.file.name} (detected as: ${result.detectedType || 'unknown'})`)
-          .join(', ');
+          .map(
+            (result) =>
+              `${result.file.name} (detected as: ${
+                result.detectedType || "unknown"
+              })`
+          )
+          .join(", ");
         return rejectWithValue(
           `Invalid files detected: ${invalidFileNames}. Files must match their extensions.`
         );
@@ -177,45 +185,47 @@ export const uploadFiles = createAsyncThunk(
       for (const { file } of validationResults) {
         const fileKey = `${userId}/${uniqueKey}-${file.name}`;
         const fileUrl = await generateFileUrl(fileKey);
-        console.log(file)
-        const fileContent = await extractTextFromFile(file);
+        const fileContent = await extractTextFromFile(file, fileKey);
         if (!fileContent) {
-          return rejectWithValue(`Failed to parse content of file: ${file.name}`);
+          return rejectWithValue(
+            `Failed to parse content of file: ${file.name}`
+          );
         }
 
         filesMetaData.push({
           url: fileUrl,
-          format: file.name.split('.').pop()!,
+          format: file.name.split(".").pop()!,
           size: file.size,
           fileId: `${uniqueKey}-${file.name}`,
           data: fileContent,
         });
       }
 
-      // Rest of your upload logic...
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
-        { files: filesMetaData, categorizationMode, customTags },
-        { withCredentials: true }
-      );
-
       // Upload to S3
       const uploadPromises = validationResults.map(async ({ file }) => {
         const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-        const { success, url } = await getS3SignedUrl(fileKey, file.type, file.size);
-        
+        const { success, url } = await getS3SignedUrl(
+          fileKey,
+          file.type,
+          file.size
+        );
+
         if (!success) {
           throw new Error(`Failed to get signed URL for ${file.name}`);
         }
 
         return axios.put(url, file, {
-          headers: { "Content-Type": file.type }
+          headers: { "Content-Type": file.type },
         });
       });
-
+      // Rest of your upload logic...
       await Promise.all(uploadPromises);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
+        { files: filesMetaData, categorizationMode, customTags },
+        { withCredentials: true }
+      );
       return response.data;
-
     } catch (error: any) {
       console.error("Error uploading files:", error);
       if (error.response?.status === 500) {

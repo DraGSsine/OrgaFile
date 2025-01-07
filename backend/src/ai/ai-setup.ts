@@ -5,6 +5,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { FileMetaData, categorizationModes } from "../types/type";
+import { HumanMessage } from "@langchain/core/messages";
 
 export interface AIAnalyzeDocumnetResponse {
   mainTopic: string;
@@ -31,7 +32,7 @@ export const CHUNK_SIZE = 2000;
 export const CHUNK_OVERLAP = 50;
 export const MAX_CHUNKS = 15;
 export const MAX_CONTEXT_LENGTH = 2000;
-
+export const SUPPORTED_IMAGES = ["png", "jpg", "jpeg", "gif", "webp", "svg"];
 export const PREDEFINED_CATEGORIES = [
   "Technology",
   "Business",
@@ -124,6 +125,28 @@ export const PROMPT_TEMPLATES = {
       Respond with the corrected list of categories .`,
     ],
   ]),
+  analysisImage: ChatPromptTemplate.fromMessages([
+    ["system", "You are a helpful assistant."],
+    [
+      "user",
+      ` Analyze the following image and provide:
+      1. mainTopic: A concise phrase of less than 3 words describing the most specific and distinctive main topic.
+      2. documentType: Identify the type of document (e.g., report, article, code, etc.).
+      3. keyEntities: List up to 5 important entities (people, companies, technologies, etc.) mentioned.
+      4. summary: A brief 2-3 sentence summary of the main points.
+
+      Respond in JSON format`,
+    ],
+    [
+      "human",
+      [
+        {
+          type: "image_url",
+          image_url: { url: "{context}" },
+        },
+      ],
+    ],
+  ]),
 };
 
 export class AIClientFactory {
@@ -190,12 +213,21 @@ export class DocumentAnalyzer {
     file: FileMetaData
   ): Promise<AIAnalyzeDocumentResponse> {
     try {
-      const contextText = await this.splitter.split(file.data);
-      const chain = PROMPT_TEMPLATES.analysis
-        .pipe(AIClientFactory.getInstance())
-        .pipe(this.parser);
+      if (SUPPORTED_IMAGES.includes(file.format)) {
+        const chain = PROMPT_TEMPLATES.analysisImage
+          .pipe(AIClientFactory.getInstance())
+          .pipe(this.parser);
+        const res = await chain.invoke({ context: file.data });
+        console.log("--->", res);
+        return res as any;
+      } else {
+        const contextText = await this.splitter.split(file.data);
+        const chain = PROMPT_TEMPLATES.analysis
+          .pipe(AIClientFactory.getInstance())
+          .pipe(this.parser);
 
-      return await chain.invoke({ context: contextText });
+        return await chain.invoke({ context: contextText });
+      }
     } catch (error) {
       console.error("Error analyzing document:", error);
       throw new Error("Failed to analyze document");
@@ -224,12 +256,16 @@ export class DocumentAnalyzer {
   ): string {
     const modeSpecificPrompts = {
       general: `
-      Available categories: ${PREDEFINED_CATEGORIES.join(", ")}
+      IMPORTANT - Follow these scoring rules in order:
 
-      Rules:
-      1. Choose ONLY from the available categories above
-      2. Return ONLY the category name
-      3. Pick the most relevant category based on the document content
+      1. Existing Categories (HIGHEST PRIORITY): ${existingCategories.join(", ")}
+      3. Default Categories (MEDIUM PRIORITY): ${PREDEFINED_CATEGORIES.join(", ")}
+
+      Strict Rules:
+      - You MUST use Existing Categories if there's ANY reasonable match
+      - ONLY fall back to default categories if NO Existing category fits
+      - Return ONLY the category name, nothing else
+      - Do not modify category names
 
       Document Details:
       - Main Topic: {mainTopic}
@@ -248,7 +284,6 @@ export class DocumentAnalyzer {
       - You MUST use custom categories if there's ANY reasonable match
       - ONLY fall back to existing or default categories if NO custom category fits
       - Return ONLY the category name, nothing else
-      - Do not create new categories
       - Do not modify category names
 
       Document Details:

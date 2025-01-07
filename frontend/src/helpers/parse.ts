@@ -1,11 +1,10 @@
 import * as XLSX from "xlsx";
 import * as mammoth from "mammoth";
 import { fileTypeFromBlob } from "file-type";
-import { get } from "http";
+import { getPresignedUrl } from "./action";
 
-export async function extractTextFromFile(file: File): Promise<string> {
+export async function extractTextFromFile(file: File, key:string): Promise<string> {
   const extension = file.name.split(".").pop()?.toLowerCase();
-  console.log(extension);
   let text = "";
   switch (extension) {
     case "pdf":
@@ -22,14 +21,13 @@ export async function extractTextFromFile(file: File): Promise<string> {
     case "txt":
       text = await extractFromTXT(file);
       break;
-    // case "png":
-    // case "jpg":
-    // case "jpeg":
-    // case "gif":
-    // case "webp":
-    // case "svg":
-    //   text = await getBase64(file);
-    //   break;
+    case "png":
+    case "jpg":
+    case "jpeg":
+    case "gif":
+    case "webp":
+      text = await getImagePresignedUrl(key);
+      break;
     default:
       throw new Error("Unsupported file format");
   }
@@ -40,16 +38,9 @@ export async function extractTextFromFile(file: File): Promise<string> {
   // Return the first 2000 characters
   return text.slice(0, 2000);
 }
-
-async function getBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+async function getImagePresignedUrl(key: string) {
+  const url = await getPresignedUrl(key);
+  return url;
 }
 
 export async function extractFromPDF(file: File): Promise<string> {
@@ -106,7 +97,6 @@ export async function validateFileType(
     jpeg: ["jpg", "jpeg"],
     gif: ["gif"],
     webp: ["webp"],
-    svg: ["svg"],
     doc: ["doc"],
     docx: ["docx"],
     xlsx: ["xlsx"],

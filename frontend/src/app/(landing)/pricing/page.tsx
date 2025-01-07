@@ -13,7 +13,7 @@ const Pricing = () => {
     {
       productId: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
       type: "Basic",
-      price: "$7.99",
+      price: "$4.99",
       subscription: "month",
       description: "Perfect for individuals who need help organizing their personal files and documents automatically.",
       mostpopular: false,

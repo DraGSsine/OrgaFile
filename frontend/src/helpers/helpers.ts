@@ -195,7 +195,7 @@ export function getFileImage(format: string): string {
     "sti",
   ];
   const textFormats = ["txt", "text", "md"];
-  // const imagesFormats = ["jpg", "jpeg", "png", "gif", "svg", "webp"];
+  const imagesFormats = ["jpg", "jpeg", "png", "gif", "webp"];
   switch (true) {
     case textFormats.includes(format):
       return "/formatImages/txt.png";
@@ -207,8 +207,8 @@ export function getFileImage(format: string): string {
       return "/formatImages/pdf.png";
     case powerpointFormats.includes(format):
       return "/formatImages/powerpoint.png";
-    // case imagesFormats.includes(format):
-    //   return "/formatImages/image.png";
+    case imagesFormats.includes(format):
+      return "/formatImages/image.png";
     default:
       return "/formatImages/file.png";
   }

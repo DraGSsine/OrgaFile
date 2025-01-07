@@ -41,7 +41,7 @@ export default function ConfirmDelete() {
           removeManyFiles({ files: removeFileState.files, isPermanently: true })
         ).then(() => {
           dispatch(setConfirmFileRemoveModal(false));
-          dispatch(resetConfirmFileRemoveModal());
+          dispatch(resetConfirmFileRemoveModal())
         });
       } else {
         dispatch(
