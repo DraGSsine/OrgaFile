@@ -12,19 +12,31 @@ export const SUPPORTED_IMAGES = ["png", "jpg", "jpeg", "gif", "webp", "svg"];
 export const PREDEFINED_CATEGORIES = [
   "Technology",
   "Business",
+  "Science",
   "Health",
+  "Education",
   "Entertainment",
   "Sports",
-  "Science",
   "Politics",
-  "Education",
-  "Arts",
+  "News",
+  "Finance",
   "Travel",
   "Food",
-  "Finance",
   "Fashion",
   "Music",
+  "Art",
+  "Lifestyle",
+  "Gaming",
+  "Photography",
+  "Literature",
+  "History",
   "Environment",
+  "Culture",
+  "Social Media",
+  "Marketing",
+  "Design",
+  "Programming",
+  "Legal",
 ] as const;
 
 export interface AIAnalyzeDocumentResponse {
@@ -60,17 +72,7 @@ export const PROMPT_TEMPLATES = {
       "summary": "string"
     }}`,
     ],
-    [
-      "user",
-      `Analyze this document:
-    {context}
-    
-    Remember:
-    - mainTopic must be 2-3 words
-    - keyEntities must be an array of 5 or fewer strings
-    - summary must be 2-3 complete sentences
-    - All JSON fields are required`,
-    ],
+    ["user", "Analyze this document:{context}"],
   ]),
 
   filename: ChatPromptTemplate.fromMessages([
@@ -111,8 +113,7 @@ export const PROMPT_TEMPLATES = {
     ],
     [
       "user",
-      `Categorize this document using these priority rules:
-    {context}
+      `Categorize this document using these priority rules: {context}
 
     Document Info:
     - Topic: {mainTopic}
@@ -123,8 +124,7 @@ export const PROMPT_TEMPLATES = {
     
     Remember:
     1. MUST use existing categories if any reasonable match exists
-    2. Only use default categories if no existing category fits
-    3. Create new category ONLY if no other options fit`,
+    2. Only use default categories if no existing category fits`,
     ],
   ]),
 
@@ -259,7 +259,11 @@ export class DocumentAnalyzer {
       const chain = PROMPT_TEMPLATES.filename.pipe(
         AIClientFactory.getInstance()
       );
-      const response = await chain.invoke(docInfo);
+      const response = await chain.invoke({
+        mainTopic: docInfo?.mainTopic,
+        documentType: docInfo?.documentType,
+        summary: docInfo?.summary,
+      });
       return (response as any).content;
     } catch (error) {
       throw new Error(`Filename generation failed: ${error.message}`);
