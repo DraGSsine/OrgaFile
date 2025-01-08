@@ -7,15 +7,23 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, ObjectId } from "mongoose";
 import * as admZip from "adm-zip";
 import { FolderDocument } from "../schemas/folders.schema";
-import { FileInfo } from "../schemas/files.schema";
+import { FileDocument, FileInfo } from "../schemas/files.schema";
 import { ConfigService } from "@nestjs/config";
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { RemovedFilesDocument } from "src/schemas/removedFiles.schema";
 
 @Injectable()
 export class FoldersService {
   constructor(
     private readonly configService: ConfigService,
+    @InjectModel("RemovedFile")
+    private readonly removedFilesModel: Model<RemovedFilesDocument>,
+    @InjectModel("File") private readonly fileModel: Model<FileDocument>,
     @InjectModel("Folder") private readonly folderModel: Model<FolderDocument>
   ) {}
   private readonly s3Client = new S3Client({
@@ -99,6 +107,51 @@ export class FoldersService {
         "Failed to download folder",
         error.message
       );
+    }
+  }
+
+  async deleteFolder(folderId: ObjectId, userId: string) {
+    try {
+      const userFolders = await this.folderModel.findOne({ userId });
+      if (!userFolders) {
+        throw new NotFoundException("Folder not found");
+      }
+      const filesIdInFolder = userFolders.folders
+        .find((f) => f.folderId.toString() === folderId.toString())
+        .files.map((file) => file.fileId);
+
+      console.log("------->", filesIdInFolder);
+      const updatedFolders = userFolders.folders.filter(
+        (f) => f.folderId.toString() !== folderId.toString()
+      );
+      userFolders.folders = updatedFolders;
+      // remove all the files in the folder from the transh and the files collection
+      await this.removedFilesModel.updateMany(
+        { userId },
+        { $pull: { files: { fileId: { $in: filesIdInFolder } } } }
+      );
+
+      // remove files from files collection
+
+      await this.fileModel.updateMany(
+        { userId },
+        { $pull: { files: { fileId: { $in: filesIdInFolder } } } }
+      );
+
+      // remove files from s3
+      for (const file of filesIdInFolder) {
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME!,
+          Key: `${userId}/${file}`,
+        });
+        await this.s3Client.send(command);
+      }
+
+      await userFolders.save();
+      return "Folder deleted successfully";
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException("Failed to delete folder");
     }
   }
 }

@@ -132,6 +132,26 @@ export const downloadFolder = createAsyncThunk(
   }
 );
 
+export const deleteFolder = createAsyncThunk(
+  "folders/deleteFolder",
+  async (folderId: string, { rejectWithValue }) => {
+    try {
+      const res = await axios.delete(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/folders/delete/${folderId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status !== 200) {
+        return rejectWithValue("Failed to delete folder");
+      }
+      return folderId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const foldersSlice = createSlice({
   name: "folders",
   initialState,
@@ -190,13 +210,27 @@ export const foldersSlice = createSlice({
     builder.addCase(downloadFolder.fulfilled, (state, action) => {
       state.downloadFolder.archive = "Downloaded";
       state.downloadFolder.isLoading = false;
-      state.downloadFolder.downloadingFolderId = state.downloadFolder.downloadingFolderId.filter(
-        (id) => id !== action.payload
-      );
+      state.downloadFolder.downloadingFolderId =
+        state.downloadFolder.downloadingFolderId.filter(
+          (id) => id !== action.payload
+        );
     });
     builder.addCase(downloadFolder.rejected, (state) => {
       state.downloadFolder.error = true;
       state.downloadFolder.isLoading = false;
+    });
+    builder.addCase(deleteFolder.pending, (state) => {
+      state.loadFolders.isLoading = true;
+    });
+    builder.addCase(deleteFolder.fulfilled, (state, action) => {
+      state.loadFolders.folders = state.loadFolders.folders.filter(
+        (folder) => folder.folderId !== action.payload
+      );
+      state.loadFolders.isLoading = false;
+    });
+    builder.addCase(deleteFolder.rejected, (state) => {
+      state.loadFolders.error = true;
+      state.loadFolders.isLoading = false;
     });
   },
 });

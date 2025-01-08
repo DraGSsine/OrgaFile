@@ -106,28 +106,79 @@ export const PROMPT_TEMPLATES = {
     Return corrected categories as a comma-separated string.`,
     ],
   ]),
-  categorization: ChatPromptTemplate.fromMessages([
+  categorizationCustom: ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You are a document categorization expert who follows rules strictly.",
+      `You are a categorization expert who creates consistent, general-purpose categories. Follow these rules strictly:
+
+      1. Prioritize custom categories (HIGHEST priority) if they clearly match the file's content
+      2. If no custom category fits, use existing categories (SECOND priority) if they clearly match
+      3. If neither custom nor existing categories fit, use predefined categories if they match
+      4. If no existing category fits, CREATE a new general category following these rules:
+         - Must be broad enough to accommodate similar future content
+         - Must match the style of existing predefined categories
+         - Must be a single word or short phrase (max 2 words)
+         - Must be general, not specific (e.g., "Automotive" not "Tesla Cars")
+         - Must be professional and widely applicable
+         
+      Examples of good new categories:
+      - For a quantum computing paper: "Science" (use existing) not "Quantum"
+      - For car reviews: "Automotive" (new category) not "Cars Reviews"
+      - For cooking videos: "Food" (use existing) not "Recipes"
+      - For cryptocurrency: "Finance" (use existing) not "Crypto"
+      
+      When matching, analyze:
+      - Main Topic: {mainTopic}
+      - Type: {documentType}
+      - Summary: {summary}
+
+      Return ONLY the final category name as a plain string.`,
     ],
     [
       "user",
-      `Categorize this document using these priority rules: {context}
-
-    Document Info:
-    - Topic: {mainTopic}
-    - Type: {documentType}
-    - Summary: {summary}
-
-    Output format: Return ONLY the category name as a plain string, no JSON or explanation.
-    
-    Remember:
-    1. MUST use existing categories if any reasonable match exists
-    2. Only use default categories if no existing category fits`,
+      `Categorize this file using:
+      - Custom Categories: {customCategories}
+      - Existing Categories: {existingCategories}
+      
+      Remember: If creating a new category, it must be general-purpose and professional.`,
     ],
   ]),
 
+  categorizationGeneral: ChatPromptTemplate.fromMessages([
+    [
+      "system",
+      `You are a categorization expert who creates consistent, general-purpose categories. Follow these rules strictly:
+
+      1. Prioritize existing categories if they clearly match the file's content
+      2. If no existing category fits, use predefined categories if they match
+      3. If no predefined category fits, CREATE a new general category following these rules:
+         - Must be broad enough to accommodate similar future content
+         - Must match the style of existing predefined categories
+         - Must be a single word or short phrase (max 2 words)
+         - Must be general, not specific (e.g., "Real Estate" not "Housing Market")
+         - Must be professional and widely applicable
+         
+      Examples of good new categories:
+      - For makeup tutorials: "Beauty" (new category) not "Makeup"
+      - For space exploration: "Science" (use existing) not "Space"
+      - For workout videos: "Fitness" (new category) not "Exercise Videos"
+      - For stock market: "Finance" (use existing) not "Stocks"
+      
+      When matching, analyze:
+      - Main Topic: {mainTopic}
+      - Type: {documentType}
+      - Summary: {summary}
+
+      Return ONLY the final category name as a plain string.`,
+    ],
+    [
+      "user",
+      `Categorize this file using:
+      - Existing Categories: {existingCategories}
+      
+      Remember: If creating a new category, it must be general-purpose and professional.`,
+    ],
+  ]),
   analysisImage: ChatPromptTemplate.fromMessages([
     ["system", "You are a document analysis expert specializing in images."],
     [
@@ -289,32 +340,31 @@ export class DocumentAnalyzer {
   ): Promise<AiResponse[]> {
     try {
       const correctedTags = await this.correctTyposInCategories(customTags);
+      const promptTemplate =
+        categorizationMode === "custom"
+          ? PROMPT_TEMPLATES.categorizationCustom
+          : PROMPT_TEMPLATES.categorizationGeneral;
 
       return await Promise.all(
         documents.map(async (doc) => {
           try {
-            let context = `
-          1. Custom Categories (HIGHEST): ${correctedTags}
-          2. Existing Categories (MEDIUM): ${existingCategories}
-          3. Default Categories (LOW): ${PREDEFINED_CATEGORIES}`;
+            const chain = promptTemplate.pipe(AIClientFactory.getInstance());
 
-            if (categorizationMode === "general") {
-              context = `
-            1. Existing Categories (HIGH): ${existingCategories}
-            2. Default Categories (MEDIUM): ${PREDEFINED_CATEGORIES}`;
+            const response = await chain.invoke({
+              mainTopic: doc.mainTopic,
+              documentType: doc.documentType,
+              keyEntities: doc.keyEntities.join(", "),
+              summary: doc.summary,
+              existingCategories: existingCategories.join(", "),
+              customCategories: correctedTags,
+            });
+
+            const category = (response as any).content.trim();
+
+            // Add the new category to existing categories if it's not already there
+            if (!existingCategories.includes(category)) {
+              existingCategories.push(category);
             }
-
-            const response = await PROMPT_TEMPLATES.categorization
-              .pipe(AIClientFactory.getInstance())
-              .invoke({
-                mainTopic: doc.mainTopic,
-                documentType: doc.documentType,
-                summary: doc.summary,
-                context,
-              });
-
-            const category = (response as any).content;
-            existingCategories.push(category);
 
             return {
               category,
@@ -323,8 +373,23 @@ export class DocumentAnalyzer {
               isExistingCategory: existingCategories.includes(category),
             };
           } catch (error) {
+            console.error(
+              `Categorization error for document: ${doc.mainTopic}`,
+              error
+            );
+            // Create a general fallback category based on the document's main topic
+            const chain = promptTemplate.pipe(AIClientFactory.getInstance());
+            const fallbackResponse = await chain.invoke({
+              mainTopic: doc.mainTopic,
+              documentType: "unknown",
+              summary: "Error processing document",
+              existingCategories: existingCategories.join(", "),
+              customCategories: correctedTags,
+            });
+
+            const fallbackCategory = (fallbackResponse as any).content.trim();
             return {
-              category: "Uncategorized",
+              category: fallbackCategory,
               originalDocument: doc,
               error: true,
               isExistingCategory: false,

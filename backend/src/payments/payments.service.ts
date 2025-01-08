@@ -63,8 +63,8 @@ export class PaymentService {
 
     this.redirectUrl =
       process.env.PROD === "true"
-        ? process.env.NEXT_APP_URL_PROD!
-        : process.env.NEXT_APP_URL_DEV!;
+        ? process.env.NEXT_APP_URL_PROD! + '/dashboard'
+        : process.env.NEXT_APP_URL_DEV! + '/dashboard';
   }
 
   async handleWebhook(request: RawBodyRequest<Request>, response: Response) {

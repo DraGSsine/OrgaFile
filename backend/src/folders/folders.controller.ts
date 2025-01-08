@@ -30,6 +30,10 @@ export class FoldersController {
   loadOneFolder(@Param('id') id: ObjectId, @Req() req: any) {
     return this.foldersService.loadOneFolder(id, req.user.userId);
   }
+  @Delete('delete/:id')
+  deleteFolder(@Param('id') id: ObjectId, @Req() req: any) {
+    return this.foldersService.deleteFolder(id, req.user.userId);
+  }
   @Get('download/:id')
   @UseGuards(SubscriptionGuard)
   async downloadFolder(

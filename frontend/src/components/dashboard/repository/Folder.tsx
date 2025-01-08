@@ -1,7 +1,7 @@
 import { FolderType } from "@/types/types";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
-import FolderDownlaodButton from "./FolderDownlaodButton";
+import FolderSettings from "./FolderSettings";
 import { bytesToMegaBytes } from "@/helpers/helpers";
 import { useMemo } from "react";
 import { Folder01Icon } from "hugeicons-react";
@@ -13,12 +13,12 @@ const FolderComponent = ({ folder }: { folder: FolderType }) => {
     };
   }, [folder]);
 
+
   return (
     <div className=" h-[230px] justify-between flex  flex-col bg-blue-100 p-6 rounded-lg fade-in ">
       <div className="flex justify-between items-center mb-5">
         <Folder01Icon size={60} className="fill-primary-color text-primary-color" />
-
-        <FolderDownlaodButton folder={folder} />
+        <FolderSettings folder={folder} />
       </div>
 
       <div>

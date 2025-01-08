@@ -2,7 +2,7 @@ import { bytesToMegaBytes } from '@/helpers/helpers';
 import { FolderType } from '@/types/types';
 import { Folder01Icon } from 'hugeicons-react';
 import React from 'react';
-import FolderDownlaodButton from '../repository/FolderDownlaodButton';
+import FolderDownlaodButton from '../repository/FolderSettings';
 import Link from 'next/link';
 
 export function FolderCard({ folder }: { folder: FolderType }) {
