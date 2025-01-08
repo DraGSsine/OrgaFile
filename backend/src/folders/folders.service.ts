@@ -120,7 +120,6 @@ export class FoldersService {
         .find((f) => f.folderId.toString() === folderId.toString())
         .files.map((file) => file.fileId);
 
-      console.log("------->", filesIdInFolder);
       const updatedFolders = userFolders.folders.filter(
         (f) => f.folderId.toString() !== folderId.toString()
       );
@@ -130,7 +129,6 @@ export class FoldersService {
         { userId },
         { $pull: { files: { fileId: { $in: filesIdInFolder } } } }
       );
-
       // remove files from files collection
 
       await this.fileModel.updateMany(

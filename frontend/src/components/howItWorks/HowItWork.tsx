@@ -2,30 +2,35 @@ import React from "react";
 import MaxWidthWrapper from "../MaxWidthWrapper";
 import HowItWorkCard from "./HowItWorkCard";
 import Slider from "./Slider";
-import { CloudDownloadIcon, CloudIcon, MagicWand01Icon } from "hugeicons-react";
+import {
+  CloudDownloadIcon,
+  CloudIcon,
+  MagicWand01Icon,
+  Select01Icon,
+} from "hugeicons-react";
 
 const HowItWorks = () => {
   const features = [
     {
       icon: <CloudIcon size={24} stroke="#4b81f7" />,
       step: "Step 1",
-      feature: "Upload Your Files",
+      feature: "Effortless File Upload",
       description:
-        "Simply drag and drop your messy files into OrgaFile. Our platform accepts pdfs,xls,docs,text files, and more is comming",
+        "Drag and drop your files into OrgaFile. We support images, PDFs, Excel sheets, Word documents, and more formats are coming soon!",
+    },
+    {
+      icon: <Select01Icon size={24} stroke="#4b81f7" />,
+      step: "Step 2",
+      feature: "Customize Your Categories",
+      description:
+        "Choose whether to let our AI categorize your files automatically or manually create categories that suit your needs. Our AI handles anything unmatched.",
     },
     {
       icon: <MagicWand01Icon size={24} stroke="#4b81f7" />,
-      step: "Step 2",
-      feature: "AI Categorization",
-      description:
-        "Watch as our AI instantly analyzes your files' content and automatically sorts them into perfect categories. No manual organization needed.",
-    },
-    {
-      icon: <CloudDownloadIcon size={24} stroke="#4b81f7" />,
       step: "Step 3",
-      feature: "Access Organized Files",
+      feature: "Smart AI Organization",
       description:
-        "Find your files instantly in their categorized folders. Download or access your perfectly organized documents from anywhere.",
+        "Let our advanced AI analyze your files and sort them into the most relevant categories. No effort, no hassle—just instant organization.",
     },
   ];
 
@@ -44,9 +49,9 @@ const HowItWorks = () => {
               From Messy to Organized in Seconds
             </h2>
             <p className="text-lg mt-4 text-slate-600 text-center [text-wrap:pretty]">
-              Experience the power of AI-driven file organization. OrgaFile automatically 
-              analyzes your documents and sorts them into logical categories, saving you 
-              hours of manual work.
+              Experience the power of AI-driven file organization. OrgaFile
+              automatically analyzes your documents and sorts them into logical
+              categories, saving you hours of manual work.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-8 md:gap-16">

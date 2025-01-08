@@ -1,37 +1,92 @@
 "use client";
-import { setActiveStep } from "@/redux/slices/landingSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import React, { ReactNode } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { ReactNode } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
+import { setActiveStep } from '@/redux/slices/landingSlice';
+import { AppDispatch, RootState } from '@/redux/store';
 
-const HowItWorkCard = ({
-  step,
-  feature,
-  description,
-  icon,
-}: {
+interface HowItWorkCardProps {
   step: string;
   feature: string;
   description: string;
   icon: ReactNode;
+}
+
+const HowItWorkCard: React.FC<HowItWorkCardProps> = ({
+  step,
+  feature,
+  description,
+  icon,
 }) => {
-  const {activeStep} = useSelector((state:RootState) => state.landing);
+  const { activeStep } = useSelector((state: RootState) => state.landing);
   const dispatch = useDispatch<AppDispatch>();
+  const isActive = activeStep === step;
+
   return (
-    <div
-      onClick={(e) => dispatch(setActiveStep(e.currentTarget.dataset.id))}
-      data-id={step}
-      className={` max-w-[350px] cursor-pointer flex flex-col gap-4 items-start group ${activeStep == step && "bg-slate-50 border-slate-100"} hover:bg-slate-50  hover:border-slate-100 border border-transparent rounded-lg transition-all md:-m-5 p-5`}
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      animate={{ scale: isActive ? 1.05 : 1 }}
+      transition={{ duration: 0.2 }}
+      onClick={() => dispatch(setActiveStep(step))}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          dispatch(setActiveStep(step));
+        }
+      }}
+      className={`
+        relative max-w-[350px] cursor-pointer 
+        rounded-xl border transition-all duration-300 ease-in-out
+        ${isActive 
+          ? 'bg-white border-primary-200 shadow-lg shadow-primary-100/50' 
+          : 'border-transparent hover:border-primary-100 hover:bg-slate-50/80'
+        }
+        p-6 md:p-7
+      `}
+      aria-pressed={isActive}
     >
-      <div className="mt-1 bg-indigo-50 border text-primary-color shadow shadow-indigo-100/50 border-indigo-100 transition-colors rounded-lg grid place-items-center  p-2 w-10 h-10 shrink-0">
+      {/* Step indicator */}
+      <div className="absolute z-50 -top-3 left-6 bg-primary-100 text-primary-color px-3 py-1 rounded-full text-sm font-medium">
+      {step}
+      </div>
+
+      {/* Icon container */}
+      <div className={`
+        mb-5 rounded-xl p-3 w-12 h-12 flex items-center justify-center
+        ${isActive 
+          ? 'bg-primary-color text-white' 
+          : 'bg-primary-50 text-primary-600'
+        }
+        transition-colors duration-300
+      `}>
         {icon}
       </div>
-      <div>
-        <span className=" inline-block py-3 text-third-color">{step}</span>
-        <h3 className="font-semibold text-lg">{feature}</h3>
-        <p className="text-slate-500 mt-2 leading-relaxed">{description}</p>
+
+      {/* Content */}
+      <div className="space-y-3">
+        <h3 className={`
+          text-xl font-semibold transition-colors duration-300
+          ${isActive ? 'text-primary-700' : 'text-gray-900'}
+        `}>
+          {feature}
+        </h3>
+        <p className="text-gray-600 leading-relaxed">
+          {description}
+        </p>
       </div>
-    </div>
+
+      {/* Active indicator */}
+      {isActive && (
+        <motion.div
+          layoutId="activeIndicator"
+          className="absolute inset-0 border-2 border-primary-500 rounded-xl"
+          initial={false}
+          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+        />
+      )}
+    </motion.div>
   );
 };
 
