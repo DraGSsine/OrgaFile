@@ -26,7 +26,7 @@ export const FileNotSupported = ({ onClose }:{onClose:any}) => {
                 Close
               </button>
   
-              <button className="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-primary-color rounded-lg shrink-0 sm:w-auto hover:bg-primary-color dark:hover:bg-primary-color dark:bg-primary-color">
+              <button onClick={()=>window.open("mailto:support@orgafile.com", "_blank")} className="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-primary-color rounded-lg shrink-0 sm:w-auto hover:bg-primary-color dark:hover:bg-primary-color dark:bg-primary-color">
                 Report
               </button>
             </div>

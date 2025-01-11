@@ -156,7 +156,6 @@ const ConfirmDeleteModal = ({
           </Button>
           <Button
             color="danger"
-            variant="flat"
             onClick={() => DeleteMyAccount()}
             isLoading={isLoading}
           >

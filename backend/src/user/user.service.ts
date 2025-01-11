@@ -84,6 +84,13 @@ export class UserService {
 
       const userFiles = await this.fileModel.findOne({ userId });
 
+      // cancel the subscription and remove customer from stripe
+      const subscription = await this.subscriptionModel.findOne({ userId });
+      if (subscription) {
+        await this.stripeClient.accounts.del(subscription.subscriptionId);
+        await this.stripeClient.customers.del(subscription.customerId);
+      }
+
       // Get all the file ids of the user
       const fileIds = userFiles?.files.map((file) => file.fileId);
 
@@ -106,6 +113,7 @@ export class UserService {
       await this.fileModel.deleteMany({ userId });
       await this.subscriptionModel.deleteMany({ userId });
       await this.removedFileModel.deleteMany({ userId });
+
 
       return "User account deleted successfully";
     } catch (error) {
