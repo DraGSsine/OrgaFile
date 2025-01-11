@@ -38,7 +38,7 @@ export default function FolderSettings({ folder }: { folder: FolderType }) {
     return <Spinner size="sm" />;
   }
 
-  function handleAction({ key }: { key: string }) {
+  function handleAction({ key }: { key: string | number }) {
     if (key === "delete") {
       toast.promise(dispatch(deleteFolder(folder.folderId)), {
         loading: "Deleting...",
