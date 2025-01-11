@@ -19,7 +19,7 @@ const UserProfile = ({ email }: { email: string }) => {
     if (e === "signout") {
       dispatch(openSignoutModal());
     } else if (e === "settings") router.push("/dashboard/settings");
-    else if (e === "help") router.push("/help");
+    else if (e === "help") window.open("mailto:support@orgafile.com", "_blank");
   };
   return (
     <Dropdown placement="bottom-end">
@@ -32,7 +32,12 @@ const UserProfile = ({ email }: { email: string }) => {
         variant="flat"
       >
         <DropdownItem key="profile" className="h-14 gap-2">
-          <p className=" font-medium">Signed in as <span className=" text-primary-color font-semibold">{email.split("@")[0]}</span></p>
+          <p className=" font-medium">
+            Signed in as{" "}
+            <span className=" text-primary-color font-semibold">
+              {email.split("@")[0]}
+            </span>
+          </p>
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>
         <DropdownItem key="help">Help</DropdownItem>

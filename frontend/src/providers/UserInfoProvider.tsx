@@ -11,7 +11,6 @@ function GetUserInfoProvider({ children }: { children: ReactNode }) {
     dispatch(GetUserInfo())
       .then(() => {
         setAllowRender(true);
-        console.log("GetUserInfoProvider: GetUserInfo dispatched");
       })
       .catch((error) => {
         setAllowRender(false);

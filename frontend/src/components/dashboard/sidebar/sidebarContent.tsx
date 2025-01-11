@@ -45,7 +45,7 @@ export function SidebarContent({
   return (
     <div className="flex h-full flex-col gap-4">
       <div className="flex h-[8vh] items-center justify-center xl:justify-start xl:px-4 gap-2">
-        <Logo />
+        <Logo alt="logo" width={200} height={50} />
       </div>
       <nav className="flex-1 space-y-2 px-2 flex justify-between flex-col">
         <div className=" space-y-2">

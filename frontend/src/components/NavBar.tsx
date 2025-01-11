@@ -30,7 +30,7 @@ const NavBar = () => {
 
       <NavbarContent className="sm:flex" justify="start">
         <NavbarBrand className="flex justify-end sm:justify-start">
-          <Logo />
+          <Logo alt="logo" width={200} height={50} />
         </NavbarBrand>
       </NavbarContent>
 

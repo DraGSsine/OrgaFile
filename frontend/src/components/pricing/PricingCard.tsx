@@ -1,4 +1,4 @@
-import { PricingShape } from "../../../public/svgShapes";
+
 import Upgrade from "./Upgrade";
 
 type PricingCardProps = {
@@ -82,9 +82,6 @@ const PricingCard = ({
                   </linearGradient>
                 </defs>
               </svg>
-            </span>
-            <span className="absolute right-4 top-4 z-[-1]">
-              <PricingShape />
             </span>
           </div>
         </div>

@@ -23,7 +23,6 @@ const SignoutModal = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const handleSignOut = () => {
-    console.log("signing out");
     setLoading(true);
     setTimeout(() => {
       dispatch(SignOutAction()).then(() => {

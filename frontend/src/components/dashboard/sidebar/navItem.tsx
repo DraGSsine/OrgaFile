@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { cn } from "@nextui-org/react";
+import { FC, RefAttributes } from "react";
+import { HugeiconsProps } from "hugeicons-react";
 
 interface NavItemProps {
   href: string;
   name: string;
-  icon: React.ElementType;
+  icon: FC<Omit<HugeiconsProps, "ref"> & RefAttributes<SVGSVGElement>>;
   isActive: boolean;
 }
 

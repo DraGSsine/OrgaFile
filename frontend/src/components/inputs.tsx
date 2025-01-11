@@ -3,12 +3,12 @@ import { Autocomplete, AutocompleteItem, Input } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
-import { SearchIcon } from "../../public/icons";
 import Image from "next/image";
 import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
 
 import cookies from "js-cookie";
 import { getPresignedUrl } from "@/helpers/action";
+import { Search01Icon } from "hugeicons-react";
 
 export const SearchInput = () => {
 
@@ -32,7 +32,7 @@ export const SearchInput = () => {
         dispatch(ToggleFile({ isOpen: true, url}));
       }}
       startContent={
-        <SearchIcon className="text-gray-600" width="25" height="25" />
+        <Search01Icon className="text-gray-600" width="25" height="25" />
       }
     >
       {files.map((file, index) => (

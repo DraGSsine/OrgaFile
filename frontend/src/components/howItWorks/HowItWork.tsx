@@ -3,7 +3,6 @@ import MaxWidthWrapper from "../MaxWidthWrapper";
 import HowItWorkCard from "./HowItWorkCard";
 import Slider from "./Slider";
 import {
-  CloudDownloadIcon,
   CloudIcon,
   MagicWand01Icon,
   Select01Icon,
@@ -54,7 +53,7 @@ const HowItWorks = () => {
               categories, saving you hours of manual work.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-8 md:gap-16">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-4 md:gap-8">
             {features.map((feature, index) => (
               <HowItWorkCard
                 key={index}

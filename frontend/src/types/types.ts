@@ -165,7 +165,7 @@ export interface UsageCardProps {
   value: number;
   max: number;
   label: string;
-  progressColor: string;
+  progressColor: "danger" | "warning" | "default" | "primary" | "secondary" | "success";
   icon: React.ReactNode;
   iconColor: string;
   iconBgColor: string;

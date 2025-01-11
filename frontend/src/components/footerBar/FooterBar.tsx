@@ -1,16 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { InstagramIcon, Linkedin01Icon, TwitterIcon } from "hugeicons-react";
+import { Logo } from "../dashboard/sidebar/logo";
 const FooterBar = () => {
   return (
     <footer className="py-14 border-t border-slate-100">
       <div className="max-w-screen-xl mx-auto px-5">
         <div className="flex justify-between">
           <div>
-            <Link href="/" className="text-lg flex items-center">
-              <span className="font-bold text-primary-color">Orga</span>
-              <span className="text-slate-600">File</span>
-            </Link>
+            <Logo alt="logo" width={100} height={50} />
             <p className="mt-4 text-sm text-slate-700 max-w-xs"></p>
             <div className="flex gap-3 mt-4 items-center">
               <Link

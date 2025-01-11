@@ -38,7 +38,7 @@ export const SignUpAction = createAsyncThunk(
       const responseData = await response.data;
       return responseData;
     } catch (error: any) {
-      console.log(error.response.data.message);
+      console.error(error.response.data.message);
       throw rejectWithValue(error.response.data.message);
     }
   }
@@ -71,7 +71,7 @@ export const SignOutAction = createAsyncThunk("auth/signout", async () => {
       }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -85,7 +85,7 @@ export const GetUserInfo = createAsyncThunk("auth/getUserInfo", async () => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 

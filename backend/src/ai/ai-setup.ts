@@ -187,7 +187,6 @@ export class DocumentAnalyzer {
         categorizationMode == "general"
           ? PROMPT_TEMPLATES.categorizationGeneral
           : PROMPT_TEMPLATES.categorizationCustom;
-      console.log("promptTemplate", promptTemplate);
       return await Promise.all(
         documents.map(async (doc) => {
           try {

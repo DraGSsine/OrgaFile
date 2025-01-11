@@ -1,39 +1,53 @@
-import React from 'react';
-import { StorageUsage } from './StorageUsage';
-import { CreditstUsage } from './ReqesutUsage';
-import UserOverview from './UserOverview';
-import { HelpCircleIcon } from 'hugeicons-react';
+"use client";
+import React from "react";
+import {
+  Card,
+  CardBody,
+  Button,
+  Progress,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Chip,
+} from "@nextui-org/react";
+import { StorageUsage } from "./StorageUsage";
+import { CreditstUsage } from "./ReqesutUsage";
+import UserOverview from "./UserOverview";
+import { HelpCircleIcon } from "hugeicons-react";
 
 const RightSidebar = () => {
   return (
-    <aside className="hidden col-start-15 col-end-17 border-l border-gray-200 dark:border-gray-800 xl:flex flex-col bg-white dark:bg-gray-900">
+    <aside className=" hidden col-start-15 col-end-17 border-l gap-10 xl:flex flex-col">
       {/* User Profile Section */}
-      <div className=" h-[8%] border-b border-gray-200 dark:border-gray-800 dark:bg-gray-950">
+      <div className="px-6 h-[8%] py-4 border-b border-divider">
         <UserOverview />
       </div>
 
       {/* Usage Stats Section */}
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Usage Overview</h2>
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+      <div className="flex-1 p-6">
+        <div className="flex flex-col justify-center items-start mb-6">
+          <h2 className="text-lg font-medium">Usage Overview</h2>
+          <p className="text-small text-default-500">
+            Monitor your resource usage
+          </p>
         </div>
-        
-        <div className="space-y-6">
+        <div className="space-y-4">
           <StorageUsage />
           <CreditstUsage />
         </div>
       </div>
 
       {/* Footer Section */}
-      <div className="p-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
-        <a 
-          href="#support" 
-          className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors group"
+      <div className="p-6 border-t border-divider bg-default-50">
+        <Button
+          onClick={() => window.open("mailto:support@orgafile.com", "_blank")}
+          variant="light"
+          className="w-full"
+          startContent={<HelpCircleIcon className="w-4 h-4 text-gray-500" />}
         >
-          <HelpCircleIcon className="w-4 h-4 group-hover:text-blue-500 transition-colors" />
-          <span>Visit our support center</span>
-        </a>
+          Need help? Contact support
+        </Button>
       </div>
     </aside>
   );

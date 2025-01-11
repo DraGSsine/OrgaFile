@@ -37,10 +37,10 @@ export function StorageUsage() {
       value={storageUsed / 100000000}
       max={storageLimit}
       label={`${formatFileSize(storageUsed)} of ${storageLimit} GB`}
-      progressColor="hsl(215 100% 50%)"
+      progressColor="primary"
       icon={<HardDriveIcon className="w-5 h-5" />}
       iconColor="text-blue-500"
-      iconBgColor="bg-blue-100 dark:bg-blue-900/20"
+      iconBgColor="bg-blue-100 border-primary-color dark:bg-blue-900/20"
       isLoading={loading}
     />
   );

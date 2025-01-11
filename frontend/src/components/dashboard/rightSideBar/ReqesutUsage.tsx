@@ -31,7 +31,7 @@ export function CreditstUsage() {
       value={creditsUsed}
       max={creditsLimit}
       label={`${creditsUsed} of ${creditsLimit} credits`}
-      progressColor="hsl(117 100% 42%)"
+      progressColor="success"
       icon={<Activity01Icon />}
       iconColor="text-success-500"
       iconBgColor="bg-success-100/50 dark:bg-success-900/20"

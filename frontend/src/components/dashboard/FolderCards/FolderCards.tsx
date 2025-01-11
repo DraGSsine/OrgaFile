@@ -29,7 +29,7 @@ export default function FolderCards() {
         );
         setFolders(response?.data?.folders ?? []);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         timeoutId = setTimeout(() => {
           setLoading(false);
