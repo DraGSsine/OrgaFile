@@ -28,7 +28,7 @@ export class UserService {
     @InjectModel("removedFile") private readonly removedFileModel: Model<any>
   ) {
     this.stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-04-10",
+      apiVersion: "2024-12-18.acacia",
     });
   }
 

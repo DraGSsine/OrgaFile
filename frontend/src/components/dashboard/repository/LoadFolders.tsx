@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { motion } from "framer-motion";
 import { FolderType } from "@/types/types";
 import { AppDispatch, RootState } from "@/redux/store";
 import { loadFolders } from "@/redux/slices/foldersSlice";
-import FolderComponent from "./Folder";
-import { Folder01Icon, FolderOpenIcon } from "hugeicons-react";
+import { FolderOpenIcon } from "hugeicons-react";
+import { FolderComponent } from "./Folder";
+import { FolderSkeletonGrid } from "./FolderSkeletonGrid";
 
 const LoadFolders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,7 +17,6 @@ const LoadFolders = () => {
   const { folders, isLoading } = useSelector(
     (state: RootState) => state.folders.loadFolders
   );
-
   const [showSkeleton, setShowSkeleton] = useState(true);
 
   useEffect(() => {
@@ -25,75 +25,77 @@ const LoadFolders = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      const timer = setTimeout(() => {
-        setShowSkeleton(false);
-      }, 500);
+      const timer = setTimeout(() => setShowSkeleton(false), 500);
       return () => clearTimeout(timer);
-    } else {
-      setShowSkeleton(true);
     }
+    setShowSkeleton(true);
   }, [isLoading]);
 
-  if (showSkeleton) {
-    return (
-      <div className=" max-h-[100%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 overflow-y-scroll p-2">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <FolderLoadSkeleton key={i} />
-        ))}
-      </div>
-    );
-  } else if (folders.length === 0) {
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <div className="grid h-60 gap-4 w-60">
-          <div className="w-20 h-20 mx-auto bg-gray-50 rounded-full shadow-sm justify-center items-center inline-flex">
-            <FolderOpenIcon
-              size={50}
-              className="fill-white text-primary-color text-1"
-            />
-          </div>
-          <div>
-            <h2 className="text-center text-black text-base font-semibold leading-relaxed pb-1">
-              No folders found
-            </h2>
-            <p className="text-center text-black text-sm font-normal leading-snug pb-4">
-              Upload Your files to show your organized folders
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
   return (
-    <div className="max-h-[100%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 overflow-y-scroll p-2">
-      {folders.map((folder: FolderType, index: number) => (
-        <FolderComponent key={index} folder={folder} />
-      ))}
+    <div className="h-full w-full p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 auto-rows-max">
+        {showSkeleton ? (
+          <FolderSkeletonGrid />
+        ) : folders.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <FolderGrid folders={folders} />
+        )}
+      </div>
     </div>
   );
 };
+
+
+const FolderGrid = ({ folders }: { folders: FolderType[] }) => (
+  <>
+    {folders.map((folder, index) => (
+      <FolderComponent key={index} index={index} folder={folder} />
+    ))}
+  </>
+);
+
+const EmptyState = () => (
+  <div className="col-span-full h-[calc(100vh-200px)] flex items-center justify-center">
+    <div className="flex flex-col items-center space-y-4 max-w-sm text-center">
+      <div className="w-20 h-20 rounded-full bg-gray-50 shadow-sm flex items-center justify-center">
+        <FolderOpenIcon
+          size={50}
+          className="text-primary-color"
+        />
+      </div>
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold text-gray-900">
+          No folders found
+        </h2>
+        <p className="text-sm text-gray-600">
+          Upload your files to show your organized folders
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+const FolderLoadSkeleton = ({ index }: { index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.05 }}
+    className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col space-y-4"
+  >
+    <div className="flex justify-between items-start">
+      <div className="w-12 h-12 rounded-lg bg-gray-200 animate-pulse" />
+      <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+    </div>
+    <div className="space-y-3 flex-grow">
+      <div className="h-5 bg-gray-200 rounded-md w-3/4 animate-pulse" />
+      <div className="flex items-center gap-2">
+        <div className="h-4 bg-gray-200 rounded-md w-20 animate-pulse" />
+        <div className="h-4 bg-gray-200 rounded-md w-16 animate-pulse" />
+      </div>
+    </div>
+    <div className="w-full h-9 rounded-lg bg-gray-200 animate-pulse" />
+  </motion.div>
+);
 
 export default LoadFolders;
-const FolderLoadSkeleton = () => {
-  return (
-    <div className="  justify-between flex  flex-col bg-blue-100 p-6 animate-pulse rounded-lg fade-in">
-      <div className="flex justify-between items-center mb-5">
-        <Folder01Icon size={60} className="fill-primary-color text-primary-color" />
-        <div className="bg-white rounded-full h-8 w-8"></div>
-      </div>
-
-      <div>
-        <div className="bg-white h-5 w-20 rounded-full mb-1"></div>
-        <div className="bg-white h-3 w-10 rounded-full"></div>
-      </div>
-      <div
-        className="
-        shadow-[0px_0px_1px_0px_#4299e1]  
-          capitalize flex justify-between items-center bg-white rounded-full mt-4"
-      >
-        <div className="bg-white h-5 w-10 rounded-full"></div>
-        <div className="bg-primary-color h-8 w-20 rounded-full"></div>
-      </div>
-    </div>
-  );
-};

@@ -1,11 +1,10 @@
-FROM node:18.13.0
+FROM node:22.13.0
 
 WORKDIR /app
 
+COPY package*.json ./
+RUN npm i -g @nestjs/cli && npm install
+
 COPY . .
 
-RUN npm install && npm i -g @nestjs/cli
-
-
-
-CMD ["npm", "run" , "start"]
+CMD ["nest", "start", "--watch"]

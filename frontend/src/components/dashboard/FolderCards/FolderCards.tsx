@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CloudSkeleton } from "./CloudSkeleton";
-import { FolderCard } from "./FolderCard";
 import { motion } from "framer-motion";
 import { HeaderPage } from "../HeaderPage";
-import { Folder01Icon, FolderOpenIcon } from "hugeicons-react";
 import axios from "axios";
 import { FolderType } from "@/types/types";
+import { Folder01Icon } from "hugeicons-react";
+import { FolderComponent } from "../repository/Folder";
+import { FolderSkeletonGrid } from "../repository/FolderSkeletonGrid";
 
 export default function FolderCards() {
   const [loading, setLoading] = useState(true);
   const [folders, setFolders] = useState<FolderType[]>([]);
+
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     (async () => {
       try {
         const response = await axios.get(
@@ -24,72 +27,62 @@ export default function FolderCards() {
         setFolders(response?.data?.folders ?? []);
       } catch (error) {
         console.log(error);
-        setLoading(false);
+      } finally {
+        timeoutId = setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     })();
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
-    <div className=" row-start-1 row-end-6 py-5 ">
+    <div className=" row-start-1 row-end-8 py-6 ">
       <HeaderPage
-        icon={<Folder01Icon className="h-8 w-8 text-primary-color" />}
+        icon={<Folder01Icon className="h-8 w-8 text-[#4b81f7]" />}
         title="Recent Folders"
-        description="view last 5 folders"
+        description="View your last 5 folders"
       />
+
       {loading ? (
-        <CloudSkeleton />
+        <div className=" w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <FolderSkeletonGrid />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 overflow-y-scrol h-[75%] py-1 px-2 overflow-y-scroll xl:scrollbar-hide ">
-          {folders.length !== 0 ? (
-            folders.map((item, index) => {
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <FolderCard folder={item} key={index} />
-                </motion.div>
-              );
-            })
+        <div className="grid pb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-y-scrol h-[100%] px-2 overflow-y-scroll xl:scrollbar-hide ">
+          {folders.length > 0 ? (
+            folders.map((folder, index) => (
+              <FolderComponent
+                key={folder.folderId}
+                folder={folder}
+                index={index}
+              />
+            ))
           ) : (
-            <div className="h-full w-full flex items-center justify-center  bg-white shadow-small rounded-xl col-start-1 col-end-6">
-              <div className="grid gap-4">
-                <div className=" flex items-center justify-center ">
-                  <FolderOpenIcon className="h-24 w-24 text-gray-200 " />
+            <motion.div
+              className="col-span-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className=" bg-primary-color p-6 rounded-2xl">
+                    <Folder01Icon className="h-12 w-12 text-white" />
+                  </div>
                 </div>
 
-                <motion.div
-                  className="relative z-10 flex flex-col items-center text-center space-y-2  mx-auto px-4"
-                  initial={{ y: 20 }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <motion.h2
-                    className="text-3xl font-bold pb-2 pt-2 text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    No folders found
-                  </motion.h2>
+                <h2 className="text-2xl font-semibold mb-3 bg-[#4b81f7] text-transparent bg-clip-text">
+                  No folders yet
+                </h2>
 
-                  <motion.div
-                    className="space-y-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      Upload Your files to show your organized folders
-                    </p>
-                  </motion.div>
-                </motion.div>
+                <p className="text-gray-500 max-w-md mx-auto">
+                  Upload your files to start organizing them into smart folders
+                </p>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       )}

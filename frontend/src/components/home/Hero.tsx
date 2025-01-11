@@ -41,17 +41,17 @@ const Hero = () => {
         <div className="flex space-x-8">
           <Link
             href="/pricing"
-            className="flex items-center justify-center p-3 rounded-full xl:px-6 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color font-medium"
+            className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color"
           >
             Start Organizing
-            <ArrowRight01Icon className="font-bold ml-2 w-12 h-8 " />
+            <ArrowRight01Icon className="font-bold" />
           </Link>
           <Link
             href="#how-it-works"
-            className="flex items-center justify-center p-3 rounded-full xl:px-6 transition-all duration-300 ease-in hover:opacity-90 border text-primary-color bg-white border-primary-color font-medium"
+            className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 border border-slate-200 bg-white text-primary-color"
           >
             See How It Works
-            <ArrowRight01Icon className="font-bold ml-2 w-12 h-8 " />
+            <ArrowRight01Icon className="font-bold " />
           </Link>
         </div>
       </div>

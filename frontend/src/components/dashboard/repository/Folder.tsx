@@ -1,46 +1,53 @@
-import { FolderType } from "@/types/types";
-import { Button } from "@nextui-org/button";
-import Link from "next/link";
-import FolderSettings from "./FolderSettings";
-import { bytesToMegaBytes } from "@/helpers/helpers";
-import { useMemo } from "react";
-import { Folder01Icon } from "hugeicons-react";
-import { Tooltip } from "@nextui-org/react";
-const FolderComponent = ({ folder }: { folder: FolderType }) => {
-  const { filesSize } = useMemo(() => {
-    return {
-      filesSize: folder?.files?.reduce((acc, file) => acc + file.size, 0),
-    };
-  }, [folder]);
+"use client";
 
+import { bytesToMegaBytes } from "@/helpers/helpers";
+import { FolderType } from "@/types/types";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import FolderDownlaodButton from "../repository/FolderSettings";
+import { Folder01Icon } from "hugeicons-react";
+
+export function FolderComponent({ index, folder }: {index:number, folder: FolderType }) {
+  const filesSize = folder.files.reduce((acc, file) => acc + file.size, 0);
 
   return (
-    <div className=" h-[230px] justify-between flex  flex-col bg-blue-100 p-6 rounded-lg fade-in ">
-      <div className="flex justify-between items-center mb-5">
-        <Folder01Icon size={60} className="fill-primary-color text-primary-color" />
-        <FolderSettings folder={folder} />
+    <motion.div
+      key={index}
+      className="bg-gradient-to-br from-white to-blue-50/50 rounded-2xl p-6 shadow-sm border border-blue-100/50"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+    >
+      <div className="flex justify-between items-start mb-6">
+        <div className=" bg-primary-color p-3 rounded-xl">
+          <Folder01Icon className="w-6 h-6 text-white" />
+        </div>
+        <FolderDownlaodButton folder={folder} />
       </div>
 
-      <div>
-      <p className="font-medium text-base md:text-lg lg:text-xl truncate mb-1">{folder.name}</p>
-        <p className=" text-zinc-500 text-sm">{folder?.files?.length} files</p>
+      <div className="space-y-2">
+        <h3 className="font-semibold text-lg truncate text-gray-800">
+          {folder.name}
+        </h3>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">
+            {folder.files.length} {folder.files.length === 1 ? "file" : "files"}
+          </span>
+          <span className="text-sm text-gray-400">•</span>
+          <span className="text-sm text-gray-500">
+            {bytesToMegaBytes(filesSize)}
+          </span>
+        </div>
       </div>
-      <div
-        className="
-        shadow-[0px_0px_1px_0px_#4299e1]  
-          capitalize flex justify-between items-center bg-white rounded-full mt-4"
-      >
-        <span className=" text-primary-color pl-4 font-medium text-sm ">
-          {bytesToMegaBytes(filesSize)}
-        </span>
-        <Link href={`repository/${folder?.folderId}`}>
-          <div className=" px-2 py-1 bg-primary-color font-medium text-white max-h-8 rounded-full">
-            Open
-          </div>
+
+      <div className="mt-6">
+        <Link
+          href={`dashboard/repository/${folder.folderId}`}
+          className="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-primary-color text-white font-medium hover:opacity-90 transition-opacity"
+        >
+          Open Folder
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
-};
-
-export default FolderComponent;
+}

@@ -9,6 +9,11 @@ type initialStateType = {
     isLoading: boolean;
     error: boolean;
   };
+  deleteFolder: {
+    deleteingFolderId: string[];
+    isLoading: boolean;
+    error: boolean;
+  };
   loadOneFolder: {
     folder: FolderType | null;
     isLoading: boolean;
@@ -25,6 +30,11 @@ const initialState: initialStateType = {
   downloadFolder: {
     downloadingFolderId: [],
     archive: null,
+    isLoading: false,
+    error: false,
+  },
+  deleteFolder: {
+    deleteingFolderId: [],
     isLoading: false,
     error: false,
   },
@@ -220,17 +230,18 @@ export const foldersSlice = createSlice({
       state.downloadFolder.isLoading = false;
     });
     builder.addCase(deleteFolder.pending, (state) => {
-      state.loadFolders.isLoading = true;
+      state.deleteFolder.isLoading = true;
     });
     builder.addCase(deleteFolder.fulfilled, (state, action) => {
-      state.loadFolders.folders = state.loadFolders.folders.filter(
-        (folder) => folder.folderId !== action.payload
-      );
-      state.loadFolders.isLoading = false;
+      state.deleteFolder.deleteingFolderId =
+        state.deleteFolder.deleteingFolderId.filter(
+          (id) => id !== action.payload
+        );
+      state.deleteFolder.isLoading = false;
     });
     builder.addCase(deleteFolder.rejected, (state) => {
-      state.loadFolders.error = true;
-      state.loadFolders.isLoading = false;
+      state.deleteFolder.error = true;
+      state.deleteFolder.isLoading = false;
     });
   },
 });

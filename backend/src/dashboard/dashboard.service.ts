@@ -19,22 +19,9 @@ export class DashboardService {
     }
 
     try {
-      /*
-      folderModle = [{
-        userId: "123",
-        folders:[
-          {
-            folderId: "fdf",
-            name: "folder1",
-          }
-        ]
-      }]
-
-      */
-
       const folders = await this.folderModel.findOne(
         { userId: userId },
-        { folders: { $slice: -5 } }
+        { folders: { $slice: -4 } }
       );
       return folders
     } catch (error) {

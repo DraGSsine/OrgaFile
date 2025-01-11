@@ -51,7 +51,7 @@ export class PaymentService {
     }
     this.webhookSecret = webhookSecret;
     this.stripe = new Stripe(key, {
-      apiVersion: "2024-04-10",
+      apiVersion: "2024-12-18.acacia",
     });
     if (process.env.PROD === undefined) {
       throw new Error("Environment not set");

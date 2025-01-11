@@ -58,7 +58,7 @@ const RecentUploadsPage = () => {
   }, [uploadFileState.isFileUploaded, removeFileState.isFileDeleted]);
 
   return (
-    <div className="row-start-6 row-end-17 h-full w-full">
+    <div className=" row-start-9 row-end-25 h-full w-full">
       <RecentUploadsContainer
         files={recentFilesState.files}
         isLoading={isLoading}

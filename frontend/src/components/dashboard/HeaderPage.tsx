@@ -14,7 +14,7 @@ export function HeaderPage({icon, title, description}:HeaderPageProps) {
         {icon}
       </div>
       <div>
-        <h1 className=" text-lg xl:text-xl 2xl:text-3xl font-bold capitalize">{title}</h1>
+        <h1 className=" text-lg xl:text-xl 2xl:text-[1.5rem] font-bold capitalize">{title}</h1>
         <p className="text-default-500 capitalize">{description}</p>
       </div>
     </div>

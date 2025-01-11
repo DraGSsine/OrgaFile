@@ -15,7 +15,6 @@ import {
   setRemoveFiles,
   restoreFile,
   downloadFile,
-  resetFilesState,
   resetFileResotreState,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
