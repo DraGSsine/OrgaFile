@@ -96,7 +96,7 @@ export function SecuritySettings() {
             value={formData.newPassword}
             onChange={handleInputChange("newPassword")}
           />
-          <Button onClick={handleSubmit} color="primary" type="submit" className="w-full">
+          <Button onClick={handleSubmit} color="primary" type="submit" className="w-full mt-auto ">
             Update Password
           </Button>
         </div>
@@ -121,6 +121,7 @@ function PasswordInput({ name, label, value, onChange }: PasswordInputProps) {
     <Input
       name={name}
       size="sm"
+      className=" flex items-center"
       endContent={
         <button
           className="focus:outline-none flex items-center justify-center"
@@ -130,13 +131,13 @@ function PasswordInput({ name, label, value, onChange }: PasswordInputProps) {
           {!isVisible ? (
             <ViewOffIcon
               width="25"
-              height="35"
+              height="25"
               className="text-2xl text-default-400 pointer-events-none"
             />
           ) : (
             <ViewIcon
               width="25"
-              height="35"
+              height="25"
               className="text-2xl text-default-400 pointer-events-none"
             />
           )}

@@ -53,7 +53,7 @@ export default function Component() {
             </>
           ) : (
             <>
-              <div className="bg-green-100 rounded-full p-4 text-green-500">
+              <div className="bg-purple-100 rounded-full p-4 text-purple-500">
                 <CheckmarkCircle01Icon className="h-8 w-8" />
               </div>
               <div className="space-y-2 text-center">

@@ -1,5 +1,5 @@
 import NavBar from "@/components/dashboard/NavBar";
-import { RightSideBar } from "@/components/dashboard/rightSideBar/RightSideBar";
+import RightSidebar from "@/components/dashboard/rightSideBar/RightSideBar";
 import Sidebar from "@/components/dashboard/sidebar/sideBar";
 
 import SignoutModal from "@/components/LogOutModal";
@@ -21,7 +21,7 @@ export default function RootLayout({
             {children}
           </main>
         </div>
-        <RightSideBar />
+        <RightSidebar />
         <SignoutModal />
       </div>
     </GetUserInfoProvider>

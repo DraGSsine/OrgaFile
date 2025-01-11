@@ -27,11 +27,11 @@ const PricingCard = ({
       <div
         className={`  relative w-[400px] p-1 rounded-xl bg-blue-200 ${
           mostpopular &&
-          " bg-gradient-to-br from-[#4b81f7] via-[#baedd2] to-[#4b81f7]"
+          " bg-gradient-to-br from-primary-color via-secondary-color to-primary-color "
         }  `}
       >
         {mostpopular && (
-          <div className="  text-center absolute z-20 -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-primary-color to-cyan-600 px-3 py-2 text-sm font-medium text-white">
+          <div className="  text-center absolute z-20 -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-primary-color to-primary-color px-3 py-2 text-sm font-medium text-white">
             Most Popular
           </div>
         )}

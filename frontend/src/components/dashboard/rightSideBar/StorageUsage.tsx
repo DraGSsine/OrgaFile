@@ -1,13 +1,12 @@
-"use client";
-
+"use client"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { loadUserLimits } from "@/redux/slices/dashboardSlice";
 import { resetFilesPermanentlyDeleted } from "@/redux/slices/filesSlices";
 import { UsageCard } from "./CreditstUsage";
-import { CloudIcon } from "hugeicons-react";
 import { formatFileSize } from "@/helpers/helpers";
+import { HardDriveIcon } from "hugeicons-react";
 
 export function StorageUsage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,14 +33,14 @@ export function StorageUsage() {
 
   return (
     <UsageCard
-      title="Cloud Storage"
-      value={storageUsed /100000000 } // bytes Convert to GB
+      title="Storage Usage"
+      value={storageUsed / 100000000}
       max={storageLimit}
       label={`${formatFileSize(storageUsed)} of ${storageLimit} GB`}
-      progressColor="hsl(201 100% 47%)"
-      icon={<CloudIcon />}
-      iconColor="text-primary-color"
-      iconBgColor="bg-primary-100/50 dark:bg-primary-900/20"
+      progressColor="hsl(215 100% 50%)"
+      icon={<HardDriveIcon className="w-5 h-5" />}
+      iconColor="text-blue-500"
+      iconBgColor="bg-blue-100 dark:bg-blue-900/20"
       isLoading={loading}
     />
   );

@@ -124,7 +124,7 @@ export class UploadService {
       const res = userFiles.files
         .slice()
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-        .slice(0, 8);
+        .slice(0, 7);
 
       return res;
     } catch (error) {

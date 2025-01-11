@@ -106,7 +106,7 @@ export const UploadDropzone = () => {
                     <div className="w-full mt-4 max-w-xs mx-auto">
                       <ProgressBar
                         indicatorColor={
-                          uploadProgress === 100 ? "bg-green-500" : ""
+                          uploadProgress === 100 ? "bg-purple-500" : ""
                         }
                         value={uploadProgress}
                       />

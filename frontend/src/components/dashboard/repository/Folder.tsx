@@ -42,7 +42,7 @@ export function FolderComponent({ index, folder }: {index:number, folder: Folder
 
       <div className="mt-6">
         <Link
-          href={`dashboard/repository/${folder.folderId}`}
+          href={`/dashboard/repository/${folder.folderId}`}
           className="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-primary-color text-white font-medium hover:opacity-90 transition-opacity"
         >
           Open Folder

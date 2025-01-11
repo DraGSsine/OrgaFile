@@ -25,7 +25,7 @@ export const ProfileDelete = () => {
         setIsModalOpen={setIsModalOpen}
       />
 
-      <div className=" col-start-8 col-end-12 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+      <div className=" col-start-8 col-end-11 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
         <div className="p-6">
           <div className="flex items-start gap-4">
             <div className="flex-1">

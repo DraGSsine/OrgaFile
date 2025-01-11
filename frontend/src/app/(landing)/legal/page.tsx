@@ -56,7 +56,7 @@ const Page = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-12 px-4">
+    <div className="min-h-screen  py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           {/* Header */}
@@ -93,7 +93,7 @@ const Page = () => {
             {/* Service Overview */}
             <section
               id="overview"
-              className="mb-12 p-6 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-xl"
+              className="mb-12 p-6 bg-gradient-to-br from-purple-50/50 to-blue-50/50 rounded-xl"
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                 <File01Icon className="w-6 h-6 mr-2 text-primary-color" />
@@ -261,7 +261,7 @@ const Page = () => {
             </section>
 
             {/* Dispute Resolution */}
-            <section id="dispute" className="mb-12 bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-xl">
+            <section id="dispute" className="mb-12 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-xl">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <HeartCheckIcon className="w-6 h-6 mr-2 text-rose-500" />
                 Friendly Dispute Resolution

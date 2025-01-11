@@ -88,7 +88,6 @@ export function CurrentPlanCard() {
       setUpgradePlanLoading(false);
     }
   }
-
   return (
     <div className="overflow-hidden col-start-1 col-end-5 rounded-xl bg-white shadow-sm ring-1 ring-gray-200 flex flex-col justify-between ">
       <div className="p-6">
@@ -107,7 +106,7 @@ export function CurrentPlanCard() {
 
         <div className="mt-4">
           <div className="flex items-baseline">
-            <span className="text-3xl font-bold text-primary-color">{price}</span>
+            <span className="text-3xl font-bold text-primary-color">{price}$</span>
             <span className="ml-1 text-gray-500">/month</span>
           </div>
 

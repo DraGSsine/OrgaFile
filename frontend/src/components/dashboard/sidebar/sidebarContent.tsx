@@ -7,8 +7,6 @@ import { NavItem } from "./navItem";
 import {
   Activity01Icon,
   CloudIcon,
-  Loading01Icon,
-  Loading02Icon,
   Loading03Icon,
   Logout01Icon,
 } from "hugeicons-react";
@@ -86,7 +84,7 @@ export function SidebarContent({
                     <CloudIcon />
                   </div>
                 </div>
-                <div className=" w-full h-10 flex items-center justify-center rounded-xl bg-green-100 cursor-pointer">
+                <div className=" w-full h-10 flex items-center justify-center rounded-xl bg-purple-100 cursor-pointer">
                   <div
                     onClick={() =>
                       setShowUsageModal({
@@ -94,7 +92,7 @@ export function SidebarContent({
                         modal: "credits",
                       })
                     }
-                    className="w-6 h-6 text-green-500"
+                    className="w-6 h-6 text-purple-500"
                   >
                     <Activity01Icon />
                   </div>

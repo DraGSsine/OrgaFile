@@ -10,7 +10,9 @@ import {
   setConfirmFileRemoveModal,
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
-import { RecentUploadsContainer } from "../recentUpload/recentFilesConatainer";
+import { HeaderPage } from "../HeaderPage";
+import { File02Icon } from "hugeicons-react";
+import TableFiles from "@/components/dashboard/TableFiles";
 
 const RecentUploadsPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,12 +61,19 @@ const RecentUploadsPage = () => {
 
   return (
     <div className=" row-start-9 row-end-25 h-full w-full">
-      <RecentUploadsContainer
-        files={recentFilesState.files}
-        isLoading={isLoading}
-        maxRows={7}
-        routeName="allFiles"
-      />
+      <div className=" h-full grid grid-rows-12 ">
+        <HeaderPage
+          icon={<File02Icon className="w-8 h-8 text-primary-color" />}
+          title="Recent Uploads"
+          description={`view last ${7} files`}
+        />
+        <TableFiles
+          files={recentFilesState.files}
+          isLoading={isLoading}
+          maxRows={7}
+          routeName="allFiles"
+        />
+      </div>
     </div>
   );
 };

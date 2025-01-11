@@ -13,6 +13,7 @@ type initialStateType = {
     deleteingFolderId: string[];
     isLoading: boolean;
     error: boolean;
+    isDeleted: boolean;
   };
   loadOneFolder: {
     folder: FolderType | null;
@@ -37,6 +38,7 @@ const initialState: initialStateType = {
     deleteingFolderId: [],
     isLoading: false,
     error: false,
+    isDeleted: false,
   },
   loadOneFolder: {
     folder: null,
@@ -231,8 +233,10 @@ export const foldersSlice = createSlice({
     });
     builder.addCase(deleteFolder.pending, (state) => {
       state.deleteFolder.isLoading = true;
+      state.deleteFolder.isDeleted = false;
     });
     builder.addCase(deleteFolder.fulfilled, (state, action) => {
+      state.deleteFolder.isDeleted = true;
       state.deleteFolder.deleteingFolderId =
         state.deleteFolder.deleteingFolderId.filter(
           (id) => id !== action.payload
