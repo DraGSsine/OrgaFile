@@ -30,6 +30,7 @@ export class AuthController {
 
   @Post('signup')
   async signUp(@Body() signUpDto: signUpDto, @Res() res: Response) {
+    return res.send({ message: 'Join the waiting list to get notified when we launch' });
     const { token, user } = await this.authService.signUp(signUpDto);
 
     res.cookie('token', token, this.resHeaders);

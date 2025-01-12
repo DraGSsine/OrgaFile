@@ -5,9 +5,13 @@ export async function middleware(request: NextRequest) {
   try {
     const cookie = request.cookies;
     const accessToken = cookie.get("token")?.value;
-    const protectedRoutes = ["/dashboard", "/payment/successful"];
     const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
-    
+    // check if the user in the signup page without a plan
+    const plan = cookie.get("plan")?.value as string
+    const isValidPlan = plan === "Basic" || plan === "Gold" || plan === "Standard"
+    if (request.nextUrl.pathname === "/auth/signup" && (!isValidPlan)) {
+      return NextResponse.redirect(new URL("/pricing", request.nextUrl.origin).href);
+    }    
     // Pass the actual token from cookies
     const { isTokenValid, isSubscribed } = await validateToken(accessToken);
 

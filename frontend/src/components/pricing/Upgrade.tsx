@@ -3,7 +3,7 @@ import { Button } from "@nextui-org/button";
 import { Loading03Icon } from "hugeicons-react";
 import { useRouter } from "next/navigation";
 import { useState } from 'react'; // Ensure useState is imported
-
+import cookies from 'js-cookie'
 const Upgrade = ({
   plan,
   active,
@@ -19,7 +19,7 @@ const Upgrade = ({
   const upgradePlan = async (plan: string) => {
     setLoading(true);
     setTimeout(() => {
-      localStorage.setItem("plan", plan);
+      cookies.set('plan', plan, { expires: 365 });
       router.push(`/auth/signup`);
       setLoading(false);
     } , 1000);

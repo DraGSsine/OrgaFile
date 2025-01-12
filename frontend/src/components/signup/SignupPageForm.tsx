@@ -9,6 +9,7 @@ import { createCheckoutSession } from "@/redux/slices/paymentSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import cookies from "js-cookie";
 
 const userSchema = z
   .object({
@@ -45,7 +46,7 @@ const SignupPageForm = () => {
     setIsLoading(true);
     setErrors({});
 
-    const plan = localStorage.getItem("plan");
+    const plan = cookies.get("plan");
     if (plan === "Basic" || plan === "Gold" || plan === "Standard") {
       try {
         const validatedUser = userSchema.parse({ ...formData, acceptTerms });

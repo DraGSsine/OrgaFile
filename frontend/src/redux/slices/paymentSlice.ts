@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import cookies from "js-cookie";
 export interface CheckoutSessionType {
   checkoutSession: any;
   loading: boolean;
@@ -32,7 +32,7 @@ const initialState: {
 export const createCheckoutSession = createAsyncThunk(
   "payment/createCheckoutSession",
   async (_, { rejectWithValue }) => {
-    const plan = localStorage.getItem("plan") || "Standard";
+    const plan = cookies.get("plan");
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/create-checkout-session`,
@@ -78,43 +78,48 @@ export const checkSubscription = createAsyncThunk(
       );
       return res.data;
     } catch (error: any) {
-      console.error(" error.response.data.message", error.response.data.message);
+      console.error(
+        " error.response.data.message",
+        error.response.data.message
+      );
       return rejectWithValue(error.response.data.message);
     }
   }
 );
 
-export const cancelSubscription = createAsyncThunk("payment/cancelSubscription", async (_, { rejectWithValue }) => {
-  try {
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/cancel-subscription`,
-      {},
-      {
-        withCredentials: true,
-      }
-    );
-    return res.data;
+export const cancelSubscription = createAsyncThunk(
+  "payment/cancelSubscription",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/cancel-subscription`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-  catch (error: any) {
-    return rejectWithValue(error.response.data.message);
-  }
-}
 );
 
-export const mangeBilling = createAsyncThunk("payment/manageBilling", async (_, { rejectWithValue }) => {
-  try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/manage-billing`,
-      {
-        withCredentials: true,
-      }
-    );
-    return res.data;
+export const mangeBilling = createAsyncThunk(
+  "payment/manageBilling",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/manage-billing`,
+        {
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-  catch (error: any) {
-    return rejectWithValue(error.response.data.message);
-  }
-}
 );
 
 export const paymentSlice = createSlice({

@@ -13,7 +13,7 @@ const NewsLetter = () => {
                   Join OrgaFile's Exclusive Waitlist
                 </h2>
                 <p className="mb-8 mt-6 text-gray-600 dark:text-gray-300">
-                  Be among the first to experience OrgaFile and receive a special 25% launch discount. Sign up now to secure your spot and get notified when we launch. Early supporters get exclusive benefits!
+                  Be among the first to experience OrgaFile and receive a special launch discount. Sign up now to secure your spot and get notified when we launch. Early supporters get exclusive benefits!
                 </p>
                 <SendEmailForm />
               </div>
