@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { cancelSubscription, createCheckoutSession, mangeBilling, renewSubscription } from "@/redux/slices/paymentSlice";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { CreditCardIcon } from "hugeicons-react";
-import { formatDateForInvoice } from "@/helpers/helpers";
+import { formatDateForInvoice } from "@/lib/helpers";
 import { Button } from "@nextui-org/button";
 import { updateUserInfo } from "@/redux/slices/authSlice";
 import { subscribeStatus } from "@/types/types";

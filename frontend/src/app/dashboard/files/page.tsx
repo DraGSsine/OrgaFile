@@ -10,7 +10,7 @@ import {
 } from "@/redux/slices/filesSlices";
 import { toast } from "sonner";
 import { HeaderPage } from "@/components/dashboard/HeaderPage";
-import { File01Icon, Files02Icon } from "hugeicons-react";
+import { File01Icon } from "hugeicons-react";
 
 const AllFilesPage = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,6 +1,6 @@
 "use client";
 
-import { bytesToMegaBytes } from "@/helpers/helpers";
+import { bytesToMegaBytes } from "@/lib/helpers";
 import { FolderType } from "@/types/types";
 import Link from "next/link";
 import { motion } from "framer-motion";

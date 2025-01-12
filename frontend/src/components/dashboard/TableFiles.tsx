@@ -14,7 +14,7 @@ import {
   FormatTheDate,
   formatFileSize,
   getFileImage,
-} from "@/helpers/helpers";
+} from "@/lib/helpers";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import {

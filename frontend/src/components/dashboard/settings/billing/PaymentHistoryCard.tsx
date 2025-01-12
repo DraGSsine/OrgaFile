@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency, formatDateForInvoice, getPaymentCardSvg } from "@/helpers/helpers";
+import { formatCurrency, formatDateForInvoice, getPaymentCardSvg } from "@/lib/helpers";
 import { RootState } from "@/redux/store";
 import { Transaction } from "@/types/types";
 import { cn } from "@nextui-org/react";

@@ -1,5 +1,5 @@
 "use client";
-import { sendEmail } from "@/helpers/mail";
+import { sendEmail } from "@/lib/mail";
 import { Button } from "@nextui-org/button";
 import { Loading03Icon, Mail01Icon } from "hugeicons-react";
 import React, { useState } from "react";
@@ -7,18 +7,20 @@ import { toast } from "sonner";
 const SendEmailForm = () => {
   const [email, setEmail] = useState("");
   const [IsLoading, setIsLoading] = useState(false);
-  const HandleSubmiteEmail = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const HandleSubmiteEmail = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     setIsLoading(true);
     const { err } = await sendEmail(email);
     if (err) {
       setIsLoading(false);
-      toast.error("Failed to subscribe. Please try again later.");
+      toast.error(err);
       return;
     }
     setTimeout(() => {
       setIsLoading(false);
       toast.success("Subscribed successfully!");
+      setEmail("");
     }, 2000);
   };
   return (
@@ -29,6 +31,7 @@ const SendEmailForm = () => {
         </div>
         <input
           onChange={(e) => setEmail(e.target.value)}
+          value={email}
           autoComplete="email"
           placeholder="Enter your email address"
           className="w-full rounded-full bg-transparent p-4 placeholder-gray-600 dark:placeholder-white outline-none"
@@ -36,7 +39,7 @@ const SendEmailForm = () => {
         />
         <div className="md:pr-1.5 lg:pr-0">
           <Button
-            onClick={(e)=>HandleSubmiteEmail(e)}
+            onClick={(e) => HandleSubmiteEmail(e)}
             variant="solid"
             color="primary"
             className=" rounded-full p-5 min-w-28"

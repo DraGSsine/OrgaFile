@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { loadUserLimits } from "@/redux/slices/dashboardSlice";
 import { resetFilesPermanentlyDeleted } from "@/redux/slices/filesSlices";
 import { UsageCard } from "./CreditstUsage";
-import { formatFileSize } from "@/helpers/helpers";
+import { formatFileSize } from "@/lib/helpers";
 import { HardDriveIcon } from "hugeicons-react";
 
 export function StorageUsage() {

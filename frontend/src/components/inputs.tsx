@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { ToggleFile, loadAllFiles } from "@/redux/slices/filesSlices";
 import Image from "next/image";
-import { bytesToMegaBytes, getFileImage } from "@/helpers/helpers";
+import { bytesToMegaBytes, getFileImage } from "@/lib/helpers";
 
 import cookies from "js-cookie";
-import { getPresignedUrl } from "@/helpers/action";
+import { getPresignedUrl } from "@/lib/action";
 import { Search01Icon } from "hugeicons-react";
 
 export const SearchInput = () => {

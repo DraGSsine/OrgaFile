@@ -4,8 +4,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import cookies from "js-cookie";
-import { extractTextFromFile, validateFileType } from "@/helpers/parse";
-import { generateFileUrl, getS3SignedUrl } from "@/helpers/action";
+import { extractTextFromFile, validateFileType } from "@/lib/parse";
+import { generateFileUrl, getS3SignedUrl } from "@/lib/action";
 
 type FileMetaData = {
   url: string;
