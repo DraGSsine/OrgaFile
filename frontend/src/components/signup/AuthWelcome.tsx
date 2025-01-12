@@ -77,7 +77,7 @@ export const AuthWelcome = ({
       <div className="absolute bottom-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-3xl -z-10" />
 
       <div className="space-y-6 mb-12">
-        <h1 className="font-bold text-[2.7rem] tracking-tight">{title}</h1>
+        <h1 className="font-bold text-lg md:text-2xl lg:text-4xl tracking-tight">{title}</h1>
 
         <p className="text-muted-foreground text-lg">
           {paragraph}

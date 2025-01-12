@@ -7,12 +7,12 @@ import { File01Icon, PlayCircleIcon, Watch01Icon } from "hugeicons-react";
 import { Logo } from "../dashboard/sidebar/logo";
 const Discover = () => {
   return (
-    <div className="hidden sm:flex h-full w-[50%] lg:w-[40%] bg-gradient-to-br to-[#0162ff15] from-[#a955f70f] rounded-lg p-12 relative overflow-hidden">
+    <div className="hidden sm:flex h-full w-[40%] bg-gradient-to-br to-[#0162ff15] from-[#a955f70f] rounded-lg p-8 relative overflow-hidden">
       {/* Abstract background patterns */}
       <div className="absolute inset-0 bg-grid-white/10 [mask-image:radial-gradient(white,transparent_85%)]" />
       <div className="absolute inset-0 bg-gradient-to-br from-transparent to-background/20 backdrop-blur-[1px]" />
       
-      <div className="relative max-w-xl mx-auto flex gap-14 flex-col">
+      <div className="relative mx-auto flex gap-14 flex-col">
         {/* Logo */}
         <Logo width={200} height={100} alt="Orgafile logo for the signup" />
         
