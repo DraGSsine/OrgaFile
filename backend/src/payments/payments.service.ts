@@ -11,6 +11,7 @@ import { Request, Response } from "express";
 import { JwtService } from "@nestjs/jwt";
 import { UserDocument } from "../schemas/auth.schema";
 import { subscriptionDocument } from "../schemas/subscriptions.schema";
+import { error } from "console";
 
 interface PlanConfig {
   storage: number;
@@ -63,8 +64,8 @@ export class PaymentService {
 
     this.redirectUrl =
       process.env.PROD === "true"
-        ? process.env.NEXT_APP_URL_PROD! + '/dashboard'
-        : process.env.NEXT_APP_URL_DEV! + '/dashboard';
+        ? process.env.NEXT_APP_URL_PROD!
+        : process.env.NEXT_APP_URL_DEV!;
   }
 
   async handleWebhook(request: RawBodyRequest<Request>, response: Response) {
@@ -187,20 +188,20 @@ export class PaymentService {
     userId: string
   ) {
     try {
-      if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
-        throw new BadRequestException("Invalid plan");
-      }
       const customerId = await this.findOrCreateCustomer(userId);
 
       const subscription = await this.subscriptionModel.findOne({ userId });
       if (subscription && subscription.status !== "ended") {
-        return { url: `${this.redirectUrl}` };
+        return { url: `${this.redirectUrl}/dashboard` };
       }
 
+      if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
+        throw new Error("Select a plan before proceeding");
+      }
       const session = await this.stripe.checkout.sessions.create({
         line_items: [{ price: SUBSCRIPTION_PLANS[plan], quantity: 1 }],
         mode: "subscription",
-        success_url: `${this.redirectUrl}/payment/successful?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${this.redirectUrl}/payment/successful`,
         cancel_url: this.redirectUrl,
         customer: customerId,
         metadata: { userId },
@@ -209,7 +210,7 @@ export class PaymentService {
       return { url: session.url! };
     } catch (error) {
       console.error("Checkout session error:", error);
-      throw new Error("Failed to create checkout session");
+      throw new Error(error.message);
     }
   }
 
@@ -272,7 +273,7 @@ export class PaymentService {
 
       const session = await this.stripe.billingPortal.sessions.create({
         customer: subscription.customerId,
-        return_url: this.redirectUrl,
+        return_url: `${this.redirectUrl}/dashboard`,
       });
 
       return { url: session.url!, message: "Billing portal session created" };

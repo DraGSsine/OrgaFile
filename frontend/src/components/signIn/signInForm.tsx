@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@nextui-org/react";
 import { AppDispatch } from "@/redux/store";
 import { userInfoType } from "@/types/types";
-
+import cookies from "js-cookie";
 const userSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters").max(30),
@@ -44,7 +44,8 @@ const SignInForm = () => {
       const signInResult = await dispatch(SignInAction(validatedUser));
 
       if (SignInAction.fulfilled.match(signInResult)) {
-        const checkoutResult = await dispatch(createCheckoutSession());
+        const plan = cookies.get("plan") || "Standard";
+        const checkoutResult = await dispatch(createCheckoutSession(plan));
 
         if (createCheckoutSession.fulfilled.match(checkoutResult)) {
           toast.success("Sign in successful");

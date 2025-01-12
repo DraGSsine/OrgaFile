@@ -16,8 +16,8 @@ export async function middleware(request: NextRequest) {
     const { isTokenValid, isSubscribed } = await validateToken(accessToken);
 
     if (
-      request.nextUrl.pathname.startsWith("/dashboard")
-      // request.nextUrl.pathname.startsWith("/payment/successful")
+      request.nextUrl.pathname.startsWith("/dashboard") ||
+      request.nextUrl.pathname.startsWith("/payment/successful")
     ) {
       if (!isTokenValid || !isSubscribed) {
         if (

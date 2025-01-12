@@ -53,7 +53,8 @@ const SignupPageForm = () => {
 
         const signUpResult = await dispatch(SignUpAction(validatedUser));
         if (SignUpAction.fulfilled.match(signUpResult)) {
-          const checkoutResult = await dispatch(createCheckoutSession());
+          const plan = cookies.get("plan") || "Standard";
+          const checkoutResult = await dispatch(createCheckoutSession(plan));
           if (createCheckoutSession.fulfilled.match(checkoutResult)) {
             toast.success("Sign up successful");
             router.push(checkoutResult.payload.url);

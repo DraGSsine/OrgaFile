@@ -30,7 +30,6 @@ export const AuthWelcome = ({
   const HandleGoogleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const plan = cookies.get("plan");
-      console.log(plan);
       if (
         pathname == "auth/signup" &&
         plan !== "Basic" &&
@@ -46,12 +45,17 @@ export const AuthWelcome = ({
           GoogleAuthAction(tokenResponse.access_token)
         );
         if (GoogleAuthAction.fulfilled.match(googleAuthResult)) {
-          const checkoutResult = await dispatch(createCheckoutSession());
+          const plan = cookies.get("plan") || "Unknown";
+          const checkoutResult = await dispatch(createCheckoutSession(plan));
           if (createCheckoutSession.fulfilled.match(checkoutResult)) {
             toast.success("Sign up successful");
             router.push(checkoutResult.payload.url);
             return;
           } else {
+            if (checkoutResult.payload === "Select a plan before proceeding") {
+              toast.error("Select a plan before proceeding");
+              return router.push("/pricing");
+            }
             toast.error(
               (googleAuthResult.payload.message as string) || "Sign up failed"
             );

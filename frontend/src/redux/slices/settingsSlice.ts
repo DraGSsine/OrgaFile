@@ -75,7 +75,7 @@ export const DeleteProfile = createAsyncThunk("settings/deleteProfile", async (_
         const res = await axios.delete(`${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/user/delete`, {
             withCredentials: true,
         });
-        return res
+        return res.data
     } catch (error: any) {
         return rejectWithValue(error.response.data.message);
     }

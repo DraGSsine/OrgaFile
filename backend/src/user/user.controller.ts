@@ -44,11 +44,15 @@ export class UserController {
 
   @Delete("delete")
   async remove(@Req() req: any, @Res() res: any) {
-    await this.userService.remove(req.user.userId);
-    const cookies = req.cookies;
-    for (const cookie in cookies) {
-      res.clearCookie(cookie, this.resHeaders);
+    try {
+      await this.userService.remove(req.user.userId);
+      const cookies = req.cookies;
+      for (const cookie in cookies) {
+        res.clearCookie(cookie, this.resHeaders);
+      }
+      return res.send("Account removed successfully");
+    } catch (error) {
+      return res.status(500).send("Failed to remove account try again later");
     }
-    return res.send({ message: "user removed" });
   }
 }

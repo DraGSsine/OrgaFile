@@ -7,6 +7,7 @@ import {
   UseGuards,
   RawBodyRequest,
   Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { CookieOptions, Request, Response } from 'express';
@@ -36,8 +37,8 @@ export class PaymentController {
       );
       return response.send(result);
     } catch (error) {
-      console.error('Error creating checkout session:', error);
-      return response.status(500).send({ error: 'Internal Server Error' });
+      console.error('Error creating checkout session:', error)
+      throw new BadRequestException(error.message);
     }
   }
   @Post('webhook')
