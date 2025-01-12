@@ -38,7 +38,7 @@ export async function getS3SignedUrl(
     const url = await getSignedUrl(s3, uploadCommand, { expiresIn: 60 });
     return { success: true, url };
   } catch (error) {
-    console.error("Error getting signed URL", error);
+    console.error(error);
     return { success: false, url: "" };
   }
 }

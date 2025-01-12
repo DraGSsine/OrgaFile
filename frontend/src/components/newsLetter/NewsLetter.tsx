@@ -1,6 +1,5 @@
-import { Mail01Icon } from "hugeicons-react";
-import Image from "next/image";
 import React from "react";
+import SendEmailForm from "./SendEmailForm";
 
 const NewsLetter = () => {
   return (
@@ -14,32 +13,11 @@ const NewsLetter = () => {
                   Stay Updated with OrgaFile
                 </h2>
                 <p className="mb-8 mt-6 text-gray-600 dark:text-gray-300">
-                  Subscribe to our newsletter for the latest updates on AI-powered file organization, 
-                  productivity tips, and exclusive OrgaFile features.
+                  Subscribe to our newsletter for the latest updates on
+                  AI-powered file organization, productivity tips, and exclusive
+                  OrgaFile features.
                 </p>
-                <form action="" className="mt-12">
-                  <div className="relative flex items-center rounded-full border border-primary/20 bg-white p-1 px-2 shadow-md dark:border-white/10 dark:bg-dark md:p-2 lg:pr-3">
-                    <div className="py-3 pl-4 lg:pl-5">
-                      <Mail01Icon size={24} stroke="#4b81f7" />
-                    </div>
-                    <input
-                      autoComplete="email"
-                      placeholder="Enter your email address"
-                      className="w-full rounded-full bg-transparent p-4 placeholder-gray-600 dark:placeholder-white outline-none"
-                      type="email"
-                    />
-                    <div className="md:pr-1.5 lg:pr-0">
-                      <button
-                        type="button"
-                        className="relative ml-auto h-12 w-16 before:absolute before:inset-0 before:rounded-full before:bg-primary-color before:transition before:duration-300 active:duration-75 active:before:scale-95 dark:before:bg-primaryLight sm:w-auto sm:px-6"
-                      >
-                        <span className="relative hidden w-max font-semibold text-white dark:text-gray-900 md:block">
-                          Subscribe
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                  <SendEmailForm />
               </div>
             </div>
             <div className="md:w-[42%] lg:w-1/2">
