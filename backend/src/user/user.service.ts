@@ -87,14 +87,13 @@ export class UserService {
       // cancel the subscription and remove customer from stripe
       const subscription = await this.subscriptionModel.findOne({ userId });
       if (subscription) {
-        await this.stripeClient.accounts.del(subscription.subscriptionId);
         await this.stripeClient.customers.del(subscription.customerId);
       }
 
       // Get all the file ids of the user
       const fileIds = userFiles?.files.map((file) => file.fileId);
 
-      if (fileIds.length > 0) {
+      if (fileIds?.length > 0) {
         // Remove the user objects from S3
         const deleteParams = {
           Bucket: this.configService.get("AWS_BUCKET_NAME"),

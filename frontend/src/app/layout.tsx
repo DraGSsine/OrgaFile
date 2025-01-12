@@ -1,11 +1,11 @@
 import { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Providers from "@/providers/Provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
-const inter = Inter({
+const montserrat = Montserrat({
   weight: ["100", "200", "300", "400", "500", "600"],
   subsets: ["vietnamese"],
   display: "swap",
@@ -24,12 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          defer
-          data-website-id="677d56f856a8569fc404ff2c"
-          data-domain="orgafile.com"
-          src="https://datafa.st/js/script.js"
-        ></script>
         <Script
           type="module"
           src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs"
@@ -39,7 +33,7 @@ export default function RootLayout({
           type="module"
         ></Script>
       </head>
-      <body className={inter.className}>
+      <body className={montserrat.className}>
         <Providers>{children}</Providers>
         <SpeedInsights />
         <Analytics />

@@ -130,7 +130,8 @@ export const settingsSlice = createSlice({
         }
         ).addCase(DeleteProfile.rejected, (state, { payload }) => {
             state.profileDelete.loading = false;
-            state.profileDelete.error = payload as string;
+            state.profileDelete.success = false;
+            state.profileDelete.error = "Error deleting profile try again later";
         }
         )
     }

@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
 
 export type UserDocument = User & Document;
 
@@ -7,6 +7,12 @@ export type UserDocument = User & Document;
   timestamps: true,
 })
 export class User {
+  @Prop({
+    required: true,
+    default:
+      "https://res.cloudinary.com/decb9vsza/image/upload/v1736693028/profile_poqbwq.jpg",
+  })
+  profilePicture: string;
   @Prop({ required: true })
   fullName: string;
   @Prop({
@@ -19,19 +25,19 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({default: 0})
+  @Prop({ default: 0 })
   storage: number;
 
   @Prop({ default: 0 })
   storageUsed: number;
 
-  @Prop({default: 0})
+  @Prop({ default: 0 })
   creditsLimit: number;
 
   @Prop({ default: 0 })
   creditsUsed: number;
-  @Prop({ enum: ['user', 'admin'], default: 'user' })
-  role: 'user' | 'admin';
+  @Prop({ enum: ["user", "admin"], default: "user" })
+  role: "user" | "admin";
 
   @Prop()
   profilePictureUrl: string;

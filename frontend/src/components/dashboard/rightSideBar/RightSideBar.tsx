@@ -1,15 +1,7 @@
 "use client";
 import React from "react";
 import {
-  Card,
-  CardBody,
   Button,
-  Progress,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Chip,
 } from "@nextui-org/react";
 import { StorageUsage } from "./StorageUsage";
 import { CreditstUsage } from "./ReqesutUsage";

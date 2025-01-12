@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { userSchema } from '../schemas/auth.schema';
 import { JwtService } from '@nestjs/jwt';
 import { subscriptionSchema } from '../schemas/subscriptions.schema';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -12,8 +14,9 @@ import { subscriptionSchema } from '../schemas/subscriptions.schema';
       { name: 'user', schema: userSchema },
       { name: 'Subscription', schema: subscriptionSchema },
     ]),
+    PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService],
+  providers: [AuthService, JwtService,GoogleStrategy],
 })
 export class AuthModule {}

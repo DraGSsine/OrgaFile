@@ -18,7 +18,7 @@ interface PlanConfig {
 }
 
 const SUBSCRIPTION_PLANS = {
-  Basic: "price_1QdWvfIdcozZ05jbkt3Qs7qx",
+  Basic: "price_1QgSkCIyKmdahMOduGiJ6SkN",
   Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
   Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
 } as const;

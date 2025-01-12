@@ -141,7 +141,7 @@ const SignupPageForm = () => {
       <Button
         type="button"
         color="primary"
-        className="w-full h-[60px] text-lg"
+        className="w-full h-[48px] text-lg"
         isLoading={isLoading}
         onClick={handleSignup}
         isDisabled={!acceptTerms}

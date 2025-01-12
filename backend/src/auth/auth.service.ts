@@ -6,6 +6,9 @@ import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { subscriptionDocument } from "../schemas/subscriptions.schema";
+import axios from "axios";
+import { UserInfoResponseType } from "src/types/type";
+import { randomBytes } from "crypto";
 
 @Injectable()
 export class AuthService {
@@ -38,6 +41,7 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         fullName: user.fullName,
+        profilePicture: user.profilePicture,
       },
     };
   }
@@ -66,8 +70,67 @@ export class AuthService {
         id: newUser._id.toString(),
         email: newUser.email,
         fullName: newUser.fullName,
+        profilePicture: newUser.profilePicture,
       },
     };
+  }
+
+  async googleAuth(token: string) {
+    try {
+      const { data }: { data: UserInfoResponseType } = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const { email, name, email_verified, picture } = data;
+      const user = await this.userModel.findOne({ email });
+      // check if the user alreayd exist do login logic else do signup logic
+      if (user) {
+        const userId = user._id.toString();
+        const isSubscribed = await this.subscriptionModel.findOne({
+          userId: user._id,
+        });
+        const accessToken = await this.generateTokens(userId, !!isSubscribed);
+        return {
+          accessToken,
+          user: {
+            id: user._id.toString(),
+            email: user.email,
+            fullName: user.fullName,
+            profilePicture: user.profilePicture,
+          },
+        };
+      } else {
+        const hashPassowrd = await bcrypt.hash(
+          randomBytes(20).toString("hex"),
+          10
+        );
+        const newUser = await this.userModel.create({
+          email,
+          fullName: name,
+          isEmailVerified: email_verified,
+          profilePicture: picture,
+          password: hashPassowrd,
+        });
+        const userId = newUser._id.toString();
+        const accessToken = await this.generateTokens(userId, false);
+        return {
+          accessToken,
+          user: {
+            id: newUser._id.toString(),
+            email: newUser.email,
+            fullName: newUser.fullName,
+            profilePicture: newUser.profilePicture,
+          },
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new UnprocessableEntityException("Invalid token");
+    }
   }
 
   private async generateTokens(userId: string, isSubscribed: boolean) {

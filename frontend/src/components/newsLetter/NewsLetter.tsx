@@ -10,7 +10,7 @@ const NewsLetter = () => {
             <div className="h-max py-16 md:w-6/12 xl:w-5/12">
               <div className="text-center md:text-left">
                 <h2 className="text-3xl max-w-[500px] font-bold text-gray-800 dark:text-white md:w-max md:text-4xl xl:text-5xl">
-                  Join OrgaFile's Exclusive Waitlist
+                  Join OrgaFile&apos;s Exclusive Waitlist
                 </h2>
                 <p className="mb-8 mt-6 text-gray-600 dark:text-gray-300">
                   Be among the first to experience OrgaFile and receive a special launch discount. Sign up now to secure your spot and get notified when we launch. Early supporters get exclusive benefits!

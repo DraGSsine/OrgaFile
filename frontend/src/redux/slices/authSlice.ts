@@ -22,6 +22,27 @@ const initialState: initialStateType = {
   },
 };
 
+export const GoogleAuthAction = createAsyncThunk(
+  "auth/googleAuth",
+  async (token:string, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/auth/google`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const SignUpAction = createAsyncThunk(
   "auth/signup",
   async (data: userInfoType, { rejectWithValue }) => {
@@ -158,6 +179,19 @@ export const AuthSlice = createSlice({
     builder.addCase(GetUserInfo.rejected, (state) => {
       state.userInfoLoading = false;
     });
+    builder.addCase(GoogleAuthAction.pending, (state) => {
+      state.isLoading = true;
+    })
+    builder.addCase(GoogleAuthAction.fulfilled, (state, action: any) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.userCreated = action.payload;
+    })
+    builder.addCase(GoogleAuthAction.rejected, (state, action: any) => {
+      state.isLoading = false;
+      state.error = action.payload || null;
+      state.userCreated = null;
+    })
   },
 });
 

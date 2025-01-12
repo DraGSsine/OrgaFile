@@ -93,7 +93,7 @@ const SignInForm = () => {
       <Button
         type="submit"
         color="primary"
-        className="w-full h-[60px] text-lg"
+        className="w-full h-[48px] text-lg"
         isLoading={isLoading}
         onClick={handleSignin}
       >
