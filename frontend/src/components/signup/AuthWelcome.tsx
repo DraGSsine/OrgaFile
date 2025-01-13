@@ -60,6 +60,7 @@ export const AuthWelcome = ({
             toast.error(
               (googleAuthResult.payload.message as string) || "Sign up failed"
             );
+            setIsLoading(false);
             return;
           }
         }

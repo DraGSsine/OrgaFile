@@ -2,7 +2,6 @@ import {
   Injectable,
   HttpStatus,
   RawBodyRequest,
-  BadRequestException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -11,7 +10,6 @@ import { Request, Response } from "express";
 import { JwtService } from "@nestjs/jwt";
 import { UserDocument } from "../schemas/auth.schema";
 import { subscriptionDocument } from "../schemas/subscriptions.schema";
-import { error } from "console";
 
 interface PlanConfig {
   storage: number;
@@ -19,7 +17,7 @@ interface PlanConfig {
 }
 
 const SUBSCRIPTION_PLANS = {
-  Basic: "price_1QgSkCIyKmdahMOduGiJ6SkN",
+  Basic: "price_1QgrdyIyKmdahMOdx5cgflL8",
   Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
   Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
 } as const;
