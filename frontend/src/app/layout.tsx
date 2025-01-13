@@ -28,10 +28,10 @@ export default function RootLayout({
           type="module"
           src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs"
         ></Script>
-        {/* <Script
+        <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs"
           type="module"
-        ></Script> */}
+        ></Script>
       </head>
       <body className={montserrat.className}>
         <Providers>{children}</Providers>
