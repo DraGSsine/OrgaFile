@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const Pricing = () => {
   const plans = [
     {
-      productId: "price_1Q3MfoHbzmnInIZ1CsBh5rGj",
+      productId: "price_1QgrdyIyKmdahMOdx5cgflL8",
       type: "Basic",
       price: "$4.99",
       subscription: "month",
