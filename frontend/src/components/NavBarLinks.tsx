@@ -36,6 +36,9 @@ const NavBarLinks = () => {
         onSelectionChange={handleSelectedTab}
         aria-label="Tabs colors"
         radius="full"
+        classNames={{
+          tabContent: "text-gray-900",
+        }}
       >
         {tabItems.map((item) => (
           <Tab key={item.key} title={item.title} />

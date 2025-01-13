@@ -132,6 +132,7 @@ const config: Config = {
             primary: {
               DEFAULT: "#0164ff",
             },
+
           },
         },
       },
