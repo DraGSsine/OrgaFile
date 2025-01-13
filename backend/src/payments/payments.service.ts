@@ -207,6 +207,7 @@ export class PaymentService {
         mode: "subscription",
         success_url: `${this.redirectUrl}/payment/successful`,
         cancel_url: this.redirectUrl,
+        discounts: [{ coupon: "YOUCHEN20" }],
         customer: customerId,
         metadata: { userId },
       });
