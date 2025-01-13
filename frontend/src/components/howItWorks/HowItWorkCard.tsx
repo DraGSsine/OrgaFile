@@ -48,16 +48,16 @@ const HowItWorkCard: React.FC<HowItWorkCardProps> = ({
       aria-pressed={isActive}
     >
       {/* Step indicator */}
-      <div className="absolute z-50 -top-3 left-6 bg-primary-100 text-primary-color px-3 py-1 rounded-full text-sm font-medium">
+      <div className="absolute z-50 -top-3 left-6 bg-blue-100 border border-blue-200 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
       {step}
       </div>
 
       {/* Icon container */}
       <div className={`
-        mb-5 rounded-xl p-3 w-12 h-12 flex items-center justify-center
+        mb-5 rounded-xl p-3 w-12 h-12 flex items-center justify-center border border-blue-200
         ${isActive 
           ? 'bg-primary-color text-white' 
-          : 'bg-primary-50 text-primary-600'
+          : 'bg-blue-100 text-blue-700'
         }
         transition-colors duration-300
       `}>
