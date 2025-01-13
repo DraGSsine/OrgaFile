@@ -134,7 +134,7 @@ export class UserService {
     payments,
     invoices,
     subscriptiondb,
-    user,
+    user: UserDocument,
     stripeSubscription
   ) {
     const latestInvoice = invoices.data[0];
@@ -144,6 +144,7 @@ export class UserService {
     const currentPaymentMethod = stripeSubscription.default_payment_method;
 
     return {
+      profilePicture: user.profilePicture,
       plan: subscriptiondb.plan,
       fullName: user.fullName,
       email: user.email,
@@ -246,7 +247,7 @@ export class UserService {
         invoices,
         subscription,
         user,
-        stripeSubscription
+        stripeSubscription,
       );
     } catch (error) {
       console.error("Error in getUserInfo:", error);

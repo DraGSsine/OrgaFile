@@ -67,6 +67,7 @@ export type initialStateType = {
     email: string;
     plan: any;
     subscriptionHistory: [];
+    profilePicture: string;
   };
 };
 

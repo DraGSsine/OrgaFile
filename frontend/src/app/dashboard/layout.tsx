@@ -4,7 +4,7 @@ import Sidebar from "@/components/dashboard/sidebar/sideBar";
 
 import SignoutModal from "@/components/LogOutModal";
 import GetUserInfoProvider from "@/providers/UserInfoProvider";
-
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -24,6 +24,14 @@ export default function RootLayout({
         <RightSidebar />
         <SignoutModal />
       </div>
+      <Script
+        type="module"
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs"
+      ></Script>
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs"
+        type="module"
+      ></Script>
     </GetUserInfoProvider>
   );
 }

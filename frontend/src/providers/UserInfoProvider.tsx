@@ -18,7 +18,8 @@ function GetUserInfoProvider({ children }: { children: ReactNode }) {
       });
   }, []);
     if (!allowRender) return null;
-  return <>{children}</>;
+  return <>{children}
+  </>;
 }
 
 export default GetUserInfoProvider;

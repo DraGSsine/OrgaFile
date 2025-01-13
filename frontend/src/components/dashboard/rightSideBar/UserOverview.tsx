@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import UserProfile from "../UserProfile";
 import { useSelector } from "react-redux";
@@ -6,24 +6,26 @@ import { RootState } from "@/redux/store";
 import { CrownIcon } from "hugeicons-react";
 
 const UserOverview = () => {
-  const { userInfoLoading, userInformation } = useSelector((state: RootState) => state.auth);
-  
+  const { userInfoLoading, userInformation } = useSelector(
+    (state: RootState) => state.auth
+  );
+
   if (!userInformation) return null;
-  const { fullName, email, plan } = userInformation;
+  const { fullName, email, plan, profilePicture } = userInformation;
   const getPlanClassName = (plan: string) => {
     switch (plan) {
-      case 'Standard':
-        return 'text-primary-color';
-      case 'Basic':
-        return 'text-gray-500';
-      case 'Gold':
-        return 'text-amber-500';
+      case "Standard":
+        return "text-primary-color";
+      case "Basic":
+        return "text-gray-500";
+      case "Gold":
+        return "text-amber-500";
       default:
-        return '';
+        return "";
     }
   };
-  
-  <CrownIcon className={`w-4 h-4 ${getPlanClassName(plan)}`} />
+
+  <CrownIcon className={`w-4 h-4 ${getPlanClassName(plan)}`} />;
   return (
     <div className="flex items-center h-full px-4 gap-4">
       <div className="flex-1 min-w-0">
@@ -43,7 +45,7 @@ const UserOverview = () => {
           </div>
         )}
       </div>
-      <UserProfile email={email} />
+      <UserProfile email={email} profilePicture={profilePicture} />
     </div>
   );
 };

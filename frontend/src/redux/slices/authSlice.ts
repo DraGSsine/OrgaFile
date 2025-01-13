@@ -19,6 +19,7 @@ const initialState: initialStateType = {
     lastFourDigits: "",
     cardBrand: "",
     subscriptionHistory: [],
+    profilePicture: "",
   },
 };
 

@@ -12,7 +12,13 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { openSignoutModal } from "@/redux/slices/dashboardSlice";
 
-const UserProfile = ({ email }: { email: string }) => {
+const UserProfile = ({
+  email,
+  profilePicture,
+}: {
+  email: string;
+  profilePicture: string;
+}) => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const handleItemSelect = (e: string | number) => {
@@ -21,10 +27,11 @@ const UserProfile = ({ email }: { email: string }) => {
     } else if (e === "settings") router.push("/dashboard/settings");
     else if (e === "help") window.open("mailto:support@orgafile.com", "_blank");
   };
+  console.log("profilePicture", profilePicture);
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger className="cursor-pointer">
-        <Avatar isBordered color="primary" src="/images/profile.jpg" />
+        <Avatar isBordered color="primary" src={profilePicture} />
       </DropdownTrigger>
       <DropdownMenu
         onAction={(key) => handleItemSelect(key)}

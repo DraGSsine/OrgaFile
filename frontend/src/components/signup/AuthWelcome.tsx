@@ -29,7 +29,6 @@ export const AuthWelcome = ({
   const pathname = usePathname();
   const HandleGoogleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      setIsLoading(true);
       const plan = cookies.get("plan");
       if (
         pathname == "auth/signup" &&
@@ -51,6 +50,7 @@ export const AuthWelcome = ({
           if (createCheckoutSession.fulfilled.match(checkoutResult)) {
             toast.success("Sign up successful");
             router.push(checkoutResult.payload.url);
+            setIsLoading(false);
             return;
           } else {
             if (checkoutResult.payload === "Select a plan before proceeding") {
@@ -65,15 +65,17 @@ export const AuthWelcome = ({
         }
         toast.error((googleAuthResult.payload as string) || "Sign up failed");
       } catch (error) {
-        toast.error("An unexpected error occurred");
-      } finally {
         setIsLoading(false);
+        toast.error("An unexpected error occurred");
       }
     },
     error_callback(nonOAuthError) {
       setIsLoading(false);
-      toast.error("Sign up failed with Google");
     },
+    onError: (error) => {
+      setIsLoading(false);
+      toast.error("Sign up failed with Google");
+    }
 
   }) as any;
   return (
@@ -104,7 +106,7 @@ export const AuthWelcome = ({
       <div className="grid gap-4 mb-8">
         <Button
           isLoading={isLoading}
-          onPress={() => HandleGoogleAuth()}
+          onPress={() => {HandleGoogleAuth(),setIsLoading(true)}}
           variant="solid"
           className="h-12 bg-black text-white"
         >
