@@ -7,13 +7,7 @@ import { ArrowRight01Icon } from "hugeicons-react";
 import { motion } from "framer-motion";
 
 const Hero = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-  const fadeUpVariants = {
+const fadeUpVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (delay: number) => ({
       opacity: 1,
@@ -134,7 +128,6 @@ const Hero = () => {
             height={1000}
             quality={85}
             priority={true}
-            onLoadingComplete={() => setIsLoaded(true)}
             className="rounded-md bg-white shadow-2xl ring-1 ring-gray-900/10"
           />
         </motion.div>
