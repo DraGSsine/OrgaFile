@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  HttpStatus,
-  RawBodyRequest,
-} from "@nestjs/common";
+import { Injectable, HttpStatus, RawBodyRequest } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import Stripe from "stripe";
@@ -207,7 +203,7 @@ export class PaymentService {
         mode: "subscription",
         success_url: `${this.redirectUrl}/payment/successful`,
         cancel_url: this.redirectUrl,
-        discounts: [{ coupon: "YOUCHEN20" }],
+        discounts: [{ coupon: "promo_1QgrXUIyKmdahMOd0YhZKoYH" }],
         customer: customerId,
         metadata: { userId },
       });
