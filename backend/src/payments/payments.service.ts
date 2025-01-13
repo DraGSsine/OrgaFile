@@ -198,19 +198,12 @@ export class PaymentService {
       if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
         throw new Error("Select a plan before proceeding");
       }
-      let coupon = null;
-
-        try {
-          coupon = await this.stripe.coupons.retrieve("promo_1QgrXUIyKmdahMOd0YhZKoYH");
-        } catch (err) {
-          throw new Error(err.message);
-        }
       const session = await this.stripe.checkout.sessions.create({
         line_items: [{ price: SUBSCRIPTION_PLANS[plan], quantity: 1 }],
         mode: "subscription",
         success_url: `${this.redirectUrl}/payment/successful`,
         cancel_url: this.redirectUrl,
-        discounts: [{ coupon }],
+        allow_promotion_codes: true,
         customer: customerId,
         metadata: { userId },
       });
