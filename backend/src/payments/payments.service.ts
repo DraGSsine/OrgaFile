@@ -41,12 +41,18 @@ export class PaymentService {
     @InjectModel("User") private userModel: Model<UserDocument>,
     private jwtService: JwtService
   ) {
-    const key = process.env.STRIPE_SECRET_KEY;
+    const key =
+      process.env.PROD === "true"
+        ? process.env.STRIPE_SECRET_KEY_PROD
+        : process.env.STRIPE_SECRET_KEY_DEV;
     if (!key) {
       throw new Error("Stripe secret key is not provided");
     }
 
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret =
+      process.env.PROD == "true"
+        ? process.env.STRIPE_WEBHOOK_SECRET_PROD
+        : process.env.STRIPE_WEBHOOK_SECRET_DEV;
     if (!webhookSecret) {
       throw new Error("Stripe webhook secret is not provided");
     }

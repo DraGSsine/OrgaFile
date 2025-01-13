@@ -7,10 +7,11 @@ import { UserDocument } from "..//schemas/auth.schema";
 import * as bcrypt from "bcrypt";
 import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
-import {DeleteObjectsCommand, S3Client} from "@aws-sdk/client-s3";
+import { DeleteObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 
 @Injectable()
 export class UserService {
+  private key: string;
   private stripeClient: Stripe;
   private readonly s3Client = new S3Client({
     region: process.env.AWS_REGION!,
@@ -27,7 +28,12 @@ export class UserService {
     @InjectModel("subscription") private readonly subscriptionModel: Model<any>,
     @InjectModel("removedFile") private readonly removedFileModel: Model<any>
   ) {
-    this.stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    this.key =
+      process.env.PROD === "true"
+        ? process.env.STRIPE_SECRET_KEY_PROD
+        : process.env.STRIPE_SECRET_KEY_DEV;
+    if (!this.key) throw new Error("Stripe secret key is not provided");
+    this.stripeClient = new Stripe(this.key, {
       apiVersion: "2024-12-18.acacia",
     });
   }
@@ -112,7 +118,6 @@ export class UserService {
       await this.fileModel.deleteMany({ userId });
       await this.subscriptionModel.deleteMany({ userId });
       await this.removedFileModel.deleteMany({ userId });
-
 
       return "User account deleted successfully";
     } catch (error) {

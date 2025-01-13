@@ -54,7 +54,7 @@ const Hero = () => {
           viewport={{ once: true, amount: 0.2 }}
           variants={fadeUpVariants}
           custom={2}
-          className="pt-4 pb-14 text-center mt-4 text-zinc-400 max-w-[600px] text-medium leading-8"
+          className="pt-4 pb-14 text-center mt-4 text-zinc-500 max-w-[600px] text-medium leading-8"
         >
           Drop your messy files and watch the magic happen. OrgaFile&apos;s AI
           instantly analyzes each file&apos;s content and automatically sorts them

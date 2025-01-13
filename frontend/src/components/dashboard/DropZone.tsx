@@ -84,7 +84,7 @@ export const UploadDropzone = () => {
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <CloudIcon className="h-6 w-6 text-primary-color mb-2" />
-                    <p className="mb-2 text-sm text-zinc-700">
+                    <p className="mb-2 text-sm ">
                       <span className="font-semibold">Click to upload</span> or
                       drag and drop
                     </p>
@@ -111,7 +111,7 @@ export const UploadDropzone = () => {
                         value={uploadProgress}
                       />
                       {uploadProgress === 100 && (
-                        <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
+                        <div className="flex gap-1 items-center justify-center text-sm  text-center pt-2">
                           <Loading03Icon className="h-3 w-3 animate-spin" />
                           Redirecting...
                         </div>
