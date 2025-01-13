@@ -201,7 +201,7 @@ export class PaymentService {
       let coupon = null;
 
         try {
-          coupon = await this.stripe.coupons.retrieve("YOUCHEN20");
+          coupon = await this.stripe.coupons.retrieve("promo_1QgrXUIyKmdahMOd0YhZKoYH");
         } catch (err) {
           throw new Error(err.message);
         }
