@@ -23,23 +23,30 @@ const NavBar = () => {
       className=" py-2 "
     >
       <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        />
+        <li className="w-8 h-8 ">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="sm:hidden"
+          />
+        </li>
       </NavbarContent>
 
       <NavbarContent className="sm:flex" justify="start">
-        <NavbarBrand className="flex justify-end sm:justify-start">
-          <Logo alt="logo" width={200} height={50} />
-        </NavbarBrand>
+        <li>
+          <NavbarBrand className="flex justify-end sm:justify-start">
+            <Logo alt="logo" width={200} height={50} />
+          </NavbarBrand>
+        </li>
       </NavbarContent>
 
       <NavbarContent className=" hidden sm:flex gap-4" justify="center">
-        <NavBarLinks />
+        <li>
+          <NavBarLinks />
+        </li>
       </NavbarContent>
 
       <NavbarContent className=" hidden sm:flex gap-4" justify="end">
-        <div className="flex items-center gap-4">
+        <li className="flex items-center gap-4">
           <Link
             href="/auth/signin"
             className="text-medium sm:px-2 py-1 transition focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:outline-none focus-visible:shadow-outline-indigo rounded-full"
@@ -47,12 +54,14 @@ const NavBar = () => {
             log in
           </Link>
 
-          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color">
+          <Link
+            href="/pricing"
+            className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color"
+          >
             Get Started
             <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
-
-        </div>
+        </li>
       </NavbarContent>
 
       <NavbarMenu className="sm:hidden">
@@ -98,7 +107,10 @@ const NavBar = () => {
               Log in
             </Button>
           </Link>
-          <Link href="/pricing" className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color">
+          <Link
+            href="/pricing"
+            className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color"
+          >
             Get Started
             <ArrowRight01Icon className=" font-bold" size={25} />
           </Link>
