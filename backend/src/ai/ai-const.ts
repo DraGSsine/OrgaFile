@@ -72,13 +72,21 @@ export const PROMPT_TEMPLATES = {
     ],
   ]),
   typoCorrection: ChatPromptTemplate.fromMessages([
-    ["system", "You are an expert at correcting typos in categories."],
+    ["system", "You are an expert in correcting typos in category names."],
     [
       "user",
-      `Correct any typos in these categories:
-    {categories}
-
-    Return corrected categories as a comma-separated string.`,
+      `
+      You are a typo correction expert. Follow these strict rules:
+      1. Correct all typos in the provided category names.  
+      2. Return only the corrected category names without any special characters.  
+      3. Capitalize the first letter of each category, with the remaining letters in lowercase.  
+      4. Separate multi-word categories with spaces.  
+      5. If a category has more than three words, shorten it to be clear and concise.  
+  
+      Correct the following categories:  
+      {categories}  
+  
+      Return the corrected categories as a comma-separated string.`,
     ],
   ]),
   analysisImage: ChatPromptTemplate.fromMessages([

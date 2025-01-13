@@ -29,6 +29,7 @@ export const AuthWelcome = ({
   const pathname = usePathname();
   const HandleGoogleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
       const plan = cookies.get("plan");
       if (
         pathname == "auth/signup" &&
@@ -69,6 +70,11 @@ export const AuthWelcome = ({
         setIsLoading(false);
       }
     },
+    error_callback(nonOAuthError) {
+      setIsLoading(false);
+      toast.error("Sign up failed with Google");
+    },
+
   }) as any;
   return (
     <>
@@ -98,9 +104,7 @@ export const AuthWelcome = ({
       <div className="grid gap-4 mb-8">
         <Button
           isLoading={isLoading}
-          onPress={() => {
-            HandleGoogleAuth(), setIsLoading(true);
-          }}
+          onPress={() => HandleGoogleAuth()}
           variant="solid"
           className="h-12 bg-black text-white"
         >

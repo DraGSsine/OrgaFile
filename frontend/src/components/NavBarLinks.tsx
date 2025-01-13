@@ -12,6 +12,7 @@ const tabItems: TabItem[] = [
   { key: "/", title: "Home" },
   { key: "/pricing", title: "Pricing" },
   { key: "/legal", title: "legal" },
+  { key: "/demo", title: "demo" },
 ];
 
 const NavBarLinks = () => {
