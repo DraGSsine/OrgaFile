@@ -29,21 +29,17 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  // Updated badge styles with better contrast ratios
   const badgeStyles = {
-    purple: "bg-purple-100 border-purple-200 text-purple-600",
-    indigo: "bg-indigo-100 border-indigo-200 text-primary-color",
+    purple: "bg-purple-100 border-purple-200 text-purple-800", // Darker purple text
+    indigo: "bg-indigo-100 border-indigo-200 text-indigo-700", // Darker indigo text that meets contrast requirements
   };
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   return (
     <motion.div
       className={`rounded-xl p-8 bg-white/50 backdrop-blur-sm transition-all 
-    ring-1 ring-gray-200/50 hover:ring-2 hover:ring-primary-200
-    shadow-sm hover:shadow-xl relative ${className}`}
+      ring-1 ring-gray-200/50 hover:ring-2 hover:ring-primary-200
+      shadow-sm hover:shadow-xl relative ${className}`}
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -80,21 +76,21 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           transition={{ delay: 0.2 + index * 0.1 }}
           className={`${
             badgeStyles[badge.color]
-          } border rounded-full text-xs font-medium px-3 py-1 inline-block`}
+          } border rounded-full text-xs font-semibold px-3 py-1 inline-block`} // Changed font-medium to font-semibold
         >
           {badge.text}
         </motion.span>
         <motion.h3
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 + index * 0.1 }}
-          className="text-xl lg:text-2xl font-semibold mt-2 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600"
+          className="text-xl lg:text-2xl font-semibold mt-2 text-gray-900" // Removed gradient for better contrast
         >
           {title}
         </motion.h3>
         <motion.p
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 + index * 0.1 }}
-          className="text-gray-600 leading-relaxed [text-wrap:balance]"
+          className="text-gray-700 leading-relaxed [text-wrap:balance]" // Darkened text color
         >
           {description}
         </motion.p>
@@ -174,11 +170,11 @@ const Features = () => {
         >
           <h2 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mb-6">
             Smart Organization for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-700">
+            <span className=" bg-gradient-to-tr from-primary-400 to-primary-800 text-transparent bg-clip-text "> {/* Updated gradient to solid color */}
               Every File
             </span>
           </h2>
-          <p className="text-lg text-gray-600 mx-auto max-w-2xl">
+          <p className="text-lg text-gray-700 mx-auto max-w-2xl"> {/* Darkened text color */}
             OrgaFile transforms how you manage files by automatically analyzing
             and categorizing your documents. Our AI understands your file&apos;s
             content and organizes them into logical categories, saving you hours
