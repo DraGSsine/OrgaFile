@@ -31,7 +31,7 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        <SignInForm />
+        <SignupPageForm />
       </div>
     </div>
   );
