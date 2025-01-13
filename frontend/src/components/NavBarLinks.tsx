@@ -11,8 +11,8 @@ type TabItem = {
 const tabItems: TabItem[] = [
   { key: "/", title: "Home" },
   { key: "/pricing", title: "Pricing" },
-  { key: "/legal", title: "legal" },
-  { key: "/demo", title: "demo" },
+  { key: "/legal", title: "Legal" },
+  { key: "/demo", title: "Demo" },
 ];
 
 const NavBarLinks = () => {
