@@ -3,7 +3,10 @@ import * as mammoth from "mammoth";
 import { fileTypeFromBlob } from "file-type";
 import { getPresignedUrl } from "./action";
 
-export async function extractTextFromFile(file: File, key:string): Promise<string> {
+export async function extractTextFromFile(
+  file: File,
+  key: string
+): Promise<string> {
   const extension = file.name.split(".").pop()?.toLowerCase();
   let text = "";
   switch (extension) {
@@ -34,7 +37,6 @@ export async function extractTextFromFile(file: File, key:string): Promise<strin
 
   // Normalize spaces and lines
   text = text.replace(/\s+/g, " ").replace(/\n+/g, "\n").trim();
-
   // Return the first 2000 characters
   return text.slice(0, 2000);
 }

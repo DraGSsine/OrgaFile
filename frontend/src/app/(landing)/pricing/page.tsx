@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 const Pricing = () => {
   const plans = [
     {
-      productId: "price_1QgrdyIyKmdahMOdx5cgflL8",
       type: "Basic",
       price: "$4.99",
       subscription: "month",
@@ -28,7 +27,6 @@ const Pricing = () => {
       ],
     },
     {
-      productId: "price_1Q3Mh3HbzmnInIZ1QvC4glTC",
       type: "Standard",
       price: "$9.99",
       subscription: "month",
@@ -46,7 +44,6 @@ const Pricing = () => {
       ],
     },
     {
-      productId: "price_1Q3MiPHbzmnInIZ1kdQAFHqH",
       type: "Gold",
       price: "$19.99",
       subscription: "month",

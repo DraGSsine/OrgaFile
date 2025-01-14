@@ -12,23 +12,14 @@ interface PlanConfig {
   creditsLimit: number;
 }
 
-const SUBSCRIPTION_PLANS = {
-  Basic: "price_1QgrdyIyKmdahMOdx5cgflL8",
-  Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
-  Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
-} as const;
-
-const PLAN_LIMITS: Record<keyof typeof SUBSCRIPTION_PLANS, PlanConfig> = {
-  Basic: { storage: 5, creditsLimit: 100 },
-  Standard: { storage: 15, creditsLimit: 500 },
-  Gold: { storage: 25, creditsLimit: 1000 },
-};
-
 @Injectable()
 export class PaymentService {
   private stripe: Stripe;
   private redirectUrl: string;
   private webhookSecret: string;
+  private SUBSCRIPTION_PLANS: Record<string, string>;
+  private PLAN_LIMITS: Record<string, PlanConfig>;
+
   constructor(
     @InjectModel("Subscription")
     private subscriptionModel: Model<subscriptionDocument>,
@@ -42,30 +33,30 @@ export class PaymentService {
     if (!key) {
       throw new Error("Stripe secret key is not provided");
     }
+    this.stripe = new Stripe(key, { apiVersion: "2024-12-18.acacia" });
 
-    const webhookSecret =
-      process.env.PROD == "true"
-        ? process.env.STRIPE_WEBHOOK_SECRET_PROD
-        : process.env.STRIPE_WEBHOOK_SECRET_DEV;
-    if (!webhookSecret) {
-      throw new Error("Stripe webhook secret is not provided");
-    }
-    this.webhookSecret = webhookSecret;
-    this.stripe = new Stripe(key, {
-      apiVersion: "2024-12-18.acacia",
-    });
-    if (process.env.PROD === undefined) {
-      throw new Error("Environment not set");
-    }
+    this.SUBSCRIPTION_PLANS = {
+      Basic:
+        process.env.PROD === "true"
+          ? process.env.BASIC_PRICE_ID_PROD
+          : process.env.BASIC_PRICE_ID_DEV,
+      Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
+      Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
+    };
 
-    if (!process.env.NEXT_APP_URL_PROD && !process.env.NEXT_APP_URL_DEV) {
-      throw new Error("Redirect URL not provided");
-    }
-
+    this.PLAN_LIMITS = {
+      Basic: { storage: 5, creditsLimit: 100 },
+      Standard: { storage: 15, creditsLimit: 500 },
+      Gold: { storage: 25, creditsLimit: 1000 },
+    };
     this.redirectUrl =
       process.env.PROD === "true"
         ? process.env.NEXT_APP_URL_PROD!
         : process.env.NEXT_APP_URL_DEV!;
+    this.webhookSecret =
+      process.env.PROD === "true"
+        ? process.env.STRIPE_WEBHOOK_SECRET_PROD
+        : process.env.STRIPE_WEBHOOK_SECRET_DEV;
   }
 
   async handleWebhook(request: RawBodyRequest<Request>, response: Response) {
@@ -118,7 +109,7 @@ export class PaymentService {
     const userId = customer.metadata.userId;
     if (!userId) return;
     const planId = invoice.lines.data[0].plan.id;
-    const planName = Object.entries(SUBSCRIPTION_PLANS).find(
+    const planName = Object.entries(this.SUBSCRIPTION_PLANS).find(
       ([_, id]) => id === planId
     )?.[0];
 
@@ -141,7 +132,7 @@ export class PaymentService {
 
     await this.userModel.updateOne(
       { _id: userId },
-      { ...PLAN_LIMITS[planName], creditsUsed: 0 }
+      { ...this.PLAN_LIMITS[planName], creditsUsed: 0 }
     );
   }
 
@@ -184,10 +175,11 @@ export class PaymentService {
   ////////////////////
 
   async createChekoutSession(
-    plan: keyof typeof SUBSCRIPTION_PLANS,
+    plan: keyof typeof this.SUBSCRIPTION_PLANS,
     userId: string
   ) {
     try {
+      console.log("----------> plan: ", this.SUBSCRIPTION_PLANS[plan]);
       const customerId = await this.findOrCreateCustomer(userId);
 
       const subscription = await this.subscriptionModel.findOne({ userId });
@@ -195,11 +187,11 @@ export class PaymentService {
         return { url: `${this.redirectUrl}/dashboard` };
       }
 
-      if (!Object.keys(SUBSCRIPTION_PLANS).includes(plan)) {
+      if (!Object.keys(this.SUBSCRIPTION_PLANS).includes(plan)) {
         throw new Error("Select a plan before proceeding");
       }
       const session = await this.stripe.checkout.sessions.create({
-        line_items: [{ price: SUBSCRIPTION_PLANS[plan], quantity: 1 }],
+        line_items: [{ price: this.SUBSCRIPTION_PLANS[plan], quantity: 1 }],
         mode: "subscription",
         success_url: `${this.redirectUrl}/payment/successful`,
         cancel_url: this.redirectUrl,

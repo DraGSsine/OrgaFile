@@ -17,7 +17,7 @@ const RightSidebar = () => {
       </div>
 
       {/* Usage Stats Section */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 px-6">
         <div className="flex flex-col justify-center items-start mb-6">
           <h2 className="text-lg font-medium">Usage Overview</h2>
           <p className="text-small text-default-500">

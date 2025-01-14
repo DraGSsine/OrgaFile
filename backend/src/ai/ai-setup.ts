@@ -43,7 +43,7 @@ export class AIClientFactory {
       this.instance = new ChatOpenAI({
         apiKey,
         model: "gpt-4o-mini",
-        temperature: 0.3,
+        temperature: 0.1,
         maxTokens: 500,
       });
     }
@@ -61,7 +61,6 @@ export class DocumentSplitter {
       separators: ["\n\n", "\n", ".", "!", "?"],
     });
   }
-
   async split(content: string): Promise<string> {
     const chunks = await this.splitter.createDocuments([content]);
     return chunks
@@ -202,7 +201,7 @@ export class DocumentAnalyzer {
                 };
               } else {
                 return {
-                  mainTopic: doc.mainTopic,
+                  mainTopic: doc.mainTopic, 
                   documentType: doc.documentType,
                   keyEntities: doc.keyEntities.join(", "),
                   summary: doc.summary,

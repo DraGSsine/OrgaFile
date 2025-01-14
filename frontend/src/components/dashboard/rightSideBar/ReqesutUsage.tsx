@@ -34,8 +34,9 @@ export function CreditstUsage() {
       progressColor="success"
       icon={<Activity01Icon />}
       iconColor="text-success-500"
-      iconBgColor="bg-success-100/50 dark:bg-success-900/20"
-      isLoading={loading}
+      iconBgColor="bg-success-100/50"
+      brogressColor="success"
+      // isLoading={loading}
     />
   );
 }

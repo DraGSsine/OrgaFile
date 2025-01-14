@@ -1,74 +1,90 @@
-import { UsageCardProps } from "@/types/types";
-import {
-  Card,
-  CardBody,
-  Button,
-  Progress,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  cn,
-} from "@nextui-org/react";
-import {
-  ChartBarLineIcon,
-  HardDriveIcon,
-  MoreVerticalCircle01Icon,
-} from "hugeicons-react";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import React from "react";
+import { ProgressBar } from "./ProgressBar";
 
-const formatTotal = (value: number | undefined) => {
-  return value?.toLocaleString() ?? "0";
+// Define the types if not already imported
+type UsageCardProps = {
+  title: string;
+  value: number;
+  max: number;
+  icon: React.ReactNode;
+  iconColor: string;
+  iconBgColor: string;
+  progressColor?: string;
+  label: string;
+  brogressColor: string;
 };
 
-const getStatusColor = (percentage: number): "good" | "warn" | "danger" => {
+const getStatusColor = (percentage: number): string => {
+  if (isNaN(percentage)) return "bg-gray-400";
+  if (percentage >= 80) return "bg-red-500";
+  if (percentage >= 60) return "bg-yellow-500";
+  return "bg-green-500";
+};
+
+const getBackgroundColor = (percentage: number, deafult: string): string => {
+  if (isNaN(percentage)) return "bg-gray-40";
+  if (percentage >= 80) return "bg-red-50";
+  if (percentage >= 60) return "bg-yellow-50";
+  return deafult;
+};
+
+const getTextColor = (percentage: number, deafult: string): string => {
+  if (isNaN(percentage)) return "text-gray-400";
+  if (percentage >= 80) return "text-red-500";
+  if (percentage >= 60) return "text-yellow-500";
+  return deafult;
+};
+
+const getColor = (percentage: number, deafult: string): any => {
+  if (isNaN(percentage)) return "deafult";
   if (percentage >= 80) return "danger";
-  if (percentage >= 60) return "warn";
-  return "good";
+  if (percentage >= 60) return "warning";
+  return deafult;
 };
 
 export function UsageCard({
   title,
-  value,
-  max,
+  value = 0,
+  max = 100,
+  icon,
   iconColor,
   iconBgColor,
   progressColor,
-  icon,
+  label,
+  brogressColor,
 }: UsageCardProps) {
-  const percentage = ((value / max) * 100).toFixed(2);
-  const status = getStatusColor(+percentage);
-  return (
-    <Card className="flex flex-col border border-transparent p-4 dark:border-default-100">
-      <div
-        className={` w-8 h-8 flex items-center justify-center rounded-lg ${iconBgColor}`}
-      >
-        {status === "good" ? (
-          <div className={`${iconBgColor} ${iconColor}`}>{icon}</div>
-        ) : status === "warn" ? (
-          <div className="text-warning-500">{icon}</div>
-        ) : (
-          <div className="text-danger-500">{icon}</div>
-        )}
-      </div>
+  // Handle division by zero and negative numbers
+  const safeMax = Math.max(max, 1);
+  const safeValue = Math.max(0, Math.min(value, safeMax));
+  const percentage = Math.round((safeValue / safeMax) * 100);
 
-      <div className="pt-1">
-        <dt className="my-2 text-sm font-medium text-default-500">{title}</dt>
-        <dd className="text-2xl font-semibold text-default-700">
-          {percentage}%
-        </dd>
-      </div>
-      <Progress
-        aria-label="status"
-        className="mt-2"
-        color={
-          status === "good"
-            ? progressColor
-            : status === "warn"
-            ? "warning"
-            : "danger"
-        }
-        value={+percentage}
-      />
+  const status = getStatusColor(percentage);
+
+  return (
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div
+          className={`rounded-lg p-2 ${getBackgroundColor(
+            percentage,
+            iconBgColor
+          )}`}
+        >
+          <div className={getTextColor(percentage, iconColor)}>{icon}</div>
+        </div>
+        <div className="text-sm font-medium">{title}</div>
+      </CardHeader>
+      <CardBody>
+        <ProgressBar
+          value={percentage}
+          className={`h-2 ${progressColor || status}`}
+          label={label}
+          max={100}
+          color={getColor(percentage, brogressColor)}
+        />
+      </CardBody>
     </Card>
   );
 }
+
+export default UsageCard;

@@ -41,7 +41,7 @@ export function StorageUsage() {
       icon={<HardDriveIcon className="w-5 h-5" />}
       iconColor="text-blue-500"
       iconBgColor="bg-blue-100 border-primary-color dark:bg-blue-900/20"
-      isLoading={loading}
+      brogressColor="primary"
     />
   );
 }

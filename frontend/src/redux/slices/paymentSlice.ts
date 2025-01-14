@@ -31,7 +31,7 @@ const initialState: {
 
 export const createCheckoutSession = createAsyncThunk(
   "payment/createCheckoutSession",
-  async (plan:string, { rejectWithValue }) => {
+  async (plan: string, { rejectWithValue }) => {
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/payment/create-checkout-session`,
@@ -77,10 +77,7 @@ export const checkSubscription = createAsyncThunk(
       );
       return res.data;
     } catch (error: any) {
-      console.error(
-        " error.response.data.message",
-        error.response.data.message
-      );
+      console.error(error.Response);
       return rejectWithValue(error.response.data.message);
     }
   }

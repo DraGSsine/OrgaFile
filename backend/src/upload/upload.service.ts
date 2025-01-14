@@ -44,9 +44,9 @@ export class UploadService {
       const totalStorageGb = (fileSize + user.storageUsed) / 1024 ** 3;
 
       if (totalStorageGb > user.storage)
-        throw new Error("Storage limit exceeded");
+        throw new Error(`Storage limit exceeded ${totalStorageGb - user.storage }Gb Remaining`);
       if (user.creditsUsed + files.files.length > user.creditsLimit)
-        throw new Error("Request limit exceeded");
+        throw new Error(`Request limit exceeded ${user.creditsLimit - user.creditsUsed} Remaining`);
 
       const fileDocuments = await uploadFiles(
         files,
@@ -66,7 +66,7 @@ export class UploadService {
       );
       return fileDocuments;
     } catch (error) {
-      throw new Error(error);
+      throw new BadRequestException(error.message);
     }
   }
 

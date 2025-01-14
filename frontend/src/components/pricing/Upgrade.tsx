@@ -6,12 +6,10 @@ import { useState } from 'react'; // Ensure useState is imported
 import cookies from 'js-cookie'
 const Upgrade = ({
   plan,
-  active,
-  productId,
+  active
 }: {
   plan: string;
   active: boolean | undefined;
-  productId: string;
 }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

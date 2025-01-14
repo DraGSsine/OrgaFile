@@ -6,6 +6,7 @@ import axios from "axios";
 import cookies from "js-cookie";
 import { extractTextFromFile, validateFileType } from "@/lib/parse";
 import { generateFileUrl, getS3SignedUrl } from "@/lib/action";
+import pLimit from "p-limit";
 
 type FileMetaData = {
   url: string;
@@ -39,7 +40,7 @@ type FilesState = {
     isPermanently: boolean;
     isLoading: boolean;
     isFileDeleted: boolean;
-    isFileDeletedPermanently: boolean
+    isFileDeletedPermanently: boolean;
     error: any;
   };
   loadRemovedFilesState: {
@@ -133,107 +134,103 @@ export const uploadFiles = createAsyncThunk(
     try {
       const categorizationMode = localStorage.getItem("categorizationMode");
       const customTags = JSON.parse(localStorage.getItem("customTags") || "[]");
-
       const filesList = files.getAll("files");
 
       if (filesList.length === 0) {
         return rejectWithValue("Please select a file to upload.");
       } else if (filesList.length > 40) {
-        return rejectWithValue("You can upload maximum 40 files at a time.");
-      }
-
-      // Validate all files
-      const validationResults = await Promise.all(
-        Array.from(filesList).map(async (fileEntry: FormDataEntryValue) => {
-          const file = fileEntry as File;
-          const validation = await validateFileType(file);
-          return {
-            file,
-            ...validation,
-          };
-        })
-      );
-
-      // Check for invalid files
-      const invalidFiles = validationResults.filter(
-        (result) => !result.isValid
-      );
-      if (invalidFiles.length > 0) {
-        const invalidFileNames = invalidFiles
-          .map(
-            (result) =>
-              `${result.file.name} (detected as: ${
-                result.detectedType || "unknown"
-              })`
-          )
-          .join(", ");
         return rejectWithValue(
-          `Invalid files detected: ${invalidFileNames}. Files must match their extensions.`
+          "You can upload a maximum of 40 files at a time."
         );
       }
 
-      // Continue with your existing upload logic for valid files
       const userId = cookies.get("userId");
       if (!userId) {
         return rejectWithValue("User not authenticated.");
       }
 
+      // Step 1: Validate the files
+      const validationResults = await Promise.all(
+        Array.from(filesList).map(async (fileEntry: FormDataEntryValue) => {
+          const file = fileEntry as File;
+          const validation = await validateFileType(file);
+          return { file, ...validation };
+        })
+      );
+
+      const invalidFiles = validationResults.filter(
+        (result) => !result.isValid
+      );
+
+      // Collect the invalid extensions
+      if (invalidFiles.length) {
+        const invalidExtensions = invalidFiles
+          .map((result) => result.file.name.split(".").pop()) // Get file extension
+          .join(", ");
+
+        return rejectWithValue(`Invalid files: [ ${invalidExtensions} ]`);
+      }
+
+      // Step 2: Generate metadata and text extraction
+      const concurrencyLimit = 5;
+      const limit = pLimit(concurrencyLimit);
+
       const filesMetaData: FileMetaData[] = [];
       const uniqueKey = uuidv4();
 
-      // Process valid files
-      for (const { file } of validationResults) {
-        const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-        const fileUrl = await generateFileUrl(fileKey);
-        const fileContent = await extractTextFromFile(file, fileKey);
-        if (!fileContent) {
-          return rejectWithValue(
-            `Failed to parse content of file: ${file.name}`
+      const metadataPromises = validationResults.map(({ file }) =>
+        limit(async () => {
+          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+          const fileUrl = await generateFileUrl(fileKey);
+          const fileContent = await extractTextFromFile(file, fileKey);
+
+          if (!fileContent) {
+            throw new Error(`Failed to parse content of file: ${file.name}`);
+          }
+
+          filesMetaData.push({
+            url: fileUrl,
+            format: file.name.split(".").pop()!,
+            size: file.size,
+            fileId: `${uniqueKey}-${file.name}`,
+            data: fileContent,
+          });
+        })
+      );
+      await Promise.all(metadataPromises);
+
+      // Step 3: Parallel Uploads to S3
+      const uploadPromises = validationResults.map(({ file }) =>
+        limit(async () => {
+          const fileKey = `${userId}/${uniqueKey}-${file.name}`;
+          const { success, url } = await getS3SignedUrl(
+            fileKey,
+            file.type,
+            file.size
           );
-        }
-
-        filesMetaData.push({
-          url: fileUrl,
-          format: file.name.split(".").pop()!,
-          size: file.size,
-          fileId: `${uniqueKey}-${file.name}`,
-          data: fileContent,
-        });
-      }
-
-      // Upload to S3
-      const uploadPromises = validationResults.map(async ({ file }) => {
-        const fileKey = `${userId}/${uniqueKey}-${file.name}`;
-        const { success, url } = await getS3SignedUrl(
-          fileKey,
-          file.type,
-          file.size
-        );
-
-        if (!success) {
-          throw new Error(`Failed to get signed URL for ${file.name}`);
-        }
-
-        return axios.put(url, file, {
-          headers: { "Content-Type": file.type },
-        });
-      });
-      // Rest of your upload logic...
+          if (!success) {
+            throw new Error(`Failed to get signed URL for ${file.name}`);
+          }
+          return axios.put(url, file, {
+            headers: { "Content-Type": file.type },
+          });
+        })
+      );
       await Promise.all(uploadPromises);
-      const response = await axios.post(
+
+      // Step 4: Batch Metadata Upload
+      const res = await axios.post(
         `${process.env.NEXT_PUBLIC_NEST_APP_URL}/api/files/upload`,
         { files: filesMetaData, categorizationMode, customTags },
         { withCredentials: true }
       );
-      return response.data;
+      return filesMetaData;
     } catch (error: any) {
-      console.error("Error uploading files:", error);
-      if (error.response?.status === 500) {
-        return rejectWithValue("Server error. Please try again later.");
+      if (error.response) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue("Failed to load files");
       }
-      return rejectWithValue(
-        error.response?.data.message || "Failed to upload files."
-      );
     }
   }
 );

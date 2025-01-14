@@ -9,7 +9,6 @@ type PricingCardProps = {
   active?: boolean;
   mostpopular?: boolean;
   features: string[];
-  productId: string;
 };
 
 const PricingCard = ({
@@ -19,8 +18,7 @@ const PricingCard = ({
   subscription,
   active,
   mostpopular,
-  features,
-  productId,
+  features
 }: PricingCardProps) => {
   return (
     <>
@@ -57,7 +55,7 @@ const PricingCard = ({
               <p className="text-base text-body-color dark:text-dark-6">{features[3]}</p>
               <p className="text-base text-body-color dark:text-dark-6">{features[4]}</p>
           </div>
-        <Upgrade plan={type} active={active} productId={productId} />
+        <Upgrade plan={type} active={active}/>
           <div>
             <span className="absolute right-0 top-7 z-[-1]">
               <svg

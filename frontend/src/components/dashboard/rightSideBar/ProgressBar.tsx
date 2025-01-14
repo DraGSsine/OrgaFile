@@ -1,40 +1,44 @@
 "use client";
+import { Progress, Skeleton } from '@nextui-org/react';
+import React from 'react';
 
-import { StorageProgressProps } from "@/types/types";
-import { Progress, Skeleton } from "@nextui-org/react";
-
+type StorageProgressProps = {
+  isLoading?: boolean;
+  value: number;
+  max: number;
+  label: string;
+  color?: "primary" | "success" | "warning" | "default" | "secondary" | "danger";
+  className?: string;
+};
 
 export function ProgressBar({
-  isLoading,
-  value,
-  max,
+  isLoading = false,
+  value = 0,
+  max = 100,
   label,
-  color = "primary",
+  color = 'primary',
   className,
 }: StorageProgressProps) {
   if (isLoading) {
     return <ProgressSkeleton />;
   }
 
-  const percentage = Math.round((value / max) * 100);
+  // Handle edge cases and invalid numbers
+  const safeMax = Math.max(max, 1); // Prevent division by zero
+  const safeValue = Math.max(0, Math.min(value, safeMax)); // Clamp value between 0 and max
+  const percentage = Math.round((safeValue / safeMax) * 100);
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between text-sm text-default-500">
+      <div className="flex justify-between text-sm text-muted-foreground">
         <span>{label}</span>
-        <span>{percentage}%</span>
+        <span>{!isNaN(percentage) ? `${percentage}%` : 'N/A'}</span>
       </div>
       <Progress
-        size="sm"
-        radius="full"
-        value={percentage}
+        value={isNaN(percentage) ? 0 : percentage}
+        className={`h-2 ${className}`}
+        aria-label={`${label} progress`}
         color={color}
-        className={className}
-        aria-label="Usage progress"
-        classNames={{
-          track: "drop-shadow-sm",
-          indicator: "bg-gradient-to-r",
-        }}
       />
     </div>
   );
@@ -51,3 +55,5 @@ function ProgressSkeleton() {
     </div>
   );
 }
+
+export default ProgressBar;

@@ -27,7 +27,7 @@ export const UploadDropzone = () => {
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev < 95) {
-          let random = Math.random() * 2;
+          let random = Math.random() * 5;
           if (prev + random > 95) {
             return 95;
           }
