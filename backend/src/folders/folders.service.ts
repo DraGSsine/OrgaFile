@@ -82,6 +82,8 @@ export class FoldersService {
 
       const zip = new admZip();
 
+      zip.addFile(`${folder.name}/`, Buffer.alloc(0));
+
       for (const file of folder.files) {
         const command = new GetObjectCommand({
           Bucket: process.env.AWS_BUCKET_NAME!,
@@ -94,7 +96,11 @@ export class FoldersService {
         const response = await fetch(signedUrl);
         const arrayBuffer = await response.arrayBuffer();
 
-        zip.addFile(`${file.name}.${file.format}`, Buffer.from(arrayBuffer));
+        // Add files inside the folder
+        zip.addFile(
+          `${folder.name}/${file.name}.${file.format}`,
+          Buffer.from(arrayBuffer)
+        );
       }
 
       const zipBuffer = zip.toBuffer();

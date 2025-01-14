@@ -14,7 +14,7 @@ import {
   FileBlockIcon,
   Loading03Icon,
 } from "hugeicons-react";
-import { CategorizationModeSelector } from "./CategorixationModeSelector";
+import { CategorizationModeSelector } from "./CategorizationModeSelector";
 
 export const UploadDropzone = () => {
   const router = useRouter();

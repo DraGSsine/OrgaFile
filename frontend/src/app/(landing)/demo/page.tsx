@@ -1,72 +1,67 @@
 "use client";
 
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { Card } from "@nextui-org/react";
-import {
-  BarCode02Icon,
-  File02Icon,
-  PlayCircle02Icon,
-  SparklesIcon,
-} from "hugeicons-react";
-import React, { useState } from "react";
+import { SparklesIcon } from "hugeicons-react";
 
 export default function DemoPage() {
-  const [activeFeature, setActiveFeature] = useState(0);
-
-  const features = [
-    {
-      title: "Smart AI",
-      description: "Watch how our AI instantly categorizes your files",
-      icon: SparklesIcon,
-    },
-    {
-      title: "Clean Code",
-      description: "Built with modern tech stack for optimal performance",
-      icon: BarCode02Icon,
-    },
-    {
-      title: "Easy Export",
-      description: "Export your organized files with one click",
-      icon: File02Icon,
-    },
-  ];
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      <div className="container max-w-7xl mx-auto px-4 py-12">
-        {/* Hero Section */}
-        <div className="flex flex-col items-center text-center space-y-6 mb-16">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-            <SparklesIcon className="w-4 h-4 mr-2" />
-            <span className="text-sm font-medium">See the magic in action</span>
-          </div>
-
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
-              Experience the Future
-            </span>
-          </h1>
-
-          <p className="text-muted-foreground max-w-2xl text-lg">
-            Watch how our AI-powered system transforms chaotic file structures
-            into perfectly organized categories in seconds
-          </p>
+    <main className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 overflow-hidden">
+      <div className="container max-w-7xl mx-auto px-4 py-24 relative">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-1/2 -right-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-1/2 -left-1/2 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl" />
         </div>
 
-        {/* Main Demo Section */}
-        <div className="flex items-center justify-center">
-          {/* Video Card */}
-          <Card className="overflow-hidden border-0 shadow-2xl bg-card/50 backdrop-blur-sm">
-            <div className="aspect-video relative bg-black rounded-lg overflow-hidden">
-              <video
-                src="https://cdn.loom.com/sessions/thumbnails/c9b25756cad9411493548cc087a975f1-ab25417174a52a16.mp4"
-                playsInline
-                loop
-                autoPlay
-                poster="https://cdn.loom.com/sessions/thumbnails/c9b25756cad9411493548cc087a975f1-ab25417174a52a16.jpg"
-              ></video>
+        {/* Hero Section */}
+        <div className="relative flex flex-col items-center text-center space-y-8 mb-20">
+          <motion.span
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2}}
+          className={` bg-purple-200 text-purple-800 border border-purple-300 rounded-full text-xs font-semibold px-3 py-1 inline-block`}
+        >
+          <SparklesIcon className="h-4 w-4 inline-block mr-1" />
+          Smart File Categorization
+        </motion.span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative"
+          >
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+              <span className=" capitalize relative inline-block py-2 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient">
+                1 Minute <br/> to Clean Your Mess!
+              </span>
+            </h1>
+            <div className="absolute -bottom-4 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+          </motion.div>
+        </div>
+
+        {/* Demo Display */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="relative px-4 z-10"
+        >
+          <Card className="overflow-hidden border border-border/50 shadow-2xl bg-card/95 backdrop-blur-sm w-full max-w-4xl mx-auto hover:shadow-primary/5 transition-all duration-500">
+            <div className="aspect-video relative bg-background rounded-lg overflow-hidden">
+              <div className="relative w-full h-full group">
+                <Image
+                  width={1920}
+                  height={1080}
+                  src="https://res.cloudinary.com/decb9vsza/image/upload/v1736871887/orgafile-demo_xt6yom.gif"
+                  alt="File Organization Demo"
+                  className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
             </div>
           </Card>
-        </div>
+        </motion.div>
       </div>
     </main>
   );
