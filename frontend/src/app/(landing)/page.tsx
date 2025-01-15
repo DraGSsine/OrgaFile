@@ -14,7 +14,7 @@ export default async function Home() {
         <Features />
         <HowItWorks />
       </MaxWidthWrapper>
-      <NewsLetter />
+      {/* <NewsLetter /> */}
       <FooterBar />
     </>
   );

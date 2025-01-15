@@ -45,7 +45,7 @@ export class PaymentService {
     };
 
     this.PLAN_LIMITS = {
-      Basic: { storage: 5, creditsLimit: 100 },
+      Basic: { storage: 5, creditsLimit: 200 },
       Standard: { storage: 15, creditsLimit: 500 },
       Gold: { storage: 25, creditsLimit: 1000 },
     };

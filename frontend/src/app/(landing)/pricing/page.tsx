@@ -12,12 +12,12 @@ const Pricing = () => {
   const plans = [
     {
       type: "Basic",
-      price: "$4.99",
+      price: "$7.99",
       subscription: "month",
       description: "Perfect for individuals who need help organizing their personal files and documents automatically.",
       mostpopular: false,
       features: [
-        "100 Files/month",
+        "200 Files/month",
         "5GB Storage",
         "Unlimited custom categories",
         "Advanced AI categorization",
@@ -28,7 +28,7 @@ const Pricing = () => {
     },
     {
       type: "Standard",
-      price: "$9.99",
+      price: "$14.99",
       subscription: "month",
       description: "Ideal for professionals who need more credits and storage for their file organization needs.",
       active: true,

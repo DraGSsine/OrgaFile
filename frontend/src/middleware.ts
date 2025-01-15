@@ -19,9 +19,9 @@ export async function middleware(request: NextRequest) {
     const { isTokenValid, isSubscribed } = await validateToken(accessToken);
 
     ////// remove this when the project is ready for production ///////
-    if (request.nextUrl.pathname.startsWith("/auth")) {
-      return NextResponse.redirect(`${request.nextUrl.origin}/#join`);
-    }
+    // if (request.nextUrl.pathname.startsWith("/auth")) {
+    //   return NextResponse.redirect(`${request.nextUrl.origin}/#join`);
+    // }
     
     if (
       request.nextUrl.pathname.startsWith("/dashboard") ||
