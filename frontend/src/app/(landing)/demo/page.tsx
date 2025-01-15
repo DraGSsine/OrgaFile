@@ -33,7 +33,7 @@ export default function DemoPage() {
             className="relative"
           >
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              <span className=" capitalize relative inline-block py-2 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient">
+              <span className=" capitalize relative inline-block py-2 boujee-text ">
                 1 Minute <br/> to Clean Your Mess!
               </span>
             </h1>
@@ -48,7 +48,7 @@ export default function DemoPage() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="relative px-4 z-10"
         >
-          <Card className="overflow-hidden border border-border/50 shadow-2xl bg-card/95 backdrop-blur-sm w-full max-w-4xl mx-auto hover:shadow-primary/5 transition-all duration-500">
+          <Card className="overflow-hidden hover:scale-110 border border-border/50 shadow-2xl bg-card/95 backdrop-blur-sm w-full max-w-4xl mx-auto hover:shadow-primary/5 transition-all duration-1000 ">
             <div className="aspect-video relative bg-background rounded-lg overflow-hidden">
               <div className="relative w-full h-full group">
                 <Image
@@ -56,7 +56,7 @@ export default function DemoPage() {
                   height={1080}
                   src="https://res.cloudinary.com/decb9vsza/image/upload/v1736871887/orgafile-demo_xt6yom.gif"
                   alt="File Organization Demo"
-                  className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover w-full h-full transform transition-transform duration-700"
                 />
               </div>
             </div>
