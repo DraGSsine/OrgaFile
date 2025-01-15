@@ -1,78 +1,62 @@
 import { NextResponse, NextRequest } from "next/server";
-import { jwtVerify } from "jose/jwt/verify";
+import { jwtVerify } from "jose";
+
+const PROTECTED_ROUTES = ["/dashboard", "/payment/successful"];
 
 export async function middleware(request: NextRequest) {
-  try {
-    const cookie = request.cookies;
-    const accessToken = cookie.get("token")?.value;
-    const publicRoutes = ["/", "/auth/signin", "/auth/signup", "/pricing"];
-    // check if the user in the signup page without a plan
-    const plan = cookie.get("plan")?.value as string;
-    const isValidPlan =
-      plan === "Basic" || plan === "Gold" || plan === "Standard";
-    if (request.nextUrl.pathname === "/auth/signup" && !isValidPlan) {
-      return NextResponse.redirect(
-        new URL("/pricing", request.nextUrl.origin).href
-      );
+  const { pathname } = request.nextUrl;
+
+  // Handle signup without a plan
+  if (pathname === "/auth/signup") {
+    const plan = request.cookies.get("plan")?.value;
+    if (!["Basic", "Gold", "Standard"].includes(plan || "")) {
+      return NextResponse.redirect(new URL("/pricing", request.url));
     }
-    // Pass the actual token from cookies
-    const { isTokenValid, isSubscribed } = await validateToken(accessToken);
-
-    ////// remove this when the project is ready for production ///////
-    // if (request.nextUrl.pathname.startsWith("/auth")) {
-    //   return NextResponse.redirect(`${request.nextUrl.origin}/#join`);
-    // }
-    
-    if (
-      request.nextUrl.pathname.startsWith("/dashboard") ||
-      request.nextUrl.pathname.startsWith("/payment/successful")
-    ) {
-      if (!isTokenValid || !isSubscribed) {
-        if (
-          !isSubscribed &&
-          isTokenValid &&
-          request.nextUrl.pathname === "/payment/successful"
-        )
-          return NextResponse.next();
-
-        return NextResponse.redirect(
-          new URL("/auth/signin", request.nextUrl.origin).href
-        );
-      }
-    } else if (publicRoutes.includes(request.nextUrl.pathname)) {
-      if (isTokenValid && isSubscribed) {
-        return NextResponse.redirect(
-          new URL("/dashboard", request.nextUrl.origin).href
-        );
-      }
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL("/", request.nextUrl.origin).href);
   }
+
+  const accessToken = request.cookies.get("token")?.value;
+  const { isTokenValid, isSubscribed } = await validateToken(accessToken);
+
+  // Protect routes that require authentication
+  if (PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
+    if (!isTokenValid || !isSubscribed) {
+      // Special case for successful payment page
+      if (pathname === "/payment/successful" && isTokenValid && !isSubscribed) {
+        return NextResponse.next();
+      }
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+  } else {
+    // All other routes are considered public
+    // Redirect authenticated and subscribed users to dashboard
+    if (isTokenValid && isSubscribed && pathname !== "/dashboard") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
+  return NextResponse.next();
 }
 
 async function validateToken(token?: string) {
+  if (!token) {
+    return { isTokenValid: false, isSubscribed: false };
+  }
+
   try {
     const key = process.env.JWT_SECRET_KEY;
-    if (!key) throw new Error("JWT_SECRET_KEY does not exist in the env");
-    if (!token) {
-      console.error("Token is missing");
-      return { isTokenValid: false, isSubscribed: false };
-    }
+    if (!key) throw new Error("JWT_SECRET_KEY is not set in the environment");
 
-    const SECRET_KEY = new TextEncoder().encode(key);
-    const { payload } = await jwtVerify(token, SECRET_KEY);
-
-    return { isTokenValid: true, isSubscribed: payload.isSubscribed };
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(key));
+    return { 
+      isTokenValid: true, 
+      isSubscribed: payload.isSubscribed as boolean 
+    };
   } catch (error) {
-    console.error("Error validating token:", error);
+    console.error("Token validation error:", error);
     return { isTokenValid: false, isSubscribed: false };
   }
 }
 
-// Config matcher for the middleware
 export const config = {
   matcher: [
     "/",
@@ -80,5 +64,8 @@ export const config = {
     "/auth/:path*",
     "/payment/successful",
     "/pricing",
+    "/legal",
+    "/demo"
   ],
 };
+
