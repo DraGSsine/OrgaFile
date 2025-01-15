@@ -40,8 +40,14 @@ export class PaymentService {
         process.env.PROD === "true"
           ? process.env.BASIC_PRICE_ID_PROD
           : process.env.BASIC_PRICE_ID_DEV,
-      Standard: "price_1QdWx8IdcozZ05jblHMivcvj",
-      Gold: "price_1QdWz8IdcozZ05jbrWWwepNF",
+      Standard:
+        process.env.PROD === "true"
+          ? process.env.STANDARD_PRICE_ID_PROD
+          : process.env.STANDARD_PRICE_ID_DEV,
+      Gold:
+        process.env.PROD === "true"
+          ? process.env.GOLD_PRICE_ID_PROD
+          : process.env.GOLD_PRICE_ID_DEV,
     };
 
     this.PLAN_LIMITS = {
