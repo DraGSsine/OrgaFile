@@ -38,15 +38,15 @@ export class PaymentService {
     this.SUBSCRIPTION_PLANS = {
       Basic:
         process.env.PROD === "true"
-          ? process.env.BASIC_PRICE_ID_PROD
+          ? 'price_1QhOzzIyKmdahMOdy1xBoRwQ'
           : process.env.BASIC_PRICE_ID_DEV,
       Standard:
         process.env.PROD === "true"
-          ? process.env.STANDARD_PRICE_ID_PROD
+          ? "price_1QhP10IyKmdahMOdeikLlU3F"
           : process.env.STANDARD_PRICE_ID_DEV,
       Gold:
         process.env.PROD === "true"
-          ? process.env.GOLD_PRICE_ID_PROD
+          ? 'price_1QhP23IyKmdahMOdTyE6ZAbh'
           : process.env.GOLD_PRICE_ID_DEV,
     };
 
