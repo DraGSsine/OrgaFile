@@ -5,7 +5,20 @@ import { ArrowRight01Icon } from "hugeicons-react";
 const Hero = () => {
   return (
     <section className="flex flex-col items-center px-4 animate-section">
-      <div className="w-full flex flex-col items-center pb-10 pt-20">
+      <div className=" pt-10">
+        <a
+          href="https://www.producthunt.com/posts/orgafile?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-orgafile"
+          target="_blank"
+        >
+          <img
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=754161&theme=light&t=1737022473921"
+            alt="OrgaFile - Your&#0032;Personal&#0032;File&#0032;Organization&#0032;Assistant | Product Hunt"
+            width="250"
+            height="54"
+          />
+        </a>
+      </div>
+      <div className="w-full flex flex-col items-center pb-10 pt-5">
         <h1 className="text-5xl md:text-7xl font-bold text-center">
           <span className="boujee-text block py-2">Organize in Seconds.</span>
           <span className="inline-block leading-[5rem]">Save Hours</span>
