@@ -55,7 +55,7 @@ const PricingCard = ({
               <p className="text-base text-body-color dark:text-dark-6">{features[3]}</p>
               <p className="text-base text-body-color dark:text-dark-6">{features[4]}</p>
           </div>
-        <Upgrade plan={type} active={active}/>
+        <Upgrade plan={type}/>
           <div>
             <span className="absolute right-0 top-7 z-[-1]">
               <svg
