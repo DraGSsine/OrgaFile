@@ -1,62 +1,71 @@
 import React from "react";
 import { Metadata } from "next";
-import { ArrowRight01Icon, CreditCardIcon, Shield01Icon, Tick01Icon, ZapIcon } from "hugeicons-react";
+import {
+  ArrowRight01Icon,
+  CreditCardIcon,
+  Shield01Icon,
+  Tick01Icon,
+  ZapIcon,
+} from "hugeicons-react";
+import Upgrade from "@/components/pricing/Upgrade";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description: "Simple, predictable pricing for organizing your files with AI.",
 };
 
-const Pricing = () =>  {
+const Pricing = () => {
   const plans = [
     {
-      name: 'Starter',
-      price: '$4.99',
-      period: 'month',
-      description: 'Perfect for students and personal use to keep your files organized.',
+      name: "Starter",
+      price: "$4.99",
+      period: "month",
+      description:
+        "Perfect for students and personal use to keep your files organized.",
       features: [
-        '100 credits per month',
-        '10GB Storage',
-        'Email support',
-        'AI-powered organization',
-        'Customizable folder rules',
+        "100 credits per month",
+        "10GB Storage",
+        "Email support",
+        "AI-powered organization",
+        "Customizable folder rules",
       ],
       highlight: false,
-      cta: 'Get Started',
-      savings: 'Save $12 yearly'
+      cta: "Get Started",
+      savings: "Save $12 yearly",
     },
     {
-      name: 'Pro',
-      price: '$9.99',
-      period: 'month',
-      description: 'Ideal for professionals and small teams who need more organization power.',
+      name: "Pro",
+      price: "$9.99",
+      period: "month",
+      description:
+        "Ideal for professionals and small teams who need more organization power.",
       features: [
-        '400 credits per month',
-        '20GB Storage',
-        'Priority support',
-        'AI-powered organization',
-        'Customizable folder rules',
+        "400 credits per month",
+        "20GB Storage",
+        "Priority support",
+        "AI-powered organization",
+        "Customizable folder rules",
       ],
       highlight: true,
-      cta: 'Get Started',
-      savings: 'Save $24 yearly'
+      cta: "Get Started",
+      savings: "Save $24 yearly",
     },
     {
-      name: 'Business',
-      price: '$14.99',
-      period: 'month',
-      description: 'For power users and businesses with high-volume needs.',
+      name: "Business",
+      price: "$14.99",
+      period: "month",
+      description: "For power users and businesses with high-volume needs.",
       features: [
-        '800 credits per month',
-        '40GB Storage',
-        '24/7 Priority support',
-        'AI-powered organization',
-        'Customizable folder rules',
+        "800 credits per month",
+        "40GB Storage",
+        "24/7 Priority support",
+        "AI-powered organization",
+        "Customizable folder rules",
       ],
       highlight: false,
-      cta: 'Contact Sales',
-      savings: 'Save $36 yearly'
-    }
+      cta: "Get Started",
+      savings: "Save $36 yearly",
+    },
   ];
 
   return (
@@ -74,7 +83,8 @@ const Pricing = () =>  {
               Simple, transparent pricing for everyone
             </h1>
             <p className="text-lg text-slate-600 mb-8">
-              No hidden fees. No complicated tiers. Just pick the plan that matches your needs and start organizing your files instantly.
+              No hidden fees. No complicated tiers. Just pick the plan that
+              matches your needs and start organizing your files instantly.
             </p>
             <div className="flex items-center justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
@@ -100,9 +110,9 @@ const Pricing = () =>  {
               key={plan.name}
               className={`relative group rounded-3xl ${
                 plan.highlight
-                  ? 'bg-primary-color  text-white shadow-xl scale-105'
-                  : 'bg-white text-slate-900 shadow-lg hover:shadow-xl'
-              } p-8 transition-all duration-300 hover:scale-[1.02]`}
+                  ? "bg-primary-color  text-white shadow-xl"
+                  : "bg-white text-slate-900 shadow-lg hover:shadow-xl"
+              } p-8 transition-all duration-300 `}
             >
               {/* {plan.highlight && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -114,16 +124,34 @@ const Pricing = () =>  {
 
               {/* Plan Header */}
               <div className="mb-8">
-                <h3 className={`text-2xl font-bold mb-2 ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                <h3
+                  className={`text-2xl font-bold mb-2 ${
+                    plan.highlight ? "text-white" : "text-slate-900"
+                  }`}
+                >
                   {plan.name}
                 </h3>
                 <div className="flex items-baseline gap-2 mb-4">
-                  <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                  <span
+                    className={`text-4xl font-bold ${
+                      plan.highlight ? "text-white" : "text-slate-900"
+                    }`}
+                  >
                     {plan.price}
                   </span>
-                  <span className={plan.highlight ? 'text-blue-200' : 'text-slate-500'}>/{plan.period}</span>
+                  <span
+                    className={
+                      plan.highlight ? "text-blue-200" : "text-slate-500"
+                    }
+                  >
+                    /{plan.period}
+                  </span>
                 </div>
-                <p className={plan.highlight ? 'text-blue-100' : 'text-slate-600'}>
+                <p
+                  className={
+                    plan.highlight ? "text-blue-100" : "text-slate-600"
+                  }
+                >
                   {plan.description}
                 </p>
               </div>
@@ -133,10 +161,18 @@ const Pricing = () =>  {
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <Tick01Icon
-                      size={20} 
-                      className={plan.highlight ? 'text-blue-300 mt-0.5' : 'text-blue-500 mt-0.5'} 
+                      size={20}
+                      className={
+                        plan.highlight
+                          ? "text-blue-300 mt-0.5"
+                          : "text-blue-500 mt-0.5"
+                      }
                     />
-                    <span className={plan.highlight ? 'text-blue-100' : 'text-slate-600'}>
+                    <span
+                      className={
+                        plan.highlight ? "text-blue-100" : "text-slate-600"
+                      }
+                    >
                       {feature}
                     </span>
                   </li>
@@ -145,16 +181,7 @@ const Pricing = () =>  {
 
               {/* CTA Button */}
               <div>
-                <button
-                  className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-200 group ${
-                    plan.highlight
-                      ? 'bg-white text-blue-900 hover:bg-blue-50'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  } flex items-center justify-center gap-2`}
-                >
-                  {plan.cta}
-                  <ArrowRight01Icon size={16} className="transition-transform group-hover:translate-x-1" />
-                </button>
+                <Upgrade plan={plan.name} />
                 {/* <p className={`text-center text-sm mt-3 ${
                   plan.highlight ? 'text-blue-200' : 'text-slate-500'
                 }`}>
@@ -164,10 +191,9 @@ const Pricing = () =>  {
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );
-}
+};
 
 export default Pricing;

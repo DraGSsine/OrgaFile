@@ -187,7 +187,7 @@ const Features = () => {
           <h2 className="text-4xl lg:text-5xl font-bold lg:tracking-tight mb-6">
             Organize Files{" "}
             <span className="bg-gradient-to-tr from-primary-400 to-primary-800 text-transparent bg-clip-text">
-              5x Faster
+              10x Faster
             </span>
           </h2>
           <p className="text-lg text-gray-700 mx-auto max-w-2xl">
