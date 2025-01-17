@@ -14,7 +14,7 @@ const Hero = () => {
             Instant File Organization
           </span>
           <span className="inline-block leading-[5rem] text-black">
-            Made Simple by AI
+            Powered-by AI
           </span>
         </h1>
         <p className="pt-4 pb-14 text-center mt-4 text-zinc-500 max-w-[600px] text-medium leading-8">
