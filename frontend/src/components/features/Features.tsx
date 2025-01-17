@@ -124,7 +124,7 @@ const FEATURES: Feature[] = [
     badge: { text: "Smart AI", color: "purple" },
     title: "10x Faster File Organization",
     description:
-      "Drop files anywhere - our AI sorts them instantly. Perfect for business docs, projects, or personal files. Save 4+ hours weekly on manual organization.",
+      "Drop files anywhere - our AI sorts them instantly. Perfect for business docs, projects, or personal files. Save 20+ hours monthly on manual organization.",
   },
   {
     id: "feature-2",
