@@ -47,7 +47,7 @@ export default function FolderCards() {
       <HeaderPage
         icon={<Folder01Icon className="h-8 w-8 text-[#4b81f7]" />}
         title="Recent Folders"
-        description="View your last 5 folders"
+        description="View your last 4 folders"
       />
 
       {loading ? (
