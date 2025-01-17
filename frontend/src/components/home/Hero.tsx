@@ -43,7 +43,7 @@ const Hero = () => {
         {/* Call to Action Buttons */}
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="group flex items-center justify-center p-2 rounded-full px-4  text-white bg-primary transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <span>Get Started</span>
