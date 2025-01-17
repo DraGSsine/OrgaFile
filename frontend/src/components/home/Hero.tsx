@@ -18,7 +18,7 @@ const Hero = () => {
           </span>
         </h1>
         <p className="pt-4 pb-14 text-center mt-4 text-zinc-500 max-w-[600px] text-medium leading-8">
-          Stop wasting hours on manual file management. OrgaFile's AI
+          Stop wasting hours on manual file management. OrgaFile&apos;s AI
           automatically analyzes, renames, and organizes your files into smart
           categories. Perfect for professionals who value their time and need a
           clutter-free workflow.
