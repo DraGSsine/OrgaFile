@@ -1,94 +1,173 @@
-import React, { ReactNode } from "react";
-import PricingCard from "@/components/pricing/PricingCard";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import React from "react";
 import { Metadata } from "next";
+import { ArrowRight01Icon, CreditCardIcon, Shield01Icon, Tick01Icon, ZapIcon } from "hugeicons-react";
 
 export const metadata: Metadata = {
-  title: 'Pricing',
-  description: "Choose the perfect plan to organize and categorize your files automatically with Orgafile's AI-powered sorting system.",
-}
+  title: "Pricing",
+  description: "Simple, predictable pricing for organizing your files with AI.",
+};
 
-const Pricing = () => {
+const Pricing = () =>  {
   const plans = [
     {
-      type: "Basic",
-      price: "$7.99",
-      subscription: "month",
-      description: "Perfect for individuals who need help organizing their personal files and documents automatically.",
-      mostpopular: false,
+      name: 'Starter',
+      price: '$4.99',
+      period: 'month',
+      description: 'Perfect for students and personal use to keep your files organized.',
       features: [
-        "200 Files/month",
-        "5GB Storage",
-        "Unlimited custom categories",
-        "Advanced AI categorization",
-        "Smart folder suggestions",
-        "Batch processing",
-        "24/7 Support",
+        '100 credits per month',
+        '10GB Storage',
+        'Email support',
+        'AI-powered organization',
+        'Customizable folder rules',
       ],
+      highlight: false,
+      cta: 'Get Started',
+      savings: 'Save $12 yearly'
     },
     {
-      type: "Standard",
-      price: "$14.99",
-      subscription: "month",
-      description: "Ideal for professionals who need more credits and storage for their file organization needs.",
-      active: true,
-      mostpopular: true,
+      name: 'Pro',
+      price: '$9.99',
+      period: 'month',
+      description: 'Ideal for professionals and small teams who need more organization power.',
       features: [
-        "500 Files/month",
-        "15GB Storage",
-        "Unlimited custom categories",
-        "Advanced AI categorization",
-        "Smart folder suggestions",
-        "Batch processing",
-        "24/7 Support",
+        '400 credits per month',
+        '20GB Storage',
+        'Priority support',
+        'AI-powered organization',
+        'Customizable folder rules',
       ],
+      highlight: true,
+      cta: 'Get Started',
+      savings: 'Save $24 yearly'
     },
     {
-      type: "Gold",
-      price: "$19.99",
-      subscription: "month",
-      description: "Complete solution for users with extensive file organization needs requiring maximum credits and storage.",
-      mostpopular: false,
+      name: 'Business',
+      price: '$14.99',
+      period: 'month',
+      description: 'For power users and businesses with high-volume needs.',
       features: [
-        "1000 Files/month",
-        "25GB Storage",
-        "Unlimited custom categories",
-        "Advanced AI categorization",
-        "Smart folder suggestions",
-        "Batch processing",
-        "24/7 Support",
+        '800 credits per month',
+        '40GB Storage',
+        '24/7 Priority support',
+        'AI-powered organization',
+        'Customizable folder rules',
       ],
-    },
-  ]
+      highlight: false,
+      cta: 'Contact Sales',
+      savings: 'Save $36 yearly'
+    }
+  ];
 
   return (
-    <MaxWidthWrapper>
-      <section className="relative z-10 overflow-hidden bg-white pb-12 pt-20 dark:bg-dark lg:pb-[90px] lg:pt-[120px]">
-        <div className="container mx-auto">
-          <div className="-mx-4 flex flex-wrap">
-            <div className="w-full px-4">
-              <div className="mx-auto mb-[60px] space-y-6 max-w-[510px] text-center">
-                <span className="bg-primary-100 border-primary-200 border text-primary-color rounded-full text-xs font-medium px-3 py-1">
-                  PRICING
-                </span>
-                <h2 className="mb-3 text-3xl font-bold leading-[1.208] text-dark dark:text-white sm:text-4xl md:text-[40px]">
-                  Choose Your Plan
-                </h2>
-                <p className="text-base text-body-color dark:text-dark-6">
-                  All plans include our full suite of AI-powered organization features. Simply choose the credit and storage amount that fits your needs.
-                </p>
+    <div className="min-h-[90vh] bg-gradient-to-br from-slate-50 via-white to-slate-50/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Header Section */}
+        <div className="relative text-center max-w-3xl mx-auto mb-20">
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-blue-100/50 rounded-full blur-3xl" />
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <ZapIcon size={16} className="text-blue-500" />
+              Special Launch Pricing
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl mb-6">
+              Simple, transparent pricing for everyone
+            </h1>
+            <p className="text-lg text-slate-600 mb-8">
+              No hidden fees. No complicated tiers. Just pick the plan that matches your needs and start organizing your files instantly.
+            </p>
+            <div className="flex items-center justify-center gap-8 text-sm">
+              <div className="flex items-center gap-2">
+                <Shield01Icon size={16} className="text-blue-500" />
+                <span>Money-back guarantee</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CreditCardIcon size={16} className="text-blue-500" />
+                <span>Secure payment</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ZapIcon size={16} className="text-blue-500" />
+                <span>Instant access</span>
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-6">
-            {plans.map((plan, index) => (
-              <PricingCard key={index} {...plan} />
-            ))}
-          </div>
         </div>
-      </section>
-    </MaxWidthWrapper>
+
+        {/* Pricing Cards */}
+        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {plans.map((plan) => (
+            <div
+              key={plan.name}
+              className={`relative group rounded-3xl ${
+                plan.highlight
+                  ? 'bg-primary-color  text-white shadow-xl scale-105'
+                  : 'bg-white text-slate-900 shadow-lg hover:shadow-xl'
+              } p-8 transition-all duration-300 hover:scale-[1.02]`}
+            >
+              {/* {plan.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <div className=" text-white px-4 py-1 rounded-full text-sm font-medium">
+                    Most Popular
+                  </div>
+                </div>
+              )} */}
+
+              {/* Plan Header */}
+              <div className="mb-8">
+                <h3 className={`text-2xl font-bold mb-2 ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                  {plan.name}
+                </h3>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>
+                    {plan.price}
+                  </span>
+                  <span className={plan.highlight ? 'text-blue-200' : 'text-slate-500'}>/{plan.period}</span>
+                </div>
+                <p className={plan.highlight ? 'text-blue-100' : 'text-slate-600'}>
+                  {plan.description}
+                </p>
+              </div>
+
+              {/* Features List */}
+              <ul className="space-y-4 mb-8">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Tick01Icon
+                      size={20} 
+                      className={plan.highlight ? 'text-blue-300 mt-0.5' : 'text-blue-500 mt-0.5'} 
+                    />
+                    <span className={plan.highlight ? 'text-blue-100' : 'text-slate-600'}>
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA Button */}
+              <div>
+                <button
+                  className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-200 group ${
+                    plan.highlight
+                      ? 'bg-white text-blue-900 hover:bg-blue-50'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  } flex items-center justify-center gap-2`}
+                >
+                  {plan.cta}
+                  <ArrowRight01Icon size={16} className="transition-transform group-hover:translate-x-1" />
+                </button>
+                {/* <p className={`text-center text-sm mt-3 ${
+                  plan.highlight ? 'text-blue-200' : 'text-slate-500'
+                }`}>
+                  {plan.savings}
+                </p> */}
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
   );
-};
+}
 
 export default Pricing;

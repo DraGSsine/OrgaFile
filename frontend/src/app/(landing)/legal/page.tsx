@@ -51,7 +51,7 @@ const Page = () => {
     },
     {
       title: "Compliance",
-      desc: "Adherence to international data protection Standards",
+      desc: "Adherence to international data protection Pros",
     },
   ];
 

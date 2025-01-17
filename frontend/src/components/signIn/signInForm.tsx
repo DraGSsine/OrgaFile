@@ -44,7 +44,7 @@ const SignInForm = () => {
       const signInResult = await dispatch(SignInAction(validatedUser));
 
       if (SignInAction.fulfilled.match(signInResult)) {
-        const plan = cookies.get("plan") || "Standard";
+        const plan = cookies.get("plan") || "Pro";
         const checkoutResult = await dispatch(createCheckoutSession(plan));
 
         if (createCheckoutSession.fulfilled.match(checkoutResult)) {

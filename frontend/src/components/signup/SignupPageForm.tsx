@@ -47,13 +47,13 @@ const SignupPageForm = () => {
     setErrors({});
 
     const plan = cookies.get("plan");
-    if (plan === "Basic" || plan === "Gold" || plan === "Standard") {
+    if (plan === "Starter" || plan === "Business" || plan === "Pro") {
       try {
         const validatedUser = userSchema.parse({ ...formData, acceptTerms });
 
         const signUpResult = await dispatch(SignUpAction(validatedUser));
         if (SignUpAction.fulfilled.match(signUpResult)) {
-          const plan = cookies.get("plan") || "Standard";
+          const plan = cookies.get("plan") || "Pro";
           const checkoutResult = await dispatch(createCheckoutSession(plan));
           if (createCheckoutSession.fulfilled.match(checkoutResult)) {
             toast.success("Sign up successful");

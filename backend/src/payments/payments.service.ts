@@ -36,24 +36,24 @@ export class PaymentService {
     this.stripe = new Stripe(key, { apiVersion: "2024-12-18.acacia" });
 
     this.SUBSCRIPTION_PLANS = {
-      Basic:
+      Starter:
         process.env.PROD === "true"
           ? 'price_1QhOzzIyKmdahMOdy1xBoRwQ'
-          : process.env.BASIC_PRICE_ID_DEV,
-      Standard:
+          : process.env.STARTER_PRICE_ID_DEV,
+      Pro:
         process.env.PROD === "true"
           ? "price_1QhP10IyKmdahMOdeikLlU3F"
-          : process.env.STANDARD_PRICE_ID_DEV,
-      Gold:
+          : process.env.PRO_PRICE_ID_DEV,
+      Business:
         process.env.PROD === "true"
           ? 'price_1QhP23IyKmdahMOdTyE6ZAbh'
-          : process.env.GOLD_PRICE_ID_DEV,
+          : process.env.BUSINESS_PRICE_ID_DEV,
     };
 
     this.PLAN_LIMITS = {
-      Basic: { storage: 5, creditsLimit: 200 },
-      Standard: { storage: 15, creditsLimit: 500 },
-      Gold: { storage: 25, creditsLimit: 1000 },
+      Starter: { storage: 10, creditsLimit: 100 },
+      Pro: { storage: 20, creditsLimit: 400 },
+      Business: { storage: 40, creditsLimit: 800 },
     };
     this.redirectUrl =
       process.env.PROD === "true"
@@ -240,7 +240,7 @@ export class PaymentService {
       cancel_at_period_end: true,
     });
 
-    await subscription.updateOne({ plan: "Basic", status: "canceled" });
+    await subscription.updateOne({ plan: "Starter", status: "canceled" });
 
     return { message: "Subscription cancelled successfully" };
   }

@@ -14,11 +14,11 @@ const UserOverview = () => {
   const { fullName, email, plan, profilePicture } = userInformation;
   const getPlanClassName = (plan: string) => {
     switch (plan) {
-      case "Standard":
+      case "Pro":
         return "text-primary-color";
-      case "Basic":
+      case "Starter":
         return "text-gray-500";
-      case "Gold":
+      case "Business":
         return "text-amber-500";
       default:
         return "";

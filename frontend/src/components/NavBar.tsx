@@ -59,7 +59,7 @@ const NavBar = () => {
             className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color"
           >
             Get Started
-            <ArrowRight01Icon className=" font-bold" size={25} />
+            <ArrowRight01Icon className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </li>
       </NavbarContent>
@@ -112,7 +112,7 @@ const NavBar = () => {
             className=" flex items-center justify-center p-2 rounded-full px-4 transition-all duration-300 ease-in hover:opacity-90 text-white bg-primary-color"
           >
             Get Started
-            <ArrowRight01Icon className=" font-bold" size={25} />
+            <ArrowRight01Icon className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
       </NavbarMenu>

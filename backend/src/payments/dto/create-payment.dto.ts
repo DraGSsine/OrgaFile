@@ -2,6 +2,6 @@ import { IsIn, IsNumberString, IsString } from 'class-validator';
 
 export class CreatePaymentDto {
   @IsString()
-  plan: "Basic" | "Standard" | "Gold";
+  plan: "Starter" | "Pro" | "Business";
 }
 

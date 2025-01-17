@@ -88,7 +88,7 @@ export function CurrentPlanCard() {
   const upgradePlan = async () => {
     setUpgradePlanLoading(true);
     try {
-      const plan = cookies.get("plan") || "Standard";
+      const plan = cookies.get("plan") || "Pro";
       const actoin = await dispatch(createCheckoutSession(plan));
       if (createCheckoutSession.fulfilled.match(actoin)) {
         router.push(actoin.payload.url);

@@ -32,9 +32,9 @@ export const AuthWelcome = ({
       const plan = cookies.get("plan");
       if (
         pathname == "auth/signup" &&
-        plan !== "Basic" &&
-        plan !== "Gold" &&
-        plan !== "Standard"
+        plan !== "Starter" &&
+        plan !== "Business" &&
+        plan !== "Pro"
       ) {
         setIsLoading(false);
         router.push("/pricing");

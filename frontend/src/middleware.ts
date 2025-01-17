@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   // Handle signup without a plan
   if (pathname === "/auth/signup") {
     const plan = request.cookies.get("plan")?.value;
-    if (!["Basic", "Gold", "Standard"].includes(plan || "")) {
+    if (!["Starter", "Business", "Pro"].includes(plan || "")) {
       return NextResponse.redirect(new URL("/pricing", request.url));
     }
   }
