@@ -21,7 +21,7 @@ const Upgrade = ({ plan }: { plan: string }) => {
     <button
       onClick={() => upgradePlan(plan)}
       data-plan={plan}
-      className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+      className={`w-full h-12 rounded-xl font-medium transition-all duration-200 ${
         plan === "Pro"
           ? "bg-white text-primary-color"
           : "bg-primary-color text-white"
